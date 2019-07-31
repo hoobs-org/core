@@ -59,3 +59,19 @@ typings/
 
 # next.js build output
 .next
+etc/persist
+etc/accessories
+
+# Apple's infamous .DS_Store
+.DS_Store
+
+# Homebridge(X) config files
+etc/config.json
+etc/config-*.json
+etc/plugins.json
+etc/layout.json
+etc/access.json
+
+# Homebridge(X) cache
+cache/
+dist/
