@@ -1,0 +1,30 @@
+{
+    "server": {
+        "port": 51827,
+        "socket": 51828,
+        "autostart": true,
+        "home_setup_id": "X-HM://",
+        "polling_seconds": 3
+    },
+    "client": {
+        "port": 51825,
+        "api": "http://localhost:51827",
+        "socket": "http://localhost:51828",
+        "default_route": "status",
+        "hide_setup_pin": false,
+        "inactive_logoff": 30,
+        "theme": "hoobs-light",
+        "locale": "en"
+    },
+    "bridge": {
+        "name": "Homebridge",
+        "username": "CC:22:3D:E3:CE:30",
+        "port": 51826,
+        "pin": "031-45-154"
+    },
+    "description": "",
+    "ports": {},
+    "plugins": [],
+    "accessories": [],
+    "platforms": []
+}

@@ -1,0 +1,36 @@
+.unify-light {
+    --primary: #00b9f1;
+    --primary-dark: #019ac9;
+    --background: #fff;
+    --background-dark: #353535;
+    --background-accent: #fcfcfc;
+    --background-highlight: #f1f1f1;
+    --nav-background: #353535;
+    --nav-lignt: #585858;
+    --warning: #e30505;
+    --button: #fff;
+    --button-text: #777;
+    --button-primary: #00b9f1;
+    --button-primary-text: #fff;
+    --input-background: #fff;
+    --input-text: #000;
+    --input-json-text: #a11;
+    --input-json-number: #164;
+    --text: #515151;
+    --text-light: #ccc;
+    --text-dark: #000;
+    --text-dim: #999;
+    --text-highlight: #8d00f1;
+    --title-text: #00b9f1;
+    --title-text-dim: #ccf1fc;
+    --error-text: #a11;
+    --primary-text: #fff;
+    --link-text: #00b9f1;
+    --warning-text: #fff;
+    --nav-text: #bababa;
+    --nav-text-light: #fff;
+    --log-text: #f1f1f1;
+    --border: #e5e5e5;
+    --border-dark: #acacac;
+    --snapshot: url("./snapshot.jpg");
+}

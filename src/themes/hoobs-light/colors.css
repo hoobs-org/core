@@ -1,0 +1,36 @@
+.hoobs-light {
+    --primary: #feb400;
+    --primary-dark: #c59319;
+    --background: #fff;
+    --background-dark: #474746;
+    --background-accent: #fcfcfc;
+    --background-highlight: #f1f1f1;
+    --nav-background: #474746;
+    --nav-lignt: #585857;
+    --warning: #e30505;
+    --button: #fff;
+    --button-text: #777;
+    --button-primary: #feb400;
+    --button-primary-text: #fff;
+    --input-background: #fff;
+    --input-text: #000;
+    --input-json-text: #a11;
+    --input-json-number: #164;
+    --text: #515151;
+    --text-light: #ccc;
+    --text-dark: #000;
+    --text-dim: #999;
+    --text-highlight: #e75a0e;
+    --title-text: #feb400;
+    --title-text-dim: #fce2a4;
+    --error-text: #a11;
+    --primary-text: #fff;
+    --link-text: #feb400;
+    --warning-text: #fff;
+    --nav-text: #bababa;
+    --nav-text-light: #fff;
+    --log-text: #f1f1f1;
+    --border: #e5e5e5;
+    --border-dark: #acacac;
+    --snapshot: url("./snapshot.jpg");
+}

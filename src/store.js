@@ -1,0 +1,172 @@
+import Vue from "vue";
+import Vuex from "vuex";
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+    state: {
+        user: null,
+        messages: [],
+        installed: [],
+        version: null,
+        running: false,
+        locked: false,
+        uptime: 0,
+        uptime: {
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0
+        },
+        cpu: {
+            used: null,
+            history: [
+                [0,  -1], [1,  -1], [2,  -1], [3,  -1],
+                [4,  -1], [5,  -1], [6,  -1], [7,  -1],
+                [8,  -1], [9,  -1], [10, -1], [11, -1],
+                [12, -1], [13, -1], [14, -1], [15, -1],
+                [16, -1], [17, -1], [18, -1], [19, -1]
+            ]
+        },
+        memory: {
+            load: null,
+            total: null,
+            used: null,
+            history: [
+                [0,  -1], [1,  -1], [2,  -1], [3,  -1],
+                [4,  -1], [5,  -1], [6,  -1], [7,  -1],
+                [8,  -1], [9,  -1], [10, -1], [11, -1],
+                [12, -1], [13, -1], [14, -1], [15, -1],
+                [16, -1], [17, -1], [18, -1], [19, -1]
+            ]
+        },
+        menus: {
+            nav: false,
+            homebridge: false
+        },
+        query: "",
+        results: [],
+        streamed: {},
+        notifications: {}
+    },
+    mutations: {
+        session(state, user) {
+            state.user = user;
+        },
+
+        lock(state) {
+            state.locked = true;
+        },
+
+        unlock(state) {
+            state.locked = false;
+        },
+
+        show(state, menu) {
+            state.menus[menu] = true;
+        },
+
+        hide(state, menu) {
+            state.menus[menu] = false;
+        },
+
+        toggle(state, menu) {
+            state.menus[menu] = !state.menus[menu];
+        },
+
+        log(state, message) {
+            state.messages.push(message)
+
+            while (state.messages.length > 1024) {
+                state.messages.shift();
+            }
+        },
+
+        push(state, payload) {
+            if (!state.notifications[payload.name]) {
+                state.notifications[payload.name] = [];
+            }
+
+            state.notifications[payload.name].push(payload.data);
+        },
+
+        monitor(state, payload) {
+            const units = (value) => {
+                const results = {
+                    value: Math.round((value / 1073741824) * 100) / 100,
+                    units: "GB"
+                };
+
+                while (results.value < 1 && results.units !== "KB") {
+                    results.value = Math.round((results.value * 1024) * 100) / 100;
+
+                    switch (results.units) {
+                        case "GB":
+                            results.units = "MB";
+                            break;
+
+                        case "MB":
+                            results.units = "KB";
+                            break;
+                    }
+                }
+
+                return results;
+            }
+
+            switch (payload.name) {
+                case "status":
+                    state.version = payload.data.version;
+                    state.running = payload.data.running;
+        
+                    let diff = payload.data.uptime;
+        
+                    state.uptime.days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    diff -=  state.uptime.days * (1000 * 60 * 60 * 24);
+                    state.uptime.hours = Math.floor(diff / (1000 * 60 * 60));
+                    diff -= state.uptime.hours * (1000 * 60 * 60);
+                    state.uptime.minutes = Math.floor(diff / (1000 * 60));
+                    diff -= state.uptime.minutes * (1000 * 60);
+                    state.uptime.seconds = Math.floor(diff / (1000));
+                    diff -= state.uptime.seconds * (1000);
+                    break;
+
+                case "load":
+                    state.cpu.used = 100 - Math.round(payload.data.cpu.currentload_idle);
+                    state.cpu.available = Math.round(payload.data.cpu.currentload_idle);
+        
+                    state.memory.load = Math.round((payload.data.memory.active * 100) / payload.data.memory.total);
+                    state.memory.total = units(payload.data.memory.total);
+                    state.memory.used = units(payload.data.memory.active);
+        
+                    for (let i = 0; i < state.cpu.history.length - 1; i++) {
+                        state.cpu.history[i] = state.cpu.history[i + 1];
+                        state.cpu.history[i][0] = i;
+        
+                        state.memory.history[i] = state.memory.history[i + 1];
+                        state.memory.history[i][0] = `${i}`;
+                    }
+        
+                    state.cpu.history[state.cpu.history.length - 1] = [state.cpu.history.length - 1, state.cpu.used];
+                    state.memory.history[state.memory.history.length - 1] = [state.memory.history.length - 1, state.memory.load];
+                    break;
+
+                default:
+                    state.streamed[payload.name] = payload.data;
+                    break;
+            }
+        },
+
+        search(state, query) {
+            state.query = query;
+        },
+
+        last(state, results) {
+            state.results = results;
+        },
+
+        cache(state, data) {
+            state.installed = data;
+        }
+    }
+});
