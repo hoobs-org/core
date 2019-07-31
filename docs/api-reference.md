@@ -1,5 +1,5 @@
 # API Reference
-Homebridge(X) has an API built-in that allows you to monitor, configure and control Homebridge.
+HOOBS has an API built-in that allows you to monitor, configure and control Homebridge.
 
 ## Authentication
 This is the main entry point to the API. You can use this to authenticate and recieve an authorization token.
@@ -34,7 +34,7 @@ This fetches basic information about the Homebridge service. Non admin users wil
 GET /
 ```
 
-This returns basic information about Homebridge(X).
+This returns basic information about HOOBS.
 
 ```javascript
 {

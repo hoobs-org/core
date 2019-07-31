@@ -1,12 +1,12 @@
 # Developing Plugins
 
-When writing your plugin, you'll want Homebridge(X) to load it from your development directory instead of publishing it to npm each time. You can tell Homebridge(X) to look for your plugin at a specific location using the command-line parameter -P. For example, if you are in the Homebridge(X) directory (as checked out from Github), you might type:
+When writing your plugin, you'll want HOOBS to load it from your development directory instead of publishing it to npm each time. You can tell HOOBS to look for your plugin at a specific location using the command-line parameter -P. For example, if you are in the HOOBS directory (as checked out from Github), you might type:
 
 ```sh
 ./bin/homebridge -D -P ../my-great-plugin/
 ```
 
-This will start up Homebridge(X) and load your in-development plugin from a nearby directory.
+This will start up HOOBS and load your in-development plugin from a nearby directory.
 
 > Note when you make changes to an interface plugin, you don't need to restart the interface. The server detects changes and will rebuild the interface live.
 
@@ -18,11 +18,11 @@ You can start Homebridge in native mode for debugging and testing by running thi
 
 > This differs from the main ./bin/homebridge script. This starts only Homebridge for plugin development.
 
-When you load a path, Homebridge(X) will actually add a symlink to the modules directory. This is done to get the exact same behavior as production. Therefore your plugin will have access to all packages the parent and other plugins have.
+When you load a path, HOOBS will actually add a symlink to the modules directory. This is done to get the exact same behavior as production. Therefore your plugin will have access to all packages the parent and other plugins have.
 
 ## Server & Interface Plugins
 
-Your plugin can contain one or both types of plugins. Server plugins are loaded into the Homebridge(X) service, like typical Homebridge plugins. These plugins are supported by both Homebridge and Homebridge(X).
+Your plugin can contain one or both types of plugins. Server plugins are loaded into the HOOBS service, like typical Homebridge plugins. These plugins are supported by both Homebridge and HOOBS.
 
 Interface plugins are plugins that are loaded into the interface. Your plugin can contain both a server and interface plugin. The vanilia Homebridge server will simply ignore the interface plugin.
 
@@ -185,7 +185,7 @@ SVG images need to be base64 encoded. You can encode SVG code [here](https://www
 
 ### CSS & Image Processing
 
-The interface needs to know what to do with your CSS and images. This is handled when Homebridge(X) starts and builds the interface. You need to define a **postcss.config.js** file.
+The interface needs to know what to do with your CSS and images. This is handled when HOOBS starts and builds the interface. You need to define a **postcss.config.js** file.
 
 ```javascript
 module.exports = {
@@ -199,7 +199,7 @@ This needs to be in the same folder as your **index.vue** file.
 
 ## Configuration Files
 
-Homebridge(X) will try to pre-configure plugins when installing. This will look for a **config.schema.json** file and insert the default configuration into the main configuration.
+HOOBS will try to pre-configure plugins when installing. This will look for a **config.schema.json** file and insert the default configuration into the main configuration.
 
 Here is an example **config.schema.json** file:
 

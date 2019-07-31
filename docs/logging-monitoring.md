@@ -1,5 +1,5 @@
 # Logging & Monitoring
-Homebridge(X) uses [Socket.IO](https://socket.io/) for logging and monitoring. This allows you to stream the CPU and memory stats as well as the Homebridge(X) log. The Homebridge(X) status is also streamed.
+HOOBS uses [Socket.IO](https://socket.io/) for logging and monitoring. This allows you to stream the CPU and memory stats as well as the HOOBS log. The service status is also streamed.
 
 ## Logging
 You can stream the active log to a browser, desktop or mobile application. Here is a basic HTML example.
