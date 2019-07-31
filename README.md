@@ -66,6 +66,11 @@ The configuration screen allows you to modify your Homebridge settings, platform
 
 ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/hoobs/config.png)
 
+### Dark Mode
+HOOBS also has a dark mode.
+
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/accessories.png)
+
 ## Adding Homebridge to iOS
 HomeKit itself is actually not an app; it's a "database" similar to HealthKit and PassKit. Where HealthKit has the companion Health app and PassKit has Passbook, HomeKit has the Home app, introduced with iOS 10.  
 
