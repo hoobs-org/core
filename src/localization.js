@@ -14,6 +14,9 @@ class Language {
 
     static supported = (lang) => {
         switch (lang) {
+            case "ro":
+                return "ro";
+
             default:
                 return "en";
         }
