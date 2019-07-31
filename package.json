@@ -1,11 +1,11 @@
 {
-    "name": "homebridge-x",
+    "name": "hoobs-code",
     "version": "0.4.50",
-    "description": "A Homebridge stack with a interface that simplifies configuration and installing plugins",
-    "license": "MIT",
+    "description": "Certified HOOBS stack",
+    "license": "Apache-2.0",
     "keywords": [
+        "HOOBS",
         "homebridge",
-        "homebridge-x",
         "homebridge-plugin"
     ],
     "repository": {
