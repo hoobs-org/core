@@ -1,7 +1,7 @@
 <template>
     <div v-if="user.admin" id="config">
         <div class="info">
-            <a href="#hoobs">{{ $t("hoobs_settings") }}</a>
+            <a href="#hoobs">{{ $t("interface_settings") }}</a>
             <a href="#bridge">{{ $t("bridge_settings") }}</a>
             <a href="#ports">{{ $t("port_ranges") }}</a>
             <a href="#accessories">{{ $t("accessories") }}</a>
@@ -23,9 +23,9 @@
         </div>
         <div class="content">
             <div class="form">
-                <h2 id="hoobs">{{ $t("hoobs_settings") }}</h2>
+                <h2 id="hoobs">{{ $t("interface_settings") }}</h2>
                 <p>
-                    {{ $t("hoobs_settings_message") }}
+                    {{ $t("interface_settings_message") }}
                 </p>
                 <div class="field">
                     <span class="title">{{ $t("language") }}</span>
@@ -179,10 +179,13 @@
                     text: this.$t("auto"),
                     value: null
                 },{
-                    text: this.$t("english"),
+                    text: "English",
                     value: "en"
                 },{
-                    text: this.$t("romanian"),
+                    text: "Español",
+                    value: "es"
+                },{
+                    text: "Română",
                     value: "ro"
                 }],
                 themes: [{
@@ -490,7 +493,7 @@
     }
 
     #config .form h2 {
-        margin: 20px 0 0 0;
+        margin: 20px 0 5px 0;
         padding: 0;
         line-height: normal;
         font-size: 22px;
@@ -498,7 +501,7 @@
     }
 
     #config .form h2:first-child {
-        margin: 0;
+        margin: 0 0 5px 0;
     }
 
     #config .form p {

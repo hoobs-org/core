@@ -167,7 +167,7 @@
     }
 
     #profile .form h2 {
-        margin: 20px 0 0 0;
+        margin: 20px 0 5px 0;
         padding: 0;
         line-height: normal;
         font-size: 22px;
@@ -175,7 +175,7 @@
     }
 
     #profile .form h2:first-child {
-        margin: 0;
+        margin: 0 0 5px 0;
     }
 
     #profile .form p {
