@@ -33,5 +33,6 @@
     --log-text: #f1f1f1;
     --border: #e5e5e5;
     --border-dark: #acacac;
+    --logo-color: #fff;
     --snapshot: url("./snapshot.jpg");
 }
