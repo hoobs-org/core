@@ -301,9 +301,7 @@
     }
 
     .button:hover {
-        box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
-                    0 2px 1px -1px rgba(0, 0, 0, 0.12),
-                    0 1px 3px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: var(--elevation-small);
     }
 
     .icon {
@@ -352,9 +350,7 @@
         margin: 0 -10px;
         padding: 0 20px 0 30px;
         background: var(--primary);
-        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
-                    0 4px 5px 0 rgba(0, 0, 0, 0.14),
-                    0 1px 10px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: var(--elevation-large);
         display: flex;
         align-content: center;
         align-items: center;
@@ -438,9 +434,7 @@
         min-width: 57px;
         padding: 0 0 15px 0;
         background: var(--nav-background);
-        box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
-                    0px 8px 10px 1px rgba(0, 0, 0, 0.14),
-                    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+        box-shadow: var(--elevation-large);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
