@@ -1,6 +1,7 @@
 <template>
     <div v-if="user.admin" id="config">
         <div class="info">
+            <a href="#hoobs">{{ $t("hoobs_settings") }}</a>
             <a href="#bridge">{{ $t("bridge_settings") }}</a>
             <a href="#ports">{{ $t("port_ranges") }}</a>
             <a href="#accessories">{{ $t("accessories") }}</a>
@@ -22,6 +23,51 @@
         </div>
         <div class="content">
             <div class="form">
+                <h2 id="hoobs">{{ $t("hoobs_settings") }}</h2>
+                <p>
+                    {{ $t("hoobs_settings_message") }}
+                </p>
+                <div class="field">
+                    <span class="title">{{ $t("language") }}</span>
+                    <span class="description">{{ $t("language_message") }}</span>
+                    <select v-model="configuration.client.locale" @change="markReload()">
+                        <option v-for="locale in locales" v-bind:value="locale.value" :key="locale.value">
+                            {{ locale.text }}
+                        </option>
+                    </select>
+                </div>
+                <div class="field">
+                    <span class="title">{{ $t("theme") }}</span>
+                    <span class="description">{{ $t("theme_message") }}</span>
+                    <select v-model="configuration.client.theme" @change="markReload()">
+                        <option v-for="theme in themes" v-bind:value="theme.value" :key="theme.value">
+                            {{ theme.text }}
+                        </option>
+                    </select>
+                </div>
+                <div class="field">
+                    <span class="title">{{ $t("default_screen") }}</span>
+                    <span class="description">{{ $t("default_screen_message") }}</span>
+                    <select v-model="configuration.client.default_route" @change="markReload()">
+                        <option v-for="screen in screens" v-bind:value="screen.value" :key="screen.value">
+                            {{ screen.text }}
+                        </option>
+                    </select>
+                </div>
+                <div class="field">
+                    <span class="title">{{ $t("show_setup_pin") }}</span>
+                    <span class="description">{{ $t("show_setup_pin_message") }}</span>
+                    <select v-model="configuration.client.hide_setup_pin" @change="markReload()">
+                        <option v-for="item in binary" v-bind:value="item.value" :key="item.value">
+                            {{ item.text }}
+                        </option>
+                    </select>
+                </div>
+                <div class="field">
+                    <span class="title">{{ $t("log_out_after") }}</span>
+                    <span class="description">{{ $t("log_out_after_message") }}</span>
+                    <input type="number" autocomplete="false" min="5" step="1" max="60" v-model="configuration.client.inactive_logoff" @change="markReload()" />
+                </div>
                 <h2 id="bridge">{{ $t("bridge_settings") }}</h2>
                 <p>
                     {{ $t("bridge_settings_message") }}
@@ -102,7 +148,18 @@
         data() {
             return {
                 working: false,
+                reload: false,
                 configuration: {
+                    client: {
+                        port: null,
+                        api: null,
+                        socket: null,
+                        default_route: null,
+                        hide_setup_pin: null,
+                        inactive_logoff: null,
+                        theme: null,
+                        locale: null
+                    },
                     bridge: {
                         name: null,
                         username: null,
@@ -118,6 +175,37 @@
                     accessories: [],
                     platforms: []
                 },
+                locales: [{
+                    text: this.$t("auto"),
+                    value: null
+                },{
+                    text: this.$t("english"),
+                    value: "en"
+                },{
+                    text: this.$t("romanian"),
+                    value: "ro"
+                }],
+                themes: [{
+                    text: this.$t("hoobs_light"),
+                    value: "hoobs-light"
+                },{
+                    text: this.$t("hoobs_dark"),
+                    value: "hoobs-dark"
+                }],
+                screens: [{
+                    text: this.$t("status"),
+                    value: "status"
+                },{
+                    text: this.$t("accessories"),
+                    value: "accessories"
+                }],
+                binary: [{
+                    text: this.$t("yes"),
+                    value: false
+                },{
+                    text: this.$t("no"),
+                    value: true
+                }],
                 errors: []
             };
         },
@@ -157,6 +245,17 @@
                     platforms.push(JSON.stringify(response.platforms[i], null, 4));
                 }
 
+                this.configuration.client = response.client || {
+                    port: 51825,
+                    api: "http://localhost:51827",
+                    socket: "http://localhost:51828",
+                    default_route: "status",
+                    hide_setup_pin: false,
+                    inactive_logoff: 30,
+                    theme: "hoobs-light",
+                    locale: "en"
+                };
+
                 this.configuration.bridge = response.bridge || {
                     name: "Homebridge",
                     username: "CC:22:3D:E3:CE:30",
@@ -170,6 +269,10 @@
                 this.configuration.platforms = platforms;
 
                 this.working = false;
+            },
+
+            markReload() {
+                this.reload = true;
             },
 
             add(section) {
@@ -223,11 +326,17 @@
                 this.errors = [];
 
                 const data = {
+
+                    client: this.configuration.client,
                     bridge: this.configuration.bridge,
                     description: this.configuration.description,
                     ports: this.configuration.ports,
                     accessories: [],
                     platforms: []
+                }
+
+                if (!data.client.inactive_logoff || data.client.inactive_logoff < 5 || data.client.inactive_logoff > 60) {
+                    this.errors.push(this.$t("invalid_inactive_logoff"));
                 }
 
                 if (!data.bridge.name || data.bridge.name === "") {
@@ -295,6 +404,20 @@
                         await this.api.post("/service/restart");
 
                         this.$store.commit("unlock");
+                    }
+
+                    if (this.reload) {
+                        await this.api.post("/service/reload");
+
+                        this.config.client.default_route = data.client.default_route;
+                        this.config.client.hide_setup_pin = data.client.hide_setup_pin;
+                        this.config.client.inactive_logoff = data.client.inactive_logoff;
+                        this.config.client.theme = data.client.theme;
+                        this.config.client.locale = data.client.locale;
+
+                        this.reload = false;
+
+                        window.location.reload();
                     }
 
                     this.load();
@@ -399,13 +522,22 @@
     #config .form .field input,
     #config .form .field select,
     #config .form .field textarea {
-        flex: 1;
         padding: 7px;
         font-size: 14px;
         background: var(--input-background);
         color: var(--input-text);
         border: 1px var(--border) solid;
         border-radius: 5px;
+    }
+
+    #config .form .field input,
+    #config .form .field textarea {
+        flex: 1;
+    }
+
+    #config .form .field input,
+    #config .form .field select {
+        height: 33px !important;
     }
 
     #config .form .field textarea {
