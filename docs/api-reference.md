@@ -44,11 +44,11 @@ This returns basic information about HOOBS.
     "homebridge_port": 51826,
     "home_setup_pin": "031-45-154",
     "home_setup_id": "X-HM://",
-    "application_path": ".../homebridge-x",
-    "configuration_path": ".../homebridge-x/etc",
-    "local_modules_path": ".../homebridge-x/node_modules",
+    "application_path": ".../hoobs-core",
+    "configuration_path": ".../hoobs-core/etc",
+    "local_modules_path": ".../hoobs-core/node_modules",
     "global_modules_path": "/usr/local/lib/node_modules",
-    "homebridge_path": ".../homebridge-x/node_modules/homebridge"
+    "homebridge_path": ".../hoobs-core/node_modules/homebridge"
 }
 ```
 
@@ -270,13 +270,13 @@ This returns the current configuration
     "description": "",
     "ports": {},
     "paths": {
-        "application": ".../homebridge-x",
-        "config": ".../homebridge-x/etc",
+        "application": ".../hoobs-core",
+        "config": ".../hoobs-core/etc",
         "modules": {
-            "local": ".../homebridge-x/node_modules",
+            "local": ".../hoobs-core/node_modules",
             "global": "/usr/local/lib/node_modules"
         },
-        "homebridge": ".../homebridge-x/node_modules/homebridge"
+        "homebridge": ".../hoobs-core/node_modules/homebridge"
     },
     "accessories": [],
     "platforms": []
