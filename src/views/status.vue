@@ -10,7 +10,7 @@
         </div>
         <div class="content">
             <div class="chart">
-                <line-chart v-if="cpu.used && memory.load" height="100%" suffix="%" :discrete="true" :data="graph" :min="0" :max="100" :colors="colors" :curve="false" legend="bottom" />
+                <line-chart v-if="cpu.used && memory.load" id="system-load" height="100%" suffix="%" :discrete="true" :data="graph" :min="0" :max="100" :colors="colors" :curve="false" legend="bottom" />
             </div>
             <div :class="client.hide_setup_pin ? 'details singluar' : 'details'">
                 <table>

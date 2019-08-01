@@ -4,8 +4,8 @@ import DeepMerge from "deepmerge";
 
 let chartId = 1;
 
-let create = function (Vue, tagName, chartType) {
-    let attributes = [
+let createComponent = function (Vue, tagName, chartType) {
+    let chartProps = [
         "adapter",
         "colors",
         "curve",
@@ -39,7 +39,9 @@ let create = function (Vue, tagName, chartType) {
             "id",
             "width",
             "height"
-        ].concat(attributes), render: (createElement) => {
+        ].concat(chartProps),
+
+        render: function (createElement) {
             return createElement("div", {
                 attrs: {
                     id: this.chartId
@@ -48,14 +50,18 @@ let create = function (Vue, tagName, chartType) {
             }, [
                 "Loading..."
             ]);
-        }, data() {
+        },
+
+        data: function () {
             return {
                 chartId: null
             };
-        }, computed: {
+        },
+
+        computed: {
             chartStyle: function () {
-                this.data();
-                this.chartOptions();
+                this.data;
+                this.chartOptions;
 
                 return {
                     height: this.height || "300px",
@@ -68,9 +74,9 @@ let create = function (Vue, tagName, chartType) {
                 };
             },
 
-            chartOptions() {
+            chartOptions: function () {
                 let options = {};
-                let props = attributes;
+                let props = chartProps;
 
                 for (let i = 0; i < props.length; i++) {
                     let prop = props[i];
@@ -84,16 +90,16 @@ let create = function (Vue, tagName, chartType) {
             }
         },
 
-        created() {
-            this.chartId = this.chartId || this.id || ("chart-" + chartId++);
+        created: function () {
+            this.chartId = this.chartId || this.id || (`chart-${chartId += 1}`);
         },
 
-        mounted() {
+        mounted: function () {
             this.updateChart();
             this.savedState = this.currentState();
         },
 
-        updated() {
+        updated: function () {
             let currentState = this.currentState();
 
             if (!DeepEqual(currentState, this.savedState)) {
@@ -102,14 +108,14 @@ let create = function (Vue, tagName, chartType) {
             }
         },
 
-        beforeDestroy() {
+        beforeDestroy: function () {
             if (this.chart) {
                 this.chart.destroy();
             }
         },
 
         methods: {
-            updateChart() {
+            updateChart: function () {
                 if (this.data !== null) {
                     if (this.chart) {
                         this.chart.updateData(this.data, this.chartOptions);
@@ -130,7 +136,7 @@ let create = function (Vue, tagName, chartType) {
                 });
             }
         }
-    })
+    });
 }
 
 Chartkick.version = "0.5.2";
@@ -140,14 +146,14 @@ Chartkick.install = function (Vue, options) {
         Chartkick.addAdapter(options.adapter);
     }
 
-    create(Vue, "line-chart", Chartkick.LineChart);
-    create(Vue, "pie-chart", Chartkick.PieChart);
-    create(Vue, "column-chart", Chartkick.ColumnChart);
-    create(Vue, "bar-chart", Chartkick.BarChart);
-    create(Vue, "area-chart", Chartkick.AreaChart);
-    create(Vue, "scatter-chart", Chartkick.ScatterChart);
-    create(Vue, "geo-chart", Chartkick.GeoChart);
-    create(Vue, "timeline", Chartkick.Timeline);
+    createComponent(Vue, "line-chart", Chartkick.LineChart);
+    createComponent(Vue, "pie-chart", Chartkick.PieChart);
+    createComponent(Vue, "column-chart", Chartkick.ColumnChart);
+    createComponent(Vue, "bar-chart", Chartkick.BarChart);
+    createComponent(Vue, "area-chart", Chartkick.AreaChart);
+    createComponent(Vue, "scatter-chart", Chartkick.ScatterChart);
+    createComponent(Vue, "geo-chart", Chartkick.GeoChart);
+    createComponent(Vue, "timeline", Chartkick.Timeline);
 }
 
 export default Chartkick;
