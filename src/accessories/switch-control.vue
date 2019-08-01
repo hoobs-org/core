@@ -68,11 +68,11 @@
                 if (this.accessory.name.toLowerCase().includes("light") || this.accessory.name.toLowerCase().includes("lamp")) {
                     return "#ffd500";
                 } else if (this.accessory.type === "switch") {
-                    return (this.client.theme || "hoobs-light").startsWith("hoobs") ? "#e75a0e" : "#8d00f1";
+                    return "#e75a0e";
                 } else if (this.accessory.name.toLowerCase().includes("fan") || this.accessory.type === "fan") {
-                    return (this.client.theme || "hoobs-light").startsWith("hoobs") ? "#f9bd2b" : "#00b9f1";
+                    return "#f9bd2b";
                 } else if (this.accessory.name.toLowerCase().includes("garbage")) {
-                    return (this.client.theme || "hoobs-light").startsWith("hoobs") ? "#f9bd2b" : "#00b9f1";
+                    return "#f9bd2b";
                 } else if (this.accessory.name.toLowerCase().includes("fireplace")) {
                     return "#f27c05";
                 } else if (this.accessory.type === "outlet") {

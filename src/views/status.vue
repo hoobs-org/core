@@ -48,7 +48,7 @@
         computed: {
             graph() {
                 return [{
-                    name: `${this.$t((this.client.theme || "hoobs-light").startsWith("hoobs") ? "hoobs" : "homebridge")} (${this.running ? this.$t("running") : this.$t("stopped")})`,
+                    name: `${this.$t("hoobs")} (${this.running ? this.$t("running") : this.$t("stopped")})`,
                     data: []
                 }, {
                     name: `${this.$t("cpu")} ${this.cpu.used}%`,
@@ -65,8 +65,8 @@
             colors() {
                 return [
                     this.running ? "#019420" : "#940101",
-                    (this.client.theme || "hoobs-light").startsWith("hoobs") ? "#f9bd2b" : "#00b9f1",
-                    (this.client.theme || "hoobs-light").startsWith("hoobs") ? "#e75a0e" : "#8d00f1",
+                    "#f9bd2b",
+                    "#e75a0e",
                     "#999999"
                 ];
             },

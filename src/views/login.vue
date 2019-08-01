@@ -11,7 +11,7 @@
                     {{ $t("welcome") }}
                 </h2>
                 <p>
-                    {{ $t((client.theme || 'hoobs-light').startsWith("hoobs") ? "welcome_message_hoobs" : "welcome_message") }} {{ $t("setup_admin_account")}}
+                    {{ $t("welcome_message_hoobs") }} {{ $t("setup_admin_account")}}
                 </p>
                 <div v-if="errors.length > 0" class="errors">
                     <span v-for="(error, index) in errors" :key="index">{{ error }}</span>

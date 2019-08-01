@@ -176,37 +176,37 @@
 
                 switch (name) {
                     case "login":
-                        return this.$t((this.client.theme || "hoobs-light").startsWith("hoobs") ? "hoobs" : "homebridge");
+                        return this.$t("hoobs");
 
                     case "profile":
-                        return `${(this.client.theme || "hoobs-light").startsWith("hoobs") && !title ? `${this.$t("hoobs")} | ` : ""}${this.$t("profile")}`;
+                        return `${!title ? `${this.$t("hoobs")} | ` : ""}${this.$t("profile")}`;
 
                     case "status":
-                        return `${(this.client.theme || "hoobs-light").startsWith("hoobs") && !title ? `${this.$t("hoobs")} | ` : ""}${this.$t("status")}`;
+                        return `${!title ? `${this.$t("hoobs")} | ` : ""}${this.$t("status")}`;
 
                     case "log":
-                        return `${(this.client.theme || "hoobs-light").startsWith("hoobs") && !title ? `${this.$t("hoobs")} | ` : ""}${this.$t("log")}`;
+                        return `${!title ? `${this.$t("hoobs")} | ` : ""}${this.$t("log")}`;
 
                     case "users":
-                        return `${(this.client.theme || "hoobs-light").startsWith("hoobs") && !title ? `${this.$t("hoobs")} | ` : ""}${this.$t("users")}`;
+                        return `${!title ? `${this.$t("hoobs")} | ` : ""}${this.$t("users")}`;
 
                     case "plugin":
                     case "plugins":
                     case "search":
-                        return `${(this.client.theme || "hoobs-light").startsWith("hoobs") && !title ? `${this.$t("hoobs")} | ` : ""}${this.$t("plugins")}`;
+                        return `${!title ? `${this.$t("hoobs")} | ` : ""}${this.$t("plugins")}`;
 
                     case "config":
-                        return `${(this.client.theme || "hoobs-light").startsWith("hoobs") && !title ? `${this.$t("hoobs")} | ` : ""}${this.$t("config")}`;
+                        return `${!title ? `${this.$t("hoobs")} | ` : ""}${this.$t("config")}`;
 
                     case "accessories":
                     case "layout":
-                        return `${(this.client.theme || "hoobs-light").startsWith("hoobs") && !title ? `${this.$t("hoobs")} | ` : ""}${this.$t("accessories")}`;
+                        return `${!title ? `${this.$t("hoobs")} | ` : ""}${this.$t("accessories")}`;
 
                     default:
                         const plugin = this.plugins.filter(p => p.name === name);
 
                         if (plugin.length > 0) {
-                            return `${(this.client.theme || "hoobs-light").startsWith("hoobs") && !title ? `${this.$t("hoobs")} | ` : ""}${this.$t(plugin[0].title) || ""}`;
+                            return `${!title ? `${this.$t("hoobs")} | ` : ""}${this.$t(plugin[0].title) || ""}`;
                         }
 
                         return "";

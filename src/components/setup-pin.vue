@@ -67,7 +67,7 @@
     }
 
     #pin .svg-code {
-        fill: var(--pin-color);
+        fill: var(--text);
         font-weight: bold;
         font-size: 788.476px;
         font-family: Helvetica;
