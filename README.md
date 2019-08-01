@@ -71,14 +71,14 @@ HOOBS also has a dark mode.
 
 ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/config.png)
 
-## Adding Homebridge to iOS
+## Adding HOOBS to iOS
 HomeKit itself is actually not an app; it's a "database" similar to HealthKit and PassKit. Where HealthKit has the companion Health app and PassKit has Passbook, HomeKit has the Home app, introduced with iOS 10.  
 
 If you are a member of the iOS developer program, you might also find Apple's [HomeKit Catalog](https://developer.apple.com/documentation/homekit/configuring_a_home_automation_device) app to be useful, as it provides straightforward and comprehensive management of all HomeKit database "objects".  
 
-Using the Home app (or most other HomeKit apps), you should be able to add the single accessory "Homebridge", assuming that you're still running Homebridge and you're on the same Wifi network. Adding this accessory will automatically add all accessories and platforms defined in your configuration.  
+Using the Home app (or most other HomeKit apps), you should be able to add the single accessory "Homebridge", assuming that you're still running HOOBS and you're on the same Wifi network. Adding this accessory will automatically add all accessories and platforms defined in your configuration. 
 
-When you attempt to add Homebridge, it will ask for a "PIN code". The default code is 031-45-154 (but this can be changed).
+When you attempt to add HOOBS, it will ask for a "PIN code". The default code is 031-45-154 (but this can be changed).
 
 ## Interacting with your Devices
 Once your device has been added to HomeKit, you should be able to tell Siri to control your devices. However, realize that Siri is a cloud service, and iOS may need some time to synchronize your device information with iCloud.  
