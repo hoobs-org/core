@@ -33,7 +33,7 @@
                     width: 258,
                     color: {
                         dark: (this.client.theme || "hoobs-light").endsWith("dark") ? "#feb400" : "#515151",
-                        light: (this.client.theme || "hoobs-light").endsWith("dark") ? "#474746" : "#ffffff"
+                        light: "#ffffff00"
                     }
                 };
             }
