@@ -507,6 +507,6 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        font-size: 14px;
+        font-size: 12pt;
     }
 </style>
