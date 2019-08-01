@@ -127,7 +127,7 @@
         "service_stoped_message": "Homebridge service not running.",
         "setup_admin_account": "To start you need to setup the administrator account.",
         "setup_id_message": "From the Apple Home app, scan this eight-digit code, or enter manually.",
-        "show_setup_pin_message": "This will show or hide the Apple Home setup PIN and QRcode on the status screen.",
+        "show_setup_pin_message": "This will show or hide the Apple Home setup PIN and QR code on the status screen.",
         "show_setup_pin": "Show Setup PIN",
         "start_port_invalid": "Start port is invalid. It must be a number between 1 and 65535.",
         "start_port_message": "The port range starting number.",
