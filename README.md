@@ -3,7 +3,7 @@
 
 A Homebridge stack with a interface that simplifies configuration and installing plugins. This adds a process wrapper for [Homebridge](https://github.com/nfarina/homebridge). It also adds an API that can be used as an endpoint for an application.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/status.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/accessories.png)
 
 HOOBS is not a Homebridge plugin. It is a seperate application designed to be a parent to Homebridge. Since this is independent, it can control Homebridge. This also keeps all of the plugins in one place. No need to install plugins in the global scope, which helps keep your Homebridge server more secure.
 
@@ -69,7 +69,7 @@ The configuration screen allows you to modify your Homebridge settings, platform
 ### Dark Mode
 HOOBS also has a dark mode.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/accessories.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/config.png)
 
 ## Adding Homebridge to iOS
 HomeKit itself is actually not an app; it's a "database" similar to HealthKit and PassKit. Where HealthKit has the companion Health app and PassKit has Passbook, HomeKit has the Home app, introduced with iOS 10.  
