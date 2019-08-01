@@ -14,6 +14,8 @@ import Themes from "./themes/themes";
 
 import Config from "../etc/config.json";
 
+Chart.defaults.global.defaultFontColor = (Config.client.theme || "hoobs-light").startsWith("hoobs") ? "#f9bd2b" : "#515151";
+
 Vue.mixin({
     data: () => {
         return {

@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-
 import Plugins from "../etc/plugins.json";
 import Config from "../etc/config.json";
 

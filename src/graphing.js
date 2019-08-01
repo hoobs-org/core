@@ -1,6 +1,7 @@
 import Chartkick from "chartkick";
 import DeepEqual from "deep-equal";
 import DeepMerge from "deepmerge";
+import Config from "../etc/config.json";
 
 let chartId = 1;
 
@@ -68,7 +69,7 @@ let createComponent = function (Vue, tagName, chartType) {
                     lineHeight: this.height || "300px",
                     width: this.width || "100%",
                     textAlign: "center",
-                    color: "#999",
+                    color: (Config.client.theme || "hoobs-light").endsWith("dark") ? "#feb400" : "#999999",
                     fontSize: "14px",
                     fontFamily: "'Lucida Grande', 'Lucida Sans Unicode', Verdana, Arial, Helvetica, sans-serif"
                 };

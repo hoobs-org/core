@@ -352,6 +352,7 @@
         padding: 10px;
         text-align: left;
         border-bottom: 1px var(--border-dark) solid;
+        color: var(--pin-color);
     }
 
     #markdown table td {

@@ -160,6 +160,7 @@
         padding: 10px;
         text-align: left;
         border-bottom: 2px var(--border-dark) solid;
+        color: var(--pin-color);
     }
 
     #status .details table td {
