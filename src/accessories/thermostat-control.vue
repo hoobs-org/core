@@ -2,7 +2,7 @@
     <div id="control">
         <svg width="190" height="190" viewBox="0 0 100 100" @click="setTarget" @mousedown="captureMouse" @mouseup="releaseMouse" @touchstart="beginTouch" @touchend="endTouch">
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" cx="50" cy="50" r="45" />
-	        <circle :fill="(client.theme || 'hoobs-light').endsWith('dark') ? '#999999' : '#fafafa'" cx="50" cy="50" r="43.5" />
+	        <circle :fill="(client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#fafafa'" cx="50" cy="50" r="43.5" />
             <path :d="`M ${this.min.x} ${this.min.y} A 40 40 0 1 1 ${this.max.x} ${this.max.y}`" stroke-width="5" :stroke="right" fill="none" style="transition: stroke 0.1s ease-in; cursor: pointer;" />
             <path v-if="visible" :d="`M ${this.zero.x} ${this.zero.y} A 40 40 0 ${this.arc} ${this.sweep} ${this.position.x} ${this.position.y}`" stroke-width="5" :stroke="left" fill="none" ref="path-value" :style="style" />
             <path fill="none" stroke="#cccccc" stroke-width="0.3" stroke-miterlimit="10" d="M53.9,19.8l0.6-4.4 M57.7,20.5l1.1-4.2 M61.5,21.7l1.6-4 M65,23.4l2.1-3.8 M68.3,25.5l2.6-3.6 M71.3,28l3-3.2 M74,30.8l3.4-2.8 M76.3,34l3.7-2.3 M78.2,37.4l3.9-1.8 M79.6,41.1l4.2-1.4 M80.6,44.8l4.3-0.8 M81.1,48.7l4.3-0.2 M81.1,52.6 l4.3,0.3 M80.6,56.5l4.3,0.8 M79.6,60.3l4.2,1.4 M78.2,63.9l3.9,1.9 M76.3,67.4l3.7,2.3 M74,70.5l3.4,2.8 M71.3,73.4l3,3.2 M68.3,75.9l2.6,3.5 M31.7,75.9l-2.6,3.5 M28.7,73.4l-3,3.2 M26,70.5l-3.4,2.8 M23.7,67.4L20,69.7 M21.8,63.9l-3.9,1.9 M20.4,60.3 l-4.2,1.4 M19.4,56.5l-4.3,0.8 M18.9,52.6l-4.3,0.3 M18.9,48.7l-4.3-0.2 M19.4,44.8L15.1,44 M20.4,41.1l-4.2-1.4 M21.8,37.4 l-3.9-1.8 M23.7,34L20,31.7 M26,30.8L22.6,28 M28.7,28l-3-3.2 M31.7,25.5l-2.6-3.6 M35,23.4l-2.1-3.8 M38.5,21.7l-1.6-4 M42.3,20.5 l-1.1-4.2 M46.1,19.8l-0.6-4.4 M50,19.5v-4.3" />
@@ -276,7 +276,7 @@
             },
 
             async control(type, value) {
-                await this.api.put(`${this.client.api}/accessory/${this.accessory.aid}/${this.accessory.characteristics.filter(c => c.type === type)[0].iid}`, {
+                await this.api.put(`/accessory/${this.accessory.aid}/${this.accessory.characteristics.filter(c => c.type === type)[0].iid}`, {
                     value
                 });
             }
