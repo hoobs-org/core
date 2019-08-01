@@ -14,7 +14,7 @@ import Themes from "./themes/themes";
 
 import Config from "../etc/config.json";
 
-Chart.defaults.global.defaultFontColor = (Config.client.theme || "hoobs-light").startsWith("hoobs") ? "#f9bd2b" : "#515151";
+Chart.defaults.global.defaultFontColor = (Config.client.theme || "hoobs-light").endsWith("dark") ? "#f9bd2b" : "#999";
 
 Vue.mixin({
     data: () => {
@@ -118,12 +118,9 @@ Vue.use(new Socket({
 
 Router.beforeEach(async (to, from, next) => {
     if (to.path !== "/login" && !(await Cookies.validate())) {
-        return next({
-            path: "/login",
-            query: {
-                url: to.path
-            }
-        });
+        window.location.href = `/login?url=${encodeURIComponent(to.path)}`;
+        
+        return;
     }
 
     const token = Cookies.get("token");
