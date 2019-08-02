@@ -1,4 +1,5 @@
-## We are working on HOOBS v3.0.0 - THIS IS NOT YET READY TO INSTALL - 
+## We are working on HOOBS v3.0.0 
+## - THIS IS NOT YET READY TO INSTALL - 
 
 # ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/logo.png)
 
@@ -21,6 +22,17 @@ There is  a [Homebridge community on Reddit](https://www.reddit.com/r/homebridge
 r/Homekit and r/Homebridge have also created a community Discord server, where users of both Homekit and Homebridge can discuss their different products as well as get support. The link for the community is [here](https://discord.gg/RcV7fa8).
 
 You can also chat with us in [Slack](https://homebridge-slackin.glitch.me).
+
+If you want to contact **HOOBS dev-team** there are a bunch of ways to do that:
+
+[HOOBS website](https://hoobs.org)
+[HOOBS Support Chat](m.me/HOOBSofficial)
+[HOOBS email](mailto:info@hoobs.org)
+[HOOBS Subreddit](https://www.reddit.com/r/hoobs/)
+[HOOBS Facebook Page](https://www.facebook.com/HOOBSofficial)
+[HOOBS Facebook Support Group](https://www.facebook.com/groups/HOOBSorg/)
+
+
 
 ## Installation
 
