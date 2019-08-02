@@ -133,4 +133,3 @@ Here is a list of available sensors.
 [API Reference](https://github.com/hoobs-org/hoobs-core/blob/master/docs/api-reference.md)  
 [Logging & Monitoring](https://github.com/hoobs-org/hoobs-core/blob/master/docs/logging-monitoring.md)  
 [Developing Plugins](https://github.com/hoobs-org/hoobs-core/blob/master/docs/developing-plugins.md)  
-[Code of Conduct](https://github.com/hoobs-org/hoobs-core/blob/master/CONDUCT.md)

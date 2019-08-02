@@ -1,5 +1,5 @@
 # API Reference
-HOOBS has an API built-in that allows you to monitor, configure and control Homebridge.
+HOOBS has an API built-in that allows you to monitor, configure and control your device.
 
 ## Authentication
 This is the main entry point to the API. You can use this to authenticate and recieve an authorization token.
@@ -28,7 +28,7 @@ The token will be null if authentication has failed. The token can now be used i
 
 
 ## Service Information
-This fetches basic information about the Homebridge service. Non admin users will recieve limited information.
+This fetches basic information about the HOOBS service. Non admin users will recieve limited information.
 
 ```sh
 GET /
@@ -79,7 +79,7 @@ POST /service/:action [start|stop|restart|clean]
 > The clean action will remove the /persist folder. This addresses known issues when running Homebridge on a Mac.
 
 ## Accessory Control
-This API gives you access to monitor and control your accessories attached to Homebridge.
+This API gives you access to monitor and control your accessories attached to HOOBS.
 
 ```sh
 GET /accessories
@@ -374,7 +374,7 @@ POST /plugins/:package [valid package on npmjs.com]
 ```
 
 ## System Information
-This API fetches information about the system Homebridge is running on. Non admin users only have access to the CPU and Memory load.
+This API fetches information about the system. Non admin users only have access to the CPU and Memory load.
 
 ```sh
 GET /system

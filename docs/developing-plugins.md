@@ -3,7 +3,7 @@
 When writing your plugin, you'll want HOOBS to load it from your development directory instead of publishing it to npm each time. You can tell HOOBS to look for your plugin at a specific location using the command-line parameter -P. For example, if you are in the HOOBS directory (as checked out from Github), you might type:
 
 ```sh
-./bin/homebridge -D -P ../my-great-plugin/
+./bin/hoobs -D -P ../my-great-plugin/
 ```
 
 This will start up HOOBS and load your in-development plugin from a nearby directory.
@@ -13,10 +13,10 @@ This will start up HOOBS and load your in-development plugin from a nearby direc
 You can start Homebridge in native mode for debugging and testing by running this command.
 
 ```sh
-./bin/homebridge-dev -D
+./bin/hoobs-native -D
 ```
 
-> This differs from the main ./bin/homebridge script. This starts only Homebridge for plugin development.
+> This differs from the main ./bin/hoobs script. This starts only Homebridge for plugin development.
 
 When you load a path, HOOBS will actually add a symlink to the modules directory. This is done to get the exact same behavior as production. Therefore your plugin will have access to all packages the parent and other plugins have.
 
