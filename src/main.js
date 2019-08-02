@@ -110,7 +110,7 @@ Vue.mixin({
 Vue.use(Graphing.use(Chart));
 
 Vue.use(new Socket({
-    connection: Client((Config.client || {}).socket || "http://localhost:5128"),
+    connection: Client((Config.client || {}).socket || "http://hoobs.local:5128"),
     vuex: {
         Store
     }
