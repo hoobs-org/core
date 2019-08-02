@@ -1,7 +1,7 @@
+# ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/logo.png)
+
 ## We are working on HOOBS v3.0.0 
 ## - THIS IS NOT YET READY TO INSTALL - 
-
-# ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/logo.png)
 
 ## THIS VERSION OF HOOBS IS UNDER HEAVY DEVELOPMENT - DONT INSTALL UNTILL WE RELEASE PUBLIC BETA
 
@@ -26,10 +26,15 @@ You can also chat with us in [Slack](https://homebridge-slackin.glitch.me).
 If you want to contact **HOOBS dev-team** there are a bunch of ways to do that:
 
 [HOOBS website](https://hoobs.org)
-[HOOBS Support Chat](m.me/HOOBSofficial)
+
+[HOOBS Support Chat](https://m.me/HOOBSofficial)
+
 [HOOBS email](mailto:info@hoobs.org)
+
 [HOOBS Subreddit](https://www.reddit.com/r/hoobs/)
+
 [HOOBS Facebook Page](https://www.facebook.com/HOOBSofficial)
+
 [HOOBS Facebook Support Group](https://www.facebook.com/groups/HOOBSorg/)
 
 
