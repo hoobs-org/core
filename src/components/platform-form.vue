@@ -30,11 +30,15 @@
         props: {
             schema: {
                 type: Object,
-                default: {}
+                default: () => {
+                    return {};
+                }
             },
             value: {
                 type: Object,
-                default: {}
+                default: () => {
+                    return {};
+                }
             }
         },
 

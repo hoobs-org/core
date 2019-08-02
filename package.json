@@ -10,10 +10,10 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git://github.com/mkellsy/homebridge-x.git"
+        "url": "git://github.com/hoobs-org/hoobs-core.git"
     },
     "bugs": {
-        "url": "https://github.com/mkellsy/homebridge-x/issues"
+        "url": "https://github.com/hoobs-org/hoobs-core/issues"
     },
     "main": "lib/loader.js",
     "bin": {
