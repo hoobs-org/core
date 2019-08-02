@@ -5,7 +5,7 @@
             <a href="#bridge">{{ $t("bridge_settings") }}</a>
             <a href="#ports">{{ $t("port_ranges") }}</a>
             <a href="#accessories">{{ $t("accessories") }}</a>
-            <a href="#platforms">{{ $t("platforms") }}</a>
+            <a href="#plugins">{{ $t("plugins") }}</a>
             <a href="#backup">{{ $t("backup") }}</a>
             <div class="actions">
                 <div v-if="!working" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
@@ -89,20 +89,28 @@
                     {{ $t("accessories_config_message") }}
                 </p>
                 <div class="field" v-for="(accessory, index) in configuration.accessories" :key="index">
-                    <json-editor name="accessory" :height="200" :index="index" :change="update" :code="accessory" />
+                    <json-editor name="accessory" :height="200" :index="index" :change="updateJson" :code="JSON.stringify(accessory, null, 4)" />
                 </div>
                 <div class="action">
-                    <div v-on:click.stop="add('accessory')" class="button">{{ $t("add_accessory") }}</div>
+                    <div v-on:click.stop="addAccessory()" class="button">{{ $t("add_accessory") }}</div>
                 </div>
-                <h2 id="platforms">{{ $t("platforms") }}</h2>
+                <h2 id="plugins">{{ $t("plugins") }}</h2>
                 <p>
                     {{ $t("platforms_message") }}
                 </p>
-                <div class="field" v-for="(platform, index) in configuration.platforms" :key="index">
-                    <json-editor name="platform" :height="200" :index="index" :change="update" :code="platform" />
-                </div>
-                <div class="action">
-                    <div v-on:click.stop="add('platform')" class="button">{{ $t("add_platform") }}</div>
+                <div v-for="(plugin, index) in plugins" :key="index">
+                    <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin.name) >= 0">
+                        <h3>{{ humanize(plugin.name) }}</h3>
+                        <p v-if="plugin.description !== ''">
+                            {{ plugin.description }}
+                        </p>
+                        <div v-if="plugin.schema.platform">
+
+                        </div>
+                        <div v-else>
+                            <json-editor name="platform" :height="200" :index="platformIndex(plugin.name)" :change="updateJson" :code="platformCode(plugin.name)" />
+                        </div>
+                    </div>
                 </div>
                 <h2 id="backup">{{ $t("backup") }}</h2>
                 <p>
@@ -117,6 +125,9 @@
 </template>
 
 <script>
+    import Decamelize from "decamelize";
+    import Inflection from "inflection";
+
     import JSONEditor from "@/components/json-editor.vue";
     import TextField from "@/components/text-field.vue";
     import PortField from "@/components/port-field.vue";
@@ -209,6 +220,7 @@
                     text: this.$t("no"),
                     value: true
                 }],
+                plugins: [],
                 errors: []
             };
         },
@@ -235,41 +247,8 @@
 
         methods: {
             async load() {
-                const response = await this.api.get("/config");
-                const accessories = [];
-
-                for (let i = 0; i < (response.accessories || []).length; i++) {
-                    accessories.push(JSON.stringify(response.accessories[i], null, 4));
-                }
-
-                const platforms = [];
-
-                for (let i = 0; i < (response.platforms || []).length; i++) {
-                    platforms.push(JSON.stringify(response.platforms[i], null, 4));
-                }
-
-                this.configuration.client = response.client || {
-                    port: 51825,
-                    api: "http://localhost:51827",
-                    socket: "http://localhost:51828",
-                    default_route: "status",
-                    hide_setup_pin: false,
-                    inactive_logoff: 30,
-                    theme: "hoobs-light",
-                    locale: "en"
-                };
-
-                this.configuration.bridge = response.bridge || {
-                    name: "Homebridge",
-                    username: "CC:22:3D:E3:CE:30",
-                    port: 51826,
-                    pin: "031-45-154"
-                };
-
-                this.configuration.description = response.description || "";
-                this.configuration.ports = response.ports || {};
-                this.configuration.accessories = accessories;
-                this.configuration.platforms = platforms;
+                this.configuration = await this.api.get("/config");
+                this.plugins = await this.api.get("/plugins") || [];                 
 
                 this.working = false;
             },
@@ -278,26 +257,48 @@
                 this.reload = true;
             },
 
-            add(section) {
+            updateJson(section, code, index) {
                 switch (section) {
                     case "accessory":
-                        this.configuration.accessories.push("{\n    \n}");
+                        const currentAccessory = JSON.parse(JSON.stringify(this.configuration.accessories[index], null, 4));
+
+                        try {
+                            this.configuration.accessories[index] = JSON.parse(code);
+
+                            const accessoryIndex = this.errors.indexOf(this.$t("accessory_invalid_json"));
+
+                            if (accessoryIndex >= 0) {
+                                this.errors.splice(accessoryIndex, 1);
+                            }
+                        } catch {
+                            if (this.errors.indexOf(this.$t("accessory_invalid_json")) === -1) {
+                                this.errors.push(this.$t("accessory_invalid_json"));
+                            }
+                        } finally {
+                            this.configuration.accessories[index].plugin_map = currentAccessory.plugin_map;
+                        }
+
                         break;
 
                     case "platform":
-                        this.configuration.platforms.push("{\n    \n}");
-                        break;
-                }
-            },
+                        const currentPlatform = JSON.parse(JSON.stringify(this.configuration.platforms[index], null, 4));
 
-            update(section, code, index) {
-                switch (section) {
-                    case "accessory":
-                        this.configuration.accessories[index] = code;
-                        break;
+                        try {
+                            this.configuration.platforms[index] = JSON.parse(code);
 
-                    case "platform":
-                        this.configuration.platforms[index] = code;
+                            const platformIndex = this.errors.indexOf(this.$t("platform_invalid_json"));
+
+                            if (platformIndex >= 0) {
+                                this.errors.splice(platformIndex, 1);
+                            }
+                        } catch {
+                            if (this.errors.indexOf(this.$t("platform_invalid_json")) === -1) {
+                                this.errors.push(this.$t("platform_invalid_json"));
+                            }
+                        } finally {
+                            this.configuration.platforms[index].plugin_map = currentPlatform.plugin_map;
+                        }
+                        
                         break;
                 }
             },
@@ -324,18 +325,22 @@
                 }
             },
 
+            addAccessory() {
+
+                // GET A LIST OF ACCESSORIES FROM THE PLUGINS SCHEMA
+
+            },
+
             async save() {
                 this.working = true;
-                this.errors = [];
 
                 const data = {
-
                     client: this.configuration.client,
                     bridge: this.configuration.bridge,
                     description: this.configuration.description,
                     ports: this.configuration.ports,
-                    accessories: [],
-                    platforms: []
+                    accessories: this.configuration.accessories || [],
+                    platforms: this.configuration.platforms || []
                 }
 
                 if (!data.client.inactive_logoff || data.client.inactive_logoff < 5 || data.client.inactive_logoff > 60) {
@@ -374,32 +379,10 @@
                     data.ports = {};
                 }
 
-                for (let i = 0; i < this.configuration.accessories.length; i++) {
-                    if (this.configuration.accessories[i] && this.configuration.accessories[i] !== "") {
-                        try {
-                            data.accessories.push(JSON.parse(this.configuration.accessories[i]));
-                        } catch {
-                            if (this.errors.indexOf(this.$t("accessory_invalid_json")) === -1) {
-                                this.errors.push(this.$t("accessory_invalid_json"));
-                            }
-                        }
-                    }
-                }
-
-                for (let i = 0; i < this.configuration.platforms.length; i++) {
-                    if (this.configuration.platforms[i] && this.configuration.platforms[i] !== "") {
-                        try {
-                            data.platforms.push(JSON.parse(this.configuration.platforms[i]));
-                        } catch {
-                            if (this.errors.indexOf(this.$t("platform_invalid_json")) === -1) {
-                                this.errors.push(this.$t("platform_invalid_json"));
-                            }
-                        }
-                    }
-                }
-
                 if (this.errors.length === 0) {
                     await this.api.post("/config", data);
+
+                    this.errors = [];
 
                     if (this.running) {
                         this.$store.commit("lock");
@@ -427,6 +410,28 @@
                 } else {
                     this.working = false;
                 }
+            },
+
+            platformIndex(name) {
+                return this.configuration.platforms.findIndex(p => p.plugin_map.plugin_name === name);
+            },
+
+            platformCode(name) {
+                const index = this.platformIndex(name);
+
+                if (index === -1) {
+                    return {};
+                }
+
+                const copy = JSON.parse(JSON.stringify(this.configuration.platforms[index]));
+
+                delete copy.plugin_map;
+
+                return JSON.stringify(copy, null, 4);
+            },
+
+            humanize(string) {
+                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
             }
         }
     }
@@ -502,6 +507,13 @@
 
     #config .form h2:first-child {
         margin: 0 0 5px 0;
+    }
+
+    #config .form h3 {
+        margin: 20px 0 0 0;
+        padding: 0;
+        line-height: normal;
+        font-size: 18px;
     }
 
     #config .form p {
