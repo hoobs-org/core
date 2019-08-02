@@ -415,7 +415,7 @@
             },
 
             platformIndex(name) {
-                return this.configuration.platforms.findIndex(p => p.plugin_map.plugin_name === name);
+                return this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
             },
 
             platformCode(name) {
