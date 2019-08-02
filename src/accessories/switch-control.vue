@@ -94,6 +94,8 @@
             },
 
             async control(type, value) {
+                this.value = true;
+                
                 await this.api.put(`/accessory/${this.accessory.aid}/${this.accessory.characteristics.filter(c => c.type === type)[0].iid}`, {
                     value
                 });

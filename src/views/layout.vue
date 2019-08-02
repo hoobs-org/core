@@ -274,6 +274,24 @@
             getComponent(aid) {
                 const accessory = this.getAccessory(aid);
 
+                if (!accessory) {
+                    for (let i = 0; i < this.layout.rooms.length; i++) {
+                        const index = this.layout.rooms[i].accessories.indexOf(aid);
+
+                        if (index >= 0) {
+                            this.layout.rooms[i].accessories.splice(index, 1);
+
+                            return "removed";
+                        }
+                    }
+
+                    const hidden = this.layout.hidden.indexOf(aid);
+
+                    this.layout.hidden.splice(hidden, 1);
+
+                    return "removed";
+                }
+
                 switch (accessory.type) {
                     case "fan":
                         if (accessory.characteristics.filter(c => c.type === "rotation_speed").length > 0) {
