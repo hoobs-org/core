@@ -30,14 +30,7 @@
                 <p v-if="id !== user.id">
                     {{ $t("permissions_message") }}
                 </p>
-                <div v-if="id !== user.id" class="field">
-                    <span class="title">{{ $t("user_type") }}</span>
-                    <select v-model="admin">
-                        <option v-for="option in options" v-bind:value="option.value" :key="option.value">
-                            {{ option.text }}
-                        </option>
-                    </select>
-                </div>
+                <select-field :name="$t('user_type')" :options="options" v-model="admin" />
                 <h2>{{ $t("security") }}</h2>
                 <p>
                     {{ $t("security_message") }}
@@ -45,14 +38,8 @@
                 <div v-if="passwordErrors.length > 0" class="errors">
                     <span v-for="(error, index) in passwordErrors" :key="index">{{ error }}</span>
                 </div>
-                <div class="field">
-                    <span class="title">{{ $t("password") }}</span>
-                    <input type="password" autocomplete="false" v-model="password" />
-                </div>
-                <div class="field">
-                    <span class="title">{{ $t("reenter_password") }}</span>
-                    <input type="password" autocomplete="false" v-model="challenge" />
-                </div>
+                <password-field :name="$t('password')" v-model="password" />
+                <password-field :name="$t('reenter_password')" v-model="challenge" />
                 <div class="action">
                     <div v-if="id >= 0" class="button button-primary" @click="saveUser()">{{ $t("save_changes") }}</div>
                     <div v-else class="button button-primary" @click="addUser()">{{ $t("add_user") }}</div>
@@ -64,12 +51,16 @@
 
 <script>
     import TextField from "@/components/text-field.vue";
+    import PasswordField from "@/components/password-field.vue";
+    import SelectField from "@/components/select-field.vue";
 
     export default {
         name: "users",
 
         components: {
-            "text-field": TextField
+            "text-field": TextField,
+            "password-field": PasswordField,
+            "select-field": SelectField
         },
 
         data() {

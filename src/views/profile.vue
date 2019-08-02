@@ -14,14 +14,8 @@
                 <div v-if="errors.length > 0" class="errors">
                     <span v-for="(error, index) in errors" :key="index">{{ error }}</span>
                 </div>
-                <div class="field">
-                    <span class="title">{{ $t("password") }}</span>
-                    <input type="password" autocomplete="false" v-model="password" />
-                </div>
-                <div class="field">
-                    <span class="title">{{ $t("reenter_password") }}</span>
-                    <input type="password" autocomplete="false" v-model="challenge" />
-                </div>
+                <password-field :name="$t('password')" v-model="password" />
+                <password-field :name="$t('reenter_password')" v-model="challenge" />
                 <div class="action">
                     <div class="button button-primary" @click="saveUser()">{{ $t("save_changes") }}</div>
                 </div>
@@ -32,13 +26,16 @@
 
 <script>
     import _ from "lodash";
+
     import TextField from "@/components/text-field.vue";
+    import PasswordField from "@/components/password-field.vue";
 
     export default {
         name: "profile",
 
         components: {
-            "text-field": TextField
+            "text-field": TextField,
+            "password-field": PasswordField
         },
 
         data() {

@@ -55,6 +55,8 @@
             getComponent(field) {
                 switch((field.type || "").toLowerCase()) {
                     case "string":
+                        // oneOf
+                        // enum
                         if (field.options && field.options.hidden) {
                             return "password-field";
                         }

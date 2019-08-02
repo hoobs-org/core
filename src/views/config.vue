@@ -27,47 +27,11 @@
                 <p>
                     {{ $t("interface_settings_message") }}
                 </p>
-                <div class="field">
-                    <span class="title">{{ $t("language") }}</span>
-                    <span class="description">{{ $t("language_message") }}</span>
-                    <select v-model="configuration.client.locale" @change="markReload()">
-                        <option v-for="locale in locales" v-bind:value="locale.value" :key="locale.value">
-                            {{ locale.text }}
-                        </option>
-                    </select>
-                </div>
-                <div class="field">
-                    <span class="title">{{ $t("theme") }}</span>
-                    <span class="description">{{ $t("theme_message") }}</span>
-                    <select v-model="configuration.client.theme" @change="markReload()">
-                        <option v-for="theme in themes" v-bind:value="theme.value" :key="theme.value">
-                            {{ theme.text }}
-                        </option>
-                    </select>
-                </div>
-                <div class="field">
-                    <span class="title">{{ $t("default_screen") }}</span>
-                    <span class="description">{{ $t("default_screen_message") }}</span>
-                    <select v-model="configuration.client.default_route" @change="markReload()">
-                        <option v-for="screen in screens" v-bind:value="screen.value" :key="screen.value">
-                            {{ screen.text }}
-                        </option>
-                    </select>
-                </div>
-                <div class="field">
-                    <span class="title">{{ $t("show_setup_pin") }}</span>
-                    <span class="description">{{ $t("show_setup_pin_message") }}</span>
-                    <select v-model="configuration.client.hide_setup_pin" @change="markReload()">
-                        <option v-for="item in binary" v-bind:value="item.value" :key="item.value">
-                            {{ item.text }}
-                        </option>
-                    </select>
-                </div>
-                <div class="field">
-                    <span class="title">{{ $t("log_out_after") }}</span>
-                    <span class="description">{{ $t("log_out_after_message") }}</span>
-                    <input type="number" autocomplete="false" min="5" step="1" max="60" v-model="configuration.client.inactive_logoff" @change="markReload()" />
-                </div>
+                <select-field :name="$t('language')" :description="$t('language_message')" :options="locales" v-model="configuration.client.locale" @change="markReload()" />
+                <select-field :name="$t('theme')" :description="$t('theme_message')" :options="themes" v-model="configuration.client.theme" @change="markReload()" />
+                <select-field :name="$t('default_screen')" :description="$t('default_screen_message')" :options="screens" v-model="configuration.client.default_route" @change="markReload()" />
+                <select-field :name="$t('show_setup_pin')" :description="$t('show_setup_pin_message')" :options="binaryReverse" v-model="configuration.client.hide_setup_pin" @change="markReload()" />
+                <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" />
                 <h2 id="bridge">{{ $t("bridge_settings") }}</h2>
                 <p>
                     {{ $t("bridge_settings_message") }}
@@ -127,8 +91,10 @@
 
     import JSONEditor from "@/components/json-editor.vue";
     import TextField from "@/components/text-field.vue";
-    import PortField from "@/components/port-field.vue";
+    import IntegerField from "@/components/integer-field.vue";
     import DescriptionField from "@/components/description-field.vue";
+    import SelectField from "@/components/select-field.vue";
+    import PortField from "@/components/port-field.vue";
  
     import PlatformForm from "@/components/platform-form.vue";
     import Marquee from "@/components/loading-marquee.vue";
@@ -139,8 +105,10 @@
         components: {
             "json-editor": JSONEditor,
             "text-field": TextField,
-            "port-field": PortField,
+            "integer-field": IntegerField,
             "description-field": DescriptionField,
+            "select-field": SelectField,
+            "port-field": PortField,
             "platform-form": PlatformForm,
             "loading-marquee": Marquee
         },
@@ -212,7 +180,7 @@
                     text: this.$t("accessories"),
                     value: "accessories"
                 }],
-                binary: [{
+                binaryReverse: [{
                     text: this.$t("yes"),
                     value: false
                 },{
