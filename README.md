@@ -1,6 +1,6 @@
 # ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/logo.png)
 
-## We are working on HOOBS v3.0.0  - THIS IS NOT YET READY TO INSTALL - 
+## We are working on HOOBS v3.0.0
 
 ## THIS VERSION OF HOOBS IS UNDER HEAVY DEVELOPMENT 
 ## - DON'T INSTALL UNTIL WE RELEASE PUBLIC BETA -
