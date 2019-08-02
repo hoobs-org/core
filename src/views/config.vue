@@ -99,8 +99,8 @@
                     {{ $t("platforms_message") }}
                 </p>
                 <div v-for="(plugin, index) in plugins" :key="index">
-                    <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin.name) >= 0">
-                        <h3 :id="plugin.name">{{ humanize(plugin.name) }}</h3>
+                    <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin) >= 0">
+                        <h3 :id="plugin.name">{{ platformTitle(plugin) }}</h3>
                         <p v-if="plugin.description !== ''">
                             {{ plugin.description }}
                         </p>
@@ -108,7 +108,7 @@
 
                         </div>
                         <div v-else>
-                            <json-editor name="platform" :height="200" :index="platformIndex(plugin.name)" :change="updateJson" :code="platformCode(plugin.name)" />
+                            <json-editor name="platform" :height="200" :index="platformIndex(plugin)" :change="updateJson" :code="platformCode(plugin)" />
                         </div>
                     </div>
                 </div>
@@ -228,7 +228,9 @@
         async mounted() {
             await this.load();
 
-            document.querySelector(window.location.hash).scrollIntoView();
+            if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
+                document.querySelector(window.location.hash).scrollIntoView();
+            }
         },
 
         filters: {
@@ -414,12 +416,23 @@
                 }
             },
 
-            platformIndex(name) {
-                return this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
+            platformIndex(plugin) {
+                return this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === plugin.name);
             },
 
-            platformCode(name) {
-                const index = this.platformIndex(name);
+            platformTitle(plugin) {
+                const index = this.platformIndex(plugin);
+                const platformSchema = (plugin.schema || {}).platform || {};
+
+                if (index === -1) {
+                    return this.humanize(platformSchema.pluginAlias || plugin.name);
+                }
+
+                return this.humanize(platformSchema.pluginAlias || this.configuration.platforms[index].platform || plugin.name);
+            },
+
+            platformCode(plugin) {
+                const index = this.platformIndex(plugin);
 
                 if (index === -1) {
                     return {};
