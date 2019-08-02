@@ -1,6 +1,6 @@
 # ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/logo.png)
 
-Available Languages: 🇬🇧 🇩🇪 🇪🇸 🇫🇷 🇮🇹 🇧🇬 🇨🇳
+Available Languages: 🇬🇧 🇩🇪 🇪🇸 🇫🇷 🇮🇹 🇧🇬 🇨🇳 🇬🇷 🇳🇱
 
 ## We are working on HOOBS v3.0.0
 
