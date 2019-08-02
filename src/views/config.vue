@@ -100,7 +100,7 @@
                 </p>
                 <div v-for="(plugin, index) in plugins" :key="index">
                     <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin.name) >= 0">
-                        <h3>{{ humanize(plugin.name) }}</h3>
+                        <h3 :id="plugin.name">{{ humanize(plugin.name) }}</h3>
                         <p v-if="plugin.description !== ''">
                             {{ plugin.description }}
                         </p>
@@ -225,8 +225,10 @@
             };
         },
 
-        mounted() {
-            this.load();
+        async mounted() {
+            await this.load();
+
+            document.querySelector(window.location.hash).scrollIntoView();
         },
 
         filters: {

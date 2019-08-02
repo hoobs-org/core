@@ -18,6 +18,7 @@
                 <router-link :to="`/plugin/${plugin.name}`" class="button">{{ $t("details") }}</router-link>
                 <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
                 <div v-if="plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
+                <router-link v-if="plugin.name !== 'homebridge'" class="config-link" :to="`/config#${plugin.name}`"><span class="icon">settings</span> {{ $t("config") }}</router-link>
             </div>
             <div v-else>
                 <router-link :to="`/plugin/${plugin.name}`" class="button">{{ $t("details") }}</router-link>
@@ -224,5 +225,24 @@
 
     #plugin p {
         margin: 20px 0 0 0;
+    }
+
+    #plugin .config-link {
+        padding: 3px 0 0 0;
+        display: inline-flex;
+        align-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: var(--text);
+    }
+
+    #plugin .config-link:hover {
+        color: var(--text-dark);
+        text-decoration: none;
+    }
+
+    #plugin .config-link .icon {
+        font-size: 17px;
+        margin: 0 2px 0 0;
     }
 </style>
