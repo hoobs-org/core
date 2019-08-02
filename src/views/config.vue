@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="content">
-            <div class="form">
+            <form class="form">
                 <h2 id="hoobs">{{ $t("interface_settings") }}</h2>
                 <p>
                     {{ $t("interface_settings_message") }}
@@ -94,18 +94,15 @@
                 <div class="action">
                     <div v-on:click.stop="addAccessory()" class="button">{{ $t("add_accessory") }}</div>
                 </div>
-                <h2 id="plugins">{{ $t("plugins") }}</h2>
-                <p>
-                    {{ $t("platforms_message") }}
-                </p>
+                <a id="plugins"></a>
                 <div v-for="(plugin, index) in plugins" :key="index">
                     <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin) >= 0">
-                        <h3 :id="plugin.name">{{ platformTitle(plugin) }}</h3>
+                        <h2 :id="plugin.name">{{ platformTitle(plugin) }}</h2>
                         <p v-if="plugin.description !== ''">
                             {{ plugin.description }}
                         </p>
-                        <div v-if="plugin.schema.platform">
-
+                        <div v-if="plugin.schema.platform && plugin.schema.platform.schema">
+                            <platform-form :schema="plugin.schema.platform.schema.properties || {}" v-model="configuration.platforms[platformIndex(plugin)]" />
                         </div>
                         <div v-else>
                             <json-editor name="platform" :height="200" :index="platformIndex(plugin)" :change="updateJson" :code="platformCode(plugin)" />
@@ -119,7 +116,7 @@
                 <div class="action">
                     <div v-on:click.stop="backup()" class="button button-primary">{{ $t("download") }}</div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </template>
@@ -132,7 +129,8 @@
     import TextField from "@/components/text-field.vue";
     import PortField from "@/components/port-field.vue";
     import DescriptionField from "@/components/description-field.vue";
-    
+ 
+    import PlatformForm from "@/components/platform-form.vue";
     import Marquee from "@/components/loading-marquee.vue";
 
     export default {
@@ -143,6 +141,7 @@
             "text-field": TextField,
             "port-field": PortField,
             "description-field": DescriptionField,
+            "platform-form": PlatformForm,
             "loading-marquee": Marquee
         },
 
@@ -417,7 +416,13 @@
             },
 
             platformIndex(plugin) {
-                return this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === plugin.name);
+                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === plugin.name);
+
+                if (index >= 0 && plugin.schema.platform.pluginAlias && (!this.configuration.platforms[index].platform || this.configuration.platforms[index].platform !== plugin.schema.platform.pluginAlias)) {
+                    this.configuration.platforms[index].platform = plugin.schema.platform.pluginAlias;
+                }
+
+                return index;
             },
 
             platformTitle(plugin) {
