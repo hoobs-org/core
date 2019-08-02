@@ -48,7 +48,7 @@ If you want to contact **HOOBS dev-team** there are a bunch of ways to do that:
 [Read the Getting Started Guide for more details](https://github.com/hoobs-org/hoobs-core/blob/master/docs/getting-started.md)
 
 ## Interface
-HOOBS comes with a built-in web interface. This allows you to monitor, backup and configure your Homebridge server. You can access the web interface at the default location. [http://localhost:51825](http://localhost:51825).
+HOOBS comes with a built-in web interface. This allows you to monitor, backup and configure your Homebridge server. You can access the web interface at the default location. [http://hoobs.local](http://hoobs.local).
 
 ### Security
 HOOBS is permissible. This helps you keep your smart home secure.

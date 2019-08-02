@@ -7,9 +7,9 @@
         "polling_seconds": 2
     },
     "client": {
-        "port": 51825,
-        "api": "http://localhost:51827",
-        "socket": "http://localhost:51828",
+        "port": 80,
+        "api": "http://hoobs.local:51827",
+        "socket": "http://hoobs.local:51828",
         "default_route": "status",
         "hide_setup_pin": false,
         "inactive_logoff": 30,
