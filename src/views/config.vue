@@ -8,7 +8,7 @@
             <a href="#plugins">{{ $t("plugins") }}</a>
             <a href="#backup">{{ $t("backup") }}</a>
             <div class="actions">
-                <div v-if="!working" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
+                <div v-if="!working && loaded" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
                 <div v-if="working" class="loading">
                     <loading-marquee v-if="working" :height="3" color="--title-text" background="--title-text-dim" />
                 </div>
@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="content">
-            <form class="form">
+            <form v-if="loaded" class="form">
                 <h2 id="hoobs">{{ $t("interface_settings") }}</h2>
                 <p>
                     {{ $t("interface_settings_message") }}
@@ -125,6 +125,7 @@
 
         data() {
             return {
+                loaded: false,
                 working: false,
                 reload: false,
                 configuration: {
@@ -221,6 +222,7 @@
                 this.configuration = await this.api.get("/config");
                 this.plugins = await this.api.get("/plugins") || [];                 
 
+                this.loaded = true;
                 this.working = false;
             },
 
