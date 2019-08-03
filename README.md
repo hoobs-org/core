@@ -2,10 +2,9 @@
 
 Available Languages: :us: :gb: :de: :es: :fr: :it: :hungary: :cn: :greece: :netherlands:
 
-### We are working on HOOBS v3.0.0
-### > THIS VERSION OF HOOBS IS UNDER HEAVY DEVELOPMENT 
-### > DON'T INSTALL UNTIL WE RELEASE PUBLIC BETA
-
+## We are working on HOOBS v3.0.0
+### THIS VERSION OF HOOBS IS UNDER HEAVY DEVELOPMENT
+### DON'T INSTALL UNTIL WE RELEASE PUBLIC BETA
 
 [![Vue.JS](https://img.shields.io/badge/Vue.JS-2.6.10-%234fc08d.svg)](https://vuejs.org/) [![Express](https://img.shields.io/badge/Express-4.17.1-%23b3b3b3.svg)](https://expressjs.com/) [![Socket.IO](https://img.shields.io/badge/Socket.IO-2.2.0-%23e0bf19.svg)](https://socket.io/) [![Homebridge](https://img.shields.io/badge/Homebridge-0.4.50-%237c2fed.svg)](https://github.com/nfarina/homebridge/)  
 
