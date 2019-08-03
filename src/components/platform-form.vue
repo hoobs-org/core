@@ -1,11 +1,14 @@
 <template>
     <div id="platform-form">
         <div v-for="(field, index) in fields" :key="index">
-            <div v-if="field && !field.readOnly && field.type.toLowerCase() === 'object'">
-                <platform-form :schema="field.properties || {}" v-model="value[field.name]" />
+            <div v-if="fieldType(field) === 'input'">
+                <component :is="getComponent(field)" :name="field.title" :options="getOptions(field)" :required="field.required" v-model="value[field.name]" />
             </div>
-            <div v-else-if="field && !field.readOnly">
-                <component :is="getComponent(field)" :name="field.title" :options="getOptions(field)" v-model="value[field.name]" />
+            <div v-else-if="fieldType(field) === 'form'">
+                <platform-form :schema="field.properties" v-model="value[field.name]" />
+            </div>
+            <div v-else-if="fieldType(field) === 'select-form'">
+
             </div>
         </div>
     </div>
@@ -15,6 +18,7 @@
     import TextField from "@/components/text-field.vue";
     import PasswordField from "@/components/password-field.vue";
     import NumberField from "@/components/number-field.vue";
+    import IntegerField from "@/components/integer-field.vue";
     import SelectField from "@/components/select-field.vue";
 
     export default {
@@ -24,6 +28,7 @@
             "text-field": TextField,
             "password-field": PasswordField,
             "number-field": NumberField,
+            "integer-field": IntegerField,
             "select-field": SelectField
         },
 
@@ -60,8 +65,23 @@
         },
 
         methods: {
+            fieldType(field) {
+                if (field && !field.readOnly && field.type.toLowerCase() !== "object") {
+                    return "input";
+                } else if (field && !field.readOnly && field.type.toLowerCase() === "object" && field.properties) {
+                    return "form";
+                } else if (field && !field.readOnly && field.type.toLowerCase() === "object" && field.oneOf) {
+                    return "select-form";
+                } else if (field && !field.readOnly && field.type.toLowerCase() === "object" && field.enum) {
+                    return "complex-form";
+                }
+
+                return null;
+            },
+
             getComponent(field) {
                 switch((field.type || "").toLowerCase()) {
+                    case "text":
                     case "string":
                         if (field.oneOf || field.enum) {
                             return "select-field";
@@ -72,6 +92,28 @@
                         }
 
                         return "text-field";
+                    
+                    case "float":
+                    case "decimal":
+                    case "double":
+                    case "number":
+                        if (field.oneOf || field.enum) {
+                            return "select-field";
+                        }
+
+                        return "number-field";
+
+                    case "int":
+                    case "integer":
+                        if (field.oneOf || field.enum) {
+                            return "select-field";
+                        }
+
+                        return "integer-field";
+
+                    case "bool":
+                    case "boolean":
+                        return "select-field";
 
                     default:
                         return "unknown";
@@ -97,8 +139,8 @@
                             });
                         } else if (typeof field.enum[i] !== "object") {
                             options.push({
-                                text: field.enum[i].toString(),
-                                value: field.enum[i].toString()
+                                text: `${field.enum[i]}`,
+                                value: field.enum[i]
                             });
                         }
                     }
@@ -116,6 +158,16 @@
                             });
                         }
                     }
+                } else if ((field.type || "").toLowerCase() === "boolean" || (field.type || "").toLowerCase() === "bool") {
+                    options.push({
+                        text: this.$t("yes"),
+                        value: true
+                    });
+
+                    options.push({
+                        text: this.$t("no"),
+                        value: false
+                    });
                 }
 
                 return options;

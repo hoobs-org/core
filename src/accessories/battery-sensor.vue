@@ -6,14 +6,14 @@
                     <div class="title-inner">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 256">
                             <path fill="#cccccc" d="M434.2,50.2v51.2h25.6v51.2h-25.6v51.2h-384V50.2H434.2 M447-1H37.4C16.2-1-1,16.2-1,37.4v179.2 c0,21.2,17.2,38.4,38.4,38.4H447c21.2,0,38.4-17.2,38.4-38.4v-12.8h6.4c10.6,0,19.2-8.6,19.2-19.2V69.4c0-10.6-8.6-19.2-19.2-19.2 h-6.4V37.4C485.4,16.2,468.2-1,447-1z" />
-                            <rect v-if="accessory.values.battery_level > 20" fill="#17d149" x="76.8" y="76.8" :width="(332.8 * this.accessory.values.battery_level) / 100" height="102.4" />
-                            <rect v-else fill="#eb0505" x="76.8" y="76.8" :width="(332.8 * this.accessory.values.battery_level) / 100" height="102.4" />
+                            <rect v-if="value.values.battery_level > 20" fill="#17d149" x="76.8" y="76.8" :width="(332.8 * this.value.values.battery_level) / 100" height="102.4" />
+                            <rect v-else fill="#eb0505" x="76.8" y="76.8" :width="(332.8 * this.value.values.battery_level) / 100" height="102.4" />
                         </svg>
                         {{ $t("battery") }}
                     </div>
                 </div>
-                <div class="value">{{ accessory.values.battery_level }}%</div>
-                <div class="name">{{ accessory.name || accessory.service_name }}</div>
+                <div class="value">{{ value.values.battery_level }}%</div>
+                <div class="name">{{ value.name || value.service_name }}</div>
             </div>
         </div>
         <div v-if="lock" class="lock"></div>
@@ -24,8 +24,7 @@
     export default {
         name: "battery-sensor",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false

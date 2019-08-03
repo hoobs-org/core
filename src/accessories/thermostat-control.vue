@@ -10,7 +10,7 @@
             <path v-if="!lock" fill="#999999" d="M50.4,76.6h-0.8v3.8h0.8V76.6z M52.2,77.4L51.7,78c0.6,0.5,1,1.2,1,2c0,1.5-1.2,2.6-2.6,2.6s-2.6-1.2-2.6-2.6 c0-0.8,0.4-1.6,1-2l-0.5-0.5c-0.7,0.6-1.2,1.5-1.2,2.6c0,1.9,1.5,3.4,3.4,3.4s3.4-1.5,3.4-3.4C53.4,79,52.9,78.1,52.2,77.4z" />
             <circle v-if="!lock" fill="#ffffff00" cx="50" cy="80" r="5.9" style="cursor: pointer;" @click="setMode" />
         </svg>
-        <div class="temp" :style="`color: ${color}`">{{ Math.round((accessory.values.target_temperature * (9/5)) + 32) }}°</div>
+        <div class="temp" :style="`color: ${color}`">{{ Math.round((value.values.target_temperature * (9/5)) + 32) }}°</div>
         <div class="name">{{ accessoryName }}</div>
         <div v-if="lock" class="lock"></div>
     </div>
@@ -20,8 +20,7 @@
     export default {
         name: "thermostat-control",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false
@@ -30,15 +29,15 @@
 
         computed: {
             accessoryName() {
-                if (this.accessory.manufacturer === "Nest") {
-                    return `${this.accessory.name} ${this.accessory.service_name}`;
+                if (this.value.manufacturer === "Nest") {
+                    return `${this.value.name} ${this.value.service_name}`;
                 } else {
-                    return this.accessory.name || this.accessory.service_name;
+                    return this.value.name || this.value.service_name;
                 }
             },
 
             target() {
-                return Math.round((100 * (this.accessory.values.target_temperature - 10)) / 22);
+                return Math.round((100 * (this.value.values.target_temperature - 10)) / 22);
             },
 
             style() {
@@ -50,7 +49,7 @@
             },
 
             visible() {
-                return this.target >= 0 && this.target <= 100 && this.accessory.values.target_heating_cooling_state > 0;
+                return this.target >= 0 && this.target <= 100 && this.value.values.target_heating_cooling_state > 0;
             },
 
             min() {
@@ -92,25 +91,25 @@
             },
 
             color() {
-                switch (this.accessory.values.target_heating_cooling_state) {
+                switch (this.value.values.target_heating_cooling_state) {
                     case 1:
-                        if (this.accessory.values.target_temperature > this.accessory.values.temperature) {
+                        if (this.value.values.target_temperature > this.value.values.temperature) {
                             return "#f27c05";
                         } else {
                             return "#cccccc";
                         }
 
                     case 2:
-                        if (this.accessory.values.target_temperature < this.accessory.values.temperature) {
+                        if (this.value.values.target_temperature < this.value.values.temperature) {
                             return "#00b9f1";
                         } else {
                             return "#cccccc";
                         }
 
                     case 3:
-                        if (this.accessory.values.target_temperature < this.accessory.values.temperature) {
+                        if (this.value.values.target_temperature < this.value.values.temperature) {
                             return "#00b9f1";
-                        } else if (this.accessory.values.target_temperature > this.accessory.values.temperature) {
+                        } else if (this.value.values.target_temperature > this.value.values.temperature) {
                             return "#f27c05";
                         } else {
                             return "#cccccc";
@@ -123,7 +122,7 @@
             },
 
             left() {
-                switch (this.accessory.values.target_heating_cooling_state) {
+                switch (this.value.values.target_heating_cooling_state) {
                     case 1:
                         return "#f27c05";
 
@@ -139,7 +138,7 @@
             },
 
             right() {
-                switch (this.accessory.values.target_heating_cooling_state) {
+                switch (this.value.values.target_heating_cooling_state) {
                     case 1:
                         return this.luminance("#f27c05", 0.55);
 
@@ -176,22 +175,22 @@
                     return;
                 }
 
-                this.accessory.values.target_temperature = Math.round(((22 * value) / 100) + 10);
+                this.value.values.target_temperature = Math.round(((22 * value) / 100) + 10);
 
-                this.control("target_temperature", this.accessory.values.target_temperature);
+                this.control("target_temperature", this.value.values.target_temperature);
             },
 
             setMode(event) {
                 event.preventDefault();
                 event.stopPropagation();
 
-                if (this.accessory.values.target_heating_cooling_state === 3) {
-                    this.accessory.values.target_heating_cooling_state = 0;
+                if (this.value.values.target_heating_cooling_state === 3) {
+                    this.value.values.target_heating_cooling_state = 0;
                 } else {
-                    this.accessory.values.target_heating_cooling_state += 1;
+                    this.value.values.target_heating_cooling_state += 1;
                 }
 
-                this.control("target_heating_cooling_state", this.accessory.values.target_heating_cooling_state);
+                this.control("target_heating_cooling_state", this.value.values.target_heating_cooling_state);
             },
 
             setTarget(event) {
@@ -276,9 +275,12 @@
             },
 
             async control(type, value) {
-                this.value = true;
+                this.$emit("change", {
+                    type,
+                    value
+                });
                 
-                await this.api.put(`/accessory/${this.accessory.aid}/${this.accessory.characteristics.filter(c => c.type === type)[0].iid}`, {
+                await this.api.put(`/accessory/${this.value.aid}/${this.value.characteristics.filter(c => c.type === type)[0].iid}`, {
                     value
                 });
             }

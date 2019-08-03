@@ -2,7 +2,7 @@
     <div id="control">
         <svg width="190" height="190" viewBox="0 0 100 100">
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" cx="50" cy="50" r="45" />
-            <circle :fill="accessory.values.on ? color : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
+            <circle :fill="value.values.on ? color : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
             <path fill="#ffffffef" :d="icon" />
             <circle fill="#ffffff00" stroke="none" cx="50" cy="50" r="45" @click="toggle" style="cursor: pointer;" />
         </svg>
@@ -15,8 +15,7 @@
     export default {
         name: "switch-control",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false
@@ -39,25 +38,25 @@
 
         computed: {
             accessoryName() {
-                if (this.accessory.manufacturer === "Nest") {
-                    return `${this.accessory.name} ${this.accessory.service_name.replace("Home Occupied", "Occupied")}`;
+                if (this.value.manufacturer === "Nest") {
+                    return `${this.value.name} ${this.value.service_name.replace("Home Occupied", "Occupied")}`;
                 } else {
-                    return this.accessory.name || this.accessory.service_name;
+                    return this.value.name || this.value.service_name;
                 }
             },
 
             icon() {
-                if (this.accessory.name.toLowerCase().includes("light") || this.accessory.name.toLowerCase().includes("lamp")) {
+                if (this.value.name.toLowerCase().includes("light") || this.value.name.toLowerCase().includes("lamp")) {
                     return this.icons.light;
-                } else if (this.accessory.type === "switch") {
-                    return this.accessory.values.on ? this.icons.on : this.icons.off;
-                } else if (this.accessory.name.toLowerCase().includes("fan") || this.accessory.type === "fan") {
+                } else if (this.value.type === "switch") {
+                    return this.value.values.on ? this.icons.on : this.icons.off;
+                } else if (this.value.name.toLowerCase().includes("fan") || this.value.type === "fan") {
                     return this.icons.fan;
-                } else if (this.accessory.name.toLowerCase().includes("garbage")) {
+                } else if (this.value.name.toLowerCase().includes("garbage")) {
                     return this.icons.garbage;
-                } else if (this.accessory.name.toLowerCase().includes("fireplace")) {
+                } else if (this.value.name.toLowerCase().includes("fireplace")) {
                     return this.icons.fireplace;
-                } else if (this.accessory.type === "outlet") {
+                } else if (this.value.type === "outlet") {
                     return this.icons.outlet;
                 }
 
@@ -65,17 +64,17 @@
             },
 
             color() {
-                if (this.accessory.name.toLowerCase().includes("light") || this.accessory.name.toLowerCase().includes("lamp")) {
+                if (this.value.name.toLowerCase().includes("light") || this.value.name.toLowerCase().includes("lamp")) {
                     return "#ffd500";
-                } else if (this.accessory.type === "switch") {
+                } else if (this.value.type === "switch") {
                     return "#e75a0e";
-                } else if (this.accessory.name.toLowerCase().includes("fan") || this.accessory.type === "fan") {
+                } else if (this.value.name.toLowerCase().includes("fan") || this.value.type === "fan") {
                     return "#f9bd2b";
-                } else if (this.accessory.name.toLowerCase().includes("garbage")) {
+                } else if (this.value.name.toLowerCase().includes("garbage")) {
                     return "#f9bd2b";
-                } else if (this.accessory.name.toLowerCase().includes("fireplace")) {
+                } else if (this.value.name.toLowerCase().includes("fireplace")) {
                     return "#f27c05";
-                } else if (this.accessory.type === "outlet") {
+                } else if (this.value.type === "outlet") {
                     return "#00d42d";
                 }
 
@@ -88,15 +87,18 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                this.accessory.values.on = !this.accessory.values.on;
+                this.value.values.on = !this.value.values.on;
 
-                this.control("on", this.accessory.values.on);
+                this.control("on", this.value.values.on);
             },
 
             async control(type, value) {
-                this.value = true;
+                this.$emit("change", {
+                    type,
+                    value
+                });
                 
-                await this.api.put(`/accessory/${this.accessory.aid}/${this.accessory.characteristics.filter(c => c.type === type)[0].iid}`, {
+                await this.api.put(`/accessory/${this.value.aid}/${this.value.characteristics.filter(c => c.type === type)[0].iid}`, {
                     value
                 });
             }

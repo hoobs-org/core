@@ -2,13 +2,13 @@
     <div id="control">
         <svg width="190" height="190" viewBox="0 0 100 100" @click="setTarget" @mousedown="captureMouse" @mouseup="releaseMouse" @touchstart="beginTouch" @touchend="endTouch">
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" cx="50" cy="50" r="45" />
-            <circle :fill="accessory.values.on ? '#ffd500' : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
-            <path :d="`M ${this.min.x} ${this.min.y} A 40 40 0 1 1 ${this.max.x} ${this.max.y}`" stroke-width="5" :stroke="luminance(accessory.values.on ? '#ffd500' : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc'), 0.05)" fill="none" style="transition: stroke 0.1s ease-in; cursor: pointer;" />
-            <path v-if="visible" :d="`M ${this.zero.x} ${this.zero.y} A 40 40 0 ${this.arc} ${this.sweep} ${this.position.x} ${this.position.y}`" stroke-width="5" :stroke="luminance(accessory.values.on ? '#ffd500' : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc'), -0.07)" fill="none" ref="path-value" :style="style" />
+            <circle :fill="value.values.on ? '#ffd500' : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
+            <path :d="`M ${this.min.x} ${this.min.y} A 40 40 0 1 1 ${this.max.x} ${this.max.y}`" stroke-width="5" :stroke="luminance(value.values.on ? '#ffd500' : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc'), 0.05)" fill="none" style="transition: stroke 0.1s ease-in; cursor: pointer;" />
+            <path v-if="visible" :d="`M ${this.zero.x} ${this.zero.y} A 40 40 0 ${this.arc} ${this.sweep} ${this.position.x} ${this.position.y}`" stroke-width="5" :stroke="luminance(value.values.on ? '#ffd500' : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc'), -0.07)" fill="none" ref="path-value" :style="style" />
             <path fill="#ffffffef" d="M38.9,53.7l5.6,5.6v9.3h11.1v-9.3l5.6-5.6v-9.3H38.9V53.7z M48.2,31.5h3.7V37h-3.7V31.5z M34.3,38.7l2.6-2.6l3.9,3.9 l-2.6,2.6L34.3,38.7z M59.2,40l3.9-3.9l2.6,2.6l-3.9,3.9L59.2,40z" />
             <circle fill="#ffffff00" stroke="none" cx="50" cy="50" r="33.5" @click="toggleSwitch" style="cursor: pointer;" />
         </svg>
-        <div class="name">{{ accessory.name || accessory.service_name }}</div>
+        <div class="name">{{ value.name || value.service_name }}</div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -17,8 +17,7 @@
     export default {
         name: "dimmer-control",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false
@@ -35,7 +34,7 @@
             },
 
             visible() {
-                return this.accessory.values.brightness >= 0 && this.accessory.values.brightness <= 100;
+                return this.value.values.brightness >= 0 && this.value.values.brightness <= 100;
             },
 
             min() {
@@ -62,9 +61,9 @@
 
             position() {
                 return {
-                    x: 50 + Math.cos(this.getRange(this.accessory.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))) * 40,
-                    y: 50 - Math.sin(this.getRange(this.accessory.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))) * 40,
-                    radians: this.getRange(this.accessory.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))
+                    x: 50 + Math.cos(this.getRange(this.value.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))) * 40,
+                    y: 50 - Math.sin(this.getRange(this.value.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))) * 40,
+                    radians: this.getRange(this.value.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))
                 };
             },
 
@@ -98,10 +97,10 @@
                     return;
                 }
 
-                this.accessory.values.brightness = Math.round(value);
-                this.accessory.values.on = true;
+                this.value.values.brightness = Math.round(value);
+                this.value.values.on = true;
 
-                this.control("brightness", this.accessory.values.brightness);
+                this.control("brightness", this.value.values.brightness);
             },
 
             setTarget(event) {
@@ -155,9 +154,9 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                this.accessory.values.on = !this.accessory.values.on;
+                this.value.values.on = !this.value.values.on;
 
-                this.control("on", this.accessory.values.on);
+                this.control("on", this.value.values.on);
             },
 
             load() {
@@ -195,9 +194,12 @@
             },
 
             async control(type, value) {
-                this.value = true;
+                this.$emit("change", {
+                    type,
+                    value
+                });
 
-                await this.api.put(`/accessory/${this.accessory.aid}/${this.accessory.characteristics.filter(c => c.type === type)[0].iid}`, {
+                await this.api.put(`/accessory/${this.value.aid}/${this.value.characteristics.filter(c => c.type === type)[0].iid}`, {
                     value
                 });
             }

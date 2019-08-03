@@ -2,7 +2,7 @@
     <div id="select-field">
         <span class="title">{{ name }}</span>
         <span v-if="description && description !== ''" class="description">{{ description }}</span>
-        <select ref="field" v-model="value" @input="update()" @change="change()">
+        <select ref="field" v-model="value" @input="update()" @change="change()" v-bind:required="required">
             <option v-for="option in options" v-bind:value="option.value" :key="option.value">
                 {{ option.text }}
             </option>
@@ -18,7 +18,11 @@
             name: String,
             description: String,
             value: [String, Number, Boolean],
-            options: Array
+            options: Array,
+            required: {
+                type: Boolean,
+                default: false
+            }
         },
 
         methods: {

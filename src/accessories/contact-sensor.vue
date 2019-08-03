@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div class="value">{{ sensorState }}</div>
-                <div class="name">{{ accessory.name || accessory.service_name }}</div>
+                <div class="name">{{ value.name || value.service_name }}</div>
             </div>
         </div>
         <div v-if="lock" class="lock"></div>
@@ -22,8 +22,7 @@
     export default {
         name: "contact-sensor",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false
@@ -32,7 +31,7 @@
 
         computed: {
             sensorState() {
-                return this.accessory.values.contact_sensor_state > 0 ? "Open": "Closed";
+                return this.value.values.contact_sensor_state > 0 ? "Open": "Closed";
             }
         }
     };

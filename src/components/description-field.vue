@@ -2,17 +2,21 @@
     <div id="description-field">
         <span class="title">{{ name }}</span>
         <span v-if="description && description !== ''" class="description">{{ description }}</span>
-        <textarea ref="field" autocomplete="false" :value="value" @input="update()" @change="change"></textarea>
+        <textarea ref="field" autocomplete="false" :value="value" @input="update()" @change="change" v-bind:required="required"></textarea>
     </div>
 </template>
-
+required
 <script>
     export default {
         name: "description-field",
         props: {
             name: String,
             description: String,
-            value: String
+            value: String,
+            required: {
+                type: Boolean,
+                default: false
+            }
         },
 
         methods: {

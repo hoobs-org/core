@@ -31,16 +31,16 @@
                 <select-field :name="$t('theme')" :description="$t('theme_message')" :options="themes" v-model="configuration.client.theme" @change="markReload()" />
                 <select-field :name="$t('default_screen')" :description="$t('default_screen_message')" :options="screens" v-model="configuration.client.default_route" @change="markReload()" />
                 <select-field :name="$t('show_setup_pin')" :description="$t('show_setup_pin_message')" :options="binaryReverse" v-model="configuration.client.hide_setup_pin" @change="markReload()" />
-                <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" />
+                <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" :required="true" />
                 <h2 id="bridge">{{ $t("bridge_settings") }}</h2>
                 <p>
                     {{ $t("bridge_settings_message") }}
                 </p>
-                <text-field :name="$t('service_name')" :description="$t('service_name_message')" v-model="configuration.bridge.name" />
+                <text-field :name="$t('service_name')" :description="$t('service_name_message')" v-model="configuration.bridge.name" :required="true" />
                 <description-field :name="$t('service_description')" :description="$t('service_description_message')" v-model="configuration.description" />
-                <port-field :name="$t('service_port')" :description="$t('service_port_message')" v-model.number="configuration.bridge.port" />
-                <text-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" />
-                <text-field :name="$t('home_pin')" :description="$t('home_pin_message')" v-model="configuration.bridge.pin" />
+                <port-field :name="$t('service_port')" :description="$t('service_port_message')" v-model.number="configuration.bridge.port" :required="true" />
+                <text-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" :required="true" />
+                <text-field :name="$t('home_pin')" :description="$t('home_pin_message')" v-model="configuration.bridge.pin" :required="true" />
                 <h2 id="ports">{{ $t("port_ranges") }}</h2>
                 <p>
                     {{ $t("port_ranges_message") }}

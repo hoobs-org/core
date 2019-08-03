@@ -2,7 +2,7 @@
     <div id="device">
         <div class="inner">
             <div>
-                <div class="name">{{ accessory.name || accessory.service_name }}</div>
+                <div class="name">{{ value.name || value.service_name }}</div>
             </div>
         </div>
         <div v-if="lock" class="lock"></div>
@@ -13,8 +13,7 @@
     export default {
         name: "unknown-device",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false

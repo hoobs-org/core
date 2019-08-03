@@ -2,7 +2,7 @@
     <div id="text-field">
         <span class="title">{{ name }}</span>
         <span v-if="description && description !== ''" class="description">{{ description }}</span>
-        <input type="text" ref="field" autocomplete="false" :value="value" @input="update()" @change="change" />
+        <input type="text" ref="field" autocomplete="false" :value="value" @input="update()" @change="change" v-bind:required="required" />
     </div>
 </template>
 
@@ -12,7 +12,11 @@
         props: {
             name: String,
             description: String,
-            value: String
+            value: String,
+            required: {
+                type: Boolean,
+                default: false
+            }
         },
 
         methods: {

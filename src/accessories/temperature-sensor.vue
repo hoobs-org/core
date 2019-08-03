@@ -10,8 +10,8 @@
                         {{ $t("temperature") }}
                     </div>
                 </div>
-                <div class="value">{{ Math.round((accessory.values.temperature * (9/5)) + 32) }}°</div>
-                <div class="name">{{ accessory.name || accessory.service_name }}</div>
+                <div class="value">{{ Math.round((value.values.temperature * (9/5)) + 32) }}°</div>
+                <div class="name">{{ value.name || value.service_name }}</div>
             </div>
         </div>
         <div v-if="lock" class="lock"></div>
@@ -22,8 +22,7 @@
     export default {
         name: "temperature-sensor",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false

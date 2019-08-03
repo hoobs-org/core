@@ -16,7 +16,7 @@
                     <h2>{{ room.name }}</h2>
                     <div class="accessory-tiles">
                         <div class="accessory" v-for="(accessory, index) in room.accessories" :key="index">
-                            <component :is="getComponent(accessory)" :accessory="accessory" v-model="skip" />
+                            <component :is="getComponent(accessory)" v-model="room.accessories[index]" @change="skip = true" />
                         </div>
                     </div>
                 </div>

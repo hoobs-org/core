@@ -1,6 +1,6 @@
 <template>
     <div id="control">
-        <div class="name">{{ accessory.name || accessory.service_name }}</div>
+        <div class="name">{{ value.name || value.service_name }}</div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -9,8 +9,7 @@
     export default {
         name: "fan-control",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false

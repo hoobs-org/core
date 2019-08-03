@@ -2,7 +2,7 @@
     <div id="port-field">
         <span class="title">{{ name }}</span>
         <span v-if="description && description !== ''" class="description">{{ description }}</span>
-        <input type="number" ref="field" autocomplete="false" min="1" step="1" max="65535" :value="value" @input="update()" @change="change" />
+        <input type="number" ref="field" autocomplete="false" min="1" step="1" max="65535" :value="value" @input="update()" @change="change" v-bind:required="required" />
     </div>
 </template>
 
@@ -12,7 +12,11 @@
         props: {
             name: String,
             description: String,
-            value: Number
+            value: Number,
+            required: {
+                type: Boolean,
+                default: false
+            }
         },
 
         methods: {

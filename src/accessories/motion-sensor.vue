@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div class="value" :style="`color: ${color};`">{{ sensorState }}</div>
-                <div class="name">{{ accessory.name || accessory.service_name }}</div>
+                <div class="name">{{ value.name || value.service_name }}</div>
             </div>
         </div>
         <div v-if="lock" class="lock"></div>
@@ -22,8 +22,7 @@
     export default {
         name: "motion-sensor",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false
@@ -32,11 +31,11 @@
 
         computed: {
             sensorState() {
-                return this.accessory.values.motion_detected ? "Detected": "No Motion";
+                return this.value.values.motion_detected ? "Detected": "No Motion";
             },
 
             color() {
-                return this.accessory.values.motion_detected ? "#00b9f1": "#999999";
+                return this.value.values.motion_detected ? "#00b9f1": "#999999";
             }
         }
     };

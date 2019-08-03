@@ -6,7 +6,7 @@
                 <p>
                     {{ $t("id_message") }}
                 </p>
-                <text-field :name="$t('name')" v-model="name" />
+                <text-field :name="$t('name')" v-model="name" :required="true" />
                 <h2>{{ $t("security") }}</h2>
                 <p>
                     {{ $t("security_message") }}

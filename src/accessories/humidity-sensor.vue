@@ -10,8 +10,8 @@
                         {{ $t("humidity") }}
                     </div>
                 </div>
-                <div class="value">{{ accessory.values.relative_humidity }}%</div>
-                <div class="name">{{ accessory.name || accessory.service_name }}</div>
+                <div class="value">{{ value.values.relative_humidity }}%</div>
+                <div class="name">{{ value.name || value.service_name }}</div>
             </div>
         </div>
         <div v-if="lock" class="lock"></div>
@@ -22,8 +22,7 @@
     export default {
         name: "humidity-sensor",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false

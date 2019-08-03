@@ -10,9 +10,9 @@
         </div>
         <svg v-else width="190" height="190" viewBox="0 0 100 100" @click="setTarget" @mousedown="captureMouse" @mouseup="releaseMouse" @touchstart="beginTouch" @touchend="endTouch">
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" cx="50" cy="50" r="45" />
-            <circle :fill="accessory.values.on ? color : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
-            <path :d="`M ${this.min.x} ${this.min.y} A 40 40 0 1 1 ${this.max.x} ${this.max.y}`" stroke-width="5" :stroke="accessory.values.on ? '#ffffff78' : luminance(((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc'), 0.05)" fill="none" style="transition: stroke 0.1s ease-in; cursor: pointer;" />
-            <path v-if="visible" :d="`M ${this.zero.x} ${this.zero.y} A 40 40 0 ${this.arc} ${this.sweep} ${this.position.x} ${this.position.y}`" stroke-width="5" :stroke="accessory.values.on ? luminance(color, -0.2) : luminance(((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc'), -0.07)" fill="none" ref="path-value" :style="style" />
+            <circle :fill="value.values.on ? color : ((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
+            <path :d="`M ${this.min.x} ${this.min.y} A 40 40 0 1 1 ${this.max.x} ${this.max.y}`" stroke-width="5" :stroke="value.values.on ? '#ffffff78' : luminance(((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc'), 0.05)" fill="none" style="transition: stroke 0.1s ease-in; cursor: pointer;" />
+            <path v-if="visible" :d="`M ${this.zero.x} ${this.zero.y} A 40 40 0 ${this.arc} ${this.sweep} ${this.position.x} ${this.position.y}`" stroke-width="5" :stroke="value.values.on ? luminance(color, -0.2) : luminance(((client.theme || 'hoobs-light').endsWith('dark') ? '#777777' : '#cccccc'), -0.07)" fill="none" ref="path-value" :style="style" />
             <path fill="#ffffffef" d="M38.9,53.7l5.6,5.6v9.3h11.1v-9.3l5.6-5.6v-9.3H38.9V53.7z M48.2,31.5h3.7V37h-3.7V31.5z M34.3,38.7l2.6-2.6l3.9,3.9 l-2.6,2.6L34.3,38.7z M59.2,40l3.9-3.9l2.6,2.6l-3.9,3.9L59.2,40z" />
             <circle fill="#ffffff00" stroke="none" cx="50" cy="50" r="33.5" @click="toggleSwitch" style="cursor: pointer;" />
         </svg>
@@ -24,7 +24,7 @@
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" stroke-miterlimit="10" cx="11.5" cy="11.5" r="11.5" />
             <path fill="#999999" d="M11.5,4.8c-3.7,0-6.7,3-6.7,6.7s3,6.7,6.7,6.7c0.6,0,1.1-0.5,1.1-1.1c0-0.3-0.1-0.5-0.3-0.7 c-0.2-0.2-0.3-0.5-0.3-0.7c0-0.6,0.5-1.1,1.1-1.1h1.3c2,0,3.7-1.7,3.7-3.7C18.2,7.5,15.2,4.8,11.5,4.8z M7.4,11.5 c-0.6,0-1.1-0.5-1.1-1.1s0.5-1.1,1.1-1.1s1.1,0.5,1.1,1.1S8,11.5,7.4,11.5z M9.6,8.5C9,8.5,8.5,8,8.5,7.4S9,6.3,9.6,6.3 s1.1,0.5,1.1,1.1S10.3,8.5,9.6,8.5z M13.4,8.5c-0.6,0-1.1-0.5-1.1-1.1s0.5-1.1,1.1-1.1s1.1,0.5,1.1,1.1S14,8.5,13.4,8.5z M15.6,11.5 c-0.6,0-1.1-0.5-1.1-1.1s0.5-1.1,1.1-1.1s1.1,0.5,1.1,1.1S16.2,11.5,15.6,11.5z" />
         </svg>
-        <div class="name">{{ accessory.name || accessory.service_name }}</div>
+        <div class="name">{{ value.name || value.service_name }}</div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -35,8 +35,7 @@
     export default {
         name: "hue-control",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false
@@ -54,7 +53,7 @@
         computed: {
             color() {
                 return new Iro.Color({
-                    h: this.accessory.values.hue,
+                    h: this.value.values.hue,
                     s: 100,
                     l: 50
                 }).hexString;
@@ -69,7 +68,7 @@
             },
 
             visible() {
-                return this.accessory.values.brightness >= 0 && this.accessory.values.brightness <= 100;
+                return this.value.values.brightness >= 0 && this.value.values.brightness <= 100;
             },
 
             min() {
@@ -96,9 +95,9 @@
 
             position() {
                 return {
-                    x: 50 + Math.cos(this.getRange(this.accessory.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))) * 40,
-                    y: 50 - Math.sin(this.getRange(this.accessory.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))) * 40,
-                    radians: this.getRange(this.accessory.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))
+                    x: 50 + Math.cos(this.getRange(this.value.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))) * 40,
+                    y: 50 - Math.sin(this.getRange(this.value.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))) * 40,
+                    radians: this.getRange(this.value.values.brightness, 0, 100, (4 * Math.PI / 3), -(Math.PI / 3))
                 };
             },
 
@@ -120,8 +119,8 @@
                         this.picker = new Iro.ColorPicker(this.$refs.wheel, {
                             width: 165.3,
                             color: {
-                                h: this.accessory.values.hue,
-                                s: 100,
+                                h: this.value.values.hue,
+                                s: this.value.values.saturation,
                                 l: 50
                             },
                             wheelLightness: false
@@ -135,11 +134,11 @@
             },
 
             setHue(color) {
-                this.accessory.values.hue = color.hsl.h;
-                this.accessory.values.saturation = 100;
+                this.value.values.hue = color.hsl.h;
+                this.value.values.saturation = color.hsl.s;
 
-                this.control("hue", this.accessory.values.hue);
-                this.control("saturation", this.accessory.values.saturation);
+                this.control("hue", this.value.values.hue);
+                this.control("saturation", this.value.values.saturation);
             },
 
             getRange(x, inMin, inMax, outMin, outMax) {
@@ -162,10 +161,10 @@
                     return;
                 }
 
-                this.accessory.values.brightness = Math.round(value);
-                this.accessory.values.on = true;
+                this.value.values.brightness = Math.round(value);
+                this.value.values.on = true;
 
-                this.control("brightness", this.accessory.values.brightness);
+                this.control("brightness", this.value.values.brightness);
             },
 
             setTarget(event) {
@@ -219,9 +218,9 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                this.accessory.values.on = !this.accessory.values.on;
+                this.value.values.on = !this.value.values.on;
 
-                this.control("on", this.accessory.values.on);
+                this.control("on", this.value.values.on);
             },
 
             load() {
@@ -259,9 +258,12 @@
             },
 
             async control(type, value) {
-                this.value = true;
+                this.$emit("change", {
+                    type,
+                    value
+                });
 
-                await this.api.put(`/accessory/${this.accessory.aid}/${this.accessory.characteristics.filter(c => c.type === type)[0].iid}`, {
+                await this.api.put(`/accessory/${this.value.aid}/${this.value.characteristics.filter(c => c.type === type)[0].iid}`, {
                     value
                 });
             }

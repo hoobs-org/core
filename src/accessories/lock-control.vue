@@ -1,7 +1,7 @@
 <template>
     <div id="control">
         <svg width="180" height="180" viewBox="0 0 100 100">
-            <g v-if="accessory.values.lock_target_state === 1">
+            <g v-if="value.values.lock_target_state === 1">
                 <path style="fill: var(--text-light); stroke: var(--text-light);" stroke-width="3.75" d="M15.8,81.1v7.3c0,4.7,3.8,8.5,8.5,8.5h51.2c4.7,0,8.5-3.8,8.5-8.5v-7.3H15.8z" />
                 <path style="fill: var(--text-light); stroke: var(--text-light);" stroke-width="3.75" d="M50,3.1c-13.8,0-25,11.2-25,25v10v26h9.5v-26v-10c0-8.6,7-15.5,15.5-15.5s15.5,7,15.5,15.5v10v26H75v-26v-10 C75,14.3,63.8,3.1,50,3.1z" />
                 <path style="fill: var(--text-light); stroke: var(--text-light);" stroke-width="1.25" stroke-miterlimit="10" d="M96.9,77c0,7.1-5.8,12.8-12.8,12.8H16C8.9,89.9,3.1,84.1,3.1,77S8.9,64.2,16,64.2h68C91.1,64.2,96.9,70,96.9,77 z" />
@@ -34,7 +34,7 @@
                 <circle fill="#ffffff" cx="83.9" cy="77" r="11" @click="toggle" style="cursor: pointer;" />
             </g>
         </svg>
-        <div class="name">{{ accessory.name || accessory.service_name }}</div>
+        <div class="name">{{ value.name || value.service_name }}</div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -43,8 +43,7 @@
     export default {
         name: "lock-control",
         props: {
-            accessory: Object,
-            value: Boolean,
+            value: Object,
             lock: {
                 type: Boolean,
                 default: false
@@ -56,15 +55,18 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                this.accessory.values.lock_target_state = this.accessory.values.lock_target_state === 1 ? 0 : 1;
+                this.value.values.lock_target_state = this.value.values.lock_target_state === 1 ? 0 : 1;
 
-                this.control("lock_target_state", this.accessory.values.lock_target_state);
+                this.control("lock_target_state", this.value.values.lock_target_state);
             },
 
             async control(type, value) {
-                this.value = true;
+                this.$emit("change", {
+                    type,
+                    value
+                });
                 
-                await this.api.put(`/accessory/${this.accessory.aid}/${this.accessory.characteristics.filter(c => c.type === type)[0].iid}`, {
+                await this.api.put(`/accessory/${this.value.aid}/${this.value.characteristics.filter(c => c.type === type)[0].iid}`, {
                     value
                 });
             }

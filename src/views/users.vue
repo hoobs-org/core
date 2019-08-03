@@ -19,8 +19,8 @@
                 <div v-if="identityErrors.length > 0" class="errors">
                     <span v-for="(error, index) in identityErrors" :key="index">{{ error }}</span>
                 </div>
-                <text-field :name="$t('username')" v-model="username" />
-                <text-field :name="$t('name')" v-model="name" />
+                <text-field :name="$t('username')" v-model="username" :required="true" />
+                <text-field :name="$t('name')" v-model="name" :required="true" />
                 <div v-if="id !== user.id && id >= 0" class="action">
                     <div v-if="!confirm" class="button" @click="confirmDelete()">{{ $t("delete_user") }}</div>
                     <div v-if="confirm" class="button" @click="cancelDelete()">   {{ $t("cancel") }}   </div>
@@ -30,7 +30,7 @@
                 <p v-if="id !== user.id">
                     {{ $t("permissions_message") }}
                 </p>
-                <select-field :name="$t('user_type')" :options="options" v-model="admin" />
+                <select-field :name="$t('user_type')" :options="options" v-model="admin" :required="true" />
                 <h2>{{ $t("security") }}</h2>
                 <p>
                     {{ $t("security_message") }}

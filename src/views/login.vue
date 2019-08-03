@@ -20,19 +20,19 @@
                 <form autocomplete="false">
                     <div class="field">
                         <span class="title">{{ $t("name") }}</span>
-                        <input type="text" autocomplete="false" v-model="name" />
+                        <input type="text" autocomplete="false" v-model="name" :required="true" />
                     </div>
                     <div class="field">
                         <span class="title">{{ $t("username") }}</span>
-                        <input type="text" autocomplete="false" v-model="username" />
+                        <input type="text" autocomplete="false" v-model="username" :required="true" />
                     </div>
                     <div class="field">
                         <span class="title">{{ $t("password") }}</span>
-                        <input type="password" autocomplete="false" v-model="password" />
+                        <input type="password" autocomplete="false" v-model="password" :required="true" />
                     </div>
                     <div class="field">
                         <span class="title">{{ $t("reenter_password") }}</span>
-                        <input type="password" autocomplete="false" v-model="challenge" />
+                        <input type="password" autocomplete="false" v-model="challenge" :required="true" />
                     </div>
                 </form>
                 <div class="actions">
@@ -55,11 +55,11 @@
                 <form autocomplete="false" class="group">
                     <div class="upper">
                         <label for="username" class="title">{{ $t("username") }}</label>
-                        <input type="text" id="username" autocomplete="false" v-model="username" v-on:keyup.enter="login" />
+                        <input type="text" id="username" autocomplete="false" v-model="username" v-on:keyup.enter="login" :required="true" />
                     </div>
                     <div class="lower">
                         <label for="password" class="title">{{ $t("password") }}</label>
-                        <input type="password" id="password" autocomplete="false" v-model="password" v-on:keyup.enter="login" />
+                        <input type="password" id="password" autocomplete="false" v-model="password" v-on:keyup.enter="login" :required="true" />
                     </div>
                 </form>
                 <div class="actions">
