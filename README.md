@@ -23,17 +23,12 @@ You can also chat with us in [Slack](https://homebridge-slackin.glitch.me).
 
 If you want to contact **HOOBS dev-team** there are a bunch of ways to do that:
 
-[HOOBS website](https://hoobs.org)
-
-[HOOBS Support Chat](https://m.me/HOOBSofficial)
-
-[HOOBS email](mailto:info@hoobs.org)
-
-[HOOBS Subreddit](https://www.reddit.com/r/hoobs/)
-
-[HOOBS Facebook Page](https://www.facebook.com/HOOBSofficial)
-
-[HOOBS Facebook Support Group](https://www.facebook.com/groups/HOOBSorg/)
+[HOOBS website](https://hoobs.org)  
+[HOOBS Support Chat](https://m.me/HOOBSofficial)  
+[HOOBS email](mailto:info@hoobs.org)  
+[HOOBS Subreddit](https://www.reddit.com/r/hoobs/)  
+[HOOBS Facebook Page](https://www.facebook.com/HOOBSofficial)  
+[HOOBS Facebook Support Group](https://www.facebook.com/groups/HOOBSorg/)  
 
 ## Documentation
 [Getting Started](https://github.com/hoobs-org/hoobs-core/blob/master/docs/getting-started.md)  
