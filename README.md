@@ -35,13 +35,11 @@ If you want to contact **HOOBS dev-team** there are a bunch of ways to do that:
 
 [HOOBS Facebook Support Group](https://www.facebook.com/groups/HOOBSorg/)
 
-
-
-## Installation
-
-> **WARNING:** This is under heavy development. Use at your own risk.
-
-[Read the Getting Started Guide for more details](https://github.com/hoobs-org/hoobs-core/blob/master/docs/getting-started.md)
+## Documentation
+[Getting Started](https://github.com/hoobs-org/hoobs-core/blob/master/docs/getting-started.md)  
+[API Reference](https://github.com/hoobs-org/hoobs-core/blob/master/docs/api-reference.md)  
+[Logging & Monitoring](https://github.com/hoobs-org/hoobs-core/blob/master/docs/logging-monitoring.md)  
+[Developing Plugins](https://github.com/hoobs-org/hoobs-core/blob/master/docs/developing-plugins.md)  
 
 ## Interface
 HOOBS comes with a built-in web interface. This allows you to monitor, backup and configure your Homebridge server. You can access the web interface at the default location. [http://hoobs.local](http://hoobs.local).
@@ -123,9 +121,3 @@ Here is a list of available sensors.
 - **Contact (Door/Window)**
 - **Battery**
 - **Motion**
-
-## Documentation
-[Getting Started](https://github.com/hoobs-org/hoobs-core/blob/master/docs/getting-started.md)  
-[API Reference](https://github.com/hoobs-org/hoobs-core/blob/master/docs/api-reference.md)  
-[Logging & Monitoring](https://github.com/hoobs-org/hoobs-core/blob/master/docs/logging-monitoring.md)  
-[Developing Plugins](https://github.com/hoobs-org/hoobs-core/blob/master/docs/developing-plugins.md)  
