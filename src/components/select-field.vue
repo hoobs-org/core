@@ -17,7 +17,7 @@
         props: {
             name: String,
             description: String,
-            value: [String, Number, Boolean],
+            value: [String, Number, Boolean, Object, Date],
             options: Array,
             required: {
                 type: Boolean,

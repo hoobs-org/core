@@ -33,13 +33,8 @@
         },
 
         props: {
+            value: Object,
             schema: {
-                type: Object,
-                default: () => {
-                    return {};
-                }
-            },
-            value: {
                 type: Object,
                 default: () => {
                     return {};
@@ -66,13 +61,17 @@
 
         methods: {
             fieldType(field) {
-                if (field && !field.readOnly && field.type.toLowerCase() !== "object") {
+                if (field && !field.readOnly && (field.type || "").toLowerCase() !== "object") {
                     return "input";
-                } else if (field && !field.readOnly && field.type.toLowerCase() === "object" && field.properties) {
+                } else if (field && !field.readOnly && (field.type || "").toLowerCase() === "object" && field.properties) {
+                    if (!this.value[field.name]) {
+                        this.value[field.name] = {};
+                    }
+
                     return "form";
-                } else if (field && !field.readOnly && field.type.toLowerCase() === "object" && field.oneOf) {
+                } else if (field && !field.readOnly && (field.type || "").toLowerCase() === "object" && field.oneOf) {
                     return "select-form";
-                } else if (field && !field.readOnly && field.type.toLowerCase() === "object" && field.enum) {
+                } else if (field && !field.readOnly && (field.type || "").toLowerCase() === "object" && field.enum) {
                     return "complex-form";
                 }
 
@@ -114,23 +113,47 @@
                     case "bool":
                     case "boolean":
                         return "select-field";
-
-                    default:
-                        return "unknown";
                 }
+
+                return null;
+            },
+
+            defaultValue(field) {
+                switch((field.type || "").toLowerCase()) {
+                    case "text":
+                    case "string":
+                        return "";
+                    
+                    case "float":
+                    case "decimal":
+                    case "double":
+                    case "number":
+                    case "int":
+                    case "integer":
+                        return 0;
+
+                    case "bool":
+                    case "boolean":
+                        return false;
+                    
+                    case "date":
+                        return new Date();
+                }
+
+                return null;
             },
 
             getOptions(field) {
                 const options = [];
 
-                if (!field.required) {
-                    options.push({
-                        text: "",
-                        value: null
-                    });
-                }
-
                 if (field.enum && Array.isArray(field.enum)) {
+                    if (!field.required) {
+                        options.push({
+                            text: "",
+                            value: this.defaultValue(field)
+                        });
+                    }
+
                     for (let i = 0; i < field.enum.length; i++) {
                         if (field.enum[i].text && field.enum[i].value) {
                             options.push({
@@ -145,16 +168,23 @@
                         }
                     }
                 } else if (field.oneOf && Array.isArray(field.oneOf)) {
-                    for (let i = 0; i < field.enum.length; i++) {
-                        if (field.enum[i].title && field.enum[i].enum && Array.isArray(field.enum[i].enum) && field.enum[i].enum.length > 0) {
+                    if (!field.required) {
+                        options.push({
+                            text: "",
+                            value: this.defaultValue(field)
+                        });
+                    }
+
+                    for (let i = 0; i < field.oneOf.length; i++) {
+                        if (field.oneOf[i].title && field.oneOf[i].enum && Array.isArray(field.oneOf[i].enum) && field.oneOf[i].enum.length > 0) {
                             options.push({
-                                text: field.enum[i].title,
-                                value: field.enum[i].enum[0]
+                                text: field.oneOf[i].title,
+                                value: field.oneOf[i].enum[0]
                             });
-                        } else if (field.enum[i].title) {
+                        } else if (field.oneOf[i].title) {
                             options.push({
-                                text: field.enum[i].title,
-                                value: field.enum[i].title
+                                text: field.oneOf[i].title,
+                                value: field.oneOf[i].title
                             });
                         }
                     }
