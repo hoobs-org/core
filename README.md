@@ -3,7 +3,7 @@
 
 Available Languages: :gb: :de: :es: :fr: :it: :hungary: :cn: :greece: :netherlands:  
 
-## We are Currently Working on HOOBS 3.0.0
+### We are Currently Working on HOOBS 3.0.0
 ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/pre-release-warning.png)  
 
 A Homebridge stack with a interface that simplifies configuration and installing plugins. This adds a process wrapper for [Homebridge](https://github.com/nfarina/homebridge). It also adds an API that can be used as an endpoint for an application.
