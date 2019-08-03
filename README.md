@@ -1,9 +1,10 @@
 # ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/logo.png)
 [![Vue.JS](https://img.shields.io/badge/Vue.JS-2.6.10-%234fc08d.svg)](https://vuejs.org/) [![Express](https://img.shields.io/badge/Express-4.17.1-%23b3b3b3.svg)](https://expressjs.com/) [![Socket.IO](https://img.shields.io/badge/Socket.IO-2.2.0-%23e0bf19.svg)](https://socket.io/) [![Homebridge](https://img.shields.io/badge/Homebridge-0.4.50-%237c2fed.svg)](https://github.com/nfarina/homebridge/)  
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/pre-release-warning.png)  
-
 Available Languages: :us: :gb: :de: :es: :fr: :it: :hungary: :cn: :greece: :netherlands:  
+
+## We are Currently Working on HOOBS 3.0.0
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/pre-release-warning.png)  
 
 A Homebridge stack with a interface that simplifies configuration and installing plugins. This adds a process wrapper for [Homebridge](https://github.com/nfarina/homebridge). It also adds an API that can be used as an endpoint for an application.
 
