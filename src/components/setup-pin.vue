@@ -69,7 +69,7 @@
     #pin .svg-code {
         fill: var(--text);
         font-weight: bold;
-        font-size: 788.476px;
-        font-family: Helvetica;
+        font-size: 808.476px;
+        font-family: "Scancardium", sans-serif;
     }
 </style>
