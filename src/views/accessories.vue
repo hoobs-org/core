@@ -73,6 +73,14 @@
         computed: {
             user() {
                 return this.$store.state.user;
+            },
+
+            running() {
+                return this.$store.state.running;
+            },
+
+            locked() {
+                return this.$store.state.locked;
             }
         },
 
@@ -83,7 +91,7 @@
 
         methods: {
             async heartbeat() {
-                if (!this.skip) {
+                if (!this.skip && this.running && !this.locked) {
                     this.accessories = await this.api.get("/accessories");
                 } else {
                     this.skip = false;
