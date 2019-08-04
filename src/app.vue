@@ -337,6 +337,14 @@
         box-shadow: var(--elevation-small);
     }
 
+    .hidden-submit {
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        opacity: 0;
+        position: absolute;
+    }
+
     .icon {
         font-family: "Material Icons";
         font-weight: normal;

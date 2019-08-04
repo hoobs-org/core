@@ -1,7 +1,8 @@
 <template>
     <div id="profile">
         <div class="content">
-            <form autocomplete="false" class="form">
+            <form autocomplete="false" class="form" method="post" action="/profile" v-on:submit.prevent="saveUser()">
+                <input type="submit" class="hidden-submit" value="submit">
                 <h2>{{ $t("id") }}</h2>
                 <p>
                     {{ $t("id_message") }}

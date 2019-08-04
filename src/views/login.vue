@@ -17,7 +17,8 @@
                 <div v-if="errors.length > 0" class="errors">
                     <span v-for="(error, index) in errors" :key="index">{{ error }}</span>
                 </div>
-                <form autocomplete="false">
+                <form autocomplete="false" method="post" action="/login" v-on:submit.prevent="createAccount()">
+                    <input type="submit" class="hidden-submit" value="submit">
                     <text-field :name="$t('name')" v-model="name" :required="true" />
                     <text-field :name="$t('username')" v-model="username" :required="true" />
                     <password-field :name="$t('password')" v-model="password" />

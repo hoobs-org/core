@@ -11,7 +11,8 @@
             </div>
         </div>
         <div v-if="loaded" class="content">
-            <form v-if="current !== undefined" autocomplete="false" class="form">
+            <form v-if="current !== undefined" autocomplete="false" class="form" method="post" action="/users" v-on:submit.prevent="save()">
+                <input type="submit" class="hidden-submit" value="submit">
                 <h2>{{ $t("id") }}</h2>
                 <p>
                     {{ $t("id_message") }}
@@ -41,8 +42,8 @@
                 <password-field :name="$t('password')" v-model="password" />
                 <password-field :name="$t('reenter_password')" v-model="challenge" />
                 <div class="action">
-                    <div v-if="id >= 0" class="button button-primary" @click="saveUser()">{{ $t("save_changes") }}</div>
-                    <div v-else class="button button-primary" @click="addUser()">{{ $t("add_user") }}</div>
+                    <div v-if="id >= 0" class="button button-primary" @click="save()">{{ $t("save_changes") }}</div>
+                    <div v-else class="button button-primary" @click="save()">{{ $t("add_user") }}</div>
                 </div>
             </form>
         </div>
@@ -154,6 +155,14 @@
                         this.showUser(this.current);
                     }
                 };
+            },
+
+            async save() {
+                if (this.id >= 0) {
+                    await this.saveUser();
+                } else {
+                    await this.addUser();
+                }
             },
 
             async addUser() {
