@@ -1,0 +1,27 @@
+{
+    "plugin_alias": "Nest",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "platform": {
+                "title": "Platform",
+                "type": "string",
+                "const": "Nest",
+                "readOnly": true
+            },
+            "email": {
+                "title": "Nest Email",
+                "type": "string",
+                "required": true
+            },
+            "password": {
+                "title": "Nest Password",
+                "type": "string",
+                "required": true,
+                "options": {
+                    "hidden": true
+                }
+            }
+        }
+    }
+}

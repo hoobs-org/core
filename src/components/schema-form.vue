@@ -1,11 +1,11 @@
 <template>
-    <div id="platform-form">
+    <div id="schema-form">
         <div v-for="(field, index) in fields" :key="index">
             <div v-if="fieldType(field) === 'input'">
                 <component :is="getComponent(field)" :name="field.title" :options="getOptions(field)" :required="field.required" v-model="value[field.name]" />
             </div>
             <div v-else-if="fieldType(field) === 'form'">
-                <platform-form :schema="field.properties" v-model="value[field.name]" />
+                <schema-form :schema="field.properties" v-model="value[field.name]" />
             </div>
             <div v-else-if="fieldType(field) === 'json'">
                 <div class="field">
@@ -26,7 +26,7 @@
     import SelectField from "@/components/select-field.vue";
 
     export default {
-        name: "platform-form",
+        name: "schema-form",
 
         components: {
             "json-editor": JSONEditor,

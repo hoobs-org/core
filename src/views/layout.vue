@@ -32,7 +32,7 @@
                     </p>
                     <draggable class="accessory-tiles" ghost-class="ghost" v-model="layout.rooms[current].accessories" @end="saveLayout()">
                         <div class="accessory" v-for="(aid, index) in layout.rooms[current].accessories" :key="index">
-                            <component :is="getComponent(aid)" :accessory="getAccessory(aid)" :lock="true" />
+                            <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" />
                             <span class="icon delete" @click="removeAccessory(aid)">delete</span>
                             <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
                         </div>
@@ -65,7 +65,7 @@
                     </p>
                     <div class="accessory-tiles">
                         <div class="accessory" v-for="(aid, index) in layout.rooms[current].accessories" :key="index">
-                            <component :is="getComponent(aid)" :accessory="getAccessory(aid)" :lock="true" />
+                            <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" />
                             <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
                         </div>
                     </div>
@@ -267,12 +267,12 @@
                 this.saveLayout();
             },
 
-            getAccessory(aid) {
-                return this.accessories.filter(a => a.aid === aid)[0];
+            getAccessoryIndex(aid) {
+                return this.accessories.findIndex(a => a.aid === aid);
             },
 
             getComponent(aid) {
-                const accessory = this.getAccessory(aid);
+                const accessory = this.accessories[this.getAccessoryIndex(aid)];
 
                 if (!accessory) {
                     for (let i = 0; i < this.layout.rooms.length; i++) {

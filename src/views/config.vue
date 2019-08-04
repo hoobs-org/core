@@ -52,8 +52,14 @@
                 <p>
                     {{ $t("accessories_config_message") }}
                 </p>
-                <div class="field" v-for="(accessory, index) in configuration.accessories" :key="index">
-                    <json-editor name="accessory" :height="200" :index="index" :change="updateJson" :code="JSON.stringify(accessory, null, 4)" />
+                <div v-for="(accessory, index) in configuration.accessories" :key="index">
+                    <div v-if="accessories[accessoryKey(accessory)]">
+                        <h3>
+                            {{ accessories[accessoryKey(accessory)].title || accessories[accessoryKey(accessory)].accessory_alias }}
+                            <span class="accessory-plugin">- {{ accessoryPlugin(accessory) }}</span>
+                        </h3>
+                        <schema-form :schema="accessories[accessoryKey(accessory)].properties || {}" v-model="configuration.accessories[index]" />
+                    </div>
                 </div>
                 <div class="action">
                     <div v-on:click.stop="addAccessory()" class="button">{{ $t("add_accessory") }}</div>
@@ -66,7 +72,7 @@
                             {{ plugin.description }}
                         </p>
                         <div v-if="plugin.schema.platform && plugin.schema.platform.schema">
-                            <platform-form :schema="plugin.schema.platform.schema.properties || {}" v-model="configuration.platforms[platformIndex(plugin)]" />
+                            <schema-form :schema="plugin.schema.platform.schema.properties || {}" v-model="configuration.platforms[platformIndex(plugin)]" />
                         </div>
                         <div v-else>
                             <json-editor name="platform" :height="200" :index="platformIndex(plugin)" :change="updateJson" :code="platformCode(plugin)" />
@@ -96,7 +102,7 @@
     import SelectField from "@/components/select-field.vue";
     import PortField from "@/components/port-field.vue";
  
-    import PlatformForm from "@/components/platform-form.vue";
+    import SchemaForm from "@/components/schema-form.vue";
     import Marquee from "@/components/loading-marquee.vue";
 
     export default {
@@ -109,7 +115,7 @@
             "description-field": DescriptionField,
             "select-field": SelectField,
             "port-field": PortField,
-            "platform-form": PlatformForm,
+            "schema-form": SchemaForm,
             "loading-marquee": Marquee
         },
 
@@ -120,6 +126,20 @@
 
             user() {
                 return this.$store.state.user;
+            },
+
+            accessories() {
+                const schemas = {};
+
+                for (let i = 0; i < this.plugins.length; i++) {
+                    if (this.plugins[i].schema) {
+                        for (let j = 0; j < this.plugins[i].schema.accessories.schemas.length; j++) {
+                            schemas[`_${this.plugins[i].name}_${j}`] = this.plugins[i].schema.accessories.schemas[j];
+                        }
+                    }
+                }
+
+                return schemas;
             }
         },
 
@@ -197,7 +217,11 @@
             await this.load();
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
-                document.querySelector(window.location.hash).scrollIntoView();
+                if (document.querySelector(window.location.hash)) {
+                    document.querySelector(window.location.hash).scrollIntoView();
+                } else {
+                    document.querySelector("#accessories").scrollIntoView();
+                }
             }
         },
 
@@ -304,6 +328,56 @@
 
             },
 
+            accessoryKey(accessory) {
+                return `_${accessory.plugin_map.plugin_name}_${accessory.plugin_map.index}`;
+            },
+
+            accessoryPlugin(accessory) {
+                const index = this.plugins.findIndex(p => p.name === accessory.plugin_map.plugin_name);
+
+                return this.humanize(this.plugins[index].schema.accessories.plugin_alias);
+            },
+
+            platformIndex(plugin) {
+                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === plugin.name);
+                const platformSchema = (plugin.schema || {}).platform || {};
+
+                if (index >= 0 && platformSchema.plugin_alias && (!this.configuration.platforms[index].platform || this.configuration.platforms[index].platform !== platformSchema.plugin_alias)) {
+                    this.configuration.platforms[index].platform = platformSchema.plugin_alias;
+                }
+
+                return index;
+            },
+
+            platformTitle(plugin) {
+                const index = this.platformIndex(plugin);
+                const platformSchema = (plugin.schema || {}).platform || {};
+
+                if (index === -1) {
+                    return this.humanize(platformSchema.plugin_alias || plugin.name);
+                }
+
+                return this.humanize(platformSchema.plugin_alias || this.configuration.platforms[index].platform || plugin.name);
+            },
+
+            platformCode(plugin) {
+                const index = this.platformIndex(plugin);
+
+                if (index === -1) {
+                    return {};
+                }
+
+                const copy = JSON.parse(JSON.stringify(this.configuration.platforms[index]));
+
+                delete copy.plugin_map;
+
+                return JSON.stringify(copy, null, 4);
+            },
+
+            humanize(string) {
+                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+            },
+
             async save() {
                 this.working = true;
 
@@ -383,46 +457,6 @@
                 } else {
                     this.working = false;
                 }
-            },
-
-            platformIndex(plugin) {
-                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === plugin.name);
-                const platformSchema = (plugin.schema || {}).platform || {};
-
-                if (index >= 0 && platformSchema.plugin_alias && (!this.configuration.platforms[index].platform || this.configuration.platforms[index].platform !== platformSchema.plugin_alias)) {
-                    this.configuration.platforms[index].platform = platformSchema.plugin_alias;
-                }
-
-                return index;
-            },
-
-            platformTitle(plugin) {
-                const index = this.platformIndex(plugin);
-                const platformSchema = (plugin.schema || {}).platform || {};
-
-                if (index === -1) {
-                    return this.humanize(platformSchema.plugin_alias || plugin.name);
-                }
-
-                return this.humanize(platformSchema.plugin_alias || this.configuration.platforms[index].platform || plugin.name);
-            },
-
-            platformCode(plugin) {
-                const index = this.platformIndex(plugin);
-
-                if (index === -1) {
-                    return {};
-                }
-
-                const copy = JSON.parse(JSON.stringify(this.configuration.platforms[index]));
-
-                delete copy.plugin_map;
-
-                return JSON.stringify(copy, null, 4);
-            },
-
-            humanize(string) {
-                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
             }
         }
     }
@@ -501,14 +535,24 @@
     }
 
     #config .form h3 {
-        margin: 20px 0 0 0;
-        padding: 0;
+        margin: 0 0 10px 0;
+        padding: 0 0 5px 0;
         line-height: normal;
         font-size: 18px;
+        border-bottom: 1px var(--border) solid;
+    }
+
+    #config .form .accessory-plugin {
+        font-weight: normal;
     }
 
     #config .form p {
         margin: 0 0 20px 0;
+    }
+
+    #config .form .accessory-button {
+        white-space: normal;
+        margin: 0 0 10px 0;
     }
 
     #config .form .field {

@@ -1,0 +1,21 @@
+{
+    "plugin_alias": "Fake-RGB",
+    "schemas": [{
+        "title": "Fake RGB Bulb",
+        "accessory_alias": "Fake-RGB",
+        "type": "object",
+        "properties": {
+            "accessory": {
+                "title": "Accessory",
+                "type": "string",
+                "const": "Fake-RGB",
+                "readOnly": true
+            },
+            "name": {
+                "title": "Name",
+                "type": "string",
+                "required": true
+            }
+        }
+    }]
+}
