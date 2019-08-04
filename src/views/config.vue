@@ -56,7 +56,7 @@
                 <div v-for="(accessory, index) in configuration.accessories" :key="index">
                     <div v-if="accessories[accessoryKey(accessory)]">
                         <h3>
-                            {{ accessories[accessoryKey(accessory)].title || accessories[accessoryKey(accessory)].accessory_alias }}
+                            {{ accessories[accessoryKey(accessory)].title }}
                             <span class="accessory-plugin">- {{ accessoryPlugin(accessory) }}</span>
                         </h3>
                         <schema-form :schema="accessories[accessoryKey(accessory)].properties || {}" v-model="configuration.accessories[index]" />

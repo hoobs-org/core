@@ -2,7 +2,6 @@
     "plugin_alias": "Fake-RGB",
     "schemas": [{
         "title": "Fake RGB Bulb",
-        "accessory_alias": "Fake-RGB",
         "type": "object",
         "properties": {
             "accessory": {
