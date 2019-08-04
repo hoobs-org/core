@@ -42,48 +42,48 @@ HOOBS comes with a built-in web interface. This allows you to monitor, backup an
 ### Security
 HOOBS is permissible. This helps you keep your smart home secure.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/login.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/login.png)
 
 ### Status
 This monitors the Homebridge service, CPU and memory load. It also has your Apple Home setup pin.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/status.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/status.png)
 
 ### Accessories
 Monitor and control accessories connected to HOOBS.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/accessories.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/accessories.png)
 
 ### Log
 This shows you the rolling log. This is helpful for troubleshooting.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/log.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/log.png)
 
 ### User Management
 
 Shows a list of users, and allows you to edit, add or remove users.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/users.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/users.png)
 
 ### Installed Plugins
 Shows you a list of installed plugins. This also includes your Homebridge service, and can be updated from here.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/installed.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/installed.png)
 
 ### Browse Plugins
 You can search all of the available plugins, and install them, all from one screen.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/search.png)
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/search.png)
 
 ### Configuration
 The configuration screen allows you to modify your Homebridge settings, platforms and accessories.
 
-![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/config.png)
-
-### Dark Mode
-HOOBS also has a dark mode.
-
 ![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/dark/config.png)
+
+### Themes
+Change the look and feel of HOOBS.
+
+![](https://raw.githubusercontent.com/hoobs-org/hoobs-core/master/docs/light/config.png)
 
 ## Adding HOOBS to iOS
 HomeKit itself is actually not an app; it's a "database" similar to HealthKit and PassKit. Where HealthKit has the companion Health app and PassKit has Passbook, HomeKit has the Home app, introduced with iOS 10.  
