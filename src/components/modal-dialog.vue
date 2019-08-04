@@ -1,11 +1,12 @@
 <template>
     <div id="modal-dialog">
         <div class="dialog-inner" :style="`width: ${width}; height: ${height};`">
+            <div v-if="title" class="dialog-header">{{ title }}</div>
             <div class="dialog-content">
                 <slot />
             </div>
             <div class="dialog-footer">
-                <div v-if="cancel" class="button">{{ $t("cancel") }}</div>
+                <div v-if="cancel" class="button" v-on:click="cancel()">{{ $t("cancel") }}</div>
                 <div v-if="ok" class="button button-primary" v-on:click="ok()">{{ $t("ok") }}</div>
             </div>
         </div>
@@ -25,6 +26,7 @@
                 type: String,
                 default: "auto"
             },
+            title: String,
             ok: Function,
             cancel: Function
         }
@@ -48,6 +50,7 @@
     #modal-dialog .dialog-inner {
         display: inline;
         margin: 0 auto 10% auto;
+        max-height: 65%;
         background: #fff;
         color: #515151;
         display: flex;
@@ -58,8 +61,16 @@
                     0 1px 10px 0 rgba(0, 0, 0, 0.12);
     }
 
+    #modal-dialog .dialog-header {
+        padding: 10px 10px 0 10px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
     #modal-dialog .dialog-content {
+        flex: 1;
         padding: 20px;
+        overflow: auto;
     }
 
     #modal-dialog .dialog-footer {

@@ -90,15 +90,17 @@
             },
 
             fieldType(field) {
-                if (field && !field.readOnly && (field.type || "").toLowerCase() !== "object") {
+                const type = (field.type || "").toLowerCase();
+
+                if (field && !field.readOnly && type !== "object") {
                     return "input";
-                } else if (field && !field.readOnly && (field.type || "").toLowerCase() === "object" && field.properties) {
+                } else if (field && !field.readOnly && type === "object" && field.properties) {
                     if (!this.value[field.name]) {
                         this.value[field.name] = {};
                     }
 
                     return "form";
-                } else if (field && !field.readOnly && (field.type || "").toLowerCase() === "object") {
+                } else if (field && !field.readOnly && (type === "object" || type === "array")) {
                     return "json";
                 }
 

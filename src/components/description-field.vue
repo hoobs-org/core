@@ -5,7 +5,7 @@
         <textarea ref="field" autocomplete="false" :value="value" @input="update()" @change="change" v-bind:required="required"></textarea>
     </div>
 </template>
-required
+
 <script>
     export default {
         name: "description-field",

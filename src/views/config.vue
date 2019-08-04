@@ -49,24 +49,29 @@
                 <text-field :name="$t('range_name')" :description="$t('range_name_message')" v-model="configuration.ports.comment" />
                 <port-field :name="$t('start_port')" :description="$t('start_port_message')" v-model.number="configuration.ports.start" />
                 <port-field :name="$t('end_port')" :description="$t('end_port_message')" v-model.number="configuration.ports.end" />
-                <h2 id="accessories">{{ $t("accessories") }}</h2>
-                <p>
-                    {{ $t("accessories_config_message") }}
-                </p>
-                <div v-for="(accessory, index) in configuration.accessories" :key="index">
-                    <div v-if="accessories[accessoryKey(accessory)]">
-                        <h3>
-                            {{ accessories[accessoryKey(accessory)].title }}
-                            <span class="accessory-plugin">- {{ accessoryPlugin(accessory) }}</span>
-                        </h3>
-                        <schema-form :schema="accessories[accessoryKey(accessory)].properties || {}" v-model="configuration.accessories[index]" />
+                <div v-if="accessoryKeys.length > 0">
+                    <h2 id="accessories">{{ $t("accessories") }}</h2>
+                    <p>
+                        {{ $t("accessories_config_message") }}
+                    </p>
+                    <div v-for="(accessory, index) in configuration.accessories" :key="`${index}-accessory`">
+                        <div v-if="accessories[accessoryKey(accessory)]">
+                            <div class="accessory-title">
+                                <h3>
+                                    {{ accessories[accessoryKey(accessory)].title }}
+                                    <span class="accessory-plugin">- {{ accessoryPlugin(accessory) }}</span>
+                                </h3>
+                                <confirm-delete :title="$t('delete')" :index="index" :confirmed="removeAccessory" />
+                            </div>
+                            <schema-form :schema="accessories[accessoryKey(accessory)].properties || {}" v-model="configuration.accessories[index]" />
+                        </div>
+                    </div>
+                    <div class="action">
+                        <div v-on:click.stop="addAccessory()" class="button">{{ $t("add_accessory") }}</div>
                     </div>
                 </div>
-                <div class="action">
-                    <div v-on:click.stop="addAccessory()" class="button">{{ $t("add_accessory") }}</div>
-                </div>
                 <a id="plugins"></a>
-                <div v-for="(plugin, index) in plugins" :key="index">
+                <div v-for="(plugin, index) in plugins" :key="`${index}-platform`">
                     <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin) >= 0">
                         <h2 :id="plugin.name">{{ platformTitle(plugin) }}</h2>
                         <p v-if="plugin.description !== ''">
@@ -89,6 +94,11 @@
                 </div>
             </form>
         </div>
+        <modal-dialog v-if="show.accessories" width="450px" :title="$t('add_accessory')" :cancel="cancelAccessory">
+            <div v-for="(key, index) in accessoryKeys" :key="`${index}-add-accessory`" class="button button-primary add-accessory-button" v-on:click="insertAccessory(key)">
+                {{ accessories[key].title }} <span class="icon">chevron_right</span>
+            </div>
+        </modal-dialog>
     </div>
 </template>
 
@@ -102,9 +112,11 @@
     import DescriptionField from "@/components/description-field.vue";
     import SelectField from "@/components/select-field.vue";
     import PortField from "@/components/port-field.vue";
- 
+
+    import ModalDialog from "@/components/modal-dialog.vue";
     import SchemaForm from "@/components/schema-form.vue";
     import Marquee from "@/components/loading-marquee.vue";
+    import ConfirmDelete from "@/components/confirm-delete.vue";
 
     export default {
         name: "config",
@@ -116,8 +128,10 @@
             "description-field": DescriptionField,
             "select-field": SelectField,
             "port-field": PortField,
+            "modal-dialog": ModalDialog,
             "schema-form": SchemaForm,
-            "loading-marquee": Marquee
+            "loading-marquee": Marquee,
+            "confirm-delete": ConfirmDelete
         },
 
         computed: {
@@ -141,6 +155,10 @@
                 }
 
                 return schemas;
+            },
+
+            accessoryKeys() {
+                return Object.keys(this.accessories);
             }
         },
 
@@ -210,7 +228,10 @@
                     value: true
                 }],
                 plugins: [],
-                errors: []
+                errors: [],
+                show: {
+                    accessories: false
+                }
             };
         },
 
@@ -323,9 +344,24 @@
                 }
             },
 
-            addAccessory() {
+            cancelAccessory() {
+                this.show.accessories = false;
+            },
 
-                // GET A LIST OF ACCESSORIES FROM THE PLUGINS SCHEMA
+            addAccessory() {
+                this.show.accessories = true;
+            },
+
+            insertAccessory(key) {
+                this.show.accessories = false;
+
+                // GET ACCESSORY MAP
+
+            },
+
+            removeAccessory(index) {
+
+                // REMOVE ACCESSORY
 
             },
 
@@ -535,12 +571,21 @@
         margin: 0 0 5px 0;
     }
 
-    #config .form h3 {
+    #config .accessory-title {
         margin: 0 0 10px 0;
         padding: 0 0 5px 0;
+        border-bottom: 1px var(--border) solid;
+        display: flex;
+        align-content: flex-end;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+
+    #config .form h3 {
+        margin: 0;
+        padding: 0;
         line-height: normal;
         font-size: 18px;
-        border-bottom: 1px var(--border) solid;
     }
 
     #config .form .accessory-plugin {
@@ -605,5 +650,20 @@
 
     #config .form .action {
         padding: 0 0 20px 0;
+    }
+
+    #config .add-accessory-button {
+        padding: 10px 10px 10px 20px;
+        display: block;
+        margin: 10px 0 0 0;
+        white-space: normal;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: space-between;
+    }
+
+    #config .add-accessory-button:first-child {
+        margin: 0;
     }
 </style>
