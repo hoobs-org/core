@@ -118,7 +118,12 @@ Vue.use(new Socket({
 
 Router.beforeEach(async (to, from, next) => {
     if (to.path !== "/login" && !(await Cookies.validate())) {
-        window.location.href = `/login?url=${encodeURIComponent(to.path)}`;
+        Router.push({
+            path: "/login",
+            query: {
+                url: to.path
+            }
+        });
         
         return;
     }

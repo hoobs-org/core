@@ -91,7 +91,12 @@
                         password: this.password !== "" ? this.password : null,
                         admin: this.admin
                     })).success) {
-                        window.location.href = "/login?url=%2Fprofile";
+                        this.$router.push({
+                            path: "/login",
+                            query: {
+                                url: "/profile"
+                            }
+                        });
                     }
                 }
             },

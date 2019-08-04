@@ -117,7 +117,9 @@
                     if (response.token) {
                         Cookies.set("token", response.token, this.client.inactive_logoff || 30);
 
-                        window.location.href = this.url;
+                        this.$router.push({
+                            path: this.url
+                        });
                     } else {
                         if (response.error) {
                             this.errors.push(response.error);
@@ -155,7 +157,9 @@
                     if (response.token) {
                         Cookies.set("token", response.token, this.client.inactive_logoff || 30);
 
-                        window.location.href = this.url;
+                        this.$router.push({
+                            path: this.url
+                        });
                     } else {
                         if (response.error) {
                             this.errors.push(response.error);

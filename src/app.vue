@@ -73,7 +73,7 @@
                     <b>HOOBS Core</b><br>
                     Version 3.0.0
                 </div>
-                <div class="button">{{ $t("check_for_updates") }}</div>
+                <div v-if="user.admin" class="button" v-on:click="checkUpdates()">{{ $t("check_for_updates") }}</div>
             </div>
             <br>
             <a href="https://hoobs.org" target="_blank">HOOBS.org</a><br>
@@ -156,6 +156,14 @@
                 this.about = false;
             },
 
+            checkUpdates() {
+                this.closeAbout();
+
+                this.$router.push({
+                    path: "/updates"
+                });
+            },
+
             hide(menu) {
                 this.$store.commit("hide", menu);
             },
@@ -208,6 +216,12 @@
                 switch (name) {
                     case "login":
                         return "";
+
+                    case "help":
+                        return `${!title ? " | " : ""}${this.$t("help")}`;
+
+                    case "updates":
+                        return `${!title ? " | " : ""}${this.$t("updates")}`;
 
                     case "profile":
                         return `${!title ? " | " : ""}${this.$t("profile")}`;

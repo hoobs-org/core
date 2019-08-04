@@ -17,6 +17,14 @@ const getRoutes = () => {
         name: "login",
         component: () => import("./views/login.vue")
     },{
+        path: "/help",
+        name: "help",
+        component: () => import("./views/help.vue")
+    },{
+        path: "/updates",
+        name: "updates",
+        component: () => import("./views/updates.vue")
+    },{
         path: "/profile",
         name: "profile",
         component: () => import("./views/profile.vue")

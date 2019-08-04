@@ -17,7 +17,7 @@
         <div v-else class="item-disabled">{{ $t("restart_service") }}</div>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
-        <div class="item">{{ $t("help") }}</div>
+        <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
     </div>
@@ -32,7 +32,7 @@
         <router-link to="/profile" class="item">{{ $t("profile") }}</router-link>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
-        <div class="item">{{ $t("help") }}</div>
+        <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
     </div>
