@@ -154,6 +154,10 @@
         "welcome_message_hoobs": "Salut! HOOBS.",
         "welcome_message": "Salut! Homebridge.",
         "welcome": "Salut",
-        "yes": "da"
+        "yes": "da",
+        "ok": "bine",
+        "check_for_updates": "Verifică pentru actualizări",
+        "about": "Despre",
+        "help": "Ajutor"
     }
 }

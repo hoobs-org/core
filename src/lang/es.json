@@ -152,6 +152,10 @@
         "welcome_message_hoobs": "Bienvenido a HOOBS.",
         "welcome_message": "WBienvenido a Homebridge.",
         "welcome": "Bienvenido",
-        "yes": "Si"
+        "yes": "Si",
+        "ok": "Okay",
+        "check_for_updates": "Buscar actualizaciones",
+        "about": "Acerca de",
+        "help": "Ayuda"
     }
 }

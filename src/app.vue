@@ -62,26 +62,44 @@
             </div>
             <div class="content">
                 <router-view />
-                <homebridge-menu v-if="visible['homebridge']" />
+                <homebridge-menu v-if="visible['homebridge']" :about="showAbout" />
             </div>
         </div>
+        <modal-dialog v-if="about" width="550px" :ok="closeAbout">
+            <img class="about-logo" src="./assets/logo.png" />
+            <div class="about-seperator"></div>
+            <div class="about-title">
+                <div class="about-version">
+                    <b>HOOBS Core</b><br>
+                    Version 3.0.0
+                </div>
+                <div class="button">{{ $t("check_for_updates") }}</div>
+            </div>
+            <br>
+            <a href="https://hoobs.org" target="_blank">HOOBS.org</a><br>
+            <br>
+            Copyright &copy; {{ new Date().getFullYear() }} HOOBS.org. All rights reserved.
+        </modal-dialog>
     </div>
 </template>
 
 <script>
+    import ModalDialog from "@/components/modal-dialog.vue";
     import Menu from "@/components/homebridge-menu.vue";
     import Marquee from "@/components/loading-marquee.vue";
     import Plugins from "../etc/plugins.json";
 
     export default {
         components: {
+            "modal-dialog": ModalDialog,
             "homebridge-menu": Menu,
             "loading-marquee": Marquee
         },
 
         data() {
             return {
-                loaded: false
+                loaded: false,
+                about: false
             }
         },
 
@@ -130,6 +148,14 @@
         },
 
         methods: {
+            showAbout() {
+                this.about = true;
+            },
+
+            closeAbout() {
+                this.about = false;
+            },
+
             hide(menu) {
                 this.$store.commit("hide", menu);
             },
@@ -421,6 +447,25 @@
 
     #app .header .service-button:hover {
         opacity: 1;
+    }
+
+    #app .about-logo {
+        width: 250px;
+    }
+
+    #app .about-seperator {
+        height: 1px;
+        background: #e5e5e5;
+        margin: 10px 0;
+    }
+
+    #app .about-title {
+        display: flex;
+        margin: 0 -10px 0 0;
+    }
+
+    #app .about-version {
+        flex: 1;
     }
 
     #app .layout {

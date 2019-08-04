@@ -16,6 +16,9 @@
         <div v-if="!locked && running" v-on:click.stop="control('restart')" class="item">{{ $t("restart_service") }}</div>
         <div v-else class="item-disabled">{{ $t("restart_service") }}</div>
         <div class="item-seperator"></div>
+        <div class="item" v-on:click="about">{{ $t("about") }}</div>
+        <div class="item">{{ $t("help") }}</div>
+        <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
     </div>
     <div v-else id="homebridge-menu">
@@ -28,6 +31,9 @@
         </div>
         <router-link to="/profile" class="item">{{ $t("profile") }}</router-link>
         <div class="item-seperator"></div>
+        <div class="item" v-on:click="about">{{ $t("about") }}</div>
+        <div class="item">{{ $t("help") }}</div>
+        <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
     </div>
 </template>
@@ -35,6 +41,10 @@
 <script>
     export default {
         name: "homebridge_menu",
+
+        props: {
+            about: Function
+        },
 
         computed: {
             locked() {
