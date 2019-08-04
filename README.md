@@ -27,10 +27,10 @@ If you want to contact **HOOBS dev-team** there are a bunch of ways to do that:
 [HOOBS Facebook Support Group](https://www.facebook.com/groups/HOOBSorg/)  
 
 ## Documentation
-[Getting Started](https://github.com/hoobs-org/hoobs-core/blob/master/docs/getting-started.md)  
-[API Reference](https://github.com/hoobs-org/hoobs-core/blob/master/docs/api-reference.md)  
-[Logging & Monitoring](https://github.com/hoobs-org/hoobs-core/blob/master/docs/logging-monitoring.md)  
-[Developing Plugins](https://github.com/hoobs-org/hoobs-core/blob/master/docs/developing-plugins.md)  
+[Getting Started](docs/getting-started.md)  
+[API Reference](docs/api-reference.md)  
+[Logging & Monitoring](docs/logging-monitoring.md)  
+[Developing Plugins](docs/developing-plugins.md)  
 
 ## Interface
 HOOBS comes with a built-in web interface. This allows you to monitor, backup and configure your Homebridge server. You can access the web interface at the default location. [http://hoobs.local](http://hoobs.local).
