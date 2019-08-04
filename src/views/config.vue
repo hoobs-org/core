@@ -59,7 +59,7 @@
                             <div class="accessory-title">
                                 <h3>
                                     {{ accessories[accessoryKey(accessory)].title }}
-                                    <span class="accessory-plugin">- {{ accessoryPlugin(accessory) }}</span>
+                                    <span class="accessory-plugin">- {{ accessoryPlugin(accessory) || humanize(pluginAlias[accessory.plugin_map.plugin_name]) }}</span>
                                 </h3>
                                 <confirm-delete :title="$t('delete')" :index="index" :confirmed="removeAccessory" />
                             </div>
@@ -143,13 +143,27 @@
                 return this.$store.state.user;
             },
 
+            pluginAlias() {
+                const schemas = {};
+
+                for (let i = 0; i < this.plugins.length; i++) {
+                    if (this.plugins[i].schema && this.plugins[i].schema.accessories) {
+                        schemas[this.plugins[i].name] = this.plugins[i].schema.accessories.plugin_alias;
+                    } else if (this.plugins[i].schema && this.plugins[i].schema.platform) {
+                        schemas[this.plugins[i].name] = this.plugins[i].schema.platform.plugin_alias;
+                    }
+                }
+
+                return schemas;
+            },
+
             accessories() {
                 const schemas = {};
 
                 for (let i = 0; i < this.plugins.length; i++) {
                     if (this.plugins[i].schema) {
                         for (let j = 0; j < this.plugins[i].schema.accessories.schemas.length; j++) {
-                            schemas[`_${this.plugins[i].name}_${j}`] = this.plugins[i].schema.accessories.schemas[j];
+                            schemas[`${this.plugins[i].name}-:-${j}`] = this.plugins[i].schema.accessories.schemas[j];
                         }
                     }
                 }
@@ -353,20 +367,28 @@
             },
 
             insertAccessory(key) {
+                const plugin = key.split("-:-")[0];
+                const index = parseInt(key.split("-:-")[1]);
+
                 this.show.accessories = false;
 
-                // GET ACCESSORY MAP
+                const accessory = {
+                    accessory: this.pluginAlias[plugin],
+                    plugin_map: {
+                        plugin_name: plugin,
+                        index
+                    }
+                };
 
+                this.configuration.accessories.push(accessory);
             },
 
             removeAccessory(index) {
-
-                // REMOVE ACCESSORY
-
+                this.configuration.accessories.splice(index, 1);
             },
 
             accessoryKey(accessory) {
-                return `_${accessory.plugin_map.plugin_name}_${accessory.plugin_map.index}`;
+                return `${accessory.plugin_map.plugin_name}-:-${accessory.plugin_map.index}`;
             },
 
             accessoryPlugin(accessory) {
