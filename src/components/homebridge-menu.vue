@@ -114,9 +114,13 @@
     }
 
     #homebridge-menu .profile .icon {
-        color: var(--text-dim);
+        color: var(--button-primary);
         margin: 0 5px 0 0;
         font-size: 42px;
+    }
+
+    #homebridge-menu .profile .identity {
+        color: var(--button-primary);
     }
 
     #homebridge-menu .profile .profile-details {
