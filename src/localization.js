@@ -9,10 +9,20 @@ class Language {
     }
 
     static get current() {
-        return Language.supported(Languages[Config.client.locale || (navigator.language || navigator.userLanguage).toLowerCase()] || "en");
+        let locale = Config.client.locale;
+
+        if ((!locale || locale === "") && navigator && (navigator.language || navigator.userLanguage)) {
+            locale = navigator.language || navigator.userLanguage;
+        }
+
+        if (!locale || locale === "") {
+            locale = "en";
+        }
+
+        return Language.supported(Languages[locale]);
     }
 
-    static supported = (lang) => {
+    static supported(lang) {
         switch (lang) {
             case "en":
             case "es":
