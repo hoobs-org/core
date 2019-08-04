@@ -389,8 +389,8 @@
                 const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === plugin.name);
                 const platformSchema = (plugin.schema || {}).platform || {};
 
-                if (index >= 0 && platformSchema.pluginAlias && (!this.configuration.platforms[index].platform || this.configuration.platforms[index].platform !== platformSchema.pluginAlias)) {
-                    this.configuration.platforms[index].platform = platformSchema.pluginAlias;
+                if (index >= 0 && platformSchema.plugin_alias && (!this.configuration.platforms[index].platform || this.configuration.platforms[index].platform !== platformSchema.plugin_alias)) {
+                    this.configuration.platforms[index].platform = platformSchema.plugin_alias;
                 }
 
                 return index;
@@ -401,10 +401,10 @@
                 const platformSchema = (plugin.schema || {}).platform || {};
 
                 if (index === -1) {
-                    return this.humanize(platformSchema.pluginAlias || plugin.name);
+                    return this.humanize(platformSchema.plugin_alias || plugin.name);
                 }
 
-                return this.humanize(platformSchema.pluginAlias || this.configuration.platforms[index].platform || plugin.name);
+                return this.humanize(platformSchema.plugin_alias || this.configuration.platforms[index].platform || plugin.name);
             },
 
             platformCode(plugin) {
