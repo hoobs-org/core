@@ -17,7 +17,7 @@
     },
     "main": "lib/loader.js",
     "bin": {
-        "homebridge": "bin/homebridge"
+        "homebridge": "bin/hoobs"
     },
     "author": "Michael J Kellsy",
     "engines": {

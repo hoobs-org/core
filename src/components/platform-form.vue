@@ -7,14 +7,18 @@
             <div v-else-if="fieldType(field) === 'form'">
                 <platform-form :schema="field.properties" v-model="value[field.name]" />
             </div>
-            <div v-else-if="fieldType(field) === 'select-form'">
-
+            <div v-else-if="fieldType(field) === 'json'">
+                <div class="field">
+                    <span class="title">{{ field.title }}</span>
+                    <json-editor :name="field.name" :height="200" :index="0" :change="updateJson()" :code="getJson(field)" />
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import JSONEditor from "@/components/json-editor.vue";
     import TextField from "@/components/text-field.vue";
     import PasswordField from "@/components/password-field.vue";
     import NumberField from "@/components/number-field.vue";
@@ -25,6 +29,7 @@
         name: "platform-form",
 
         components: {
+            "json-editor": JSONEditor,
             "text-field": TextField,
             "password-field": PasswordField,
             "number-field": NumberField,
@@ -60,6 +65,30 @@
         },
 
         methods: {
+            updateJson(name, code) {
+                let current = null;
+
+                try {
+                    current = JSON.parse(JSON.stringify(this.value[name]));
+                } catch {
+                    current = null;
+                }
+
+                try {
+                    this.value[name] = JSON.parse(code);
+                } catch {
+                    this.value[name] = current;
+                }
+            },
+
+            getJson(field) {
+                if (!this.value[field.name]) {
+                    return "";
+                }
+
+                return JSON.stringify(this.value[field.name], null, 4);
+            },
+
             fieldType(field) {
                 if (field && !field.readOnly && (field.type || "").toLowerCase() !== "object") {
                     return "input";
@@ -69,10 +98,8 @@
                     }
 
                     return "form";
-                } else if (field && !field.readOnly && (field.type || "").toLowerCase() === "object" && field.oneOf) {
-                    return "select-form";
-                } else if (field && !field.readOnly && (field.type || "").toLowerCase() === "object" && field.enum) {
-                    return "complex-form";
+                } else if (field && !field.readOnly && (field.type || "").toLowerCase() === "object") {
+                    return "json";
                 }
 
                 return null;
@@ -207,5 +234,12 @@
 </script>
 
 <style scoped>
-    
+    #config .form .field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #config .form .field .title {
+        font-weight: bold;
+    }
 </style>

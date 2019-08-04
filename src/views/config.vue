@@ -387,9 +387,10 @@
 
             platformIndex(plugin) {
                 const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === plugin.name);
+                const platformSchema = (plugin.schema || {}).platform || {};
 
-                if (index >= 0 && plugin.schema.platform.pluginAlias && (!this.configuration.platforms[index].platform || this.configuration.platforms[index].platform !== plugin.schema.platform.pluginAlias)) {
-                    this.configuration.platforms[index].platform = plugin.schema.platform.pluginAlias;
+                if (index >= 0 && platformSchema.pluginAlias && (!this.configuration.platforms[index].platform || this.configuration.platforms[index].platform !== platformSchema.pluginAlias)) {
+                    this.configuration.platforms[index].platform = platformSchema.pluginAlias;
                 }
 
                 return index;

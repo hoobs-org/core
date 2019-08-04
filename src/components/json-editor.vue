@@ -50,7 +50,11 @@
 </script>
 
 <style>
-    .CodeMirror {
+    #editor {
+        margin: 0 0 20px 0;
+    }
+
+    #editor .CodeMirror {
         font-family: monospace;
         height: 100%;
         background: var(--input-background) !important;
@@ -60,26 +64,26 @@
         border-radius: 5px;
     }
 
-    .CodeMirror-lines {
+    #editor .CodeMirror-lines {
         padding: 4px 0;
     }
 
-    .CodeMirror pre {
+    #editor .CodeMirror pre {
         padding: 0 4px;
     }
 
-    .CodeMirror-scrollbar-filler,
-    .CodeMirror-gutter-filler {
+    #editor .CodeMirror-scrollbar-filler,
+    #editor .CodeMirror-gutter-filler {
         background-color: white;
     }
 
-    .CodeMirror-gutters {
+    #editor .CodeMirror-gutters {
         border-right: 1px solid #ddd;
         background-color: #f7f7f7;
         white-space: nowrap;
     }
 
-    .CodeMirror-linenumber {
+    #editor .CodeMirror-linenumber {
         padding: 0 3px 0 5px;
         min-width: 20px;
         text-align: right;
@@ -87,42 +91,42 @@
         white-space: nowrap;
     }
 
-    .CodeMirror-guttermarker {
+    #editor .CodeMirror-guttermarker {
         color: black;
     }
 
-    .CodeMirror-guttermarker-subtle {
+    #editor .CodeMirror-guttermarker-subtle {
         color: #999;
     }
 
-    .CodeMirror-cursor {
+    #editor .CodeMirror-cursor {
         border-left: 1px solid black;
         border-right: none;
         width: 0;
     }
 
-    .CodeMirror div.CodeMirror-secondarycursor {
+    #editor .CodeMirror div.CodeMirror-secondarycursor {
         border-left: 1px solid silver;
     }
 
-    .cm-fat-cursor .CodeMirror-cursor {
+    #editor .cm-fat-cursor .CodeMirror-cursor {
         width: auto;
         border: 0 !important;
         background: #7e7;
     }
 
-    .cm-fat-cursor div.CodeMirror-cursors {
+    #editor .cm-fat-cursor div.CodeMirror-cursors {
         z-index: 1;
     }
 
-    .cm-fat-cursor-mark {
+    #editor .cm-fat-cursor-mark {
         background-color: rgba(20, 255, 20, 0.5);
         -webkit-animation: blink 1.06s steps(1) infinite;
         -moz-animation: blink 1.06s steps(1) infinite;
         animation: blink 1.06s steps(1) infinite;
     }
 
-    .cm-animate-fat-cursor {
+    #editor .cm-animate-fat-cursor {
         width: auto;
         border: 0;
         -webkit-animation: blink 1.06s steps(1) infinite;
@@ -167,12 +171,12 @@
         }
     }
 
-    .cm-tab {
+    #editor .cm-tab {
         display: inline-block;
         text-decoration: inherit;
     }
 
-    .CodeMirror-rulers {
+    #editor .CodeMirror-rulers {
         position: absolute;
         left: 0;
         right: 0;
@@ -181,150 +185,150 @@
         overflow: hidden;
     }
 
-    .CodeMirror-ruler {
+    #editor .CodeMirror-ruler {
         border-left: 1px solid #ccc;
         top: 0;
         bottom: 0;
         position: absolute;
     }
 
-    .cm-s-default .cm-header {
+    #editor .cm-s-default .cm-header {
         color: blue;
     }
 
-    .cm-s-default .cm-quote {
+    #editor .cm-s-default .cm-quote {
         color: #090;
     }
 
-    .cm-negative {
+    #editor .cm-negative {
         color: #d44;
     }
 
-    .cm-positive {
+    #editor .cm-positive {
         color: #292;
     }
 
-    .cm-header,
-    .cm-strong {
+    #editor .cm-header,
+    #editor .cm-strong {
         font-weight: bold;
     }
 
-    .cm-em {
+    #editor .cm-em {
         font-style: italic;
     }
 
-    .cm-link {
+    #editor .cm-link {
         text-decoration: underline;
     }
 
-    .cm-strikethrough {
+    #editor .cm-strikethrough {
         text-decoration: line-through;
     }
 
-    .cm-s-default .cm-keyword {
+    #editor .cm-s-default .cm-keyword {
         color: #708;
     }
 
-    .cm-s-default .cm-atom {
+    #editor .cm-s-default .cm-atom {
         color: #219;
     }
 
-    .cm-s-default .cm-number {
+    #editor .cm-s-default .cm-number {
         color: var(--input-json-number);
     }
 
-    .cm-s-default .cm-def {
+    #editor .cm-s-default .cm-def {
         color: #00f;
     }
 
-    .cm-s-default .cm-variable-2 {
+    #editor .cm-s-default .cm-variable-2 {
         color: #05a;
     }
 
-    .cm-s-default .cm-variable-3,
-    .cm-s-default .cm-type {
+    #editor .cm-s-default .cm-variable-3,
+    #editor .cm-s-default .cm-type {
         color: #085;
     }
 
-    .cm-s-default .cm-comment {
+    #editor .cm-s-default .cm-comment {
         color: #a50;
     }
 
-    .cm-s-default .cm-string {
+    #editor .cm-s-default .cm-string {
         color: var(--input-json-text);
     }
 
-    .cm-s-default .cm-string-2 {
+    #editor .cm-s-default .cm-string-2 {
         color: #f50;
     }
 
-    .cm-s-default .cm-meta {
+    #editor .cm-s-default .cm-meta {
         color: #555;
     }
 
-    .cm-s-default .cm-qualifier {
+    #editor .cm-s-default .cm-qualifier {
         color: #555;
     }
 
-    .cm-s-default .cm-builtin {
+    #editor .cm-s-default .cm-builtin {
         color: #30a;
     }
 
-    .cm-s-default .cm-bracket {
+    #editor .cm-s-default .cm-bracket {
         color: #997;
     }
 
-    .cm-s-default .cm-tag {
+    #editor .cm-s-default .cm-tag {
         color: #170;
     }
 
-    .cm-s-default .cm-attribute {
+    #editor .cm-s-default .cm-attribute {
         color: #00c;
     }
 
-    .cm-s-default .cm-hr {
+    #editor .cm-s-default .cm-hr {
         color: #999;
     }
 
-    .cm-s-default .cm-link {
+    #editor .cm-s-default .cm-link {
         color: #00c;
     }
 
-    .cm-s-default .cm-error {
+    #editor .cm-s-default .cm-error {
         color: #f00;
     }
 
-    .cm-invalidchar {
+    #editor .cm-invalidchar {
         color: #f00;
     }
 
-    .CodeMirror-composing {
+    #editor .CodeMirror-composing {
         border-bottom: 2px solid;
     }
 
-    div.CodeMirror span.CodeMirror-matchingbracket {
+    #editor div.CodeMirror span.CodeMirror-matchingbracket {
         color: #0b0;
     }
 
-    div.CodeMirror span.CodeMirror-nonmatchingbracket {
+    #editor div.CodeMirror span.CodeMirror-nonmatchingbracket {
         color: #a22;
     }
 
-    .CodeMirror-matchingtag {
+    #editor .CodeMirror-matchingtag {
         background: rgba(255, 150, 0, 0.3);
     }
 
-    .CodeMirror-activeline-background {
+    #editor .CodeMirror-activeline-background {
         background: #e8f2ff;
     }
 
-    .CodeMirror {
+    #editor .CodeMirror {
         position: relative;
         overflow: hidden;
         background: white;
     }
 
-    .CodeMirror-scroll {
+    #editor .CodeMirror-scroll {
         overflow: scroll !important;
         margin-bottom: -30px;
         margin-right: -30px;
@@ -334,45 +338,45 @@
         position: relative;
     }
 
-    .CodeMirror-sizer {
+    #editor .CodeMirror-sizer {
         position: relative;
         border-right: 30px solid transparent;
     }
 
-    .CodeMirror-vscrollbar,
-    .CodeMirror-hscrollbar,
-    .CodeMirror-scrollbar-filler,
-    .CodeMirror-gutter-filler {
+    #editor .CodeMirror-vscrollbar,
+    #editor .CodeMirror-hscrollbar,
+    #editor .CodeMirror-scrollbar-filler,
+    #editor .CodeMirror-gutter-filler {
         position: absolute;
         z-index: 6;
         display: none;
     }
 
-    .CodeMirror-vscrollbar {
+    #editor .CodeMirror-vscrollbar {
         right: 0;
         top: 0;
         overflow-x: hidden;
         overflow-y: scroll;
     }
 
-    .CodeMirror-hscrollbar {
+    #editor .CodeMirror-hscrollbar {
         bottom: 0;
         left: 0;
         overflow-y: hidden;
         overflow-x: scroll;
     }
 
-    .CodeMirror-scrollbar-filler {
+    #editor .CodeMirror-scrollbar-filler {
         right: 0;
         bottom: 0;
     }
 
-    .CodeMirror-gutter-filler {
+    #editor .CodeMirror-gutter-filler {
         left: 0;
         bottom: 0;
     }
 
-    .CodeMirror-gutters {
+    #editor .CodeMirror-gutters {
         position: absolute;
         left: 0;
         top: 0;
@@ -380,7 +384,7 @@
         z-index: 3;
     }
 
-    .CodeMirror-gutter {
+    #editor .CodeMirror-gutter {
         white-space: normal;
         height: 100%;
         display: inline-block;
@@ -388,40 +392,40 @@
         margin-bottom: -30px;
     }
 
-    .CodeMirror-gutter-wrapper {
+    #editor .CodeMirror-gutter-wrapper {
         position: absolute;
         z-index: 4;
         background: none !important;
         border: none !important;
     }
 
-    .CodeMirror-gutter-background {
+    #editor .CodeMirror-gutter-background {
         position: absolute;
         top: 0;
         bottom: 0;
         z-index: 4;
     }
 
-    .CodeMirror-gutter-elt {
+    #editor .CodeMirror-gutter-elt {
         position: absolute;
         cursor: default;
         z-index: 4;
     }
 
-    .CodeMirror-gutter-wrapper ::selection {
+    #editor .CodeMirror-gutter-wrapper ::selection {
         background-color: transparent;
     }
 
-    .CodeMirror-gutter-wrapper ::-moz-selection {
+    #editor .CodeMirror-gutter-wrapper ::-moz-selection {
         background-color: transparent;
     }
 
-    .CodeMirror-lines {
+    #editor .CodeMirror-lines {
         cursor: text;
         min-height: 1px;
     }
 
-    .CodeMirror pre {
+    #editor .CodeMirror pre {
         -moz-border-radius: 0;
         -webkit-border-radius: 0;
         border-radius: 0;
@@ -442,13 +446,13 @@
         font-variant-ligatures: contextual;
     }
 
-    .CodeMirror-wrap pre {
+    #editor .CodeMirror-wrap pre {
         word-wrap: break-word;
         white-space: pre-wrap;
         word-break: normal;
     }
 
-    .CodeMirror-linebackground {
+    #editor .CodeMirror-linebackground {
         position: absolute;
         left: 0;
         right: 0;
@@ -457,30 +461,30 @@
         z-index: 0;
     }
 
-    .CodeMirror-linewidget {
+    #editor .CodeMirror-linewidget {
         position: relative;
         z-index: 2;
         padding: 0.1px;
     }
 
-    .CodeMirror-rtl pre {
+    #editor .CodeMirror-rtl pre {
         direction: rtl;
     }
 
-    .CodeMirror-code {
+    #editor .CodeMirror-code {
         outline: none;
     }
 
-    .CodeMirror-scroll,
-    .CodeMirror-sizer,
-    .CodeMirror-gutter,
-    .CodeMirror-gutters,
-    .CodeMirror-linenumber {
+    #editor .CodeMirror-scroll,
+    #editor .CodeMirror-sizer,
+    #editor .CodeMirror-gutter,
+    #editor .CodeMirror-gutters,
+    #editor .CodeMirror-linenumber {
         -moz-box-sizing: content-box;
         box-sizing: content-box;
     }
 
-    .CodeMirror-measure {
+    #editor .CodeMirror-measure {
         position: absolute;
         width: 100%;
         height: 0;
@@ -488,12 +492,12 @@
         visibility: hidden;
     }
 
-    .CodeMirror-cursor {
+    #editor .CodeMirror-cursor {
         position: absolute;
         pointer-events: none;
     }
 
-    .CodeMirror-measure pre {
+    #editor .CodeMirror-measure pre {
         position: static;
     }
 
@@ -507,54 +511,54 @@
         visibility: visible;
     }
 
-    .CodeMirror-focused div.CodeMirror-cursors {
+    #editor .CodeMirror-focused div.CodeMirror-cursors {
         visibility: visible;
     }
 
-    .CodeMirror-selected {
+    #editor .CodeMirror-selected {
         background: #d9d9d9;
     }
 
-    .CodeMirror-focused .CodeMirror-selected {
+    #editor .CodeMirror-focused .CodeMirror-selected {
         background: #add6ff;
     }
 
-    .CodeMirror-crosshair {
+    #editor .CodeMirror-crosshair {
         cursor: crosshair;
     }
 
-    .CodeMirror-line::selection,
-    .CodeMirror-line > span::selection,
-    .CodeMirror-line > span > span::selection {
+    #editor .CodeMirror-line::selection,
+    #editor .CodeMirror-line > span::selection,
+    #editor .CodeMirror-line > span > span::selection {
         background: #add6ff;
     }
 
-    .CodeMirror-line::-moz-selection,
-    .CodeMirror-line > span::-moz-selection,
-    .CodeMirror-line > span > span::-moz-selection {
+    #editor .CodeMirror-line::-moz-selection,
+    #editor .CodeMirror-line > span::-moz-selection,
+    #editor .CodeMirror-line > span > span::-moz-selection {
         background: #add6ff;
     }
 
-    .cm-searching {
+    #editor .cm-searching {
         background-color: #ffa;
         background-color: rgba(255, 255, 0, 0.4);
     }
 
-    .cm-force-border {
+    #editor .cm-force-border {
         padding-right: 0.1px;
     }
 
     @media print {
-        .CodeMirror div.CodeMirror-cursors {
+        #editor .CodeMirror div.CodeMirror-cursors {
             visibility: hidden;
         }
     }
 
-    .cm-tab-wrap-hack:after {
+    #editor .cm-tab-wrap-hack:after {
         content: "";
     }
 
-    span.CodeMirror-selectedtext {
+    #editor span.CodeMirror-selectedtext {
         background: none;
     }
 </style>

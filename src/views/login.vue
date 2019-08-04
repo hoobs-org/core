@@ -1,7 +1,7 @@
 <template>
     <div id="login">
-        <div class="content">
-            <div v-if="init" class="form create">
+        <div v-if="init" class="content create">
+            <div class="form">
                 <h2>
                     <div class="logo">
                         <svg width="27" height="27" viewBox="0 0 80 80.92" xmlns="http://www.w3.org/2000/svg">
@@ -18,28 +18,18 @@
                     <span v-for="(error, index) in errors" :key="index">{{ error }}</span>
                 </div>
                 <form autocomplete="false">
-                    <div class="field">
-                        <span class="title">{{ $t("name") }}</span>
-                        <input type="text" autocomplete="false" v-model="name" :required="true" />
-                    </div>
-                    <div class="field">
-                        <span class="title">{{ $t("username") }}</span>
-                        <input type="text" autocomplete="false" v-model="username" :required="true" />
-                    </div>
-                    <div class="field">
-                        <span class="title">{{ $t("password") }}</span>
-                        <input type="password" autocomplete="false" v-model="password" :required="true" />
-                    </div>
-                    <div class="field">
-                        <span class="title">{{ $t("reenter_password") }}</span>
-                        <input type="password" autocomplete="false" v-model="challenge" :required="true" />
-                    </div>
+                    <text-field :name="$t('name')" v-model="name" :required="true" />
+                    <text-field :name="$t('username')" v-model="username" :required="true" />
+                    <password-field :name="$t('password')" v-model="password" />
+                    <password-field :name="$t('reenter_password')" v-model="challenge" />
                 </form>
                 <div class="actions">
                     <div class="button button-primary" @click="createAccount()">{{ $t("create_account") }}</div>
                 </div>
             </div>
-            <div v-else class="form">
+        </div>
+        <div v-else class="content">
+            <div class="form">
                 <h2>
                     <div class="logo">
                         <svg width="27" height="27" viewBox="0 0 80 80.92" xmlns="http://www.w3.org/2000/svg">
@@ -71,10 +61,18 @@
 </template>
 
 <script>
+    import TextField from "@/components/text-field.vue";
+    import PasswordField from "@/components/password-field.vue";
+
     import Cookies from "../cookies";
 
     export default {
         name: "login",
+
+        components: {
+            "text-field": TextField,
+            "password-field": PasswordField
+        },
 
         data () {
             return {
@@ -193,6 +191,10 @@
         background-size: cover;
     }
 
+    #login .create {
+        padding: 0 0 10% 0;
+    }
+
     #login .form {
         width: 100%;
         max-width: 420px;
@@ -202,7 +204,7 @@
         border-radius: 3px;
     }
 
-    #login .create {
+    #login .create .form {
         max-width: 520px;
     }
 
