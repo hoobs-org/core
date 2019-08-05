@@ -1,7 +1,7 @@
 <template>
     <div id="status">
         <div v-if="showPin" class="info">
-            <div v-if="info" class="pin">
+            <div v-if="info" class="pin" v-on:click="showPinDialog()">
                 <setup-pin v-if="info" :code="info.home_setup_pin" :setup="info.home_setup_id" />
             </div>
             <p v-if="info" class="note">
@@ -34,17 +34,34 @@
                 </table>
             </div>
         </div>
+        <modal-dialog v-if="pin" :title="$t('home_pin')" :ok="closePinDialog">
+            <div class="pin-scan-surface">
+                <svg version="1.1" style="fill-rule: evenodd;" width="100%" viewBox="0 0 9534 2622" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#000000" d="M566 26l1437 0c312,0 566,255 566,566l0 1438c0,311 -254,566 -566,566l-1437 0c-311,0 -566,-255 -566,-566l0 -1438c0,-311 255,-566 566,-566z" />
+                    <path fill="#ffffff" d="M1974 2133l-1359 0c-28,0 -56,-28 -56,-55l0 -694 -194 0c-14,0 -42,-14 -42,-28 -13,-14 0,-41 14,-55l916 -902c14,-14 55,-14 69,0l291 292 0 -125c0,-28 28,-42 42,-42l319 0c28,0 42,28 42,42l0 513 222 222c14,14 14,28 14,55 -14,14 -28,28 -42,28l-194 0 0 694c0,27 -14,55 -42,55zm-1318 -97l1277 0 0 -694c0,-27 27,-41 41,-41l125 0 -153 -167c-13,-13 -13,-27 -13,-27l0 -486 -222 0 0 180c0,14 -14,42 -28,42 -14,14 -42,0 -56,-14l-333 -333 -804 791 125 0c27,0 41,28 41,42l0 707z" />
+                    <path fill="#ffffff" d="M795 1356c-14,-14 -14,-55 0,-69 139,-125 305,-180 486,-180 180,0 360,69 485,180 14,14 28,42 0,69 -14,14 -42,28 -69,0 -111,-97 -264,-166 -430,-166 -153,0 -306,55 -430,166 14,14 -14,14 -42,0z" />
+                    <path fill="#ffffff" d="M934 1523c-14,-14 -14,-56 14,-70 97,-69 222,-111 346,-111 125,0 250,42 347,111 28,14 28,42 14,70 -14,28 -42,28 -69,14 -84,-70 -194,-97 -292,-97 -111,0 -208,27 -291,97 -28,14 -55,14 -69,-14z" />
+                    <path fill="#ffffff" d="M1447 1717c-97,-55 -222,-55 -305,0 -28,14 -56,14 -70,-14 -13,-28 -13,-55 14,-69 125,-83 292,-83 416,0 28,14 28,41 14,69 -27,28 -55,28 -69,14z" />
+                    <path fill="#000000" d="M2807 0l6727 0 0 2622 -6727 0 0 -2622zm130 130l6467 0 0 2362 -6467 0 0 -2362z" />
+                    <text class="svg-code" x="6204" y="1563" text-anchor="middle">{{ info.home_setup_pin }}</text>
+                </svg>
+            </div>
+        </modal-dialog>
     </div>
 </template>
 
 <script>
+    import ModalDialog from "@/components/modal-dialog.vue";
     import SetupPIN from "@/components/setup-pin.vue";
 
     export default {
         name: "status",
+
         components: {
+            "modal-dialog": ModalDialog,
             "setup-pin": SetupPIN
         },
+
         computed: {
             graph() {
                 return [{
@@ -94,12 +111,23 @@
 
         data() {
             return {
-                info: null
+                info: null,
+                pin: false
             };
         },
 
         async mounted() {
             this.info = await this.api.get("/");
+        },
+
+        methods: {
+            showPinDialog() {
+                this.pin = true;
+            },
+
+            closePinDialog() {
+                this.pin = false;
+            }
         }
     };
 </script>
@@ -122,6 +150,7 @@
         background: var(--background);
         box-shadow: var(--elevation-small);
         border-radius: 3px;
+        cursor: pointer;
     }
 
     #status .info .note {
@@ -170,5 +199,16 @@
     #status .details table .empty {
         padding: 30px;
         text-align: center;
+    }
+
+    #status .pin-scan-surface {
+        padding: 20px;
+    }
+
+    #status .svg-code {
+        fill: #000000;
+        font-weight: bold;
+        font-size: 808.476px;
+        font-family: "Scancardium";
     }
 </style>
