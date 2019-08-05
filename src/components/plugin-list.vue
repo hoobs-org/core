@@ -104,12 +104,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    if (this.interface) {
-                        await this.api.post("/service/reload");
-                    }
+                    await this.api.post("/service/reload");
 
-                    this.plugin.installed = this.plugin.version;
-                    this.working = false;
+                    window.location.href = "/plugins"
                 }
             },
 
@@ -133,12 +130,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    if (this.interface) {
-                        await this.api.post("/service/reload");
-                    }
+                    await this.api.post("/service/reload");
 
-                    this.plugin.installed = false;
-                    this.working = false;
+                    window.location.href = "/plugins"
                 }
             },
 
@@ -162,12 +156,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    if (this.interface) {
-                        await this.api.post("/service/reload");
-                    }
+                    await this.api.post("/service/reload");
 
-                    this.plugin.installed = this.plugin.version;
-                    this.working = false;
+                    window.location.href = "/plugins"
                 }
             }
         }
