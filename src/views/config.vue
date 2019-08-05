@@ -49,26 +49,28 @@
                 <text-field :name="$t('range_name')" :description="$t('range_name_message')" v-model="configuration.ports.comment" />
                 <port-field :name="$t('start_port')" :description="$t('start_port_message')" v-model.number="configuration.ports.start" />
                 <port-field :name="$t('end_port')" :description="$t('end_port_message')" v-model.number="configuration.ports.end" />
-                <div v-if="accessoryKeys.length > 0">
-                    <h2 id="accessories">{{ $t("accessories") }}</h2>
-                    <p>
-                        {{ $t("accessories_config_message") }}
-                    </p>
-                    <div v-for="(accessory, index) in configuration.accessories" :key="`${index}-accessory`">
-                        <div v-if="accessories[accessoryKey(accessory)]">
-                            <div class="accessory-title">
-                                <h3>
-                                    {{ accessories[accessoryKey(accessory)].title }}
-                                    <span class="accessory-plugin">- {{ accessoryPlugin(accessory) || humanize(pluginAlias[accessory.plugin_map.plugin_name]) }}</span>
-                                </h3>
-                                <confirm-delete :title="$t('delete')" :index="index" :confirmed="removeAccessory" />
-                            </div>
-                            <schema-form :schema="accessories[accessoryKey(accessory)].properties || {}" v-model="configuration.accessories[index]" />
+                <h2 id="accessories">{{ $t("accessories") }}</h2>
+                <p>
+                    {{ $t("accessories_config_message") }}
+                </p>
+                <div v-for="(accessory, index) in configuration.accessories" :key="`${index}-accessory`">
+                    <div v-if="accessory.plugin_map && accessories[accessoryKey(accessory)]">
+                        <div class="accessory-title">
+                            <h3>{{ accessories[accessoryKey(accessory)].title || humanize(pluginAlias[accessory.plugin_map.plugin_name]) }}</h3>
+                            <confirm-delete :title="$t('delete')" :index="index" :confirmed="removeAccessory" />
                         </div>
+                        <schema-form :schema="accessories[accessoryKey(accessory)].properties || {}" v-model="configuration.accessories[index]" />
                     </div>
-                    <div class="action">
-                        <div v-on:click.stop="addAccessory()" class="button">{{ $t("add_accessory") }}</div>
+                    <div v-else>
+                        <div class="accessory-title">
+                            <h3>{{ $t("custom") }}</h3>
+                            <confirm-delete :title="$t('delete')" :index="index" :confirmed="removeAccessory" />
+                        </div>
+                        <json-editor name="accessory" :height="200" :index="index" :change="updateJson" :code="accessoryCode(index)" />
                     </div>
+                </div>
+                <div class="action">
+                    <div v-on:click.stop="addAccessory()" class="button">{{ $t("add_accessory") }}</div>
                 </div>
                 <a id="plugins"></a>
                 <div v-for="(plugin, index) in plugins" :key="`${index}-platform`">
@@ -97,6 +99,9 @@
         <modal-dialog v-if="show.accessories" width="450px" :title="$t('add_accessory')" :cancel="cancelAccessory">
             <div v-for="(key, index) in accessoryKeys" :key="`${index}-add-accessory`" class="button button-primary add-accessory-button" v-on:click="insertAccessory(key)">
                 {{ accessories[key].title }} <span class="icon">chevron_right</span>
+            </div>
+            <div class="button button-primary add-accessory-button" v-on:click="insertAccessory()">
+                {{ $t("custom") }} <span class="icon">chevron_right</span>
             </div>
         </modal-dialog>
     </div>
@@ -367,20 +372,28 @@
             },
 
             insertAccessory(key) {
-                const plugin = key.split("-:-")[0];
-                const index = parseInt(key.split("-:-")[1]);
+                if (key) {
+                    const plugin = key.split("-:-")[0];
+                    const index = parseInt(key.split("-:-")[1]);
 
-                this.show.accessories = false;
+                    this.show.accessories = false;
 
-                const accessory = {
-                    accessory: this.pluginAlias[plugin],
-                    plugin_map: {
-                        plugin_name: plugin,
-                        index
-                    }
-                };
+                    const accessory = {
+                        accessory: this.pluginAlias[plugin],
+                        plugin_map: {
+                            plugin_name: plugin,
+                            index
+                        }
+                    };
 
-                this.configuration.accessories.push(accessory);
+                    this.configuration.accessories.push(accessory);
+                } else {
+                    this.show.accessories = false;
+
+                    this.configuration.accessories.push({
+                        accessory: ""
+                    });
+                }
             },
 
             removeAccessory(index) {
@@ -395,6 +408,10 @@
                 const index = this.plugins.findIndex(p => p.name === accessory.plugin_map.plugin_name);
 
                 return this.humanize(this.plugins[index].schema.accessories.plugin_alias);
+            },
+
+            accessoryCode(index) {
+                return JSON.stringify(this.configuration.accessories[index], null, 4);
             },
 
             platformIndex(plugin) {
@@ -608,10 +625,6 @@
         padding: 0;
         line-height: normal;
         font-size: 18px;
-    }
-
-    #config .form .accessory-plugin {
-        font-weight: normal;
     }
 
     #config .form p {

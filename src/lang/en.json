@@ -159,6 +159,7 @@
         "check_for_updates": "Check for Updates",
         "about": "About",
         "help": "Help",
-        "updates": "Updates"
+        "updates": "Updates",
+        "custom": "Custom"
     }
 }
