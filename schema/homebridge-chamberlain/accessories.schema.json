@@ -1,0 +1,37 @@
+{
+    "plugin_alias": "Chamberlain",
+    "schemas": [{
+        "title": "myQ Garage Door",
+        "type": "object",
+        "properties": {
+            "accessory": {
+                "title": "Accessory",
+                "type": "string",
+                "const": "Chamberlain",
+                "readOnly": true
+            },
+            "name": {
+                "title": "Name",
+                "type": "string",
+                "required": true
+            },
+            "username": {
+                "title": "myQ Username",
+                "type": "string",
+                "required": true
+            },
+            "password": {
+                "title": "myQ Password",
+                "type": "string",
+                "required": true,
+                "options": {
+                    "hidden": true
+                }
+            },
+            "deviceId": {
+                "title": "Device ID",
+                "type": "string"
+            }
+        }
+    }]
+}

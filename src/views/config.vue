@@ -79,7 +79,7 @@
                         <p v-if="plugin.description !== ''">
                             {{ plugin.description }}
                         </p>
-                        <div v-if="plugin.schema.platform && plugin.schema.platform.schema">
+                        <div v-if="plugin.schema && plugin.schema.platform.schema.properties">
                             <schema-form :schema="plugin.schema.platform.schema.properties || {}" v-model="configuration.platforms[platformIndex(plugin)]" />
                         </div>
                         <div v-else>
