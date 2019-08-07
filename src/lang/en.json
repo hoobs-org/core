@@ -160,6 +160,7 @@
         "about": "About",
         "help": "Help",
         "updates": "Updates",
-        "custom": "Custom"
+        "custom": "Custom",
+        "hoobs_version": "HOOBS Version"
     }
 }
