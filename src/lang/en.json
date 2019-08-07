@@ -167,6 +167,8 @@
         "chat_with_us": "Chat With Us",
         "common_issues": "Common Issues",
         "clear_cache": "Clear Cache",
+        "reset_connection": "Reset Connection",
+        "reset": "Reset",
         "generate_new_username": "Generate New Username",
         "generate": "Generate",
         "clear": "Clear"

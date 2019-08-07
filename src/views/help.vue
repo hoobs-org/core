@@ -26,11 +26,11 @@
                 <b>Apple Home Can't Find Homebridge.</b> iOS DNS cache has gone stale or gotten misconfigured. Try turning airplane mode on and back off to flush the DNS cache.
             </p>
             <p>
-                <b>Apple Home Can't Find Homebridge.</b> The Homebridge service thinks it's paired, but iOS thinks otherwise. Try clearing the cache with the button below. This will delete the persist folder.<br>
+                <b>Apple Home Can't Find Homebridge.</b> The Homebridge service thinks it's paired, but iOS thinks otherwise. Try resetting the connection with the button below. This will delete the persist folder.<br>
                 <b>Warning</b> This will disconnect Homebridge from Apple Home. You will need to re-pair.
             </p>
             <div v-if="user.admin" class="help-actions">
-                <confirm-delete :title="$t('clear_cache')" :subtitle="$t('clear')" :confirmed="clearCache" />
+                <confirm-delete :title="$t('reset_connection')" :subtitle="$t('reset')" :confirmed="clearCache" />
             </div>
             <div v-else class="help-actions">
                 <p>
