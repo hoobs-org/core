@@ -160,7 +160,7 @@
                 this.closeAbout();
 
                 this.$router.push({
-                    path: "/updates"
+                    path: "/system"
                 });
             },
 
@@ -220,8 +220,8 @@
                     case "help":
                         return `${!title ? " | " : ""}${this.$t("help")}`;
 
-                    case "updates":
-                        return `${!title ? " | " : ""}${this.$t("updates")}`;
+                    case "system":
+                        return `${!title ? " | " : ""}${this.$t("system")}`;
 
                     case "profile":
                         return `${!title ? " | " : ""}${this.$t("profile")}`;

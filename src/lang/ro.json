@@ -171,6 +171,8 @@
         "reset": "Reset",
         "generate_new_username": "Generate New Username",
         "generate": "Generate",
-        "clear": "Clear"
+        "clear": "Clear",
+        "system_info": "System Information",
+        "system": "System"
     }
 }

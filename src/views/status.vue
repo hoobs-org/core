@@ -14,12 +14,6 @@
             </div>
             <div :class="client.hide_setup_pin ? 'details singluar' : 'details'">
                 <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 30%;">{{ $t("name") }}</th>
-                            <th style="width: 70%;">{{ $t("value") }}</th>
-                        </tr>
-                    </thead>
                     <tbody v-if="running">
                         <tr v-for="(value, name) in info" :key="name">
                             <td>{{ $t(name) }}</td>
@@ -183,17 +177,21 @@
         border-spacing: 0;
     }
 
-    #status .details table th {
+    #status .details table tr th {
         padding: 10px;
         text-align: left;
         border-bottom: 2px var(--border-dark) solid;
         color: var(--pin-color);
     }
 
-    #status .details table td {
+    #status .details table tr td {
         padding: 10px;
         text-align: left;
         border-bottom: 1px var(--border) solid;
+    }
+
+    #status .details table tr:last-child td {
+        border-bottom: 0 none;
     }
 
     #status .details table .empty {

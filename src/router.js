@@ -21,9 +21,9 @@ const getRoutes = () => {
         name: "help",
         component: () => import("./views/help.vue")
     },{
-        path: "/updates",
-        name: "updates",
-        component: () => import("./views/updates.vue")
+        path: "/system",
+        name: "system",
+        component: () => import("./views/system.vue")
     },{
         path: "/profile",
         name: "profile",
