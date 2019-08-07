@@ -40,7 +40,7 @@
                 <text-field :name="$t('service_name')" :description="$t('service_name_message')" v-model="configuration.bridge.name" :required="true" />
                 <description-field :name="$t('service_description')" :description="$t('service_description_message')" v-model="configuration.description" />
                 <port-field :name="$t('service_port')" :description="$t('service_port_message')" v-model.number="configuration.bridge.port" :required="true" />
-                <text-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" :required="true" />
+                <hex-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" :required="true" />
                 <text-field :name="$t('home_pin')" :description="$t('home_pin_message')" v-model="configuration.bridge.pin" :required="true" />
                 <h2 id="ports">{{ $t("port_ranges") }}</h2>
                 <p>
@@ -117,6 +117,7 @@
     import DescriptionField from "@/components/description-field.vue";
     import SelectField from "@/components/select-field.vue";
     import PortField from "@/components/port-field.vue";
+    import HexField from "@/components/hex-field.vue";
 
     import ModalDialog from "@/components/modal-dialog.vue";
     import SchemaForm from "@/components/schema-form.vue";
@@ -133,6 +134,7 @@
             "description-field": DescriptionField,
             "select-field": SelectField,
             "port-field": PortField,
+            "hex-field": HexField,
             "modal-dialog": ModalDialog,
             "schema-form": SchemaForm,
             "loading-marquee": Marquee,

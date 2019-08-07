@@ -161,6 +161,14 @@
         "help": "Ajutor",
         "updates": "Actualizări",
         "custom": "Personalizat",
-        "hoobs_version": "Versiune HOOBS"
+        "hoobs_version": "Versiune HOOBS",
+        "online_help": "Online Help",
+        "online_help_message": "The best place to get help with HOOBS is online. We have many step-by-step guides that can help troubleshoot any issue you may have with HOOBS.",
+        "chat_with_us": "Chat With Us",
+        "common_issues": "Common Issues",
+        "clear_cache": "Clear Cache",
+        "generate_new_username": "Generate New Username",
+        "generate": "Generate",
+        "clear": "Clear"
     }
 }
