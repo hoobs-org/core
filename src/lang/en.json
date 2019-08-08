@@ -141,7 +141,6 @@
         "unassigned_accessories": "Unassigned Accessories",
         "unassigned": "Unassigned",
         "uninstall": "Uninstall",
-        "update-available": "Update Available",
         "update": "Update",
         "updated": "Up to Date",
         "uptime": "Uptime",
@@ -173,6 +172,9 @@
         "generate": "Generate",
         "clear": "Clear",
         "system_info": "System Information",
-        "system": "System"
+        "system": "System",
+        "software": "Software",
+        "up_to_date": "Up to Date",
+        "update_available": "Update Available"
     }
 }

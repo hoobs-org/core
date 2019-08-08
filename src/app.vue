@@ -71,7 +71,7 @@
             <div class="about-title">
                 <div class="about-version">
                     <b>HOOBS Core</b><br>
-                    Version 3.0.0
+                    Version {{ status.hoobs_version }}
                 </div>
                 <div v-if="user.admin" class="button" v-on:click="checkUpdates()">{{ $t("check_for_updates") }}</div>
             </div>
@@ -98,6 +98,7 @@
 
         data() {
             return {
+                status: null,
                 loaded: false,
                 about: false
             }
@@ -133,13 +134,14 @@
             }
         },
 
-        mounted() {
+        async mounted() {
             document.body.addEventListener("error", (event) => {
                 if (event.target.tagName === "IMG") {
                     event.target.parentNode.removeChild(event.target);
                 }
             }, true);
 
+            this.status = await this.api.get("/");
             this.loaded = true;
         },
 

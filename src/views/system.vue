@@ -1,5 +1,22 @@
 <template>
     <div v-if="user.admin" id="system">
+        <div class="system-content">
+            <h2>{{ $t("software") }}</h2>
+            <div class="update-card">
+                <b>HOOBS Core</b>
+                <span v-if="status">Current Version: {{ status.hoobs_version }}</span>
+                <div v-if="checking" class="update-actions">
+                    <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
+                </div>
+                <div v-else-if="updates.length > 0" class="update-actions">
+                    <b>{{ updates[0].version }} {{ $t("update_available") }}</b><br>
+                    <div class="button button-primary">{{ $t("update") }}</div>
+                </div>
+                <div v-else class="update-actions">
+                    <b>{{ $t("up_to_date") }}</b>
+                </div>
+            </div>
+        </div>
         <div v-if="info" class="system-content">
             <div v-for="(section, title) in info" :key="title">
                 <h2>{{ humanize(title) }}</h2>
@@ -20,8 +37,15 @@
     import Decamelize from "decamelize";
     import Inflection from "inflection";
 
+    import Marquee from "@/components/loading-marquee.vue";
+    import { setTimeout } from 'timers';
+
     export default {
         name: "system",
+
+        components: {
+            "loading-marquee": Marquee
+        },
 
         computed: {
             user() {
@@ -31,15 +55,30 @@
 
         data() {
             return {
-                info: null
+                info: null,
+                status: null,
+                checking: true,
+                updates: []
             }
         },
 
         async mounted() {
             this.info = await this.api.get("/system");
+            this.status = await this.api.get("/");
+
+            this.checkVersion();
         },
 
         methods: {
+            async checkVersion() {
+                this.checking = true;
+                this.updates = await this.api.get("/system/updates");
+
+                setTimeout(() => {
+                    this.checking = false;
+                }, 1000);
+            },
+
             humanize(string) {
                 return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
             }
@@ -57,6 +96,29 @@
     #system .system-content {
         width: 100%;
         max-width: 780px;
+        margin: 20px 0 0 0;
+    }
+
+    #system .system-content:first-child {
+        margin: 0;
+    }
+
+    #system .update-card {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        background: var(--background);
+        box-shadow: var(--elevation-small);
+        border-radius: 3px;
+        color: var(--text) !important;
+    }
+
+    #system .update-card .update-actions {
+        margin: 20px 0 0 0;
+    }
+
+    #system .update-card .update-actions .button {
+        margin: 10px 10px 0 0;
     }
 
     #system h2 {

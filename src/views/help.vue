@@ -8,6 +8,18 @@
             <a href="http://hoobs.org" target="_blank" class="button button-primary">HOOBS.org</a>
             <a href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
             <a href="https://www.reddit.com/r/hoobs/" target="_blank" class="button">HOOBS Subreddit</a>
+            <h2>{{ $t("software") }}</h2>
+            <p>
+                Stay up-to-date. Updating HOOBS helps keep your setup running healthy. Try checking for updates from the system menu.
+            </p>
+            <div v-if="user.admin">
+                <router-link to="/system" class="button button-primary">{{ $t("system") }}</router-link>
+            </div>
+            <div v-else>
+                <p>
+                    <b>Please login as an administrator to check for updates.</b>
+                </p>
+            </div>
             <h2>{{ $t("common_issues") }}</h2>
             <p>
                 <b>Apple Home Can't Find Homebridge.</b> The Homebridge service is not running. Try starting the service. Check the Status screen and if the Homebridge service is not running, click the service menu on the rupper right and click Start Service.
