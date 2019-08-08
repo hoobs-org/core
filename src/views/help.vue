@@ -165,7 +165,7 @@
 
     #help .help-content {
         width: 100%;
-        max-width: 780px;
+        max-width: 990px;
     }
 
     #help h2 {
