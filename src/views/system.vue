@@ -1,33 +1,41 @@
 <template>
     <div v-if="user.admin" id="system">
-        <div class="system-content">
-            <h2>{{ $t("software") }}</h2>
-            <div class="update-card">
-                <b>HOOBS Core</b>
-                <span v-if="status">Current Version: {{ status.hoobs_version }}</span>
-                <div v-if="checking" class="update-actions">
-                    <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
-                </div>
-                <div v-else-if="updates.length > 0" class="update-actions">
-                    <b>{{ updates[0].version }} {{ $t("update_available") }}</b><br>
-                    <div class="button button-primary">{{ $t("update") }}</div>
-                </div>
-                <div v-else class="update-actions">
-                    <b>{{ $t("up_to_date") }}</b>
-                </div>
+        <div class="info">
+            <a href="#software">{{ $t("software") }}</a>
+            <div v-for="(section, title) in info" :key="title">
+                <a :href="`#h-${title}`">{{ humanize(title) }}</a>
             </div>
         </div>
-        <div v-if="info" class="system-content">
-            <div v-for="(section, title) in info" :key="title">
-                <h2>{{ humanize(title) }}</h2>
-                <table>
-                    <tbody>
-                        <tr v-for="(value, name) in section" :key="name">
-                            <td style="min-width: 250px;">{{ humanize(name) }}</td>
-                            <td style="width: 100%;">{{ value }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="content">
+            <div class="system-content">
+                <h2 id="software">{{ $t("software") }}</h2>
+                <div class="update-card">
+                    <b>HOOBS Core</b>
+                    <span v-if="status">Current Version: {{ status.hoobs_version }}</span>
+                    <div v-if="checking" class="update-actions">
+                        <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
+                    </div>
+                    <div v-else-if="updates.length > 0" class="update-actions">
+                        <b>{{ updates[0].version }} {{ $t("update_available") }}</b><br>
+                        <div class="button button-primary">{{ $t("update") }}</div>
+                    </div>
+                    <div v-else class="update-actions">
+                        <b>{{ $t("up_to_date") }}</b>
+                    </div>
+                </div>
+            </div>
+            <div v-if="info" class="system-content">
+                <div v-for="(section, title) in info" :key="title">
+                    <h2 :id="`h-${title}`">{{ humanize(title) }}</h2>
+                    <table>
+                        <tbody>
+                            <tr v-for="(value, name) in section" :key="name">
+                                <td style="min-width: 250px;">{{ humanize(name) }}</td>
+                                <td style="width: 100%;">{{ value }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -89,7 +97,36 @@
 <style scoped>
     #system {
         flex: 1;
+        padding: 0;
+        display: flex;
+        overflow: hidden;
+    }
+
+    #system .info {
+        width: 210px;
+        padding: 20px 0 20px 20px;
+    }
+
+    #system .info a,
+    #system .info a:link,
+    #system .info a:active,
+    #system .info a:visited {
+        padding: 10px;
+        border-bottom: 1px var(--border) solid;
+        color: var(--text);
+        text-decoration: none;
+        display: block;
+    }
+
+    #system .info a:hover {
+        color: var(--text-dark);
+    }
+
+    #system .content {
+        flex: 1;
         padding: 20px;
+        display: flex;
+        flex-direction: column;
         overflow: auto;
     }
 
