@@ -7,7 +7,7 @@
         "polling_seconds": 2
     },
     "client": {
-        "port": 80,
+        "port": 8080,
         "api": "http://hoobs.local:51827",
         "socket": "http://hoobs.local:51828",
         "default_route": "status",
