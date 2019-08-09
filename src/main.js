@@ -157,10 +157,26 @@ new Vue({
             Store.commit("log", data);
         },
         push: (data) => {
-            Store.commit("push", JSON.parse(data))
+            try {
+                data = JSON.parse(data);
+            } catch {
+                data = null;
+            }
+
+            if (data) {
+                Store.commit("push", data);
+            }
         },
         monitor: (data) => {
-            Store.commit("monitor", JSON.parse(data));
+            try {
+                data = JSON.parse(data);
+            } catch {
+                data = null;
+            }
+
+            if (data) {
+                Store.commit("monitor", data);
+            }
         }
     },
     render: view => view(App)

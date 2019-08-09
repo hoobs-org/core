@@ -1,6 +1,6 @@
 <template>
     <div id="help">
-        <div class="help-content">
+        <div class="content">
             <h2>{{ $t("online_help") }}</h2>
             <p>
                 {{ $t("online_help_message") }}
@@ -163,9 +163,10 @@
         overflow: auto;
     }
 
-    #help .help-content {
+    #help .content {
         width: 100%;
         max-width: 990px;
+            display: block;
     }
 
     #help h2 {

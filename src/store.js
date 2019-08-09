@@ -132,23 +132,26 @@ export default new Vuex.Store({
                     break;
 
                 case "load":
-                    state.cpu.used = 100 - Math.round(payload.data.cpu.currentload_idle);
-                    state.cpu.available = Math.round(payload.data.cpu.currentload_idle);
-        
-                    state.memory.load = Math.round((payload.data.memory.active * 100) / payload.data.memory.total);
-                    state.memory.total = units(payload.data.memory.total);
-                    state.memory.used = units(payload.data.memory.active);
-        
-                    for (let i = 0; i < state.cpu.history.length - 1; i++) {
-                        state.cpu.history[i] = state.cpu.history[i + 1];
-                        state.cpu.history[i][0] = i;
-        
-                        state.memory.history[i] = state.memory.history[i + 1];
-                        state.memory.history[i][0] = `${i}`;
+                    if (state.cpu && state.memory) {
+                        state.cpu.used = 100 - Math.round(payload.data.cpu.currentload_idle);
+                        state.cpu.available = Math.round(payload.data.cpu.currentload_idle);
+
+                        state.memory.load = Math.round((payload.data.memory.active * 100) / payload.data.memory.total);
+                        state.memory.total = units(payload.data.memory.total);
+                        state.memory.used = units(payload.data.memory.active);
+
+                        for (let i = 0; i < state.cpu.history.length - 1; i++) {
+                            state.cpu.history[i] = state.cpu.history[i + 1];
+                            state.cpu.history[i][0] = i;
+
+                            state.memory.history[i] = state.memory.history[i + 1];
+                            state.memory.history[i][0] = `${i}`;
+                        }
+
+                        state.cpu.history[state.cpu.history.length - 1] = [state.cpu.history.length - 1, state.cpu.used];
+                        state.memory.history[state.memory.history.length - 1] = [state.memory.history.length - 1, state.memory.load];
                     }
-        
-                    state.cpu.history[state.cpu.history.length - 1] = [state.cpu.history.length - 1, state.cpu.used];
-                    state.memory.history[state.memory.history.length - 1] = [state.memory.history.length - 1, state.memory.load];
+
                     break;
 
                 default:

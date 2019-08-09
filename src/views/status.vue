@@ -10,7 +10,7 @@
         </div>
         <div class="content">
             <div class="chart">
-                <line-chart v-if="cpu.used && memory.load" id="system-load" height="100%" suffix="%" :discrete="true" :data="graph" :min="0" :max="100" :colors="colors" :curve="false" legend="bottom" />
+                <line-chart id="system-load" height="100%" suffix="%" :discrete="true" :data="graph" :min="0" :max="100" :colors="colors" :curve="false" legend="bottom" />
             </div>
             <div :class="client.hide_setup_pin ? 'details singluar' : 'details'">
                 <table>
@@ -62,13 +62,13 @@
                     name: `${this.$t("hoobs")} (${this.running ? this.$t("running") : this.$t("stopped")})`,
                     data: []
                 }, {
-                    name: `${this.$t("cpu")} ${this.cpu.used}%`,
+                    name: `${this.$t("cpu")} ${(this.cpu || {}).used || 0}%`,
                     data: this.cpu.history
                 }, {
-                    name: `${this.$t("memory")} ${this.memory.load}% (${this.memory.used.value} ${this.memory.used.units})`,
+                    name: `${this.$t("memory")} ${(this.memory || {}).load || 0}% (${((this.memory || {}).used || {}).value || 0} ${((this.memory || {}).used || {}).units || "MB"})`,
                     data: this.memory.history
                 }, {
-                    name: `${this.running ? this.$t("uptime") : this.$t("downtime")} ${this.uptime.days} ${this.$t("days")} ${this.uptime.hours} ${this.$t("hours")} ${this.uptime.minutes} ${this.$t("minutes")}`,
+                    name: `${this.running ? this.$t("uptime") : this.$t("downtime")} ${(this.uptime || {}).days || 0} ${this.$t("days")} ${(this.uptime || {}).hours || 0} ${this.$t("hours")} ${(this.uptime || {}).minutes || 0} ${this.$t("minutes")}`,
                     data: []
                 }];
             },
