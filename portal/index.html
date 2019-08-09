@@ -3,8 +3,8 @@
 	<head>
 		<title>HOOBS</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">		
-		<link rel="shortcut icon" href="/favicon.png">
-		<link rel="stylesheet" href="/css/style.css">
+		<link rel="shortcut icon" href="favicon.png">
+		<link rel="stylesheet" href="css/style.css">
 	</head>
 	<body>
 		<div class="header">
@@ -19,47 +19,49 @@
 				<h1>| Network</h1>
 			</div>
 		</div>
-		<div class="container">
-			<div class="before-submit">
-				<h2>Welcome to HOOBS</h2>
-				<p>
-					Please choose your wifi from the list.
-				</p>
-				<div class="col-lg-8 col-lg-offset-2">
-					<form id="connect-form" action="/connect" method="post">
-						<div class="field">
-							<span class="title">SSID</span>
-							<select id="ssid-select" name="ssid"></select>
-						</div>
-						<div class="field" id="identity-group">
-							<span class="title">User</span>
-							<input name="identity" />
-						</div>
-						<div class="field">
-							<span class="title">Passphrase</span>
-							<input type="password" name="passphrase" />
-						</div>
-						<div class="action">
-							<button type="submit" class="button button-primary">   Connect   </button>
-						</div>
-					</form>
+		<div class="layout">
+			<div class="container">
+				<div class="before-submit">
+					<h2>Welcome to HOOBS</h2>
+					<p>
+						Please choose your WiFi network from the list.
+					</p>
+					<div>
+						<form id="connect-form" action="/connect" method="post">
+							<div class="field">
+								<span class="title">Network</span>
+								<select id="ssid-select" name="ssid"></select>
+							</div>
+							<div class="field" id="identity-group">
+								<span class="title">User</span>
+								<input name="identity" />
+							</div>
+							<div class="field">
+								<span class="title">Passphrase</span>
+								<input type="password" name="passphrase" />
+							</div>
+							<div class="action">
+								<button type="submit" class="button button-primary">   Connect   </button>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="hidden" id="submit-message">
+					<h2>Applying Changes...</h2>
+					<p>
+						Your device will soon be online. If connection is unsuccessful, the Access Point will 
+						be back up in a few minutes, and reloading this page will allow you to try again.
+					</p>
+				</div>
+				<div class="hidden" id="no-networks-message">
+					<h2>No WiFi Networks Available</h2>
+					<p>
+						Please ensure there is a network within range and reboot the device.
+					</p>
 				</div>
 			</div>
-			<div class="hidden" id="submit-message">
-				<h2>Applying Changes...</h2>
-				<p>
-					Your device will soon be online. If connection is unsuccessful, the Access Point will 
-					be back up in a few minutes, and reloading this page will allow you to try again.
-				</p>
-			</div>
-			<div class="hidden" id="no-networks-message">
-				<h2>No WiFi Networks Available</h2>
-				<p>
-					Please ensure there is a network within range and reboot the device.
-				</p>
-			</div>
 		</div>
-		<script src="/js/jquery.min.js"></script>
-		<script src="/js/index.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/index.js"></script>
 	</body>
 </html>

@@ -16,6 +16,10 @@
     unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
 }
 
+html {
+    height: 100%;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -25,6 +29,9 @@ body {
     -moz-osx-font-smoothing: grayscale;
     font-size: 12pt;
     color: #515151;
+    background: #feb400;
+    display: flex;
+    flex-direction: column;
 }
 
 .hidden {
@@ -61,12 +68,11 @@ body {
 .header {
     width: 100%;
     height: 57px;
+    min-height: 57px;
+    max-height: 57px;
     margin: 0 -10px;
     padding: 0 20px 0 30px;
     background: #feb400;
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
-                0 4px 5px 0 rgba(0, 0, 0, 0.14),
-                0 1px 10px 0 rgba(0, 0, 0, 0.12);
     display: flex;
     align-content: center;
     align-items: center;
@@ -118,12 +124,25 @@ body {
     margin: 0 7px 0 0;
 }
 
+.layout {
+    flex: 1;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    padding: 0 0 10% 0;
+}
+
 .container {
-    padding: 20px;
+    padding: 0 20px;
     font-size: 12pt;
     width: 100%;
-    max-width: 780px;
+    max-width: 460px;
+    background: #fff;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+                0 2px 1px -1px rgba(0, 0, 0, 0.12),
+                0 1px 3px 0 rgba(0, 0, 0, 0.2);
     margin: 0 auto;
+    border-radius: 3px;
     box-sizing: border-box;
 }
 
