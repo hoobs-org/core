@@ -43,4 +43,10 @@
         white-space: pre-wrap;
         color: var(--log-text);
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #logs .message {
+            font-size: 12px;
+        }
+    }
 </style>

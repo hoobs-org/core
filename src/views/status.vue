@@ -209,4 +209,30 @@
         font-size: 808.476px;
         font-family: "Scancardium";
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #status .info,
+        #status .chart {
+            display: none;
+        }
+
+        #status .details {
+            padding: 10px 20px 20px 20px;
+        }
+
+        #status .details table tr {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #status .details table tr td {
+            padding: 0 10px 10px 10px;
+        }
+
+        #status .details table tr td:first-child {
+            border: 0 none;
+            padding: 10px 10px 0 10px;
+            font-weight: bold;
+        }
+    }
 </style>

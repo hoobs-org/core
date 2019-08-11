@@ -20,6 +20,7 @@
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
+        <div class="button mobile-show menu-cancel">{{ $t("cancel") }}</div>
     </div>
     <div v-else id="service-menu">
         <div class="profile">
@@ -35,6 +36,7 @@
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
+        <div class="button mobile-show menu-cancel">{{ $t("cancel") }}</div>
     </div>
 </template>
 
@@ -172,5 +174,24 @@
         height: 1px;
         margin: 0 10px;
         background: var(--border);
+    }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #service-menu {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--background);
+            box-shadow: unset;
+            width: 100%;
+            height: 100%;
+            z-index: 300;
+        }
+
+        .menu-cancel {
+            position: absolute;
+            bottom: 10px;
+            right: 0;
+        }
     }
 </style>

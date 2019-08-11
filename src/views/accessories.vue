@@ -229,4 +229,19 @@
         height: 226px;
         user-select: none;
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #accessories .info {
+            display: none;
+        }
+
+        #accessories .content .accessory-tiles {
+            flex-flow: unset;
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            align-items: center;
+            justify-content: flex-start;
+        }
+    }
 </style>

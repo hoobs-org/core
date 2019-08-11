@@ -345,4 +345,13 @@
         display: flex;
         justify-content: flex-end;
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #login .content {
+            align-content: unset;
+            align-items: unset;
+            padding: 0;
+            background: var(--background);
+        }
+    }
 </style>

@@ -197,4 +197,31 @@
         padding: 30px;
         text-align: center;
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #system .info {
+            display: none;
+        }
+
+        #system .system-content table {
+            margin: 0 20px 30px 0;
+        }
+
+        #system .system-content table tr {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #system .system-content table tr td {
+            padding: 0 10px 10px 10px;
+            min-width: unset !important;
+            width: unset !important;
+        }
+
+        #system .system-content table tr td:first-child {
+            border: 0 none;
+            padding: 10px 10px 0 10px;
+            font-weight: bold;
+        }
+    }
 </style>

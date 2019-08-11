@@ -12,7 +12,7 @@
                     </svg>
                 </div>
                 <h1 class="title-logo-text">{{ $t("hoobs") }}</h1>
-                <h1 v-html="routeName()"></h1>
+                <h1 class="mobile-hide" v-html="routeName()"></h1>
             </div>
             <div v-if="instances.length > 1" class="instance" v-on:click.stop="toggle('instance')">
                 {{ $bridge.name }}
@@ -45,7 +45,7 @@
                         <span v-bind:class="activeIcon('log')">subject</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('log')">{{ routeName('log') }}</span>
                     </router-link>
-                    <router-link v-if="user.admin" to="/users" @click.native="hide('nav')">
+                    <router-link v-if="user.admin" to="/users" @click.native="hide('nav')" class="mobile-hide">
                         <span v-bind:class="activeIcon('users')">people</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('users')">{{ routeName('users') }}</span>
                     </router-link>
@@ -53,7 +53,7 @@
                         <span v-bind:class="activeIcon('system')">memory</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('system')">{{ routeName('system') }}</span>
                     </router-link>
-                    <router-link v-if="user.admin" :to="defaultRoute === 'plugins' ? '/' : '/plugins'" @click.native="hide('nav')">
+                    <router-link v-if="user.admin" :to="defaultRoute === 'plugins' ? '/' : '/plugins'" @click.native="hide('nav')" class="mobile-hide">
                         <span v-bind:class="activeIcon('plugins', 'search')">extension</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('plugins', 'search')">{{ routeName('plugins') }}</span>
                     </router-link>
@@ -63,7 +63,7 @@
                     </router-link>
                 </div>
                 <div class="routes">
-                    <router-link v-if="user.admin" to="/config" @click.native="hide('nav')">
+                    <router-link v-if="user.admin" to="/config" @click.native="hide('nav')" class="mobile-hide">
                         <span v-bind:class="activeIcon('config', 'config-advanced')">settings</span>
                     </router-link>
                 </div>
@@ -631,5 +631,19 @@
         display: flex;
         flex-direction: column;
         font-size: 12pt;
+    }
+
+    .mobile-show {
+        display: none;
+    }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        .mobile-hide {
+            display: none !important;
+        }
+
+        .mobile-show {
+            display: unset;
+        }
     }
 </style>

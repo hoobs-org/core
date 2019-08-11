@@ -1,6 +1,7 @@
 <template>
     <div id="instance-menu">
         <div v-for="(instance, index) in instances" :key="index" v-on:click.stop="changeInstance(index)" class="item">{{ instance }}</div>
+        <div class="button mobile-show menu-cancel">{{ $t("cancel") }}</div>
     </div>
 </template>
 
@@ -50,5 +51,24 @@
         background: var(--background-highlight);
         text-decoration: none;
         color: var(--text-dark);
+    }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #instance-menu {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--background);
+            box-shadow: unset;
+            width: 100%;
+            height: 100%;
+            z-index: 300;
+        }
+
+        .menu-cancel {
+            position: absolute;
+            bottom: 10px;
+            right: 0;
+        }
     }
 </style>
