@@ -1,7 +1,5 @@
 import Request from "axios";
 
-import Config from "../etc/config.json";
-
 export default class Cookies {
     static set(name, value, minutes) {
         const date = new Date();
@@ -37,11 +35,11 @@ export default class Cookies {
         return null;
     }
 
-    static validate() {
+    static validate(api) {
         return new Promise((resolve) => {
             Request.defaults.headers.get["Authorization"] = Cookies.get("token");
 
-            Request.get(`${Config.client.api}/auth/validate`).then((response) => {
+            Request.get(`${api}/auth/validate`).then((response) => {
                 resolve(response.data.valid);
             }).catch(() => {
                 resolve(false);

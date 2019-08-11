@@ -8,7 +8,10 @@
     },
     "client": {
         "port": 8080,
-        "api": "http://hoobs.local:51827",
+        "config": "http://hoobs.local:51827",
+        "api": [
+            "http://hoobs.local:51827"
+        ],
         "socket": "http://hoobs.local:51828",
         "default_route": "status",
         "hide_setup_pin": false,

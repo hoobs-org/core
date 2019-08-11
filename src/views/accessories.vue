@@ -85,7 +85,7 @@
         },
 
         async created() {
-            this.pollingSeconds = this.config.server.polling_seconds || 15 < 15 ? 15 : this.config.server.polling_seconds || 15;
+            this.pollingSeconds = this.$server.polling_seconds || 15 < 15 ? 15 : this.$server.polling_seconds || 15;
             this.heartbeat();
         },
 

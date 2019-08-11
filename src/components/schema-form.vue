@@ -234,14 +234,3 @@
         }
     };
 </script>
-
-<style scoped>
-    #config .form .field {
-        display: flex;
-        flex-direction: column;
-    }
-
-    #config .form .field .title {
-        font-weight: bold;
-    }
-</style>

@@ -110,6 +110,7 @@
 <script>
     import Decamelize from "decamelize";
     import Inflection from "inflection";
+    import Request from "axios";
 
     import JSONEditor from "@/components/json-editor.vue";
     import TextField from "@/components/text-field.vue";
@@ -286,7 +287,15 @@
 
         methods: {
             async load() {
-                this.configuration = await this.api.get("/config");
+                await this.$configure();
+
+                this.configuration.client = this.$client;
+                this.configuration.bridge = this.$bridge;
+                this.configuration.description = this.$description;
+                this.configuration.ports = this.$ports;
+                this.configuration.accessories = this.$accessories;
+                this.configuration.platforms = this.$platforms;
+
                 this.plugins = await this.api.get("/plugins") || [];                 
 
                 this.loaded = true;
@@ -505,7 +514,17 @@
                 }
 
                 if (this.errors.length === 0) {
-                    await this.api.post("/config", data);
+                    await this.client.post("/config", {
+                        client: data.client
+                    });
+
+                    await this.api.post("/config", {
+                        bridge: data.bridge,
+                        description: data.description,
+                        ports: data.ports,
+                        accessories: data.accessories,
+                        platforms: data.platforms
+                    });
 
                     this.errors = [];
 
@@ -518,16 +537,6 @@
                     }
 
                     if (this.reload) {
-                        await this.api.post("/service/reload");
-
-                        this.config.client.default_route = data.client.default_route;
-                        this.config.client.hide_setup_pin = data.client.hide_setup_pin;
-                        this.config.client.inactive_logoff = data.client.inactive_logoff;
-                        this.config.client.theme = data.client.theme;
-                        this.config.client.locale = data.client.locale;
-
-                        this.reload = false;
-
                         window.location.reload();
                     }
 

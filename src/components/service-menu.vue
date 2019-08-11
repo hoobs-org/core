@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user.admin" id="homebridge-menu">
+    <div v-if="user.admin" id="service-menu">
         <div class="profile">
             <span class="icon">account_circle</span>
             <div class="profile-details">
@@ -21,7 +21,7 @@
         <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
     </div>
-    <div v-else id="homebridge-menu">
+    <div v-else id="service-menu">
         <div class="profile">
             <span class="icon">account_circle</span>
             <div class="profile-details">
@@ -40,7 +40,7 @@
 
 <script>
     export default {
-        name: "homebridge_menu",
+        name: "service-menu",
 
         props: {
             about: Function
@@ -66,7 +66,7 @@
                     switch (action) {
                         case "start":
                             this.$store.commit("lock");
-                            this.$store.commit("hide", "homebridge");
+                            this.$store.commit("hide", "service");
 
                             await this.api.post("/service/start");
 
@@ -76,7 +76,7 @@
 
                         case "stop":
                             this.$store.commit("lock");
-                            this.$store.commit("hide", "homebridge");
+                            this.$store.commit("hide", "service");
 
                             await this.api.post("/service/stop");
 
@@ -86,7 +86,7 @@
 
                         case "restart":
                             this.$store.commit("lock");
-                            this.$store.commit("hide", "homebridge");
+                            this.$store.commit("hide", "service");
 
                             await this.api.post("/service/restart");
 
@@ -95,7 +95,7 @@
                             break;
 
                         default:
-                            this.$store.commit("hide", "homebridge");
+                            this.$store.commit("hide", "service");
                             break;
                     }
                 }
@@ -105,7 +105,7 @@
 </script>
 
 <style scoped>
-    #homebridge-menu {
+    #service-menu {
         position: absolute;
         top: 20px;
         right: 40px;
@@ -114,7 +114,7 @@
         z-index: 300;
     }
 
-    #homebridge-menu .profile {
+    #service-menu .profile {
         padding: 20px 20px 10px 20px;
         display: flex;
         align-items: center;
@@ -123,30 +123,30 @@
         user-select: none;
     }
 
-    #homebridge-menu .profile .icon {
+    #service-menu .profile .icon {
         color: var(--button-primary);
         margin: 0 5px 0 0;
         font-size: 42px;
     }
 
-    #homebridge-menu .profile .identity {
+    #service-menu .profile .identity {
         color: var(--button-primary);
     }
 
-    #homebridge-menu .profile .profile-details {
+    #service-menu .profile .profile-details {
         flex: 1;
         display: flex;
         flex-direction: column;
     }
 
-    #homebridge-menu .profile .sub-title {
+    #service-menu .profile .sub-title {
         font-size: 10px;
     }
 
-    #homebridge-menu .item,
-    #homebridge-menu .item:link,
-    #homebridge-menu .item:active,
-    #homebridge-menu .item:visited {
+    #service-menu .item,
+    #service-menu .item:link,
+    #service-menu .item:active,
+    #service-menu .item:visited {
         padding: 10px 20px;
         color: var(--text);
         display: block;
@@ -155,20 +155,20 @@
         user-select: none;
     }
 
-    #homebridge-menu .item:hover {
+    #service-menu .item:hover {
         background: var(--background-highlight);
         text-decoration: none;
         color: var(--text-dark);
     }
 
-    #homebridge-menu .item-disabled {
+    #service-menu .item-disabled {
         padding: 10px 20px;
         cursor: default;
         user-select: none;
         opacity: 0.4;
     }
 
-    #homebridge-menu .item-seperator {
+    #service-menu .item-seperator {
         height: 1px;
         margin: 0 10px;
         background: var(--border);

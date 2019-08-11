@@ -12,7 +12,7 @@
             <div class="chart">
                 <line-chart id="system-load" height="100%" suffix="%" :discrete="true" :data="graph" :min="0" :max="100" :colors="colors" :curve="false" legend="bottom" />
             </div>
-            <div :class="client.hide_setup_pin ? 'details singluar' : 'details'">
+            <div :class="$client.hide_setup_pin ? 'details singluar' : 'details'">
                 <table>
                     <tbody v-if="running">
                         <tr v-for="(value, name) in info" :key="name">
@@ -99,7 +99,7 @@
             },
 
             showPin() {
-                return !this.client.hide_setup_pin;
+                return !this.$client.hide_setup_pin;
             }
         },
 

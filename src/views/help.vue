@@ -25,7 +25,7 @@
                 <b>Apple Home Can't Find Homebridge.</b> The Homebridge service is not running. Try starting the service. Check the Status screen and if the Homebridge service is not running, click the service menu on the rupper right and click Start Service.
             </p>
             <div v-if="user.admin" class="help-actions">
-                <router-link :to="client.default_route || 'status' === 'status' ? '/' : '/status'" class="button button-primary">{{ $t("status") }}</router-link>
+                <router-link :to="$client.default_route || 'status' === 'status' ? '/' : '/status'" class="button button-primary">{{ $t("status") }}</router-link>
                 <div v-if="!locked && running" class="button" v-on:click="startService()">{{ $t("restart_service") }}</div>
                 <div v-else-if="!locked" class="button" v-on:click="startService()">{{ $t("start_service") }}</div>
             </div>
@@ -128,15 +128,14 @@
                     }
 
                     const username = (await this.api.get("/config/generate")).username || "";
-                    const configuration = await this.api.get("/config");
 
                     const data = {
-                        client: configuration.client,
-                        bridge: configuration.bridge,
-                        description: configuration.description,
-                        ports: configuration.ports,
-                        accessories: configuration.accessories || [],
-                        platforms: configuration.platforms || []
+                        client: this.$client,
+                        bridge: this.$bridge,
+                        description: this.$description,
+                        ports: this.$ports,
+                        accessories: this.$accessories || [],
+                        platforms: this.$platforms || []
                     }
 
                     if (username && username !== "") {
@@ -149,6 +148,7 @@
                         await this.api.post("/service/start");
                     }
 
+                    await this.$configure();
                     this.$store.commit("unlock");
                 }
             }

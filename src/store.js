@@ -6,6 +6,10 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         user: null,
+        config: {
+            client: {},
+            server: {}
+        },
         messages: [],
         installed: [],
         version: null,
@@ -42,7 +46,8 @@ export default new Vuex.Store({
         },
         menus: {
             nav: false,
-            homebridge: false
+            service: false,
+            instance: false
         },
         query: "",
         results: [],
@@ -50,6 +55,10 @@ export default new Vuex.Store({
         notifications: {}
     },
     mutations: {
+        configure(state, data) {
+            state.config[data.type] = data.config;
+        },
+
         session(state, user) {
             state.user = user;
         },

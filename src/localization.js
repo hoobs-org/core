@@ -1,16 +1,13 @@
 import Vue from "vue";
 import VueI18n from "vue-i18n";
-import Config from "../etc/config.json";
 import Languages from "./lang/languages";
 
 class Language {
-    static load() {
-        return require(`./lang/${Language.current}.json`);
+    static load(locale) {
+        return require(`./lang/${Language.current(locale)}.json`);
     }
 
-    static get current() {
-        let locale = Config.client.locale;
-
+    static current(locale) {
         if ((!locale || locale === "") && navigator && (navigator.language || navigator.userLanguage)) {
             locale = navigator.language || navigator.userLanguage;
         }
@@ -22,12 +19,12 @@ class Language {
         return Language.supported(Languages[locale]);
     }
 
-    static supported(lang) {
-        switch (lang) {
+    static supported(locale) {
+        switch (locale) {
             case "en":
             case "es":
             case "ro":
-                return lang;
+                return locale;
 
             default:
                 return "en";
@@ -37,7 +34,9 @@ class Language {
 
 Vue.use(VueI18n);
 
-export default new VueI18n({
-    locale: Language.current,
-    messages: Language.load()
-});
+export default function (locale) {
+    return new VueI18n({
+        locale: Language.current(locale),
+        messages: Language.load(locale)
+    });
+}

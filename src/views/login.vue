@@ -95,9 +95,10 @@
             }
 
             Cookies.set("token", "", -30);
+            Cookies.set("instance", "", -30);
 
             this.$store.commit("session", null);
-            this.init = (await this.api.get("/auth")).state === -1;
+            this.init = (await this.client.get("/auth")).state === -1;
         },
 
         methods: {
@@ -109,13 +110,13 @@
                 }
 
                 if (this.errors.length === 0) {
-                    const response = await this.api.post("/auth", {
+                    const response = await this.client.post("/auth", {
                         username: this.username,
                         password: this.password
                     });
 
                     if (response.token) {
-                        Cookies.set("token", response.token, this.client.inactive_logoff || 30);
+                        Cookies.set("token", response.token, this.$client.inactive_logoff || 30);
 
                         this.$router.push({
                             path: this.url
@@ -147,7 +148,7 @@
                 }
 
                 if (this.errors.length === 0) {
-                    const response = await this.api.put("/auth", {
+                    const response = await this.client.put("/auth", {
                         name: this.name,
                         admin: true,
                         username: this.username,
@@ -155,7 +156,7 @@
                     });
 
                     if (response.token) {
-                        Cookies.set("token", response.token, this.client.inactive_logoff || 30);
+                        Cookies.set("token", response.token, this.$client.inactive_logoff || 30);
 
                         this.$router.push({
                             path: this.url

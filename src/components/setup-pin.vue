@@ -13,15 +13,17 @@
             code: String,
             setup: String
         },
+
         components: {
             "qrcode": QRCode
         },
+
         computed: {
             options() {
                 return {
                     width: 258,
                     color: {
-                        dark: (this.client.theme || "hoobs-light").endsWith("dark") ? "#feb400" : "#515151",
+                        dark: (this.$client.theme || "hoobs-light").endsWith("dark") ? "#feb400" : "#515151",
                         light: "#ffffff00"
                     }
                 };

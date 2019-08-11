@@ -4,180 +4,308 @@ import Client from "socket.io-client";
 import Graphing from "./graphing";
 import Chart from "chart.js";
 import Request from "axios";
-import Cookies from "./cookies";
 
-import Store from "./store";
-import Router from "./router";
 import Localization from "./localization";
-import App from "./app.vue";
+import Cookies from "./cookies";
+import Config from "./config";
+import Router from "./router";
 import Themes from "./themes/themes";
+import Store from "./store";
+import App from "./app.vue";
 
-import Config from "../etc/config.json";
+(async () => {
+    const config = new Config();
+    const index = parseInt(Cookies.get("instance") || "0", 10);
+    const instance = (await config.list())[index];
 
-Chart.defaults.global.defaultFontColor = (Config.client.theme || "hoobs-light").endsWith("dark") ? "#f9bd2b" : "#999";
+    await config.active(index);
 
-Vue.mixin({
-    data: () => {
-        return {
-            get config() {
-                return Config || {};
+    Vue.mixin({
+        computed: {
+            $socket() {
+                return config.socket;
+            },
+        
+            $control() {
+                return config.control;
+            },
+        
+            $server() {
+                return config.server;
+            },
+        
+            $client() {
+                return config.client;
+            },
+        
+            $bridge() {
+                return config.bridge;
+            },
+        
+            $description() {
+                return config.description;
+            },
+        
+            $ports() {
+                return config.ports;
+            },
+        
+            $accessories() {
+                return config.accessories;
+            },
+        
+            $platforms() {
+                return config.platforms;
+            },
+        
+            $instance() {
+                return config.instance;
+            }
+        },
+
+        methods: {
+            async $instances() {
+                return await config.list();
             },
 
-            get client() {
-                return Config.client || {};
+            async $active(index) {
+                Cookies.set("instance", index, 20160);
+
+                window.location.reload();
             },
+        
+            async $configure() {
+                await config.configure();
+            }
+        }
+    });
 
-            api: {
-                async get(url, sync) {
-                    Request.defaults.headers.get["Authorization"] = Cookies.get("token");
-
-                    if (sync) {
-                        return new Promise((resolve, reject) => {
-                            Request.get(`${Config.client.api}${url}`).then((response) => {
-                                resolve(response.data);
-                            }).catch((error) => {
-                                reject(error);
+    Vue.mixin({
+        data: () => {
+            return {
+                client: {
+                    async get(url, sync) {
+                        Request.defaults.headers.get["Authorization"] = Cookies.get("token");
+    
+                        if (sync) {
+                            return new Promise((resolve, reject) => {
+                                Request.get(`${config.control}${url}`).then((response) => {
+                                    resolve(response.data);
+                                }).catch((error) => {
+                                    reject(error);
+                                });
                             });
-                        });
-                    } else {
-                        return (await Request.get(`${Config.client.api}${url}`)).data;
+                        } else {
+                            return (await Request.get(`${config.control}${url}`)).data;
+                        }
+                    },
+    
+                    async post(url, data, sync) {
+                        Request.defaults.headers.post["Authorization"] = Cookies.get("token");
+    
+                        if (sync) {
+                            return new Promise((resolve, reject) => {
+                                Request.post(`${config.control}${url}`, data).then((response) => {
+                                    resolve(response.data);
+                                }).catch((error) => {
+                                    reject(error);
+                                });
+                            })
+                        } else {
+                            return (await Request.post(`${config.control}${url}`, data)).data;
+                        }
+                    },
+    
+                    async put(url, data, sync) {
+                        Request.defaults.headers.put["Authorization"] = Cookies.get("token");
+    
+                        if (sync) {
+                            return new Promise((resolve, reject) => {
+                                Request.put(`${config.control}${url}`, data).then((response) => {
+                                    resolve(response.data);
+                                }).catch((error) => {
+                                    reject(error);
+                                });
+                            })
+                        } else {
+                            return (await Request.put(`${config.control}${url}`, data)).data;
+                        }
+                    },
+    
+                    async delete(url, data, sync) {
+                        Request.defaults.headers.delete["Authorization"] = Cookies.get("token");
+    
+                        if (sync) {
+                            return new Promise((resolve, reject) => {
+                                Request.delete(`${config.control}${url}`, data).then((response) => {
+                                    resolve(response.data);
+                                }).catch((error) => {
+                                    reject(error);
+                                });
+                            })
+                        } else {
+                            return (await Request.delete(`${config.control}${url}`, data)).data;
+                        }
                     }
                 },
-
-                async post(url, data, sync) {
-                    Request.defaults.headers.post["Authorization"] = Cookies.get("token");
-
-                    if (sync) {
-                        return new Promise((resolve, reject) => {
-                            Request.post(`${Config.client.api}${url}`, data).then((response) => {
-                                resolve(response.data);
-                            }).catch((error) => {
-                                reject(error);
+    
+                api: {
+                    async get(url, sync) {
+                        Request.defaults.headers.get["Authorization"] = Cookies.get("token");
+    
+                        if (sync) {
+                            return new Promise((resolve, reject) => {
+                                Request.get(`${config.instance}${url}`).then((response) => {
+                                    resolve(response.data);
+                                }).catch((error) => {
+                                    reject(error);
+                                });
                             });
-                        })
-                    } else {
-                        return (await Request.post(`${Config.client.api}${url}`, data)).data;
-                    }
-                },
-
-                async put(url, data, sync) {
-                    Request.defaults.headers.put["Authorization"] = Cookies.get("token");
-
-                    if (sync) {
-                        return new Promise((resolve, reject) => {
-                            Request.put(`${Config.client.api}${url}`, data).then((response) => {
-                                resolve(response.data);
-                            }).catch((error) => {
-                                reject(error);
-                            });
-                        })
-                    } else {
-                        return (await Request.put(`${Config.client.api}${url}`, data)).data;
-                    }
-                },
-
-                async delete(url, data, sync) {
-                    Request.defaults.headers.delete["Authorization"] = Cookies.get("token");
-
-                    if (sync) {
-                        return new Promise((resolve, reject) => {
-                            Request.delete(`${Config.client.api}${url}`, data).then((response) => {
-                                resolve(response.data);
-                            }).catch((error) => {
-                                reject(error);
-                            });
-                        })
-                    } else {
-                        return (await Request.delete(`${Config.client.api}${url}`, data)).data;
+                        } else {
+                            return (await Request.get(`${config.instance}${url}`)).data;
+                        }
+                    },
+    
+                    async post(url, data, sync) {
+                        Request.defaults.headers.post["Authorization"] = Cookies.get("token");
+    
+                        if (sync) {
+                            return new Promise((resolve, reject) => {
+                                Request.post(`${config.instance}${url}`, data).then((response) => {
+                                    resolve(response.data);
+                                }).catch((error) => {
+                                    reject(error);
+                                });
+                            })
+                        } else {
+                            return (await Request.post(`${config.instance}${url}`, data)).data;
+                        }
+                    },
+    
+                    async put(url, data, sync) {
+                        Request.defaults.headers.put["Authorization"] = Cookies.get("token");
+    
+                        if (sync) {
+                            return new Promise((resolve, reject) => {
+                                Request.put(`${config.instance}${url}`, data).then((response) => {
+                                    resolve(response.data);
+                                }).catch((error) => {
+                                    reject(error);
+                                });
+                            })
+                        } else {
+                            return (await Request.put(`${config.instance}${url}`, data)).data;
+                        }
+                    },
+    
+                    async delete(url, data, sync) {
+                        Request.defaults.headers.delete["Authorization"] = Cookies.get("token");
+    
+                        if (sync) {
+                            return new Promise((resolve, reject) => {
+                                Request.delete(`${config.instance}${url}`, data).then((response) => {
+                                    resolve(response.data);
+                                }).catch((error) => {
+                                    reject(error);
+                                });
+                            })
+                        } else {
+                            return (await Request.delete(`${config.instance}${url}`, data)).data;
+                        }
                     }
                 }
             }
-        }
-    },
-    methods: {
-        getPlugin(name) {
-            const plugin = Config.platforms.filter(p => p.platform === name);
-
-            if (plugin.length > 0) {
-                return plugin;
+        },
+        methods: {
+            getPlugin(name) {
+                const plugin = config.platforms.filter(p => p.platform === name);
+    
+                if (plugin.length > 0) {
+                    return plugin;
+                }
+    
+                return {};
             }
-
-            return {};
         }
-    }
-});
-
-Vue.use(Graphing.use(Chart));
-
-Vue.use(new Socket({
-    connection: Client((Config.client || {}).socket || "http://hoobs.local:5128"),
-    vuex: {
-        Store
-    }
-}));
-
-Router.beforeEach(async (to, from, next) => {
-    if (to.path !== "/login" && !(await Cookies.validate())) {
-        Router.push({
-            path: "/login",
-            query: {
-                url: to.path
-            }
-        });
+    });
+    
+    Vue.use(Graphing.use(Chart));
+    
+    Vue.use(new Socket({
+        connection: Client(config.socket),
+        vuex: {
+            Store
+        }
+    }));
+    
+    const localization = Localization(config.client.locale);
+    const router = Router(config.client.default_route || "status");
+    
+    router.beforeEach(async (to, from, next) => {
+        if (to.path !== "/login" && !(await Cookies.validate(config.instance))) {
+            router.push({
+                path: "/login",
+                query: {
+                    url: to.path
+                }
+            });
+            
+            return;
+        }
+    
+        const token = Cookies.get("token");
+    
+        Cookies.set("token", token, config.client.inactive_logoff || 30);
+    
+        if (!token) {
+            Store.commit("session", null);
+        }
+    
+        try {
+            Store.commit("session", JSON.parse(atob(token)));
+        } catch {
+            Store.commit("session", null);
+        }
+    
+        next();
+    });
+    
+    Vue.config.productionTip = false;
+    
+    new Vue({
+        router,
+        i18n: localization,
+        store: Store,
+        themes: Themes,
+        sockets: {
+            log: (data) => {
+                Store.commit("log", data);
+            },
+            push: (data) => {
+                try {
+                    data = JSON.parse(data);
+                } catch {
+                    data = null;
+                }
+    
+                if (data) {
+                    Store.commit("push", data);
+                }
+            },
+            monitor: (status) => {
+                try {
+                    status = JSON.parse(status);
+                } catch {
+                    status = null;
+                }
         
-        return;
-    }
-
-    const token = Cookies.get("token");
-
-    Cookies.set("token", token, Config.client.inactive_logoff || 30);
-
-    if (!token) {
-        Store.commit("session", null);
-    }
-
-    try {
-        Store.commit("session", JSON.parse(atob(token)));
-    } catch {
-        Store.commit("session", null);
-    }
-
-    next();
-});
-
-Vue.config.productionTip = false;
-
-new Vue({
-    router: Router,
-    i18n: Localization,
-    themes: Themes,
-    store: Store,
-    sockets: {
-        log: (data) => {
-            Store.commit("log", data);
-        },
-        push: (data) => {
-            try {
-                data = JSON.parse(data);
-            } catch {
-                data = null;
-            }
-
-            if (data) {
-                Store.commit("push", data);
+                if (status) {
+                    if (status.data.instance === instance) {
+                        Store.commit("monitor", status);
+                    }
+                }
             }
         },
-        monitor: (data) => {
-            try {
-                data = JSON.parse(data);
-            } catch {
-                data = null;
-            }
-
-            if (data) {
-                Store.commit("monitor", data);
-            }
-        }
-    },
-    render: view => view(App)
-}).$mount("#app");
+        render: view => view(App)
+    }).$mount("#app");
+})()

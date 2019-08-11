@@ -95,7 +95,7 @@
         },
 
         async mounted() {
-            this.users = await this.api.get("/users");
+            this.users = await this.client.get("/users");
 
             if (this.users.length > 0) {
                 this.showUser(0);
@@ -144,8 +144,8 @@
             },
 
             async deleteUser() {
-                if ((await this.api.delete(`/user/${this.id}`)).success) {
-                    this.users = await this.api.get("/users");
+                if ((await this.client.delete(`/user/${this.id}`)).success) {
+                    this.users = await this.client.get("/users");
 
                     if (this.users.length === 0) {
                         this.current = undefined;
@@ -188,14 +188,14 @@
                 if (this.identityErrors.length === 0 && this.passwordErrors.length === 0) {
                     this.current = undefined;
 
-                    await this.api.put("/users", {
+                    await this.client.put("/users", {
                         name: this.name,
                         username: this.username,
                         password: this.password,
                         admin: this.admin
                     });
 
-                    this.users = await this.api.get("/users");
+                    this.users = await this.client.get("/users");
                     this.showUser(this.users.length - 1);
                 }
             },
@@ -225,7 +225,7 @@
                 if (this.identityErrors.length === 0 && this.passwordErrors.length === 0) {
                     this.current = undefined;
 
-                    if ((await this.api.post(`/user/${this.id}`, {
+                    if ((await this.client.post(`/user/${this.id}`, {
                         name: this.name,
                         username: this.username,
                         password: this.password !== "" ? this.password : null,
@@ -234,7 +234,7 @@
                         if (this.id === this.user.id) {
                             window.location.href = "/login";
                         } else {
-                            this.users = await this.api.get("/users");
+                            this.users = await this.client.get("/users");
                             this.showUser(current);
                         }
                     }

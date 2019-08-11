@@ -1,9 +1,9 @@
 <template>
-    <div id="app" :class="client.theme || 'hoobs-light'" v-on:click="hide('homebridge')">
+    <div id="app" :class="$client.theme || 'hoobs-light'" v-on:click="hide('service', 'instance')">
         <div class="header">
             <div class="title">
                 <div class="logo">
-                    <svg v-if="(client.theme || 'hoobs-light').endsWith('dark')" width="27" height="27" viewBox="0 0 80 80.92" xmlns="http://www.w3.org/2000/svg">
+                    <svg v-if="($client.theme || 'hoobs-light').endsWith('dark')" width="27" height="27" viewBox="0 0 80 80.92" xmlns="http://www.w3.org/2000/svg">
                         <path class="header-logo-svg" d="M65.05,0H15A15.08,15.08,0,0,0,0,15.12V65.8A15.09,15.09,0,0,0,15,80.92h50.1A15.09,15.09,0,0,0,80,65.8V15.12A15.08,15.08,0,0,0,65.05,0Zm2,39.07a2.09,2.09,0,0,1-1.79,1.71,1.76,1.76,0,0,1-2.09-1c-.83-2.21-2.63-3.55-4.2-5.07a5.66,5.66,0,0,1-2-4.81c.09-1.24,0-2.49,0-3.73h0c0-1.66,0-3.32,0-5,0-1.5-.94-1.78-2.15-1.76s-2.64-.21-2.72,1.65c-.07,1.5,0,3-.06,4.51,0,.5.25,1.2-.23,1.44s-.83-.45-1.18-.78c-3.29-3.11-6.59-6.22-9.83-9.39-1-1-1.74-1-2.71,0Q27.51,27.79,16.75,38.57c-.94.94-1.07,1.7,0,2.57.24.19.44.44.66.65,1.41,1.4,1.62,1.36,3.13,0,4.68-4.35,9.08-9,13.63-13.48,1-.94,2-1.81,2.93-2.74a3.81,3.81,0,0,1,5.74,0c2,1.9,3.84,3.89,5.78,5.82C52.18,34.88,55.8,38.4,59.37,42c2.35,2.36,2.31,4.44,0,6.83-3.65,3.72-5.08,3.7-8.77,0-3.21-3.2-6.5-6.32-9.7-9.53-1-1-1.76-.91-2.71.06Q33,44.63,27.81,49.8c-.91.9-.91,1.65,0,2.48a13.05,13.05,0,0,1,1,1,1.48,1.48,0,0,0,2.48,0c1.82-1.83,3.7-3.59,5.55-5.38a4,4,0,0,1,5.9-.13q3.09,2.91,6.07,6a4,4,0,0,1,0,5.72c-1.36,1.47-2.82,2.87-4.23,4.3a8.46,8.46,0,0,0-2.22,2.92,1.84,1.84,0,0,1-2.1,1.23,2,2,0,0,1-1.84-1.63,2.09,2.09,0,0,1,1.09-2.5c2.93-1.4,4.61-4.19,6.94-6.26a1.08,1.08,0,0,0,0-1.75l-5.57-5.59c-.75-.75-1.43-.54-2.13.14-1.84,1.8-3.71,3.57-5.56,5.37a4,4,0,0,1-5.9.26c-.51-.43-1-.92-1.44-1.4-2.38-2.44-2.38-4.57,0-7Q31,42.31,36.22,37c2.22-2.23,4.32-2.25,6.57-.06l10.6,10.39c1.5,1.46,1.67,1.44,3.45-.37,1.51-1.54,1.53-1.76,0-3.25-5.21-5.21-10.46-10.39-15.65-15.62-.88-.89-1.58-.95-2.46-.07-2.41,2.4-4.84,4.77-7.27,7.16q-4.8,4.71-9.59,9.42a3.94,3.94,0,0,1-5.79.13c-3.81-3.46-4.75-5.29-.33-9.57,6.88-6.67,13.53-13.58,20.29-20.39,2.41-2.43,4.49-2.44,6.91-.07,1.65,1.62,3.35,3.2,5,4.81.68.66,1.15,1.07,1.51-.3a3.4,3.4,0,0,1,3-2.57,14.24,14.24,0,0,1,1.83-.21c4.28-.12,5.77,1.36,5.78,5.68,0,2.6,0,5.19,0,7.78a3.09,3.09,0,0,0,1.06,2.61c1.66,1.44,2.86,3.38,5,4.27A1.88,1.88,0,0,1,67.1,39.07Z" />
                     </svg>
                     <svg v-else width="27" height="27" viewBox="0 0 80 80.92" xmlns="http://www.w3.org/2000/svg">
@@ -14,7 +14,11 @@
                 <h1 class="title-logo-text">{{ $t("hoobs") }}</h1>
                 <h1 v-html="routeName()"></h1>
             </div>
-            <div v-if="user" v-on:click.stop="toggle('homebridge')" class="icon homebridge">more_vert</div>
+            <div v-if="instances.length > 1" class="instance" v-on:click.stop="toggle('instance')">
+                {{ $bridge.name }}
+                <span class="icon">arrow_drop_down</span>
+            </div>
+            <div v-if="user" v-on:click.stop="toggle('service')" class="icon service">more_vert</div>
             <div v-if="locked" class="service-loader">
                 <loading-marquee :height="2" color="--title-text-dim" background="--title-text" />
             </div>
@@ -66,7 +70,8 @@
             </div>
             <div class="content">
                 <router-view />
-                <homebridge-menu v-if="visible['homebridge']" :about="showAbout" />
+                <service-menu v-if="visible['service']" :about="showAbout" />
+                <instance-menu v-if="visible['instance']" />
             </div>
         </div>
         <modal-dialog v-if="about" width="550px" :ok="closeAbout">
@@ -89,14 +94,16 @@
 
 <script>
     import ModalDialog from "@/components/modal-dialog.vue";
-    import Menu from "@/components/homebridge-menu.vue";
+    import ServiceMenu from "@/components/service-menu.vue";
+    import InstanceMenu from "@/components/instance-menu.vue";
     import Marquee from "@/components/loading-marquee.vue";
     import Plugins from "../etc/plugins.json";
 
     export default {
         components: {
             "modal-dialog": ModalDialog,
-            "homebridge-menu": Menu,
+            "service-menu": ServiceMenu,
+            "instance-menu": InstanceMenu,
             "loading-marquee": Marquee
         },
 
@@ -104,7 +111,8 @@
             return {
                 status: null,
                 loaded: false,
-                about: false
+                about: false,
+                instances: []
             }
         },
 
@@ -126,11 +134,11 @@
             },
 
             defaultRoute() {
-                if (!this.user.admin && (this.client.default_route === "log" || this.client.default_route === "plugins")) {
+                if (!this.user.admin && (this.$client.default_route === "log" || this.$client.default_route === "plugins")) {
                     return "status";
                 }
 
-                return this.client.default_route || "status";
+                return this.$client.default_route || "status";
             },
 
             user() {
@@ -139,6 +147,8 @@
         },
 
         async mounted() {
+            Chart.defaults.global.defaultFontColor = (this.$client.theme || "hoobs-light").endsWith("dark") ? "#f9bd2b" : "#999";
+
             document.body.addEventListener("error", (event) => {
                 if (event.target.tagName === "IMG") {
                     event.target.parentNode.removeChild(event.target);
@@ -146,6 +156,7 @@
             }, true);
 
             this.status = await this.api.get("/");
+            this.instances = await this.$instances();
             this.loaded = true;
         },
 
@@ -170,11 +181,27 @@
                 });
             },
 
-            hide(menu) {
-                this.$store.commit("hide", menu);
+            hide(...menu) {
+                for (let i = 0; i < menu.length; i++) {
+                    this.$store.commit("hide", menu[i]);
+                }
             },
 
             toggle(menu) {
+                switch (menu) {
+                    case "instance":
+                        this.hide("service");
+                        break;
+
+                    case "service":
+                        this.hide("instance");
+                        break;
+                    
+                    default:
+                        this.hide("service", "instance");
+                        break;
+                }
+
                 this.$store.commit("toggle", menu);
             },
 
@@ -421,6 +448,7 @@
     }
 
     #app .header .title {
+        flex: 1;
         display: flex;
         align-content: center;
         align-items: center;
@@ -463,7 +491,7 @@
         margin: 0 7px 0 0;
     }
 
-    #app .header .homebridge {
+    #app .header .service {
         width: 32px;
         height: 32px;
         padding: 4px 0;
@@ -476,12 +504,21 @@
         opacity: 0.9;
     }
 
-    #app .header .homebridge:hover {
+    #app .header .service:hover {
         background: var(--primary-dark);
     }
 
     #app .header .service-button:hover {
         opacity: 1;
+    }
+
+    #app .header .instance {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        margin: 0 10px 0 0;
+        color: var(--primary-text);
+        cursor: pointer;
     }
 
     #app .about-logo {

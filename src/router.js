@@ -1,13 +1,10 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Plugins from "../etc/plugins.json";
-import Config from "../etc/config.json";
 
 Vue.use(Router);
 
-const getRoutes = () => {
-    const defaultRoute = Config.client.default_route || "status";
-
+const getRoutes = (defaultRoute) => {
     const routes = [{
         path: defaultRoute === "status" ? "/" : "/status",
         name: "status",
@@ -78,8 +75,10 @@ const getRoutes = () => {
     return routes;
 }
 
-export default new Router({
-    mode: "history",
-    base: process.env.BASE_URL,
-    routes: getRoutes()
-});
+export default function(defaultRoute) {
+    return new Router({
+        mode: "history",
+        base: process.env.BASE_URL,
+        routes: getRoutes(defaultRoute)
+    });
+}
