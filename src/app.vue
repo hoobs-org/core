@@ -645,5 +645,13 @@
         .mobile-show {
             display: unset;
         }
+
+        #app .layout {
+            overflow: auto;
+        }
+
+        #app .content {
+            overflow: auto;
+        }
     }
 </style>
