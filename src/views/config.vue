@@ -7,6 +7,7 @@
             <a href="#accessories">{{ $t("accessories") }}</a>
             <a href="#plugins">{{ $t("plugins") }}</a>
             <a href="#backup">{{ $t("backup") }}</a>
+            <router-link to="/config/advanced">{{ $t("advanced_config") }}</router-link>
             <div class="actions">
                 <div v-if="!working && loaded" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
                 <div v-if="working" class="loading">
@@ -110,7 +111,6 @@
 <script>
     import Decamelize from "decamelize";
     import Inflection from "inflection";
-    import Request from "axios";
 
     import JSONEditor from "@/components/json-editor.vue";
     import TextField from "@/components/text-field.vue";

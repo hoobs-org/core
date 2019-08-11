@@ -1,5 +1,5 @@
 <template>
-    <div :style="`height: ${height || 300}px;`" id="editor"></div>
+    <div :style="height ? `height: ${height || 300}px;` : ''" id="editor"></div>
 </template>
 
 <script>
@@ -52,6 +52,8 @@
 <style>
     #editor {
         margin: 0 0 20px 0;
+        height: 100%;
+        box-sizing: border-box;
     }
 
     #editor .CodeMirror {
@@ -62,6 +64,7 @@
         direction: ltr;
         border: 1px var(--border) solid;
         border-radius: 5px;
+        box-sizing: border-box;
     }
 
     #editor .CodeMirror-lines {

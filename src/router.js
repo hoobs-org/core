@@ -54,9 +54,13 @@ const getRoutes = (defaultRoute) => {
         name: "layout",
         component: () => import("./views/layout.vue")
     },{
-        path: defaultRoute === "config" ? "/" : "/config",
+        path: "/config",
         name: "config",
         component: () => import("./views/config.vue")
+    },{
+        path: "/config/advanced",
+        name: "config-advanced",
+        component: () => import("./views/config-advanced.vue")
     },{
         path: "*",
         component: () => import("./views/error.vue")

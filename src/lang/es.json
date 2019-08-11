@@ -173,6 +173,9 @@
         "system": "Sistema",
         "software": "Software",
         "up_to_date": "A hoy",
-        "update_available": "Actualización disponible"
+        "update_available": "Actualización disponible",
+        "invalid_json": "JSON inválido.",
+        "guided_config": "Configuración guiada",
+        "advanced_config": "Configuracion avanzada"
     }
 }

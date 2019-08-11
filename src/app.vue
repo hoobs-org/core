@@ -64,7 +64,7 @@
                 </div>
                 <div class="routes">
                     <router-link v-if="user.admin" to="/config" @click.native="hide('nav')">
-                        <span v-bind:class="activeIcon('config')">settings</span>
+                        <span v-bind:class="activeIcon('config', 'config-advanced')">settings</span>
                     </router-link>
                 </div>
             </div>
@@ -274,6 +274,7 @@
                         return `${!title ? " | " : ""}${this.$t("plugins")}`;
 
                     case "config":
+                    case "config-advanced":
                         return `${!title ? " | " : ""}${this.$t("config")}`;
 
                     case "accessories":

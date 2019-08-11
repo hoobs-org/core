@@ -175,6 +175,9 @@
         "system": "System",
         "software": "Software",
         "up_to_date": "Up to Date",
-        "update_available": "Update Available"
+        "update_available": "Update Available",
+        "invalid_json": "Invalid JSON.",
+        "guided_config": "Guided Configuration",
+        "advanced_config": "Advanced Configuration"
     }
 }

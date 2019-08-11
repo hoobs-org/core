@@ -175,6 +175,9 @@
         "system": "Sistem",
         "software": "Software-ul",
         "up_to_date": "La zi",
-        "update_available": "Actualizare disponibila"
+        "update_available": "Actualizare disponibila",
+        "invalid_json": "JSON nevalid.",
+        "guided_config": "Configurare ghidată",
+        "advanced_config": "Configurare avansată"
     }
 }
