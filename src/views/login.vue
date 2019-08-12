@@ -353,5 +353,12 @@
             padding: 0;
             background: var(--background);
         }
+
+        #login .form {
+            width: 100%;
+            max-width: unset;
+            box-shadow: unset;
+            border-radius: unset;
+        }
     }
 </style>

@@ -7,7 +7,7 @@
             </p>
             <a href="http://hoobs.org" target="_blank" class="button button-primary">HOOBS.org</a>
             <a href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
-            <a href="https://www.reddit.com/r/hoobs/" target="_blank" class="button">HOOBS Subreddit</a>
+            <a href="https://www.reddit.com/r/hoobs/" target="_blank" class="button mobile-hide">HOOBS Subreddit</a>
             <h2>{{ $t("software") }}</h2>
             <p>
                 Stay up-to-date. Updating HOOBS helps keep your setup running healthy. Try checking for updates from the system menu.
