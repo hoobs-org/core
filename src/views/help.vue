@@ -42,7 +42,7 @@
                 <b>Warning</b> This will disconnect Homebridge from Apple Home. You will need to re-pair.
             </p>
             <div v-if="user.admin" class="help-actions">
-                <confirm-delete :title="$t('reset_connection')" :subtitle="$t('reset')" :confirmed="clearCache" />
+                <confirm-delete :title="$t('reset_connection')" :subtitle="$t('reset')" :confirmed="resetService" />
             </div>
             <div v-else class="help-actions">
                 <p>
@@ -105,12 +105,37 @@
                 }
             },
 
-            async clearCache() {
+            async resetService() {
                 if (!this.locked) {
+                    const running = this.running;
+
                     this.$store.commit("lock");
                     this.$store.commit("hide", "homebridge");
 
                     await this.api.post("/service/clean");
+
+                    const username = (await this.api.get("/config/generate")).username || "";
+
+                    const data = {
+                        client: this.$client,
+                        bridge: this.$bridge,
+                        description: this.$description,
+                        ports: this.$ports,
+                        accessories: this.$accessories || [],
+                        platforms: this.$platforms || []
+                    }
+
+                    if (username && username !== "") {
+                        data.bridge.username = username;
+                    }
+
+                    await this.api.post("/config", data);
+
+                    if (running) {
+                        await this.api.post("/service/start");
+                    }
+
+                    await this.$configure();
 
                     this.$store.commit("unlock");
                 }
@@ -149,6 +174,7 @@
                     }
 
                     await this.$configure();
+
                     this.$store.commit("unlock");
                 }
             }
