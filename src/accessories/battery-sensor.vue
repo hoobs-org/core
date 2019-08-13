@@ -99,4 +99,15 @@
         padding: 5px 0;
         color: var(--title-text);
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #sensor {
+            padding: 0;
+        }
+
+        #sensor .inner {
+            border-radius: unset;
+            box-shadow: unset;
+        }
+    }
 </style>

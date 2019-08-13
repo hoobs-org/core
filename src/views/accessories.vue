@@ -247,6 +247,10 @@
             display: none;
         }
 
+        #accessories .content .room-layout h2 {
+            text-align: center;
+        }
+
         #accessories .content .accessory-tiles {
             flex-flow: unset;
             display: flex;
@@ -254,6 +258,16 @@
             align-content: center;
             align-items: center;
             justify-content: flex-start;
+        }
+
+        #accessories .content .accessory-tiles .accessory {
+            margin: 10px;
+            width: 100%;
+            padding: 10px 0 0 0;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: var(--elevation-small);
         }
     }
 </style>

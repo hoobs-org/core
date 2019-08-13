@@ -62,4 +62,15 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #device {
+            padding: 0;
+        }
+
+        #device .inner {
+            border-radius: unset;
+            box-shadow: unset;
+        }
+    }
 </style>
