@@ -7,6 +7,7 @@
             <p v-if="info" class="note">
                 {{ $t("setup_id_message") }}
             </p>
+            <div class="button button-primary" v-on:click="showPinDialog()">{{ $t("show_setup_pin") }}</div>
         </div>
         <div class="content">
             <div class="chart">
