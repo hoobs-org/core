@@ -63,6 +63,7 @@
         data() {
             return {
                 skip: false,
+                interval: null,
                 pollingSeconds: 15,
                 accessories: {
                     rooms: []
@@ -84,23 +85,34 @@
             }
         },
 
-        async created() {
+        async mounted() {
             this.pollingSeconds = this.$server.polling_seconds || 15 < 15 ? 15 : this.$server.polling_seconds || 15;
+
+            if (this.pollingSeconds > 0) {
+                this.interval = setInterval(() => {
+                    this.heartbeat();
+                }, this.pollingSeconds * 1000);
+            }
+
             this.heartbeat();
+        },
+
+        destroyed() {
+            if (this.interval) {
+                clearInterval(this.interval);   
+            } 
         },
 
         methods: {
             async heartbeat() {
                 if (!this.skip && this.running && !this.locked) {
-                    this.accessories = await this.api.get("/accessories");
+                    try {
+                        this.accessories = await this.api.get("/accessories");
+                    } catch {
+                        this.skip = true;
+                    }
                 } else {
                     this.skip = false;
-                }
-
-                if (this.pollingSeconds > 0) {
-                    setTimeout(() => {
-                        this.heartbeat();
-                    }, this.$store.state.running ? (this.pollingSeconds * 1000) : 10);
                 }
             },
 
