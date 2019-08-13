@@ -315,13 +315,6 @@
     }
 
     @font-face {
-        font-family: "Scancardium";
-        font-weight: normal;
-        font-style: normal;
-        src: url(./assets/scancardium.woff) format("woff2");
-    }
-
-    @font-face {
         font-family: "Material Icons";
         font-style: normal;
         font-weight: 400;
