@@ -19,11 +19,7 @@
         "theme": "hoobs-light",
         "locale": "en"
     },
-    "bridge": {
-        "name": "HOOBS",
-        "port": 51826,
-        "pin": "031-45-154"
-    },
+    "bridge": {},
     "description": "",
     "ports": {},
     "plugins": [],

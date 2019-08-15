@@ -5,4 +5,4 @@ process.title = "hoobs-core";
 const { realpathSync } = require("fs");
 const { dirname, join } = require("path");
 
-require(join(dirname(realpathSync(__filename)), "../lib/loader"))();
+require(join(dirname(realpathSync(__filename)), "../lib/cli"))();
