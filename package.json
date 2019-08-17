@@ -1,12 +1,11 @@
 {
-    "name": "hoobs-core",
+    "name": "@hoobs/hoobs",
     "version": "3.0.0",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
         "HOOBS",
-        "homebridge",
-        "homebridge-plugin"
+        "homebridge"
     ],
     "repository": {
         "type": "git",
@@ -21,8 +20,7 @@
     },
     "author": "Michael J Kellsy",
     "engines": {
-        "node": ">=4.3.2",
-        "homebridge": ">=0.4.50"
+        "node": ">=12.8.1"
     },
     "scripts": {
         "build": "vue-cli-service build"
