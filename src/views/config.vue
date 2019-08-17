@@ -76,8 +76,14 @@
                 <a id="plugins"></a>
                 <div v-for="(plugin, index) in plugins" :key="`${index}-platform`">
                     <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin) >= 0">
-                        <h2 :id="plugin.name">{{ platformTitle(plugin) }}</h2>
-                        <p v-if="plugin.description !== ''">
+                        <h2 v-if="plugin.name === 'homebridge-gsh'" :id="plugin.name">Google Home</h2>
+                        <h2 v-else :id="plugin.name">{{ platformTitle(plugin) }}</h2>
+                        <p v-if="plugin.name === 'homebridge-gsh'">
+                            <span>
+                                <div class="button button-primary" v-on:click="gsh">Link Account</div>
+                            </span>
+                        </p>
+                        <p v-else-if="plugin.description !== ''">
                             {{ plugin.description }}
                         </p>
                         <div v-if="plugin.schema && plugin.schema.platform.schema.properties">
@@ -253,7 +259,9 @@
                 errors: [],
                 show: {
                     accessories: false
-                }
+                },
+                gshPopup: null,
+                gshOriginCheck: null
             };
         },
 
@@ -266,6 +274,20 @@
                 } else {
                     document.querySelector("#accessories").scrollIntoView();
                 }
+            }
+
+            window.addEventListener("message", this.gshListner, false);
+        },
+
+        destroyed() {
+            if (this.gshOriginCheck) {
+                clearInterval(this.gshOriginCheck);
+            }
+
+            window.removeEventListener("message", this.gshListner);
+
+            if (this.gshPopup) {
+                this.gshPopup.close();
             }
         },
 
@@ -544,6 +566,55 @@
                 } else {
                     this.working = false;
                 }
+            },
+
+            gsh() {
+                const width = 450;
+                const height = 700;
+                const top = window.top.outerHeight / 2 + window.top.screenY - (height / 2);
+                const left = window.top.outerWidth / 2 + window.top.screenX - (width / 2);
+
+                this.gshPopup = window.open(
+                    "https://homebridge-gsh.iot.oz.nu/link-account",
+                    "oznu-google-smart-home-auth",
+                    `toolbar=no, location=no, directories=no, status=no, menubar=no scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`,
+                );
+
+                this.gshOriginCheck = setInterval(() => {
+                    this.gshPopup.postMessage("origin-check", "https://homebridge-gsh.iot.oz.nu");
+                }, 2000);
+            },
+
+            gshListner(event) {
+                if (event.origin === "https://homebridge-gsh.iot.oz.nu") {
+                    try {
+                        const data = JSON.parse(event.data);
+
+                        if (data.token) {
+                            this.gshProcessToken(data.token);
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            },
+
+            gshProcessToken(token) {
+                if (this.gshOriginCheck) {
+                    clearInterval(this.gshOriginCheck);
+                }
+
+                this.gshOriginCheck = null;
+
+                if (this.gshPopup) {
+                    this.gshPopup.close();
+                }
+
+                this.gshPopup = null;
+
+                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "homebridge-gsh");
+
+                this.configuration.platforms[index].token = token;
             }
         }
     }
