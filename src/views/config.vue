@@ -615,6 +615,8 @@
                 const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "homebridge-gsh");
 
                 this.configuration.platforms[index].token = token;
+
+                this.save();
             }
         }
     }
