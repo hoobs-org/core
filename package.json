@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -16,7 +16,8 @@
     },
     "main": "lib/loader.js",
     "bin": {
-        "homebridge": "bin/homebridge"
+        "homebridge": "bin/homebridge",
+        "hoobs": "bin/hoobs"
     },
     "author": "Michael J Kellsy",
     "engines": {

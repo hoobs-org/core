@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-
-process.title = "homebridge";
-
-const { join, dirname } = require("path");
-const { realpathSync } = require("fs");
-
-require(join(dirname(realpathSync(__filename)), "../node_modules/homebridge/lib/cli"))();

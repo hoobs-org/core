@@ -2,7 +2,91 @@
 
 process.title = "hoobs-core";
 
-const { realpathSync } = require("fs");
+const OS = require("os");
+const File = require("fs-extra");
+const Remove = require("rimraf");
+
 const { dirname, join } = require("path");
 
-require(join(dirname(realpathSync(__filename)), "../lib/cli"))();
+const root = join(OS.homedir(), ".hoobs");
+const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
+const installed = JSON.parse(File.readFileSync(join(applicaiton, "package.json")));
+
+let executing = null;
+
+if (File.existsSync(join(root, "package.json"))) {
+    executing = JSON.parse(File.readFileSync(join(join(root, "package.json"))));
+}
+
+if (!executing || installed.version !== executing.version) {
+    console.log("Initilizing ...");
+
+    if (executing && executing.dependencies) {
+        const dependencies = Object.keys(executing.dependencies);
+
+        for (let i = 0; i < dependencies.length; i++) {
+            const name = dependencies[i];
+            const dependency = executing.dependencies[dependencies[i]];
+
+            if ((name.startsWith("homebridge-") || (name.startsWith("@hoobs/") && name !== "@hoobs/homebridge")) && !installed.dependencies.hasOwnProperty(name)) {
+                installed.dependencies[name] = dependency;
+            }
+        }
+
+        if (File.existsSync(join(root, "package.json"))) {
+            File.unlinkSync(join(root, "package.json"));
+        }
+
+        File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
+    } else {
+        if (File.existsSync(join(root, "package.json"))) {
+            File.unlinkSync(join(root, "package.json"));
+        }
+
+        File.copySync(join(applicaiton, "package.json"), join(root, "package.json"));
+    }
+
+    if (File.existsSync(join(root, "lib"))) {
+        Remove.sync(join(root, "lib"));
+    }
+
+    if (File.existsSync(join(root, "src"))) {
+        Remove.sync(join(root, "src"));
+    }
+
+    if (File.existsSync(join(root, "public"))) {
+        Remove.sync(join(root, "public"));
+    }
+
+    if (File.existsSync(join(root, "node_modules"))) {
+        Remove.sync(join(root, "node_modules"));
+    }
+
+    File.copySync(join(applicaiton, "lib"), join(root, "lib"));
+    File.copySync(join(applicaiton, "src"), join(root, "src"));
+    File.copySync(join(applicaiton, "public"), join(root, "public"));
+    File.copySync(join(applicaiton, "node_modules"), join(root, "node_modules"));
+
+    if (File.existsSync(join(root, "default.json"))) {
+        File.unlinkSync(join(root, "default.json"));
+    }
+
+    if (File.existsSync(join(root, "vue.config.json"))) {
+        File.unlinkSync(join(root, "vue.config.json"));
+    }
+
+    if (File.existsSync(join(root, "babel.config.json"))) {
+        File.unlinkSync(join(root, "babel.config.json"));
+    }
+
+    if (File.existsSync(join(root, "postcss.config.json"))) {
+        File.unlinkSync(join(root, "postcss.config.json"));
+    }
+
+    File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
+    File.copySync(join(applicaiton, "vue.config.js"), join(root, "vue.config.js"));
+    File.copySync(join(applicaiton, "babel.config.js"), join(root, "babel.config.js"));
+    File.copySync(join(applicaiton, "postcss.config.js"), join(root, "postcss.config.js"));
+}
+
+require(join(root, "lib/cli"))();
