@@ -7,6 +7,7 @@ const File = require("fs-extra");
 const Remove = require("rimraf");
 
 const { dirname, join } = require("path");
+const { exec } = require("child_process");
 
 const root = join(OS.homedir(), ".hoobs");
 const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
@@ -87,6 +88,13 @@ if (!executing || installed.version !== executing.version) {
     File.copySync(join(applicaiton, "vue.config.js"), join(root, "vue.config.js"));
     File.copySync(join(applicaiton, "babel.config.js"), join(root, "babel.config.js"));
     File.copySync(join(applicaiton, "postcss.config.js"), join(root, "postcss.config.js"));
-}
 
-require(join(root, "lib/cli"))();
+
+    exec("npm install", {
+        cwd: root
+    }, () => {
+        require(join(root, "lib/cli"))();
+    });
+} else {
+    require(join(root, "lib/cli"))();
+}
