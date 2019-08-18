@@ -5,22 +5,24 @@ process.title = "hoobs-core";
 const OS = require("os");
 const File = require("fs-extra");
 const Remove = require("rimraf");
+const Ora = require("ora");
 
 const { dirname, join } = require("path");
 const { exec } = require("child_process");
 
-const root = join(OS.homedir(), ".hoobs");
+const root = join(OS.userInfo().homedir, ".hoobs");
 const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
 const installed = JSON.parse(File.readFileSync(join(applicaiton, "package.json")));
 
 let executing = null;
+let throbber = null;
 
 if (File.existsSync(join(root, "package.json"))) {
     executing = JSON.parse(File.readFileSync(join(join(root, "package.json"))));
 }
 
 if (!executing || installed.version !== executing.version) {
-    console.log("Initilizing ...");
+    throbber = Ora("Initilizing").start();
 
     if (executing && executing.dependencies) {
         const dependencies = Object.keys(executing.dependencies);
@@ -66,7 +68,6 @@ if (!executing || installed.version !== executing.version) {
     File.copySync(join(applicaiton, "lib"), join(root, "lib"));
     File.copySync(join(applicaiton, "src"), join(root, "src"));
     File.copySync(join(applicaiton, "public"), join(root, "public"));
-    File.copySync(join(applicaiton, "node_modules"), join(root, "node_modules"));
 
     if (File.existsSync(join(root, "default.json"))) {
         File.unlinkSync(join(root, "default.json"));
@@ -89,10 +90,11 @@ if (!executing || installed.version !== executing.version) {
     File.copySync(join(applicaiton, "babel.config.js"), join(root, "babel.config.js"));
     File.copySync(join(applicaiton, "postcss.config.js"), join(root, "postcss.config.js"));
 
-
     exec("npm install", {
         cwd: root
     }, () => {
+        throbber.stop();
+
         require(join(root, "lib/cli"))();
     });
 } else {
