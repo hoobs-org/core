@@ -5,7 +5,10 @@
                 <span v-if="checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
                 <span v-else class="status">{{ $t("updated") }}</span>
             </span>
-            <h3>{{ plugin.name }}</h3>
+            <div v-if="plugin.scope === 'hoobs'" class="certified">
+                HOOBS Certified
+            </div>
+            <h3>{{ humanize(plugin.name) }}</h3>
             <span class="version">
                 {{ plugin.installed || plugin.version }}
                 <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
@@ -34,6 +37,9 @@
 </template>
 
 <script>
+    import Decamelize from "decamelize";
+    import Inflection from "inflection";
+
     import Versioning from "../versioning";
     import Dates from "../dates";
     import Marquee from "@/components/loading-marquee.vue";
@@ -82,6 +88,10 @@
 
             checkVersion(version, latest) {
                 return Versioning.checkVersion(version, latest);
+            },
+
+            humanize(string) {
+                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").trim()));
             },
 
             async install() {
@@ -187,13 +197,13 @@
     #plugin h3 {
         font-size: 20px;
         line-height: normal;
+        color: var(--title-text);
         padding: 0;
         margin: 0;
     }
 
     #plugin .status {
         font-size: 14px;
-        color: var(--title-text);
         font-weight: bold;
     }
 
@@ -235,5 +245,11 @@
     #plugin .config-link .icon {
         font-size: 17px;
         margin: 0 2px 0 0;
+    }
+
+    #plugin .certified {
+        font-size: 12px;
+        color: var(--title-text);
+        padding: 10px 0 0 0;
     }
 </style>
