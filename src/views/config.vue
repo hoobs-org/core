@@ -76,9 +76,9 @@
                 <a id="plugins"></a>
                 <div v-for="(plugin, index) in plugins" :key="`${index}-platform`">
                     <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin) >= 0">
-                        <h2 v-if="plugin.name === 'google-home' || plugin.name === 'homebridge-gsh'" :id="plugin.name">Google Home</h2>
+                        <h2 v-if="plugin.name === 'google-home'" :id="plugin.name">Google Home</h2>
                         <h2 v-else :id="plugin.name">{{ platformTitle(plugin) }}</h2>
-                        <p v-if="plugin.name === 'google-home' || plugin.name === 'homebridge-gsh'">
+                        <p v-if="plugin.name === 'google-home'">
                             <span>
                                 <div class="button button-primary" v-on:click="gsh">Link Account</div>
                             </span>
@@ -612,7 +612,7 @@
 
                 this.gshPopup = null;
 
-                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "homebridge-gsh");
+                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "google-home");
 
                 this.configuration.platforms[index].token = token;
 
