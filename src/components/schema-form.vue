@@ -151,7 +151,7 @@
                 switch((field.type || "").toLowerCase()) {
                     case "text":
                     case "string":
-                        return "";
+                        return field.default || "";
                     
                     case "float":
                     case "decimal":
@@ -159,14 +159,14 @@
                     case "number":
                     case "int":
                     case "integer":
-                        return 0;
+                        return field.default || 0;
 
                     case "bool":
                     case "boolean":
-                        return false;
+                        return field.default || false;
                     
                     case "date":
-                        return new Date();
+                        return field.default ? new Date(field.default) : new Date();
                 }
 
                 return null;

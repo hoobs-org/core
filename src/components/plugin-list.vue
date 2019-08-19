@@ -18,13 +18,13 @@
         </div>
         <div v-if="!plugin.local && !working" class="actions">
             <div v-if="plugin.installed">
-                <router-link :to="`/plugin/${plugin.name}`" class="button">{{ $t("details") }}</router-link>
+                <router-link :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`" class="button">{{ $t("details") }}</router-link>
                 <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
                 <div v-if="plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
                 <router-link v-if="plugin.name !== 'homebridge'" class="config-link" :to="`/config#${plugin.name}`"><span class="icon">settings</span> {{ $t("config") }}</router-link>
             </div>
             <div v-else>
-                <router-link :to="`/plugin/${plugin.name}`" class="button">{{ $t("details") }}</router-link>
+                <router-link :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`" class="button">{{ $t("details") }}</router-link>
                 <div v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
             </div>
         </div>
@@ -106,7 +106,7 @@
                         await this.api.post("/service/stop");
                     }
 
-                    await this.api.put(`/plugins/${this.plugin.name}`);
+                    await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
 
                     if (this.server && restart) {
                         await this.api.post("/service/start");
@@ -132,7 +132,7 @@
                         await this.api.post("/service/stop");
                     }
 
-                    await this.api.delete(`/plugins/${this.plugin.name}`);
+                    await this.api.delete(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
 
                     if (this.server && restart) {
                         await this.api.post("/service/start");
@@ -158,7 +158,7 @@
                         await this.api.post("/service/stop");
                     }
 
-                    await this.api.post(`/plugins/${this.plugin.name}`);
+                    await this.api.post(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
 
                     if (this.server && restart) {
                         await this.api.post("/service/start");

@@ -33,7 +33,7 @@
         },
 
         mounted() {
-            this.api.get(`/plugins/${this.$route.params.name}`, true).then((response) => {
+            this.api.get(`/plugins/${encodeURIComponent(this.$route.params.name)}`, true).then((response) => {
                 if (response.readme && response.readme !== "") {
                     this.markdown = response.readme;
                 } else {
