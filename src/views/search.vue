@@ -67,7 +67,7 @@
             this.query = this.$store.state.query;
             this.results = this.$store.state.results;
 
-            this.fetchCertified(this.category);
+            this.fetchCertified(this.category || this.categories[0]);
         },
 
         created: function () {
