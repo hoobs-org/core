@@ -18,9 +18,12 @@
                         {{ plugin.installed || plugin.version }}
                         <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
                     </div>
-                    <div v-if="!working && checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
-                    <div v-if="!working && plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
-                    <div v-if="working" class="loader">
+                    <div v-if="!working" class="actions">
+                        <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>
+                        <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
+                        <div v-if="plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
+                    </div>
+                    <div v-else class="loader">
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
                     </div>
                 </div>
@@ -32,8 +35,11 @@
                         {{ plugin.installed || plugin.version }}
                         <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
                     </div>
-                    <div v-if="!working" v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
-                    <div v-if="working" class="loader">
+                    <div v-if="!working" class="actions">
+                        <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>
+                        <div v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
+                    </div>
+                    <div v-else class="loader">
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
                     </div>
                 </div>
@@ -267,7 +273,7 @@
     #plugin .control {
         padding: 20px;
         margin: 0 0 20px 0;
-        background: var(--background);
+        background: var(--background-light);
         box-shadow: var(--elevation-small);
         border-radius: 3px;
         display: block;
@@ -278,6 +284,22 @@
     #plugin .info {
         width: 210px;
         padding: 20px 0 20px 20px;
+    }
+
+    #plugin .actions {
+        display: flex;
+        align-content: center;
+        align-items: center;
+    }
+
+    #plugin .actions .icon {
+        font-size: 32px;
+        margin: 0 10px 0 0;
+        cursor: pointer;
+    }
+
+    #plugin .actions .icon:hover {
+        color: var(--text-dark);
     }
 
     #plugin .info a,

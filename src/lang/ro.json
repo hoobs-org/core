@@ -61,7 +61,7 @@
         "id_message": "Aceasta sectiune identifica utilizatorul.",
         "id": "Identificare",
         "install": "Instalare",
-        "installed_packages": "Pachete de aplicatii instalate",
+        "installed_packages": "Plugin-uri instalate",
         "interface_settings_message": "Aceasta sectiune defineste aspectul si aspectul interfetei.",
         "interface_settings": "Setari interfata",
         "invalid_inactive_logoff": "Timpul de inactivare invalid este valabil intre 5 si 60.",

@@ -179,7 +179,7 @@
     #plugin {
         padding: 20px 20px 0 20px;
         margin: 0 0 20px 0;
-        background: var(--background);
+        background: var(--background-light);
         box-shadow: var(--elevation-small);
         border-radius: 3px;
         display: block;

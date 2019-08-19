@@ -144,7 +144,7 @@
         padding: 20px;
         display: flex;
         flex-direction: column;
-        background: var(--background);
+        background: var(--background-light);
         box-shadow: var(--elevation-small);
         border-radius: 3px;
         color: var(--text) !important;

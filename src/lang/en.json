@@ -61,7 +61,7 @@
         "id_message": "This section uniquely identifies the user.",
         "id": "Identification",
         "install": "Install",
-        "installed_packages": "Installed Packages",
+        "installed_packages": "Installed Plugins",
         "interface_settings_message": "This section defines the interface look and feel.",
         "interface_settings": "Interface Settings",
         "invalid_inactive_logoff": "Invalid inactive timeout, must be between 5 and 60.",

@@ -59,7 +59,7 @@
         "id_message": "Esta sección identifica de forma exclusiva al usuario.",
         "id": "Identificación",
         "install": "Instalar",
-        "installed_packages": "Paquetes de instalación",
+        "installed_packages": "Complementos instalados",
         "interface_settings_message": "Esta sección define el aspecto de la interfaz.",
         "interface_settings": "Configuraciones de interfaz",
         "invalid_inactive_logoff": "Tiempo de espera inactivo no válido, debe ser entre 5 y 60.",
