@@ -35,12 +35,17 @@ const getRoutes = (defaultRoute) => {
         component: () => import("./views/users.vue")
     },{
         path: defaultRoute === "plugins" ? "/" : "/plugins",
+        name: "search",
+        component: () => import("./views/search.vue")
+    },{
+        path: "/plugins/installed",
         name: "plugins",
         component: () => import("./views/plugins.vue")
     },{
-        path: "/plugins/search",
-        name: "search",
-        component: () => import("./views/search.vue")
+        path: "/plugins/:category",
+        name: "browse",
+        component: () => import("./views/search.vue"),
+        props: true
     },{
         path: "/plugin/:name",
         name: "plugin",

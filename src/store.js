@@ -12,6 +12,7 @@ export default new Vuex.Store({
         },
         messages: [],
         installed: [],
+        categories: [],
         version: null,
         running: false,
         locked: false,
@@ -179,6 +180,10 @@ export default new Vuex.Store({
 
         cache(state, data) {
             state.installed = data;
+        },
+
+        category(state, data) {
+            state.categories = data;
         }
     }
 });

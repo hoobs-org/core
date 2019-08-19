@@ -176,6 +176,14 @@
         "update_available": "Actualización disponible",
         "invalid_json": "JSON inválido.",
         "guided_config": "Configuración guiada",
-        "advanced_config": "Configuracion avanzada"
+        "advanced_config": "Configuracion avanzada",
+        "category_climate": "Clima",
+        "category_hubs": "Hubs y puentes",
+        "category_lighting": "Iluminación",
+        "category_media": "Entretenimiento y medios",
+        "category_outdoor": "Al aire libre",
+        "category_security": "Seguridad",
+        "category_video": "Monitoreo de video",
+        "category_voice_assistant": "Asistentes de voz"
     }
 }

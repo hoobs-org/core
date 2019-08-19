@@ -178,6 +178,14 @@
         "update_available": "Actualizare disponibila",
         "invalid_json": "JSON nevalid.",
         "guided_config": "Configurare ghidată",
-        "advanced_config": "Configurare avansată"
+        "advanced_config": "Configurare avansată",
+        "category_climate": "Climat",
+        "category_hubs": "Butuci si poduri",
+        "category_lighting": "Iluminat",
+        "category_media": "Divertisment și media",
+        "category_outdoor": "În aer liber",
+        "category_security": "Securitate",
+        "category_video": "Video și monitorizare",
+        "category_voice_assistant": "Asistenți vocali"
     }
 }

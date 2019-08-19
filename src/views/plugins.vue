@@ -1,16 +1,19 @@
 <template>
     <div v-if="user.admin" id="plugins">
         <div class="info">
-            <router-link to="/plugins" class="active">{{ $t("installed_packages") }}</router-link>
-            <router-link to="/plugins/search">{{ $t("browse_packages") }}</router-link>
+            <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
+            <router-link to="/plugins/installed" class="active">{{ $t("installed_packages") }}</router-link>
         </div>
         <div class="content">
-            <plugin-list v-for="(plugin, index) in installed" :key="index" :plugin="plugin" />
+            <plugin-list v-for="(plugin, index) in installed" :key="`plugin-${index}`" :plugin="plugin" />
         </div>
     </div>
 </template>
 
 <script>
+    import Decamelize from "decamelize";
+    import Inflection from "inflection";
+
     import PluginList from "@/components/plugin-list.vue";
 
     export default {
@@ -27,11 +30,40 @@
 
             user() {
                 return this.$store.state.user;
+            },
+
+            categories() {
+                return this.$store.state.categories;
             }
         },
 
         async mounted() {
+            if (!this.categories || this.categories.length === 0) {
+                this.$store.commit("category", await this.api.get(`/plugins/certified/categories`));
+            }
+
             this.$store.commit("cache", await this.api.get("/plugins"));
+        },
+
+        methods: {
+            categoryName(value) {
+                value = (value || "").replace(/-/gi, "_");
+                value = this.$t(value);
+                value = value.replace("category_", "");
+
+                return Inflection.titleize(Decamelize(value.trim()));
+            },
+
+            changeCategory(category) {
+                this.$store.commit("search", "");
+                this.$store.commit("last", []);
+
+                this.results = [];
+
+                this.$router.push({
+                    path: `/plugins/${category}`,
+                });
+            }
         }
     }
 </script>
@@ -52,15 +84,18 @@
     #plugins .info a,
     #plugins .info a:link,
     #plugins .info a:active,
-    #plugins .info a:visited {
+    #plugins .info a:visited,
+    #plugins .info .category-link {
         padding: 10px;
         border-bottom: 1px var(--border) solid;
         color: var(--text);
-        text-decoration: none;
+        text-decoration: none !important;
         display: block;
+        cursor: pointer;
     }
 
-    #plugins .info a:hover {
+    #plugins .info a:hover,
+    #plugins .info .category-link:hover {
         color: var(--text-dark);
     }
 

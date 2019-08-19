@@ -271,6 +271,7 @@
                     case "plugin":
                     case "plugins":
                     case "search":
+                    case "browse":
                         return `${!title ? " | " : ""}${this.$t("plugins")}`;
 
                     case "config":

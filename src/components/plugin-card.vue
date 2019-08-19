@@ -1,51 +1,24 @@
 <template>
-    <div id="plugin">
+    <router-link id="plugin" :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`">
         <div>
-            <span v-if="plugin.installed && !plugin.local">
-                <span v-if="checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
-                <span v-else class="status">{{ $t("updated") }}</span>
-            </span>
-            <div v-if="plugin.scope === 'hoobs'" class="certified">
-                HOOBS Certified
-            </div>
             <h3>{{ humanize(plugin.name) }}</h3>
-            <span class="version">
-                {{ plugin.installed || plugin.version }}
-                <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
-            </span>
-            <p v-if="!plugin.local">{{ plugin.description }}</p>
-            <p v-if="plugin.local">{{ plugin.links.directory }}</p>
+            <p>{{ plugin.description }}</p>
+            <img style="width: 100%;" :src="plugin.image" />
         </div>
-        <div v-if="!plugin.local && !working" class="actions">
-            <div v-if="plugin.installed">
-                <router-link :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`" class="button">{{ $t("details") }}</router-link>
-                <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
-                <div v-if="plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
-                <router-link v-if="plugin.name !== 'homebridge'" class="config-link" :to="`/config#${plugin.name}`"><span class="icon">settings</span> {{ $t("config") }}</router-link>
-            </div>
-            <div v-else>
-                <router-link :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`" class="button">{{ $t("details") }}</router-link>
-                <div v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
-            </div>
-        </div>
-        <div v-if="plugin.local && !working" class="actions"></div>
-        <div v-if="working" class="loader">
-            <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
-        </div>
-        <div v-if="formatted !== ''" v-html="formatted" id="markdown"></div>
-    </div>
+    </router-link>
 </template>
 
 <script>
     import Decamelize from "decamelize";
     import Inflection from "inflection";
+    import Request from "axios";
 
     import Versioning from "../versioning";
     import Dates from "../dates";
     import Marquee from "@/components/loading-marquee.vue";
 
     export default {
-        name: "plugin-list",
+        name: "plugin-card",
         components: {
             "loading-marquee": Marquee
         },
@@ -66,8 +39,8 @@
             return {
                 working: false,
                 formatted: "",
-                server: ((this.plugin || {}).keywords || []).indexOf("hoobs-plugin") >= 0 || ((this.plugin || {}).keywords || []).indexOf("homebridge-plugin") >= 0,
-                interface: ((this.plugin || {}).keywords || []).indexOf("hoobs-interface") >= 0
+                server: this.plugin.keywords.indexOf("homebridge-plugin") >= 0,
+                interface: this.plugin.keywords.indexOf("homebridge-x-plugin") >= 0
             }
         },
 
@@ -91,7 +64,7 @@
             },
 
             humanize(string) {
-                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").trim()));
+                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace("homebridge-", "").trim()));
             },
 
             async install() {
@@ -142,7 +115,7 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/plugins/installed"
+                    window.location.href = "/plugins"
                 }
             },
 
@@ -168,7 +141,7 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/plugins/installed"
+                    window.location.href = "/plugins"
                 }
             }
         }
@@ -177,21 +150,17 @@
 
 <style scoped>
     #plugin {
+        width: 12rem;
+        height: 17rem;
         padding: 20px 20px 0 20px;
-        margin: 0 0 20px 0;
+        margin: 0 20px 20px 0;
         background: var(--background);
         box-shadow: var(--elevation-small);
         border-radius: 3px;
         display: block;
         color: var(--text) !important;
-        text-decoration: none;
-    }
-
-    #plugin .loader {
-        width: 100%;
-        max-width: 390px;
-        display: inline-block;
-        padding: 0 0 20px 0;
+        text-decoration: none !important;
+        cursor: pointer;
     }
 
     #plugin h3 {
@@ -200,20 +169,6 @@
         color: var(--title-text);
         padding: 0;
         margin: 0;
-    }
-
-    #plugin .status {
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    #plugin .upgradeable {
-        color: var(--text-highlight);
-    }
-
-    #plugin .version {
-        color: var(--text-dim);
-        font-size: 14px;
     }
 
     #plugin .actions {
@@ -225,31 +180,19 @@
     }
 
     #plugin p {
-        margin: 20px 0 0 0;
-    }
-
-    #plugin .config-link {
-        padding: 3px 0 0 0;
-        display: inline-flex;
-        align-content: center;
-        align-items: center;
-        font-size: 14px;
-        color: var(--text);
-    }
-
-    #plugin .config-link:hover {
-        color: var(--text-dark);
-        text-decoration: none;
-    }
-
-    #plugin .config-link .icon {
-        font-size: 17px;
-        margin: 0 2px 0 0;
-    }
-
-    #plugin .certified {
+        width: 100%;
+        height: 28px;
+        margin: 5px 0 0 0;
+        text-overflow: ellipsis;
+        overflow: hidden;
         font-size: 12px;
-        color: var(--title-text);
-        padding: 10px 0 0 0;
+    }
+
+    #plugin img {
+        opacity: 0.75;
+    }
+
+    #plugin:hover img {
+        opacity: 1;
     }
 </style>

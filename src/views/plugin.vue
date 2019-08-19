@@ -1,11 +1,42 @@
 <template>
     <div v-if="user.admin" id="plugin">
         <div class="info">
-            <router-link to="/plugins">{{ $t("installed_packages") }}</router-link>
-            <router-link to="/plugins/search">{{ $t("browse_packages") }}</router-link>
+            <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
+            <router-link to="/plugins/installed">{{ $t("installed_packages") }}</router-link>
         </div>
         <div class="content">
-            <div class="details">
+            <div class="details" v-if="plugin.version">
+                <div v-if="plugin.installed" class="control">
+                    <span v-if="!plugin.local">
+                        <span v-if="checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
+                        <span v-else class="status">{{ $t("updated") }}</span>
+                    </span>
+                    <div v-if="plugin.scope === 'hoobs'" class="certified">
+                        HOOBS Certified
+                    </div>
+                    <div class="version">
+                        {{ plugin.installed || plugin.version }}
+                        <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
+                    </div>
+                    <div v-if="!working && checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
+                    <div v-if="!working && plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
+                    <div v-if="working" class="loader">
+                        <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
+                    </div>
+                </div>
+                <div v-else class="control">
+                    <div v-if="plugin.scope === 'hoobs'" class="certified">
+                        HOOBS Certified
+                    </div>
+                    <div class="version">
+                        {{ plugin.installed || plugin.version }}
+                        <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
+                    </div>
+                    <div v-if="!working" v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
+                    <div v-if="working" class="loader">
+                        <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
+                    </div>
+                </div>
                 <div v-if="formatted !== ''" v-html="formatted" id="markdown"></div>
             </div>
         </div>
@@ -15,25 +46,56 @@
 <script>
     import Showdown from "showdown";
     import Prism from "prismjs";
+    import Decamelize from "decamelize";
+    import Inflection from "inflection";
+
+    import Versioning from "../versioning";
+    import Dates from "../dates";
+
+    import Marquee from "@/components/loading-marquee.vue";
 
     export default {
         name: "plugin",
 
+        components: {
+            "loading-marquee": Marquee
+        },
+
         computed: {
+            locked() {
+                return this.$store.state.locked;
+            },
+
+            running() {
+                return this.$store.state.running;
+            },
+
             user() {
                 return this.$store.state.user;
+            },
+
+            categories() {
+                return this.$store.state.categories;
             }
         },
 
         data() {
             return {
+                working: false,
                 markdown: "",
-                formatted: ""
+                formatted: "",
+                plugin: {}
             }
         },
 
-        mounted() {
+        async mounted() {
+            if (!this.categories || this.categories.length === 0) {
+                this.$store.commit("category", await this.api.get(`/plugins/certified/categories`));
+            }
+
             this.api.get(`/plugins/${encodeURIComponent(this.$route.params.name)}`, true).then((response) => {
+                this.plugin = response;
+
                 if (response.readme && response.readme !== "") {
                     this.markdown = response.readme;
                 } else {
@@ -66,6 +128,123 @@
                     }
                 }, 100);
             });
+        },
+
+        methods: {
+            formatDate(date) {
+                return Dates.formatDate(date);
+            },
+
+            getAgeDisplay(date) {
+                const age = Dates.getAgeDisplay(date);
+
+                if (age !== "") {
+                    return `• ${age}`;
+                }
+
+                return "";
+            },
+
+            categoryName(value) {
+                value = (value || "").replace(/-/gi, "_");
+                value = this.$t(value);
+                value = value.replace("category_", "");
+
+                return Inflection.titleize(Decamelize(value.trim()));
+            },
+
+            checkVersion(version, latest) {
+                return Versioning.checkVersion(version, latest);
+            },
+
+            changeCategory(category) {
+                this.$store.commit("search", "");
+                this.$store.commit("last", []);
+
+                this.results = [];
+
+                this.$router.push({
+                    path: `/plugins/${category}`,
+                });
+            },
+
+            async install() {
+                if (!this.locked) {
+                    this.working = true;
+
+                    const restart = this.running;
+
+                    if (this.server && restart) {
+                        this.$store.commit("lock");
+
+                        await this.api.post("/service/stop");
+                    }
+
+                    await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
+
+                    if (this.server && restart) {
+                        await this.api.post("/service/start");
+
+                        this.$store.commit("unlock");
+                    }
+
+                    await this.api.post("/service/reload");
+
+                    window.location.href = "/plugins/installed"
+                }
+            },
+            
+            async uninstall() {
+                if (!this.locked) {
+                    this.working = true;
+
+                    const restart = this.running;
+
+                    if (this.server && restart) {
+                        this.$store.commit("lock");
+
+                        await this.api.post("/service/stop");
+                    }
+
+                    await this.api.delete(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
+
+                    if (this.server && restart) {
+                        await this.api.post("/service/start");
+
+                        this.$store.commit("unlock");
+                    }
+
+                    await this.api.post("/service/reload");
+
+                    window.location.href = "/plugins/installed"
+                }
+            },
+
+            async update() {
+                if (!this.locked) {
+                    this.working = true;
+
+                    const restart = this.running;
+
+                    if (this.server && restart) {
+                        this.$store.commit("lock");
+
+                        await this.api.post("/service/stop");
+                    }
+
+                    await this.api.post(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
+
+                    if (this.server && restart) {
+                        await this.api.post("/service/start");
+
+                        this.$store.commit("unlock");
+                    }
+
+                    await this.api.post("/service/reload");
+
+                    window.location.href = "/plugins/installed"
+                }
+            }
         }
     }
 </script>
@@ -78,6 +257,24 @@
         overflow: hidden;
     }
 
+    #plugin .loader {
+        width: 100%;
+        max-width: 390px;
+        display: inline-block;
+        padding: 0 0 20px 0;
+    }
+
+    #plugin .control {
+        padding: 20px;
+        margin: 0 0 20px 0;
+        background: var(--background);
+        box-shadow: var(--elevation-small);
+        border-radius: 3px;
+        display: block;
+        color: var(--text) !important;
+        text-decoration: none;
+    }
+
     #plugin .info {
         width: 210px;
         padding: 20px 0 20px 20px;
@@ -86,15 +283,18 @@
     #plugin .info a,
     #plugin .info a:link,
     #plugin .info a:active,
-    #plugin .info a:visited {
+    #plugin .info a:visited,
+    #plugin .info .category-link {
         padding: 10px;
         border-bottom: 1px var(--border) solid;
         color: var(--text);
-        text-decoration: none;
+        text-decoration: none !important;
         display: block;
+        cursor: pointer;
     }
 
-    #plugin .info a:hover {
+    #plugin .info a:hover,
+    #plugin .info .category-link:hover {
         color: var(--text-dark);
     }
 
@@ -109,6 +309,17 @@
     #plugin .content .details {
         width: 100%;
         max-width: 780px;
+    }
+
+    #plugin .version {
+        color: var(--text-dim);
+        font-size: 14px;
+        padding: 0 0 10px 0;
+    }
+
+    #plugin .certified {
+        font-size: 12px;
+        color: var(--title-text);
     }
 </style>
 
