@@ -151,7 +151,7 @@
 <style scoped>
     #plugin {
         width: 12rem;
-        height: 17rem;
+        height: 18rem;
         padding: 20px 20px 0 20px;
         margin: 0 20px 20px 0;
         background: var(--background-light);
@@ -182,7 +182,7 @@
     #plugin p {
         width: 100%;
         height: 28px;
-        margin: 5px 0 0 0;
+        margin: 5px 0 20px 0;
         text-overflow: ellipsis;
         overflow: hidden;
         font-size: 12px;
