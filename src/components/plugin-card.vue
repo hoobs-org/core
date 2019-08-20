@@ -15,16 +15,14 @@
 
     import Versioning from "../versioning";
     import Dates from "../dates";
-    import Marquee from "@/components/loading-marquee.vue";
 
     export default {
         name: "plugin-card",
-        components: {
-            "loading-marquee": Marquee
-        },
+
         props: {
             plugin: Object
         },
+
         computed: {
             locked() {
                 return this.$store.state.locked;
