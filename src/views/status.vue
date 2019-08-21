@@ -3,10 +3,10 @@
         <div v-if="showPin" class="info">
             <div v-if="info" class="pin">
                 <setup-pin v-if="info" :code="info.home_setup_pin" :setup="info.home_setup_id" />
+                <p v-if="info" class="note">
+                    {{ $t("setup_id_message") }}
+                </p>
             </div>
-            <p v-if="info" class="note">
-                {{ $t("setup_id_message") }}
-            </p>
         </div>
         <div class="content">
             <div class="chart">
@@ -116,6 +116,8 @@
     }
 
     #status .pin {
+        height: 290px;
+        padding: 0 20px 10px 20px;
         background: var(--background);
         box-shadow: var(--elevation-small);
         border-radius: 3px;
@@ -129,11 +131,15 @@
         flex: 1;
         display: flex;
         flex-direction: column;
+        padding: 20px;
     }
 
     #status .chart {
-        height: 36%;
-        padding: 20px 20px 0 10px;
+        height: 260px;
+        padding: 20px 20px 20px 10px;
+        background: var(--background);
+        box-shadow: var(--elevation-small);
+        border-radius: 3px;
     }
 
     #status .details {

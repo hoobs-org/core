@@ -49,6 +49,10 @@ if (!executing || installed.version !== executing.version) {
         File.copySync(join(applicaiton, "package.json"), join(root, "package.json"));
     }
 
+    if (File.existsSync(join(root, "dist"))) {
+        Remove.sync(join(root, "dist"));
+    }
+
     if (File.existsSync(join(root, "lib"))) {
         Remove.sync(join(root, "lib"));
     }

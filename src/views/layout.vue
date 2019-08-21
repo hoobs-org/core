@@ -33,8 +33,13 @@
                     <draggable class="accessory-tiles" ghost-class="ghost" v-model="layout.rooms[current].accessories" @end="saveLayout()">
                         <div class="accessory" v-for="(aid, index) in layout.rooms[current].accessories" :key="index">
                             <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" />
-                            <span class="icon delete" @click="removeAccessory(aid)">delete</span>
-                            <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
+                            <div class="accessory-actions">
+                                <div class="action-icons">
+                                    <span class="icon favorite" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
+                                    <span class="icon delete" @click="removeAccessory(aid)">delete</span>
+                                    <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
+                                </div>
+                            </div>
                         </div>
                     </draggable>
                     <div v-if="!add" class="action">
@@ -66,7 +71,12 @@
                     <div class="accessory-tiles">
                         <div class="accessory" v-for="(aid, index) in layout.rooms[current].accessories" :key="index">
                             <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" />
-                            <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
+                            <div class="accessory-actions">
+                                <div class="action-icons">
+                                    <span class="icon favorite" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
+                                    <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -253,11 +263,35 @@
                 this.saveLayout();
             },
 
+            targetFavorite(aid) {
+                if (!this.layout.favorites) {
+                    this.layout.favorites = [];
+                }
+
+                const index = this.layout.favorites.indexOf(aid);
+
+                if (index >= 0) {
+                    this.layout.favorites.splice(index, 1);
+                } else {
+                    this.layout.favorites.push(aid);
+                }
+
+                this.saveLayout();
+            },
+
             hideAccessory(aid) {
-                const index = this.layout.rooms[this.current].accessories.indexOf(aid);
+                let index = this.layout.rooms[this.current].accessories.indexOf(aid);
 
                 if (index > -1) {
                     this.layout.rooms[this.current].accessories.splice(index, 1);
+                }
+
+                if (this.layout.favorites && this.layout.favorites.length > 0) {
+                    index = this.layout.favorites.indexOf(aid);
+
+                    if (index > -1) {
+                        this.layout.favorites.splice(index, 1);
+                    }
                 }
 
                 if (this.layout.hidden.indexOf(aid) === -1) {
@@ -351,7 +385,11 @@
                     data.rooms.splice(index, 1);
                 }
 
-                await this.api.post("/layout", data);
+                try {
+                    await this.api.post("/layout", data);
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
     }
@@ -474,24 +512,38 @@
         position: relative;
     }
 
-    #layout .form  .accessory .delete {
+    #layout .form .accessory .accessory-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
         position: absolute;
-        bottom: 45px;
-        right: 15px;
-        font-size: 14px;
-        color: var(--text-dim);
-        cursor: pointer;
+        top: 4px;
     }
 
+    #layout .form .accessory .accessory-actions .action-icons {
+        border: 1px var(--border) solid;
+        border-radius: 15px;
+        background: var(--background);
+        padding: 3px 10px;
+        display: flex;
+        align-items: center;
+        align-content: center;
+    }
+
+    #layout .form  .accessory .favorite,
+    #layout .form  .accessory .delete,
     #layout .form  .accessory .hide {
-        position: absolute;
-        bottom: 45px;
-        left: 18px;
-        font-size: 14px;
+        margin: 0 0 0 5px;
+        font-size: 22px;
         color: var(--text-dim);
         cursor: pointer;
     }
 
+    #layout .form  .accessory .favorite {
+        margin: 0;
+    }
+
+    #layout .form  .accessory .favorite:hover,
     #layout .form  .accessory .delete:hover,
     #layout .form  .accessory .hide:hover {
         color: var(--text-dark);

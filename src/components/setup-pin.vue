@@ -35,6 +35,7 @@
 <style scoped>
     #pin {
         padding: 0;
+        margin: 0 -20px -20px -20px;
         display: flex;
         flex-direction: column;
         border-radius: 3px;
@@ -45,7 +46,7 @@
     }
 
     #pin .code {
-        padding: 0 17px 11px 15px;
+        padding: 0 17px 0 15px;
         border-radius: 3px;
     }
 </style>
