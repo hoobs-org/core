@@ -383,6 +383,10 @@
         background: var(--button-primary) !important;
     }
 
+    .vue-resizable-handle {
+        opacity: 0;
+    }
+
     .hidden-submit {
         width: 1px;
         height: 1px;

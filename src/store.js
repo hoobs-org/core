@@ -13,6 +13,8 @@ export default new Vuex.Store({
         messages: [],
         installed: [],
         categories: [],
+        weather: null,
+        forecast: null,
         version: null,
         running: false,
         locked: false,
@@ -184,6 +186,20 @@ export default new Vuex.Store({
 
         category(state, data) {
             state.categories = data;
+        },
+
+        current(state, data) {
+            state.weather = {
+                date: new Date(),
+                data
+            }
+        },
+
+        future(state, data) {
+            state.forecast = {
+                date: new Date(),
+                data
+            }
         }
     }
 });

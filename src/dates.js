@@ -16,12 +16,6 @@ export default class Dates {
         return `${value.getMonth() + 1}/${value.getDate()}/${value.getFullYear()}`;
     }
 
-    static formatLongDate(value) {
-        value = new Date(value);
-
-        return `${Dates.getFullWeekDayName(value)} ${Dates.getFullMonthName(value)} ${value.getDate()}${Dates.ordinal(value.getDate())}, ${value.getFullYear()}`
-    }
-
     static formatTime(value, seconds) {
         value = new Date(value);
 
@@ -144,7 +138,7 @@ export default class Dates {
         return Dates.formatSqlDateTime(new Date());
     }
 
-    static getFullWeekDayName(value) {
+    static getWeekDayName(value) {
         value = new Date(value);
 
         let day = null;
@@ -161,33 +155,29 @@ export default class Dates {
 
         switch (day % 7) {
             case 1:
-                return "Monday";
+                return "monday";
 
             case 2:
-                return "Tuesday";
+                return "tuesday";
 
             case 3:
-                return "Wednesday";
+                return "wednesday";
 
             case 4:
-                return "Thursday";
+                return "thursday";
 
             case 5:
-                return "Friday";
+                return "friday";
 
             case 6:
-                return "Saturday";
+                return "saturday";
 
             default:
-                return "Sunday";
+                return "sunday";
         }
     }
 
-    static getWeekDayName(value) {
-        return this.getFullWeekDayName(value).substring(0, 3);
-    }
-
-    static getFullMonthName(value) {
+    static getMonthName(value) {
         value = new Date(value);
 
         let month = null;
@@ -204,45 +194,41 @@ export default class Dates {
 
         switch (month % 12) {
             case 1:
-                return "February";
+                return "february";
 
             case 2:
-                return "March";
+                return "march";
 
             case 3:
-                return "April";
+                return "april";
 
             case 4:
-                return "May";
+                return "may";
 
             case 5:
-                return "June";
+                return "june";
 
             case 6:
-                return "July";
+                return "july";
 
             case 7:
-                return "August";
+                return "august";
 
             case 8:
-                return "September";
+                return "september";
 
             case 9:
-                return "October";
+                return "october";
 
             case 10:
-                return "November";
+                return "november";
 
             case 11:
-                return "December";
+                return "december";
 
             default:
-                return "January";
+                return "january";
         }
-    }
-
-    static getMonthName(value) {
-        return this.getFullMonthName(value).substring(0, 3);
     }
 
     static displayDate(date) {

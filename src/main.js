@@ -76,6 +76,16 @@ import App from "./app.vue";
         
             async $configure() {
                 await config.configure();
+            },
+
+            $cookie(name, value, minutes) {
+                if (value) {
+                    return Cookies.get(name);
+                } else if (minutes < 0) {
+                    Cookies.set(name, "", -1);
+                } else {
+                    Cookies.set(name, value, minutes);
+                }
             }
         }
     });
