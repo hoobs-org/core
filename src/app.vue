@@ -379,6 +379,10 @@
         box-shadow: var(--elevation-small);
     }
 
+    .vue-grid-placeholder {
+        background: var(--button-primary) !important;
+    }
+
     .hidden-submit {
         width: 1px;
         height: 1px;

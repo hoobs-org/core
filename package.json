@@ -60,6 +60,7 @@
         "symlink-dir": "^3.1.0",
         "systeminformation": "^4.14.4",
         "vue": "^2.6.10",
+        "vue-grid-layout": "^2.3.4",
         "vue-i18n": "^8.14.0",
         "vue-router": "^3.1.2",
         "vue-socket.io": "^3.0.7",

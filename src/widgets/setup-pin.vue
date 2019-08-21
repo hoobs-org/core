@@ -1,6 +1,9 @@
 <template>
     <div id="pin">
-        <qrcode :value="setup" :options="options" />
+        <qrcode v-if="info" :value="info.home_setup_id" :options="options" />
+        <p v-if="info" class="note">
+            {{ $t("setup_id_message") }}
+        </p>
     </div>
 </template>
 
@@ -9,19 +12,25 @@
 
     export default {
         name: "setup-pin",
-        props: {
-            code: String,
-            setup: String
-        },
 
         components: {
             "qrcode": QRCode
         },
 
+        data() {
+            return {
+                info: null
+            }
+        },
+
+        async mounted() {
+            this.info = await this.api.get("/");
+        },
+
         computed: {
             options() {
                 return {
-                    width: 258,
+                    width: 238,
                     color: {
                         dark: (this.$client.theme || "hoobs-light").endsWith("dark") ? "#feb400" : "#515151",
                         light: "#ffffff00"
@@ -35,18 +44,19 @@
 <style scoped>
     #pin {
         padding: 0;
-        margin: 0 -20px -20px -20px;
         display: flex;
         flex-direction: column;
+        align-content: center;
+        align-items: center;
         border-radius: 3px;
     }
 
     #pin canvas {
-        border-radius: 3px;
+        margin: 0 0 -40px 0;
     }
 
-    #pin .code {
-        padding: 0 17px 0 15px;
-        border-radius: 3px;
+    #pin .note {
+        padding: 10px 30px;
+        font-size: 12px;
     }
 </style>

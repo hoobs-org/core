@@ -1,102 +1,88 @@
 <template>
     <div id="status">
-        <div v-if="showPin" class="info">
-            <div v-if="info" class="pin">
-                <setup-pin v-if="info" :code="info.home_setup_pin" :setup="info.home_setup_id" />
-                <p v-if="info" class="note">
-                    {{ $t("setup_id_message") }}
-                </p>
-            </div>
-        </div>
         <div class="content">
-            <div class="chart">
-                <line-chart id="system-load" height="100%" suffix="%" :discrete="true" :data="graph" :min="0" :max="100" :colors="colors" :curve="false" legend="bottom" />
-            </div>
-            <div :class="$client.hide_setup_pin ? 'details singluar' : 'details'">
-                <table>
-                    <tbody v-if="running">
-                        <tr v-for="(value, name) in info" :key="name">
-                            <td>{{ $t(name) }}</td>
-                            <td>{{ value }}</td>
-                        </tr>
-                    </tbody>
-                    <tbody v-else>
-                        <tr>
-                            <td colspan="2" class="empty">{{ $t("service_stoped_message") }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <grid-layout :layout.sync="grid" :col-num="12" :row-height="30" :is-draggable="true" :is-resizable="true" :is-mirrored="false" :vertical-compact="true" :margin="[10, 10]" :use-css-transforms="true" @layout-updated="updateDashboard">
+                <grid-item class="widget" v-for="(item, index) in grid" :key="index" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i">
+                    <component :is="item.component" />
+                </grid-item>
+            </grid-layout>
         </div>
     </div>
 </template>
 
 <script>
-    import SetupPIN from "@/components/setup-pin.vue";
+    import GridLayout from "vue-grid-layout";
+
+    import FavoriteAccessories from "@/widgets/favorite-accessories.vue";
+    import SetupPIN from "@/widgets/setup-pin.vue";
+    import SystemLoad from "@/widgets/system-load.vue";
+    import SystemInfo from "@/widgets/system-info.vue";
+    import Weather from "@/widgets/weather.vue";
 
     export default {
         name: "status",
 
         components: {
-            "setup-pin": SetupPIN
-        },
-
-        computed: {
-            graph() {
-                return [{
-                    name: `${this.$t("hoobs")} (${this.running ? this.$t("running") : this.$t("stopped")})`,
-                    data: []
-                }, {
-                    name: `${this.$t("cpu")} ${(this.cpu || {}).used || 0}%`,
-                    data: this.cpu.history
-                }, {
-                    name: `${this.$t("memory")} ${(this.memory || {}).load || 0}% (${((this.memory || {}).used || {}).value || 0} ${((this.memory || {}).used || {}).units || "MB"})`,
-                    data: this.memory.history
-                }, {
-                    name: `${this.running ? this.$t("uptime") : this.$t("downtime")} ${(this.uptime || {}).days || 0} ${this.$t("days")} ${(this.uptime || {}).hours || 0} ${this.$t("hours")} ${(this.uptime || {}).minutes || 0} ${this.$t("minutes")}`,
-                    data: []
-                }];
-            },
-
-            colors() {
-                return [
-                    this.running ? "#019420" : "#940101",
-                    "#f9bd2b",
-                    "#e75a0e",
-                    "#999999"
-                ];
-            },
-
-            running() {
-                return this.$store.state.running;
-            },
-
-            uptime() {
-                return this.$store.state.uptime;
-            },
-
-            cpu() {
-                return this.$store.state.cpu;
-            },
-
-            memory() {
-                return this.$store.state.memory;
-            },
-
-            showPin() {
-                return !this.$client.hide_setup_pin;
-            }
+            "grid-layout": GridLayout.GridLayout,
+            "grid-item": GridLayout.GridItem,
+            "favorite-accessories": FavoriteAccessories,
+            "setup-pin": SetupPIN,
+            "system-load": SystemLoad,
+            "system-info": SystemInfo,
+            "weather": Weather
         },
 
         data() {
             return {
                 info: null,
-                pin: false
+                pin: false,
+                grid: [{
+                    x: 0,
+                    y: 0,
+                    w: 2,
+                    h: 7,
+                    i: "0",
+                    component: "setup-pin"
+                },{
+                    x: 2,
+                    y: 0,
+                    w: 10,
+                    h: 7,
+                    i: "1",
+                    component: "system-load"
+                },{
+                    x: 0,
+                    y: 7,
+                    w: 7,
+                    h: 6,
+                    i: "2",
+                    component: "weather"
+                },{
+                    x: 0,
+                    y: 13,
+                    w: 7,
+                    h: 9,
+                    i: "3",
+                    component: "favorite-accessories"
+                },{
+                    x: 7,
+                    y: 7,
+                    w: 5,
+                    h: 15,
+                    i: "4",
+                    component: "system-info"
+                }]
             };
         },
 
         async mounted() {
             this.info = await this.api.get("/");
+        },
+
+        methods: {
+            updateDashboard() {
+                console.log(JSON.stringify(this.grid, null, 4));
+            }
         }
     };
 </script>
@@ -110,11 +96,6 @@
         overflow: hidden;
     }
 
-    #status .info {
-        width: 258px;
-        padding: 20px 0 20px 20px;
-    }
-
     #status .pin {
         height: 290px;
         padding: 0 20px 10px 20px;
@@ -123,94 +104,16 @@
         border-radius: 3px;
     }
 
-    #status .info .note {
-        font-size: 12px;
+    #status .widget {
+        background: var(--background-light);
+        box-shadow: var(--elevation-small);
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow: auto;
     }
 
     #status .content {
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-    }
-
-    #status .chart {
-        height: 260px;
-        padding: 20px 20px 20px 10px;
-        background: var(--background);
-        box-shadow: var(--elevation-small);
-        border-radius: 3px;
-    }
-
-    #status .details {
-        flex: 1;
-        padding: 10px 20px 20px 57px;
         overflow: auto;
-    }
-
-    #status .singluar {
-        padding: 10px 20px 20px 20px;
-    }
-
-    #status .details table {
-        width: 100%;
-        border-spacing: 0;
-    }
-
-    #status .details table tr th {
-        padding: 10px;
-        text-align: left;
-        border-bottom: 2px var(--border-dark) solid;
-        color: var(--pin-color);
-    }
-
-    #status .details table tr td {
-        padding: 10px;
-        text-align: left;
-        border-bottom: 1px var(--border) solid;
-    }
-
-    #status .details table tr:last-child td {
-        border-bottom: 0 none;
-    }
-
-    #status .details table .empty {
-        padding: 30px;
-        text-align: center;
-    }
-
-    #status .pin-scan-surface {
-        padding: 20px;
-    }
-
-    #status .svg-code {
-        font-size: 27.0242px;
-        font-family: "Scancardium";
-    }
-
-    @media (min-width: 300px) and (max-width: 815px) {
-        #status .info,
-        #status .chart {
-            display: none;
-        }
-
-        #status .details {
-            padding: 10px 20px 20px 20px;
-        }
-
-        #status .details table tr {
-            display: flex;
-            flex-direction: column;
-        }
-
-        #status .details table tr td {
-            padding: 0 10px 10px 10px;
-        }
-
-        #status .details table tr td:first-child {
-            border: 0 none;
-            padding: 10px 10px 0 10px;
-            font-weight: bold;
-        }
     }
 </style>

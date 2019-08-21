@@ -1,0 +1,68 @@
+<template>
+    <div id="system">
+        <table>
+            <tbody v-if="running">
+                <tr v-for="(value, name) in info" :key="name">
+                    <td>{{ $t(name) }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            </tbody>
+            <tbody v-else>
+                <tr>
+                    <td colspan="2" class="empty">{{ $t("service_stoped_message") }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: "system-info",
+
+        data() {
+            return {
+                info: null
+            }
+        },
+
+        computed: {
+            running() {
+                return this.$store.state.running;
+            }
+        },
+
+        async mounted() {
+            this.info = await this.api.get("/");
+        }
+    };
+</script>
+
+<style scoped>
+    #system {
+        flex: 1;
+        padding: 20px;
+    }
+
+    #system table {
+        width: 100%;
+        border-spacing: 0;
+    }
+
+    #system table tr td {
+        height: 37px;
+        min-height: 37px;
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px var(--border) solid;
+    }
+
+    #system table tr:last-child td {
+        border-bottom: 0 none;
+    }
+
+    #system table .empty {
+        padding: 30px;
+        text-align: center;
+    }
+</style>
