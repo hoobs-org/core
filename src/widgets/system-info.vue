@@ -41,7 +41,7 @@
 <style scoped>
     #system {
         flex: 1;
-        padding: 20px;
+        padding: 10px 20px;
     }
 
     #system table {
@@ -50,10 +50,11 @@
     }
 
     #system table tr td {
-        height: 37px;
-        min-height: 37px;
+        height: 26px;
+        min-height: 26px;
         padding: 10px;
         text-align: left;
+        font-size: 13px;
         border-bottom: 1px var(--border) solid;
     }
 
