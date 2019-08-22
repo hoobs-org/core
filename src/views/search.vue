@@ -1,8 +1,8 @@
 <template>
     <div v-if="user.admin" id="search">
         <div class="info">
+            <router-link v-on:click="clearSearch()" to="/plugins">{{ $t("installed_packages") }}</router-link>
             <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" :class="(category || categories[0]) === item ? 'active category-link': 'category-link'">{{ categoryName(item) }}</div>
-            <router-link v-on:click="clearSearch()" to="/plugins/installed">{{ $t("installed_packages") }}</router-link>
         </div>
         <div class="content">
             <div class="search-field">

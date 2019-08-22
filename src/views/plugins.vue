@@ -1,8 +1,8 @@
 <template>
     <div v-if="user.admin" id="plugins">
         <div class="info">
+            <router-link to="/plugins" class="active">{{ $t("installed_packages") }}</router-link>
             <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
-            <router-link to="/plugins/installed" class="active">{{ $t("installed_packages") }}</router-link>
         </div>
         <div class="content">
             <plugin-list v-for="(plugin, index) in installed" :key="`plugin-${index}`" :plugin="plugin" />
