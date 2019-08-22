@@ -38,7 +38,7 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                this.value.values.target_door_state  = this.value.values.target_door_state  === 1 ? 0 : 1;
+                this.value.values.target_door_state = this.value.values.target_door_state  === 1 ? 0 : 1;
 
                 this.control("target_door_state", this.value.values.target_door_state);
             },
