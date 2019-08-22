@@ -37,7 +37,6 @@
         "details": "Detalii",
         "download": "Descarca",
         "downtime": "Timp offline",
-        "edit_rooms": "Editeaza camere",
         "end_port_invalid": "Portul nu este valid. Trebuie sa fie o cifra intre 1 si 65535.",
         "end_port_message": "Finalul plajei de porturi.",
         "end_port": "Port final",
@@ -124,7 +123,6 @@
         "service_port": "Port serviciu",
         "service_stoped_message": "Homebridge nu functioneaza.",
         "setup_admin_account": "Pentru a incepe trebuie setat contul de administrator.",
-        "setup_id_message": "Din aplicatia Apple Home, scaneaza acest cod de opt cifre. Codul poate fi introdus si manual.",
         "show_setup_pin_message": "Aceasta va afisa sau ascunde PIN-ul de configurare Apple Home si codul QR pe ​​ecranul de stare.",
         "show_setup_pin": "Afisati codul PIN de configurare",
         "start_port_invalid": "Portul de pornire nu este valid. Trebuie sa fie un numar intre 1 si 65535.",
@@ -189,6 +187,8 @@
         "category_voice_assistant": "Asistenți vocali",
 
         "favorite_accessories": "Favorite Accessories",
+        "setup_id_message": "From the Apple Home app, scan this QR code.",
+        "edit_rooms": "Edit Accessories",
 
         "today": "Today",
         "monday": "Monday",

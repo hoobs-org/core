@@ -10,6 +10,11 @@
     export default {
         name: "system-load",
 
+        props: {
+            value: Array,
+            index: Number
+        },
+
         components: {
             "qrcode": QRCode
         },

@@ -20,6 +20,11 @@
     export default {
         name: "system-info",
 
+        props: {
+            value: Array,
+            index: Number
+        },
+
         data() {
             return {
                 info: null
@@ -40,8 +45,12 @@
 
 <style scoped>
     #system {
+        width: 100%;
+        height: 100%;
         flex: 1;
         padding: 10px 20px;
+        box-sizing: border-box;
+        overflow: auto;
     }
 
     #system table {

@@ -6,6 +6,9 @@
             </div>
         </div>
         <div class="title">{{ $t("favorite_accessories") }}</div>
+        <div class="actions">
+            <router-link to="/accessories/layout" class="icon">settings</router-link>
+        </div>
     </div>
 </template>
 
@@ -28,6 +31,11 @@
 
     export default {
         name: "favorite-accessories",
+
+        props: {
+            value: Array,
+            index: Number
+        },
 
         components: {
             "switch-control": SwitchControl,
@@ -176,5 +184,19 @@
         position: absolute;
         top: 20px;
         left: 20px;
+    }
+
+    #favorites .actions {
+        font-size: 14px;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    #favorites .actions .icon,
+    #favorites .actions a:link {
+        font-size: 18px;
+        color: var(--text) !important;
+        text-decoration: none !important;
     }
 </style>

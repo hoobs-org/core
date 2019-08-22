@@ -37,7 +37,6 @@
         "details": "Details",
         "download": "Download",
         "downtime": "Downtime",
-        "edit_rooms": "Edit Rooms",
         "end_port_invalid": "End port is invalid. It must be a number between 1 and 65535.",
         "end_port_message": "The port range ending number.",
         "end_port": "End Port",
@@ -124,7 +123,6 @@
         "service_port": "Service Port",
         "service_stoped_message": "Homebridge service not running.",
         "setup_admin_account": "To start you need to setup the administrator account.",
-        "setup_id_message": "From the Apple Home app, scan this eight-digit code, or enter manually.",
         "show_setup_pin_message": "This will show or hide the Apple Home setup PIN and QR code on the status screen.",
         "show_setup_pin": "Show Setup PIN",
         "start_port_invalid": "Start port is invalid. It must be a number between 1 and 65535.",
@@ -189,6 +187,8 @@
         "category_voice_assistant": "Voice Assistants",
 
         "favorite_accessories": "Favorite Accessories",
+        "setup_id_message": "From the Apple Home app, scan this QR code.",
+        "edit_rooms": "Edit Accessories",
 
         "today": "Today",
         "monday": "Monday",

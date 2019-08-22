@@ -35,7 +35,6 @@
         "details": "Detalles",
         "download": "Descargar",
         "downtime": "Tiempo de inactividad",
-        "edit_rooms": "Editar Habitación",
         "end_port_invalid": "El puerto no es válido. Debe ser un número entre 1 y 65535.",
         "end_port_message": "El número del rango de puertos.",
         "end_port": "Puerto",
@@ -122,7 +121,6 @@
         "service_port": "Puerto de servicio",
         "service_stoped_message": "El servicio Homebridge no se está ejecutando",
         "setup_admin_account": "Para comenzar, debe configurar la cuenta de administrador",
-        "setup_id_message": "Desde la aplicación Apple Home, escanee este código de ocho dígitos o ingrese manualmente",
         "show_setup_pin_message": "Esto mostrará u ocultará el PIN y el código QR de la configuración de Apple Home en la pantalla de estado",
         "show_setup_pin": "Mostrar PIN de configuración",
         "start_port_invalid": "El puerto de inicio no es válido. Debe ser un número entre 1 y 65535.",
@@ -187,6 +185,8 @@
         "category_voice_assistant": "Asistentes de voz",
 
         "favorite_accessories": "Favorite Accessories",
+        "setup_id_message": "From the Apple Home app, scan this QR code.",
+        "edit_rooms": "Edit Accessories",
 
         "today": "Today",
         "monday": "Monday",

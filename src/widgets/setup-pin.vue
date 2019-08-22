@@ -13,6 +13,11 @@
     export default {
         name: "setup-pin",
 
+        props: {
+            value: Array,
+            index: Number
+        },
+
         components: {
             "qrcode": QRCode
         },

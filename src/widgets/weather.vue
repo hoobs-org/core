@@ -27,6 +27,11 @@
     export default {
         name: "weather",
 
+        props: {
+            value: Array,
+            index: Number
+        },
+
         computed: {
             weather() {
                 return this.$store.state.weather;

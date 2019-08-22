@@ -3,7 +3,7 @@
         <div class="content">
             <grid-layout :layout.sync="grid" :col-num="12" :row-height="30" :is-draggable="true" :is-resizable="true" :is-mirrored="false" :vertical-compact="true" :margin="[10, 10]" :use-css-transforms="true" @layout-updated="updateDashboard">
                 <grid-item class="widget" v-for="(item, index) in grid" :key="index" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i">
-                    <component :is="item.component" />
+                    <component :is="item.component" :index:="index" v-model="grid" />
                 </grid-item>
             </grid-layout>
         </div>
