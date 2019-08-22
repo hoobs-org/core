@@ -34,54 +34,23 @@
 
         data() {
             return {
-                info: null,
-                pin: false,
-                grid: [{
-                    x: 0,
-                    y: 0,
-                    w: 2,
-                    h: 7,
-                    i: "0",
-                    component: "setup-pin"
-                },{
-                    x: 2,
-                    y: 0,
-                    w: 10,
-                    h: 7,
-                    i: "1",
-                    component: "system-load"
-                },{
-                    x: 0,
-                    y: 7,
-                    w: 7,
-                    h: 7,
-                    i: "2",
-                    component: "weather"
-                },{
-                    x: 0,
-                    y: 14,
-                    w: 7,
-                    h: 8,
-                    i: "3",
-                    component: "favorite-accessories"
-                },{
-                    x: 7,
-                    y: 7,
-                    w: 5,
-                    h: 15,
-                    i: "4",
-                    component: "system-info"
-                }]
+                grid: []
             };
         },
 
         async mounted() {
-            this.info = await this.api.get("/");
+            this.grid = await this.api.get("/layout/dashboard");
         },
 
         methods: {
-            updateDashboard() {
-                console.log(JSON.stringify(this.grid, null, 4));
+            async updateDashboard() {
+                const data = JSON.parse(JSON.stringify(this.grid));
+
+                for (let i = 0; i < data.length; i++) {
+                    delete data[i].moved;
+                }
+
+                await this.api.post("/layout/dashboard", data);
             }
         }
     };
