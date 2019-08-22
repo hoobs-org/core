@@ -66,7 +66,7 @@
         },
 
         methods: {
-            reboot() {
+            async reboot() {
                 this.$store.commit("lock");
                 this.$store.commit("hide", "service");
 
