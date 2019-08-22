@@ -29,6 +29,7 @@
     "dependencies": {
         "@chenfengyuan/vue-qrcode": "^1.0.1",
         "@hoobs/homebridge": "^3.0.2",
+        "@hoobs/systeminfo": "^4.14.7",
         "@jaames/iro": "^4.5.1",
         "@vue/cli-plugin-babel": "^3.10.0",
         "@vue/cli-plugin-eslint": "^3.10.0",
@@ -59,7 +60,6 @@
         "showdown": "^1.9.0",
         "socket.io": "^2.2.0",
         "symlink-dir": "^3.1.0",
-        "systeminformation": "^4.14.4",
         "vue": "^2.6.10",
         "vue-grid-layout": "^2.3.4",
         "vue-i18n": "^8.14.0",
