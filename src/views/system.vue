@@ -17,7 +17,7 @@
                     </div>
                     <div v-else-if="updates.length > 0" class="update-actions">
                         <b>{{ updates[0].version }} {{ $t("update_available") }}</b><br>
-                        <div class="button button-primary">{{ $t("update") }}</div>
+                        <div class="button button-primary" v-on:click="update()">{{ $t("update") }}</div>
                     </div>
                     <div v-else class="update-actions">
                         <b>{{ $t("up_to_date") }}</b>
@@ -89,6 +89,10 @@
 
             humanize(string) {
                 return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+            },
+
+            async update() {
+                await this.api.put("/update");
             }
         }
     }
