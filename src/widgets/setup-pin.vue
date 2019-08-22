@@ -14,8 +14,9 @@
         name: "setup-pin",
 
         props: {
-            value: Array,
-            index: Number
+            item: Object,
+            index: Number,
+            change: Function
         },
 
         components: {

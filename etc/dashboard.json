@@ -21,7 +21,8 @@
         "w": 7,
         "h": 7,
         "i": "2",
-        "component": "weather"
+        "component": "weather",
+        "units": "imperial"
     },
     {
         "x": 0,

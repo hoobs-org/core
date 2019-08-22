@@ -11,8 +11,9 @@
         name: "system-load",
 
         props: {
-            value: Array,
-            index: Number
+            item: Object,
+            index: Number,
+            change: Function
         },
 
         components: {

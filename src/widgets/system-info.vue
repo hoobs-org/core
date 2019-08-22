@@ -21,8 +21,9 @@
         name: "system-info",
 
         props: {
-            value: Array,
-            index: Number
+            item: Object,
+            index: Number,
+            change: Function
         },
 
         data() {

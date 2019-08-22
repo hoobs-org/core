@@ -33,8 +33,9 @@
         name: "favorite-accessories",
 
         props: {
-            value: Array,
-            index: Number
+            item: Object,
+            index: Number,
+            change: Function
         },
 
         components: {
@@ -191,6 +192,7 @@
         position: absolute;
         top: 20px;
         right: 20px;
+        user-select: none;
     }
 
     #favorites .actions .icon,

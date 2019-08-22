@@ -1,18 +1,31 @@
 <template>
     <div v-if="weather && forecast" id="weather">
         <div class="current-weather">
-            <span class="current-title">{{ $t("today") }}</span>
+            <span class="current-title">{{ $t(forecastDay(new Date())) }}</span>
+            <span class="current-time">{{ formatTime(new Date()) }}</span>
             <div class="current-weather-icon" :class="`wi wi-day-${icon[weather.data.weather[0].id].icon}`"></div>
             <span class="current-description">{{ $t(icon[weather.data.weather[0].id].label) }}</span>
             <span class="current-temp">{{ Math.round(weather.data.main.temp) }}°</span>
         </div>
-        <div v-for="(day, index) in forecast.data.list" :key="index">
-            <div v-if="isNoon(day.dt_txt)" class="forecast-weather">
-                <span class="forecast-title">{{ $t(forecastDay(day.dt_txt)) }}</span>
-                <div class="forecast-weather-icon" :class="`wi wi-day-${icon[day.weather[0].id].icon}`"></div>
-                <span class="forecast-description">{{ $t(icon[day.weather[0].id].label) }}</span>
-                <span class="forecast-temp">{{ Math.round(day.main.temp) }}°</span>
+        <div class="details">
+            <div class="detail-contents">
+                <span class="detail-title">{{ $t("forecast") }}</span>
             </div>
+            <div class="forecast">
+                <div v-for="(day, index) in forecast.data.list" :key="index">
+                    <div v-if="isNoon(day.dt_txt)" class="forecast-weather">
+                        <span class="forecast-title">{{ $t(forecastDay(day.dt_txt)) }}</span>
+                        <div class="forecast-weather-icon" :class="`wi wi-day-${icon[day.weather[0].id].icon}`"></div>
+                        <span class="forecast-description">{{ $t(icon[day.weather[0].id].label) }}</span>
+                        <span class="forecast-temp">{{ Math.round(day.main.temp) }}°</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <span class="action-label">°C</span>
+            <span class="icon" v-on:click="toggleUnits()">{{ toggleIcon }}</span>
+            <span class="action-label">°F</span>
         </div>
     </div>
 </template>
@@ -28,8 +41,16 @@
         name: "weather",
 
         props: {
-            value: Array,
-            index: Number
+            item: Object,
+            index: Number,
+            change: Function
+        },
+
+        data() {
+            return {
+                units: "imperial",
+                toggleIcon: "toggle_on"
+            }
         },
 
         computed: {
@@ -47,30 +68,58 @@
         },
 
         async mounted() {
-            if (!this.weather || new Date().getTime() - this.weather.date.getTime() >= 3600000) {
-                const position = await this.geolocation();
+            this.units = this.item.units === "metric" ? "metric" : "imperial";
+            this.toggleIcon = this.units === "metric" ? "toggle_off" : "toggle_on";
 
-                Request(`https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&units=imperial&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
-                    if (!error) {
-                        this.$store.commit("current", response);
-                    }
-                });
+            if (!this.weather || new Date().getTime() - this.weather.date.getTime() >= 3600000) {
+                this.loadWeather(await this.geolocation());
             }
 
             if (!this.forecast || new Date().getTime() - this.weather.date.getTime() >= 86400000) {
-                const position = await this.geolocation();
-
-                Request(`https://api.openweathermap.org/data/2.5/forecast?lat=${position.latitude}&lon=${position.longitude}&units=imperial&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
-                    if (!error) {
-                        this.$store.commit("future", response);
-                    }
-                });
+                this.loadForecast(await this.geolocation());
             }
         },
 
         methods: {
+            loadWeather(position) {
+                Request(`https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+                    if (!error) {
+                        this.$store.commit("current", response);
+                    }
+                });
+            },
+
+            loadForecast(position) {
+                Request(`https://api.openweathermap.org/data/2.5/forecast?lat=${position.latitude}&lon=${position.longitude}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+                    if (!error) {
+                        this.$store.commit("future", response);
+                    }
+                });
+            },
+
+            async toggleUnits() {
+                if (this.item.units === "metric") {
+                    this.units = "imperial";
+                    this.toggleIcon = "toggle_on";
+                } else {
+                    this.units = "metric";
+                    this.toggleIcon = "toggle_off";
+                }
+
+                this.item.units = this.units;
+
+                this.change(this.index, "units", this.units);
+
+                this.loadWeather(await this.geolocation());
+                this.loadForecast(await this.geolocation());
+            },
+
             forecastDay(value) {
                 return Dates.getWeekDayName(value);
+            },
+
+            formatTime(value) {
+                return Dates.formatTime(value);
             },
 
             isNoon(value) {
@@ -125,6 +174,7 @@
         align-content: center;
         align-items: center;
         justify-content: space-between;
+        position: relative;
     }
 
     #weather .current-weather {
@@ -146,6 +196,7 @@
     #weather .current-title {
         font-weight: bold;
         font-size: 20px;
+        color: var(--title-text);
     }
     
     #weather .current-description {
@@ -156,6 +207,38 @@
     #weather .current-temp {
         font-weight: bold;
         font-size: 28px;
+    }
+
+    #weather .current-time {
+        margin: 0 0 10px 0;
+    }
+
+    #weather .details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #weather .details .detail-contents {
+        display: flex;
+        border-bottom: 1px var(--border) solid;
+        justify-content: space-around;
+        margin: 0 0 20px 0;
+        padding: 0 20px 10px 20px;
+    }
+
+    #weather .detail-title {
+        font-weight: bold;
+        font-size: 18px;
+        color: var(--title-text);
+    }
+
+    #weather .forecast {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px 0 0;
+        overflow: auto;
     }
 
     #weather .forecast-weather {
@@ -187,5 +270,27 @@
     #weather .forecast-temp {
         font-weight: bold;
         font-size: 18px;
+    }
+
+    #weather .actions {
+        font-size: 14px;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        align-content: center;
+        align-items: center;
+        user-select: none;
+    }
+
+    #weather .action-label {
+        font-size: 12px;
+        margin: 0 5px;
+    }
+
+    #weather .actions .icon {
+        font-size: 28px;
+        color: var(--title-text);
+        cursor: pointer;
     }
 </style>
