@@ -92,7 +92,11 @@
             },
 
             async update() {
-                await this.api.put("/update");
+                this.$store.commit("lock");
+
+                await this.api.post("/service/stop");
+
+                this.api.put("/update");
             }
         }
     }
