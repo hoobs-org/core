@@ -6,7 +6,7 @@
             </div>
         </div>
         <div class="title">{{ $t("favorite_accessories") }}</div>
-        <div class="actions">
+        <div v-if="user.admin" class="actions">
             <router-link to="/accessories/layout" class="icon">settings</router-link>
         </div>
     </div>
@@ -70,6 +70,10 @@
 
             locked() {
                 return this.$store.state.locked;
+            },
+
+            user() {
+                return this.$store.state.user;
             }
         },
 

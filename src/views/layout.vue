@@ -35,7 +35,7 @@
                             <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" />
                             <div class="accessory-actions">
                                 <div class="action-icons">
-                                    <span class="icon favorite" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
+                                    <span :class="`icon favorite ${(layout.favorites || []).indexOf(aid) === -1 ? 'favorite-off' : 'favorite-on'}`" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
                                     <span class="icon delete" @click="removeAccessory(aid)">delete</span>
                                     <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
                                 </div>
@@ -73,7 +73,7 @@
                             <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" />
                             <div class="accessory-actions">
                                 <div class="action-icons">
-                                    <span class="icon favorite" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
+                                    <span :class="`icon favorite ${(layout.favorites || []).indexOf(aid) === -1 ? 'favorite-off' : 'favorite-on'}`" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
                                     <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
                                 </div>
                             </div>
@@ -547,6 +547,11 @@
     #layout .form  .accessory .delete:hover,
     #layout .form  .accessory .hide:hover {
         color: var(--text-dark);
+    }
+
+    #layout .form  .accessory .favorite-on,
+    #layout .form  .accessory .favorite-on:hover {
+        color: var(--title-text);
     }
 
     #layout .form .available-acessories {
