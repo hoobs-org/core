@@ -87,6 +87,7 @@
 
         async mounted() {
             this.pollingSeconds = this.$server.polling_seconds || 15 < 15 ? 15 : this.$server.polling_seconds || 15;
+            this.accessories = await this.api.get("/accessories");
 
             if (this.pollingSeconds > 0) {
                 this.interval = setInterval(() => {

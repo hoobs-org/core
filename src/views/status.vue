@@ -54,14 +54,14 @@
                     x: 0,
                     y: 7,
                     w: 7,
-                    h: 6,
+                    h: 7,
                     i: "2",
                     component: "weather"
                 },{
                     x: 0,
-                    y: 13,
+                    y: 14,
                     w: 7,
-                    h: 9,
+                    h: 8,
                     i: "3",
                     component: "favorite-accessories"
                 },{
