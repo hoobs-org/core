@@ -16,6 +16,9 @@
         <div v-if="!locked && running" v-on:click.stop="control('restart')" class="item">{{ $t("restart_service") }}</div>
         <div v-else class="item-disabled">{{ $t("restart_service") }}</div>
         <div class="item-seperator"></div>
+        <div v-if="!locked && running" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
+        <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
+        <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
@@ -63,6 +66,15 @@
         },
 
         methods: {
+            reboot() {
+                this.$store.commit("lock");
+                this.$store.commit("hide", "service");
+
+                await this.api.post("/service/stop");
+
+                this.api.put("/reboot");
+            },
+
             async control(action) {
                 if (this.user.admin) {
                     switch (action) {
