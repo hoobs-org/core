@@ -14,7 +14,6 @@
         ],
         "socket": "http://hoobs.local:51828",
         "default_route": "status",
-        "hide_setup_pin": false,
         "inactive_logoff": 30,
         "theme": "hoobs-light",
         "locale": "en"

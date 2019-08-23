@@ -32,7 +32,6 @@
                 <select-field :name="$t('language')" :description="$t('language_message')" :options="locales" v-model="configuration.client.locale" @change="markReload()" />
                 <select-field :name="$t('theme')" :description="$t('theme_message')" :options="themes" v-model="configuration.client.theme" @change="markReload()" />
                 <select-field :name="$t('default_screen')" :description="$t('default_screen_message')" :options="screens" v-model="configuration.client.default_route" @change="markReload()" />
-                <select-field :name="$t('show_setup_pin')" :description="$t('show_setup_pin_message')" :options="binaryReverse" v-model="configuration.client.hide_setup_pin" @change="markReload()" />
                 <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" :required="true" />
                 <h2 id="bridge">{{ $t("bridge_settings") }}</h2>
                 <p>
@@ -201,7 +200,6 @@
                         api: null,
                         socket: null,
                         default_route: null,
-                        hide_setup_pin: null,
                         inactive_logoff: null,
                         theme: null,
                         locale: null

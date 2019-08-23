@@ -54,7 +54,6 @@
                         api: null,
                         socket: null,
                         default_route: null,
-                        hide_setup_pin: null,
                         inactive_logoff: null,
                         theme: null,
                         locale: null
