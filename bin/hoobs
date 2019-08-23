@@ -3,9 +3,9 @@
 process.title = "hoobs-core";
 
 const OS = require("os");
-const File = require("fs-extra");
-const Remove = require("rimraf");
-const Ora = require("ora");
+const File = require("../node_modules/fs-extra/lib");
+const Remove = require("../node_modules/rimraf");
+const Ora = require("../node_modules/ora");
 
 const { dirname, join } = require("path");
 const { exec, spawn } = require("child_process");
@@ -22,7 +22,8 @@ process.argv.forEach((value, index) => {
     }
 });
 
-const root = join(OS.userInfo().homedir, ".hoobs");
+const home = OS.userInfo().homedir;
+const root = join(home, ".hoobs");
 const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
 const installed = JSON.parse(File.readFileSync(join(applicaiton, "package.json")));
 
@@ -115,7 +116,7 @@ if (!executing || installed.version !== executing.version) {
         "#sudo-hoobs#",
         "rm",
         "-fR",
-        "~/.npm"
+        join(home, ".npm")
     ]);
 
     process.stdout.on("data", (data) => {
