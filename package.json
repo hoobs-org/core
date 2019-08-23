@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.0-alpha.8",
+    "version": "3.0.0-alpha.10",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -32,7 +32,7 @@
         "@hoobs/systeminfo": "^4.14.7",
         "@jaames/iro": "^4.5.1",
         "@vue/cli-plugin-babel": "^3.10.0",
-        "@vue/cli-plugin-eslint": "^3.10.0",
+        "@vue/cli-plugin-eslint": "^3.11.0",
         "@vue/cli-service": "^3.10.0",
         "axios": "^0.19.0",
         "babel-eslint": "^10.0.1",

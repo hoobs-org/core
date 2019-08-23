@@ -94,7 +94,7 @@ if (!executing || installed.version !== executing.version) {
     File.copySync(join(applicaiton, "babel.config.js"), join(root, "babel.config.js"));
     File.copySync(join(applicaiton, "postcss.config.js"), join(root, "postcss.config.js"));
 
-    exec("npm install", {
+    exec("npm install --unsafe-perm", {
         cwd: root
     }, () => {
         throbber.stop();
