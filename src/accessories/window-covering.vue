@@ -1,17 +1,17 @@
 <template>
     <div id="control">
-        <svg version="1.1" width="100" height="100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-            <rect x="13.3" y="7.1" style="fill: #fefefe; stroke: #cccccc; stroke-width: 0.25;" width="73.4" height="85.8" />
-            <rect x="20.4" y="13.9" style="fill: #feb400; stroke: #cccccc;" width="59.2" height="72.2" />
+        <svg version="1.1" width="190" height="190" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" @click="toggle">
+            <rect x="13.3" y="7.1" style="fill: var(--background-accent); stroke: var(--text-light); stroke-width: 0.25;" width="73.4" height="85.8" />
+            <rect x="20.4" y="13.9" style="fill: #feb400; stroke: var(--text-light);" width="59.2" height="72.2" />
             <g v-if="value.values.target_position > 0">
-                <rect x="20.4" y="13.9" style="fill: #fefefe; stroke: #cccccc; stroke-width: 0.25;" width="59.2" height="7.6" />
-                <circle style="fill: #fefefe; stroke: #cccccc; stroke-width: 0.5;" cx="50" cy="22" r="4.3" />
-                <path style="fill: #cccccc;" d="M51.9,20.6L50,22.7l-1.9-2.1l-0.6,0.7l2.5,2.8l2.4-2.8L51.9,20.6z" />
+                <rect x="20.4" y="13.9" style="fill: var(--background-accent); stroke: var(--text-light); stroke-width: 0.25; cursor: pointer;" width="59.2" height="7.6" />
+                <circle style="fill: var(--background-accent); stroke: var(--text-light); stroke-width: 0.5; cursor: pointer;" cx="50" cy="22" r="4.3" />
+                <path style="fill: var(--text-light); cursor: pointer;" d="M51.9,20.6L50,22.7l-1.9-2.1l-0.6,0.7l2.5,2.8l2.4-2.8L51.9,20.6z" />
             </g>
             <g v-else>
-                <rect x="20.4" y="13.9" style="fill: #fefefe; stroke: #cccccc; stroke-width: 0.25;" width="59.2" height="72.2" />
-                <circle style="fill: #fefefe; stroke: #cccccc; stroke-width: 0.5;" cx="50" cy="87" r="4.3" />
-                <path style="fill: #cccccc;" d="M48.1,88.4l1.9-2.1l1.9,2.1l0.6-0.7L50,84.9l-2.4,2.8L48.1,88.4z" />
+                <rect x="20.4" y="13.9" style="fill: var(--background-accent); stroke: var(--text-light); stroke-width: 0.25; cursor: pointer;" width="59.2" height="72.2" />
+                <circle style="fill: var(--background-accent); stroke: var(--text-light); stroke-width: 0.5; cursor: pointer;" cx="50" cy="87" r="4.3" />
+                <path style="fill: var(--text-light); cursor: pointer;" d="M48.1,88.4l1.9-2.1l1.9,2.1l0.6-0.7L50,84.9l-2.4,2.8L48.1,88.4z" />
             </g>
         </svg>
         <div class="name">{{ value.name || value.service_name }}</div>

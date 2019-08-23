@@ -116,7 +116,7 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/plugins/installed"
+                    window.location.href = "/plugins"
                 }
             },
 
@@ -142,7 +142,7 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/plugins/installed"
+                    window.location.href = "/plugins"
                 }
             },
 
@@ -168,7 +168,7 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/plugins/installed"
+                    window.location.href = "/plugins"
                 }
             }
         }
