@@ -8,7 +8,19 @@ const Remove = require("rimraf");
 const Ora = require("ora");
 
 const { dirname, join } = require("path");
-const { exec } = require("child_process");
+const { exec, spawn } = require("child_process");
+
+let password = null;
+
+process.argv.forEach((value, index) => {
+    if (value === "-p") {
+        password = "#sudo-password#"
+    } else if (password === "#sudo-password#") {
+        password = value;
+
+        return;
+    }
+});
 
 const root = join(OS.userInfo().homedir, ".hoobs");
 const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
@@ -94,12 +106,48 @@ if (!executing || installed.version !== executing.version) {
     File.copySync(join(applicaiton, "babel.config.js"), join(root, "babel.config.js"));
     File.copySync(join(applicaiton, "postcss.config.js"), join(root, "postcss.config.js"));
 
-    exec("npm install --unsafe-perm", {
-        cwd: root
-    }, () => {
-        throbber.stop();
+    let prompts = 0;
 
-        require(join(root, "lib/cli"))();
+    const process = spawn("sudo", [
+        "-S",
+        "-k",
+        "-p",
+        "#sudo-hoobs#",
+        "rm",
+        "-fR",
+        "~/.npm"
+    ]);
+
+    process.stdout.on("data", (data) => {
+        console.log(`${data}`.trimEnd());
+    });
+
+    process.stderr.on("data", (data) => {
+        const lines = `${data}`.split(/\r?\n/);
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+
+            if (line === "#sudo-hoobs#") {
+                if (++prompts > 1) {
+                    process.stdin.write("\n\n\n\n");
+                } else {
+                    process.stdin.write(`${password || ""}\n`);
+                }
+            } else {
+                console.log(line);
+            }
+        }
+    });
+
+    process.on("close", () => {
+        exec("npm install --unsafe-perm", {
+            cwd: root
+        }, () => {
+            throbber.stop();
+    
+            require(join(root, "lib/cli"))();
+        });
     });
 } else {
     require(join(root, "lib/cli"))();
