@@ -3,6 +3,7 @@
         <div class="info">
             <router-link to="/plugins">{{ $t("installed_packages") }}</router-link>
             <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
+            <router-link v-on:click="clearSearch()" to="/plugins/search">{{ $t("search") }}</router-link>
         </div>
         <div class="content">
             <div class="details" v-if="plugin.version">
