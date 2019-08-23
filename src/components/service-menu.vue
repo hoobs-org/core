@@ -16,7 +16,7 @@
         <div v-if="!locked && running" v-on:click.stop="control('restart')" class="item">{{ $t("restart_service") }}</div>
         <div v-else class="item-disabled">{{ $t("restart_service") }}</div>
         <div class="item-seperator"></div>
-        <div v-if="!locked && running" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
+        <div v-if="!locked" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
         <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
