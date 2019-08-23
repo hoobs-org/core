@@ -82,7 +82,6 @@
 
         methods: {
             loadWeather(query) {
-                console.log(query);
                 Request(`https://api.openweathermap.org/data/2.5/weather?${query}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
                     if (!error) {
                         this.$store.commit("current", response);
