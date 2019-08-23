@@ -64,7 +64,9 @@ const getRoutes = (defaultRoute) => {
         component: () => import("./views/config-advanced.vue")
     },{
         path: "*",
-        component: () => import("./views/error.vue")
+        redirect: () => {
+            window.location.href = "/";
+        }
     }];
 
     for (let i = 0; i < Plugins.length; i++) {
