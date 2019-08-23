@@ -165,7 +165,7 @@
     },
     "721": {
         "label": "haze",
-        "icon": "day-haze"
+        "icon": "haze"
     },
     "731": {
         "label": "sand_dust_whirls",
@@ -189,7 +189,7 @@
     },
     "771": {
         "label": "squalls",
-        "icon": "day-windy"
+        "icon": "windy"
     },
     "781": {
         "label": "tornado",

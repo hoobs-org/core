@@ -79,7 +79,7 @@ import App from "./app.vue";
             },
 
             $cookie(name, value, minutes) {
-                if (value) {
+                if (value === undefined) {
                     return Cookies.get(name);
                 } else if (minutes < 0) {
                     Cookies.set(name, "", -1);

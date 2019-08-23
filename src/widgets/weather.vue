@@ -72,25 +72,26 @@
             this.toggleIcon = this.units === "metric" ? "toggle_off" : "toggle_on";
 
             if (!this.weather || new Date().getTime() - this.weather.date.getTime() >= 3600000) {
-                this.loadWeather(await this.geolocation());
+                this.loadWeather(await this.getQuery());
             }
 
             if (!this.forecast || new Date().getTime() - this.weather.date.getTime() >= 86400000) {
-                this.loadForecast(await this.geolocation());
+                this.loadForecast(await this.getQuery());
             }
         },
 
         methods: {
-            loadWeather(position) {
-                Request(`https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+            loadWeather(query) {
+                console.log(query);
+                Request(`https://api.openweathermap.org/data/2.5/weather?${query}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
                     if (!error) {
                         this.$store.commit("current", response);
                     }
                 });
             },
 
-            loadForecast(position) {
-                Request(`https://api.openweathermap.org/data/2.5/forecast?lat=${position.latitude}&lon=${position.longitude}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+            loadForecast(query) {
+                Request(`https://api.openweathermap.org/data/2.5/forecast?${query}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
                     if (!error) {
                         this.$store.commit("future", response);
                     }
@@ -110,8 +111,8 @@
 
                 this.change(this.index, "units", this.units);
 
-                this.loadWeather(await this.geolocation());
-                this.loadForecast(await this.geolocation());
+                this.loadWeather(await this.getQuery());
+                this.loadForecast(await this.getQuery());
             },
 
             forecastDay(value) {
@@ -130,6 +131,32 @@
                 }
 
                 return false;
+            },
+
+            getQuery() {
+                return new Promise((resolve) => {
+                    const query = this.$cookie("weather_query");
+
+                    if (query && query !== "undefined" && query !== "") {
+                        resolve(query.replace(/\|/gi, "="));
+                    } else {
+                        let results = null;
+
+                        this.geolocation().then((position) => {
+                            Request(`https://api.openweathermap.org/data/2.5/find?lat=${position.latitude}&lon=${position.longitude}&cnt=10&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+                                if (!error && response.list && Array.isArray(response.list) && response.list.length > 0) {
+                                    results = `id|${response.list[0].id}`;
+                                } else {
+                                    results = `lat|${position.latitude}&lon=${position.longitude}`;
+                                }
+
+                                this.$cookie("weather_query", results, 20160);
+
+                                resolve(results.replace(/\|/gi, "="));
+                            });
+                        });
+                    }
+                });
             },
 
             geolocation() {
