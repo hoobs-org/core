@@ -114,7 +114,7 @@
                         this.$store.commit("unlock");
                     }
 
-                    if (this.plugin.keywords.indexOf("hoobs-interface")) {
+                    if (this.plugin.keywords.indexOf("hoobs-interface") >= 0) {
                         await this.api.post("/service/reload");
                     }
 
@@ -142,7 +142,7 @@
                         this.$store.commit("unlock");
                     }
 
-                    if (this.plugin.keywords.indexOf("hoobs-interface")) {
+                    if (this.plugin.keywords.indexOf("hoobs-interface") >= 0) {
                         await this.api.post("/service/reload");
                     }
 
@@ -170,7 +170,7 @@
                         this.$store.commit("unlock");
                     }
 
-                    if (this.plugin.keywords.indexOf("hoobs-interface")) {
+                    if (this.plugin.keywords.indexOf("hoobs-interface") >= 0) {
                         await this.api.post("/service/reload");
                     }
 
