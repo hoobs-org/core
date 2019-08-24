@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Plugins from "../etc/plugins.json";
 
 Vue.use(Router);
 
@@ -68,16 +67,6 @@ const getRoutes = (defaultRoute) => {
             window.location.href = "/";
         }
     }];
-
-    for (let i = 0; i < Plugins.length; i++) {
-        const { ...plugin } = Plugins[i];
-
-        routes.push({
-            path: defaultRoute === (plugin.route || plugin.name) ? "/" : `/${plugin.route || plugin.name}`,
-            name: plugin.name,
-            component: () => import(`../node_modules/${plugin.module}/index.vue`)
-        });
-    }
 
     return routes;
 }

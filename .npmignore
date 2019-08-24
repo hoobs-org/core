@@ -1,6 +1,5 @@
 node_modules
 .vscode
-dist
 docs
 etc
 schema

@@ -1,0 +1,1 @@
+HOOBS_CONFIG = {};

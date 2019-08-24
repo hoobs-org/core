@@ -1,10 +1,9 @@
 import Request from "axios";
 import Cookies from "./cookies";
-import Base from "../etc/config.json";
 
 export default class Config {
     constructor () {
-        this._api = Base.client.api;
+        this._api = HOOBS_CONFIG.client.api;
 
         if (!Array.isArray(this._api)) {
             this.api = [this._api];
@@ -19,11 +18,11 @@ export default class Config {
     }
 
     get socket() {
-        return (Base.client || {}).socket || "http://hoobs.local:5128";
+        return (HOOBS_CONFIG.client || {}).socket || "http://hoobs.local:5128";
     }
 
     get control() {
-        return Base.client.config;
+        return HOOBS_CONFIG.client.config;
     }
 
     get server() {
@@ -118,13 +117,13 @@ export default class Config {
         try {
             this._ui = (await Request.get(`${this._api}/config`)).data.client;
         } catch {
-            this._ui = Base.client;
+            this._ui = HOOBS_CONFIG.client;
         }
 
         try {
             this._configuration = (await Request.get(`${this.instance}/config`)).data;
         } catch {
-            this._configuration = Base;
+            this._configuration = HOOBS_CONFIG;
         }
     }
 }

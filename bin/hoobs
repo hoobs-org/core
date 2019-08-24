@@ -49,6 +49,10 @@ if (!executing || installed.version !== executing.version) {
             }
         }
 
+        if (installed.devDependencies) {
+            delete installed.devDependencies;
+        }
+
         if (File.existsSync(join(root, "package.json"))) {
             File.unlinkSync(join(root, "package.json"));
         }
@@ -73,42 +77,22 @@ if (!executing || installed.version !== executing.version) {
         Remove.sync(join(root, "lib"));
     }
 
-    if (File.existsSync(join(root, "src"))) {
-        Remove.sync(join(root, "src"));
-    }
-
-    if (File.existsSync(join(root, "public"))) {
-        Remove.sync(join(root, "public"));
-    }
-
     if (File.existsSync(join(root, "node_modules"))) {
         Remove.sync(join(root, "node_modules"));
     }
 
+    File.copySync(join(applicaiton, "dist"), join(root, "dist"));
     File.copySync(join(applicaiton, "lib"), join(root, "lib"));
-    File.copySync(join(applicaiton, "src"), join(root, "src"));
-    File.copySync(join(applicaiton, "public"), join(root, "public"));
+
+    if (File.existsSync(join(root, "package-lock.json"))) {
+        File.unlinkSync(join(root, "package-lock.json"));
+    }
 
     if (File.existsSync(join(root, "default.json"))) {
         File.unlinkSync(join(root, "default.json"));
     }
 
-    if (File.existsSync(join(root, "vue.config.json"))) {
-        File.unlinkSync(join(root, "vue.config.json"));
-    }
-
-    if (File.existsSync(join(root, "babel.config.json"))) {
-        File.unlinkSync(join(root, "babel.config.json"));
-    }
-
-    if (File.existsSync(join(root, "postcss.config.json"))) {
-        File.unlinkSync(join(root, "postcss.config.json"));
-    }
-
     File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
-    File.copySync(join(applicaiton, "vue.config.js"), join(root, "vue.config.js"));
-    File.copySync(join(applicaiton, "babel.config.js"), join(root, "babel.config.js"));
-    File.copySync(join(applicaiton, "postcss.config.js"), join(root, "postcss.config.js"));
 
     let prompts = 0;
 

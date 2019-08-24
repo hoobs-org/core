@@ -57,10 +57,6 @@
                         <span v-bind:class="activeIcon('plugins', 'search')">extension</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('plugins', 'search')">{{ routeName('plugins') }}</span>
                     </router-link>
-                    <router-link v-for="(link, index) in links" :key="index" :to="defaultRoute === link.route ? '/' : `/${link.route}`" @click.native="hide('nav')">
-                        <span v-bind:class="activeIcon(link.name)" v-html="pluginIcon(link)"></span>
-                        <span v-if="visible['nav']" v-bind:class="activeLink(link.name)">{{ routeName(link.name) }}</span>
-                    </router-link>
                 </div>
                 <div class="routes">
                     <router-link v-if="user.admin" to="/config" @click.native="hide('nav')" class="mobile-hide">
@@ -97,7 +93,6 @@
     import ServiceMenu from "@/components/service-menu.vue";
     import InstanceMenu from "@/components/instance-menu.vue";
     import Marquee from "@/components/loading-marquee.vue";
-    import Plugins from "../etc/plugins.json";
 
     export default {
         components: {
@@ -123,14 +118,6 @@
 
             locked() {
                 return this.$store.state.locked;
-            },
-
-            plugins() {
-                return Plugins;
-            },
-
-            links() {
-                return Plugins.filter(p => p.plugin_icon && p.route);
             },
 
             defaultRoute() {
@@ -283,12 +270,6 @@
                         return `${!title ? " | " : ""}${this.$t("accessories")}`;
 
                     default:
-                        const plugin = this.plugins.filter(p => p.name === name);
-
-                        if (plugin.length > 0) {
-                            return `${!title ? " | " : ""}${this.$t(plugin[0].title) || ""}`;
-                        }
-
                         return "";
                 }
             }
