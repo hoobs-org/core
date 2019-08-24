@@ -2,7 +2,6 @@ import Vue from "vue";
 import Socket from "vue-socket.io";
 import Client from "socket.io-client";
 import Graphing from "./graphing";
-import Chart from "chart.js";
 import Request from "axios";
 
 import Localization from "./localization";

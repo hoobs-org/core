@@ -114,7 +114,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    await this.api.post("/service/reload");
+                    if (this.plugin.keywords.indexOf("hoobs-interface")) {
+                        await this.api.post("/service/reload");
+                    }
 
                     window.location.href = "/plugins"
                 }
@@ -140,7 +142,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    await this.api.post("/service/reload");
+                    if (this.plugin.keywords.indexOf("hoobs-interface")) {
+                        await this.api.post("/service/reload");
+                    }
 
                     window.location.href = "/plugins"
                 }
@@ -166,7 +170,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    await this.api.post("/service/reload");
+                    if (this.plugin.keywords.indexOf("hoobs-interface")) {
+                        await this.api.post("/service/reload");
+                    }
 
                     window.location.href = "/plugins"
                 }

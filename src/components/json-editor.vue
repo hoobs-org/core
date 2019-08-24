@@ -3,9 +3,6 @@
 </template>
 
 <script>
-    import Codemirror from "codemirror";
-    import "codemirror/mode/javascript/javascript";
-
     export default {
         name: "json-editor",
         props: {
@@ -23,7 +20,7 @@
         },
 
         mounted() {
-            this.editor = Codemirror(this.$el, {
+            this.editor = CodeMirror(this.$el, {
                 value: this.code,
                 lineNumbers: false,
                 indentUnit: 4,

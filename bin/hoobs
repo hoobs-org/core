@@ -62,6 +62,9 @@ if (!executing || installed.version !== executing.version) {
         File.copySync(join(applicaiton, "package.json"), join(root, "package.json"));
     }
 
+    throbber.stopAndPersist();
+    throbber = Ora("Setting Up User Mode").start();
+
     if (File.existsSync(join(root, "dist"))) {
         Remove.sync(join(root, "dist"));
     }
@@ -109,6 +112,12 @@ if (!executing || installed.version !== executing.version) {
 
     let prompts = 0;
 
+    throbber.stopAndPersist({
+        text: "User Mode Active"
+    });
+
+    throbber = Ora("Fixing Node Cache").start();
+
     const process = spawn("sudo", [
         "-S",
         "-k",
@@ -135,13 +144,17 @@ if (!executing || installed.version !== executing.version) {
                 } else {
                     process.stdin.write(`${password || ""}\n`);
                 }
-            } else {
-                console.log(line);
             }
         }
     });
 
     process.on("close", () => {
+        throbber.stopAndPersist({
+            text: "Node Cache Fixed"
+        });
+    
+        throbber = Ora("Configuring Server").start();
+
         exec("npm install --unsafe-perm", {
             cwd: root
         }, () => {
