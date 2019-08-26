@@ -9,12 +9,14 @@ import Cookies from "./cookies";
 import Config from "./config";
 import Router from "./router";
 import Themes from "./themes/themes";
+import Loader from "./loader";
 import Store from "./store";
 import App from "./app.vue";
 
 (async () => {
     const config = new Config();
     const index = parseInt(Cookies.get("instance") || "0", 10);
+    const loader = Loader();
     const instance = (await config.list())[index];
 
     await config.active(index);
@@ -251,7 +253,7 @@ import App from "./app.vue";
     const router = Router(config.client.default_route || "status");
     
     router.beforeEach(async (to, from, next) => {
-        if (to.path !== "/login" && !(await Cookies.validate(config.instance))) {
+        if (to.path !== "/login" && !(await Cookies.validate(config.control))) {
             router.push({
                 path: "/login",
                 query: {
@@ -287,6 +289,25 @@ import App from "./app.vue";
         store: Store,
         themes: Themes,
         sockets: {
+            connect: () => {
+                if (loader.loading) {
+                    loader.load();
+                }
+            },
+            reconnect: () => {
+                if (loader.loading) {
+                    loader.load();
+                }
+            },
+            connect_error: () => {
+                fetch("/").then((response) => {
+                    if (!response.ok) {
+                        loader.write();
+                    }
+                }).catch(() => {
+                    loader.write();
+                });
+            },
             log: (data) => {
                 Store.commit("log", data);
             },
