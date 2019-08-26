@@ -74,9 +74,7 @@
 
                 this.api.put("/reboot");
 
-                setTimeout(() => {
-                    window.location.href = "/";
-                }, 2000);
+                window.location.href = "/";
             },
 
             async control(action) {
