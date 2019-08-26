@@ -73,8 +73,6 @@
                 await this.api.post("/service/stop");
 
                 this.api.put("/reboot");
-
-                window.location.href = "/";
             },
 
             async control(action) {
