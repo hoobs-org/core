@@ -24,7 +24,8 @@
         "node": ">=10.16.3"
     },
     "scripts": {
-        "build": "vue-cli-service build"
+        "build": "vue-cli-service build",
+        "prepare" : "npm run build"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.0.2",
