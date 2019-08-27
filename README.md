@@ -1,114 +1,69 @@
-# ![](docs/logo.png)
-[![Vue.JS](https://img.shields.io/badge/Vue.JS-2.6.10-%234fc08d.svg)](https://vuejs.org/) [![Express](https://img.shields.io/badge/Express-4.17.1-%23b3b3b3.svg)](https://expressjs.com/) [![Socket.IO](https://img.shields.io/badge/Socket.IO-2.2.0-%23e0bf19.svg)](https://socket.io/)  
-Available Languages: :gb: :de: :es: :fr: :it: :hungary: :cn: :greece: :netherlands:   
+![](https://raw.githubusercontent.com/hoobs-org/HOOBS/master/docs/logo.png)
+## Welcome to HOOBS
+Pronounced as "huːbz"  
 
-A Homebridge stack with a interface that simplifies configuration and installing plugins. This adds a process wrapper for [Homebridge](https://github.com/nfarina/homebridge). It also adds an API that can be used as an endpoint for an application.
+HOOBS a Homebridge stack with a interface that simplifies configuration and installing plugins. This adds a process wrapper for [Homebridge](https://github.com/nfarina/homebridge). It also adds an API that can be used as an endpoint for an application.
 
-![](docs/light/accessories.png)
+[![](https://raw.githubusercontent.com/hoobs-org/HOOBS/master/docs/product-video.gif)](https://vimeo.com/330252973)
 
 HOOBS is not a Homebridge plugin. It is a seperate application designed to be a parent to Homebridge. Since this is independent, it can control Homebridge. This also keeps all of the plugins in one place. No need to install plugins in the global scope, which helps keep your Homebridge server more secure.
 
-## Community
-If you're having an issue with a particular plugin, open an issue in that plugin's Github repository. If you're having an issue with Homebridge itself, feel free to open issues and PRs here.
+## Introduction
+HOOBS goal is to make Homebridge more accessible to new inexperienced users and advanced users. To achieve this HOOBS' aim to unify, simplify and make the Homebridge ecosystem more user-friendly.
+Starting with a standardized installation in the form of a free downloadable image file that can be easily written to an sdcard. Up to the complete hardware solution which works out of the box.
+HOOBS combine hardware and operating system, with server service and user interface for easy installation of your favorite plugins and guide the user with manuals and assistance.
 
-There is  a [Homebridge community on Reddit](https://www.reddit.com/r/homebridge/).
-
-r/Homekit and r/Homebridge have also created a community Discord server, where users of both Homekit and Homebridge can discuss their different products as well as get support. The link for the community is [here](https://discord.gg/RcV7fa8).
-
-You can also chat with us in [Slack](https://homebridge-slackin.glitch.me).
-
-If you want to contact **HOOBS dev-team** there are a bunch of ways to do that:
-
-[HOOBS website](https://hoobs.org)  
-[HOOBS Support Chat](https://m.me/HOOBSofficial)  
-[HOOBS email](mailto:info@hoobs.org)  
-[HOOBS Subreddit](https://www.reddit.com/r/hoobs/)  
-[HOOBS Facebook Page](https://www.facebook.com/HOOBSofficial)  
-[HOOBS Facebook Support Group](https://www.facebook.com/groups/HOOBSorg/)  
+We’re a small team from around the world who are passionate about making the home that you live in a better home – a smart home. That is why we came up with the idea of developing HOOBS which is an out of the box ready to run system for Homebridge. We want to create a solution that even beginners could understand, comfortable with and get a lot of use out of. Our motivation is to serve the homebridge community with a tool that we believe will make their lives easier and we hope our goal will be reached.
 
 ## Documentation
-[Getting Started](docs/getting-started.md)  
-[API Reference](docs/api-reference.md)  
-[Logging & Monitoring](docs/logging-monitoring.md)  
-[Developing Plugins](docs/developing-plugins.md)  
+* [**Welcome**](https://github.com/hoobs-org/HOOBS/wiki)  
+* [**Community**](https://github.com/hoobs-org/HOOBS/wiki/1.0-Community)
+* [**Getting Started**](https://github.com/hoobs-org/HOOBS/wiki/2.0-Getting-Started)
+  * [**HOOBS Box**](https://github.com/hoobs-org/HOOBS/wiki/2.1-HOOBS-Box)
+  * [**HOOBS SD Card**](https://github.com/hoobs-org/HOOBS/wiki/2.2-HOOBS-SD-Card)
+  * [**Upgrading HOOBS**](https://github.com/hoobs-org/HOOBS/wiki/2.3-Upgrading-HOOBS)
+  * [**Upgrading Manually**](https://github.com/hoobs-org/HOOBS/wiki/2.4-Upgrading-Manually)
+  * [**Installing HOOBS**](https://github.com/hoobs-org/HOOBS/wiki/2.5-Installing-from-Scratch)
+    * [**macOS**](https://github.com/hoobs-org/HOOBS/wiki/2.5.0-macOS-Installation)
+    * [**Fedora**](https://github.com/hoobs-org/HOOBS/wiki/2.5.1-Fedora-Installation)
+    * [**Debian**](https://github.com/hoobs-org/HOOBS/wiki/2.5.2-Debian-Installation)
+  * [**HOOBS Service**](https://github.com/hoobs-org/HOOBS/wiki/2.6-Running-HOOBS-on-Startup)
+    * [**macOS**](https://github.com/hoobs-org/HOOBS/wiki/2.6.0-macOS-Service)
+    * [**Fedora**](https://github.com/hoobs-org/HOOBS/wiki/2.6.1-Fedora-Service)
+    * [**Debian**](https://github.com/hoobs-org/HOOBS/wiki/2.6.2-Debian-Service)
+  * [**Remote Access**](https://github.com/hoobs-org/HOOBS/wiki/2.7-Remote-Access)
+    * [**macOS**](https://github.com/hoobs-org/HOOBS/wiki/2.7.0-macOS-Remote-Access)
+    * [**Fedora**](https://github.com/hoobs-org/HOOBS/wiki/2.7.1-Fedora-Remote-Access)
+    * [**Debian**](https://github.com/hoobs-org/HOOBS/wiki/2.7.2-Debian-Remote-Access)
+* [**User Interface**](https://github.com/hoobs-org/HOOBS/wiki/3.0-User-Interface)
+  * [**Administrator Account**](https://github.com/hoobs-org/HOOBS/wiki/3.1-Administrator-Account)
+  * [**Status Dashboard**](https://github.com/hoobs-org/HOOBS/wiki/3.2-Status-Dashboard)
+  * [**Accessories**](https://github.com/hoobs-org/HOOBS/wiki/3.3-Accessories)
+  * [**Room Layout**](https://github.com/hoobs-org/HOOBS/wiki/3.4-Room-Layout)
+  * [**Log**](https://github.com/hoobs-org/HOOBS/wiki/3.5-Log)
+  * [**System**](https://github.com/hoobs-org/HOOBS/wiki/3.6-System)
+  * [**Plugins**](https://github.com/hoobs-org/HOOBS/wiki/3.7-Plugins)
+  * [**Configuration**](https://github.com/hoobs-org/HOOBS/wiki/3.8-Configuration)
+  * [**User Accounts**](https://github.com/hoobs-org/HOOBS/wiki/3.9-User-Accounts)
+* [**Plugins**](https://github.com/hoobs-org/HOOBS/wiki/4.0-Plugins)
+* [**Hardware**](https://github.com/hoobs-org/HOOBS/wiki/5.0-Hardware)
+  * [**Certified Hardware**](https://github.com/hoobs-org/HOOBS/wiki/5.1-Certified-Hardware)
+  * [**Certified Accessories**](https://github.com/hoobs-org/HOOBS/wiki/5.2-Certified-Accessories)
+* [**Developers**](https://github.com/hoobs-org/HOOBS/wiki/6.0-Developers)
+  * [**Command Line Interface**](https://github.com/hoobs-org/HOOBS/wiki/6.1-Command-Line-Interface)
+  * [**Architecture**](https://github.com/hoobs-org/HOOBS/wiki/6.2-Architecture)
+  * [**API Reference**](https://github.com/hoobs-org/HOOBS/wiki/6.3-API-Reference)
+  * [**Developing Plugins**](https://github.com/hoobs-org/HOOBS/wiki/6.4-Developing-Plugins)
+  * [**Interface Plugins**](https://github.com/hoobs-org/HOOBS/wiki/6.5-Interface-Plugins)
+* [**Legal**](https://github.com/hoobs-org/HOOBS/wiki/7.0-Legal)
+  * [**Terms & Conditions**](https://github.com/hoobs-org/HOOBS/wiki/7.1-Terms-and-Conditions)
+  * [**Shipping & Taxes**](https://github.com/hoobs-org/HOOBS/wiki/7.2-Shipping-and-Taxes)
+  * [**Warranty**](https://github.com/hoobs-org/HOOBS/wiki/7.3-Warranty)
+* [**Credits**](https://github.com/hoobs-org/HOOBS/wiki/8.0-Credits)
 
-## Interface
-HOOBS comes with a built-in web interface. This allows you to monitor, backup and configure your Homebridge server. You can access the web interface at the default location. [http://hoobs.local](http://hoobs.local).
+## Legal
+HOOBS.org is a department of two4you business solution gmbh
 
-### Security
-HOOBS is permissible. This helps you keep your smart home secure.
+c/o two4you business solution gmbh | Rhypark 8 | CH-5080 Laufenburg | Switzerland
 
-![](docs/light/login.png)
-
-### Status
-This monitors the Homebridge service, CPU and memory load. It also has your Apple Home setup pin.
-
-![](docs/light/status.png)
-
-### Accessories
-Monitor and control accessories connected to HOOBS.
-
-![](docs/light/accessories.png)
-
-### Log
-This shows you the rolling log. This is helpful for troubleshooting.
-
-![](docs/light/log.png)
-
-### User Management
-
-Shows a list of users, and allows you to edit, add or remove users.
-
-![](docs/light/users.png)
-
-### Installed Plugins
-Shows you a list of installed plugins. This also includes your Homebridge service, and can be updated from here.
-
-![](docs/light/installed.png)
-
-### Browse Plugins
-You can search all of the available plugins, and install them, all from one screen.
-
-![](docs/light/search.png)
-
-### Configuration
-The configuration screen allows you to modify your Homebridge settings, platforms and accessories.
-
-![](docs/light/config.png)
-
-### Themes
-Change the look and feel of HOOBS.
-
-![](docs/dark/config.png)
-
-## Adding HOOBS to iOS
-HomeKit itself is actually not an app; it's a "database" similar to HealthKit and PassKit. Where HealthKit has the companion Health app and PassKit has Passbook, HomeKit has the Home app, introduced with iOS 10.  
-
-If you are a member of the iOS developer program, you might also find Apple's [HomeKit Catalog](https://developer.apple.com/documentation/homekit/configuring_a_home_automation_device) app to be useful, as it provides straightforward and comprehensive management of all HomeKit database "objects".  
-
-Using the Home app (or most other HomeKit apps), you should be able to add the single accessory "Homebridge", assuming that you're still running HOOBS and you're on the same Wifi network. Adding this accessory will automatically add all accessories and platforms defined in your configuration. 
-
-When you attempt to add HOOBS, it will ask for a "PIN code". The default code is 031-45-154 (but this can be changed).
-
-## Interacting with your Devices
-Once your device has been added to HomeKit, you should be able to tell Siri to control your devices. However, realize that Siri is a cloud service, and iOS may need some time to synchronize your device information with iCloud.  
-
-One final thing to remember is that Siri will almost always prefer its default phrase handling over HomeKit devices. For instance, if you name your Sonos device "Radio" and try saying "Siri, turn on the Radio" then Siri will probably start playing an iTunes Radio station on your phone. Even if you name it "Sonos" and say "Siri, turn on the Sonos", Siri will probably just launch the Sonos app instead. This is why, for instance, the suggested name for the Sonos accessory is "Speakers".
-
-### Controls
-You can interact with your devices from the Accessories screen in the interface. Here is a list of available controls.
-
-- **Light (Binary, Dimmer & Hue)**
-- **Switch**
-- **Thermostat**
-- **Door Lock**
-- **Garage Door**
-
-### Sensors
-Here is a list of available sensors.
-
-- **Temperature**
-- **Humidity**
-- **Contact (Door/Window)**
-- **Battery**
-- **Motion**
+[HOOBS website](https://hoobs.org) | [HOOBS Support Chat](https://m.me/HOOBSofficial) | [HOOBS email](mailto:info@hoobs.org) | [HOOBS Subreddit](https://www.reddit.com/r/hoobs/) | [HOOBS Facebook Page](https://www.facebook.com/HOOBSofficial) | [HOOBS Facebook Support Group](https://www.facebook.com/groups/HOOBSorg/) | [Homebridge Subreddit](https://www.reddit.com/r/homebridge/) 
