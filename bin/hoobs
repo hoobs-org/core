@@ -48,23 +48,21 @@ if (!executing || installed.version !== executing.version) {
                 installed.dependencies[name] = dependency;
             }
         }
-
-        if (installed.devDependencies) {
-            delete installed.devDependencies;
-        }
-
-        if (File.existsSync(join(root, "package.json"))) {
-            File.unlinkSync(join(root, "package.json"));
-        }
-
-        File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
-    } else {
-        if (File.existsSync(join(root, "package.json"))) {
-            File.unlinkSync(join(root, "package.json"));
-        }
-
-        File.copySync(join(applicaiton, "package.json"), join(root, "package.json"));
     }
+
+    if (installed.devDependencies) {
+        delete installed.devDependencies;
+    }
+
+    if (installed.scripts) {
+        delete installed.scripts;
+    }
+
+    if (File.existsSync(join(root, "package.json"))) {
+        File.unlinkSync(join(root, "package.json"));
+    }
+
+    File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
 
     throbber.stopAndPersist();
     throbber = Ora("Setting Up User Mode").start();
