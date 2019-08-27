@@ -75,6 +75,7 @@ else
     echo "creating hoobs service"
 
     curl https://raw.githubusercontent.com/hoobs-org/HOOBS/master/service/fedora-hoobs.service --output /etc/systemd/system/hoobs.service > /dev/null
+    chmod 755 /etc/systemd/system/hoobs.service > /dev/null
 fi
 
 echo "configuring firewall"
