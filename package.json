@@ -25,7 +25,8 @@
     },
     "scripts": {
         "build": "vue-cli-service build",
-        "prepare" : "npm run build"
+        "prepare": "npm run build",
+        "postinstall": "scripts/install.sh"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.0.2",
