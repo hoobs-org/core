@@ -56,8 +56,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         if test -f /etc/systemd/system/homebridge-config-ui-x.service; then
             echo "removing config ui service"
-        
-            systemctl stop homebridge-config-ui-x.service > /dev/null
+
             systemctl disable homebridge-config-ui-x.service > /dev/null
         
             rm -f /etc/systemd/system/homebridge-config-ui-x.service > /dev/null
@@ -65,8 +64,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         if test -f /etc/systemd/system/homebridge.service; then
             echo "removing homebridge service"
-        
-            systemctl stop homebridge.service > /dev/null
+
             systemctl disable homebridge.service > /dev/null
         
             rm -f /etc/systemd/system/homebridge.service > /dev/null
@@ -161,8 +159,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         if test -f /etc/systemd/system/homebridge-config-ui-x.service; then
             echo "removing config ui service"
-        
-            systemctl stop homebridge-config-ui-x.service > /dev/null
+
             systemctl disable homebridge-config-ui-x.service > /dev/null
         
             rm -f /etc/systemd/system/homebridge-config-ui-x.service > /dev/null
@@ -170,8 +167,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         if test -f /etc/systemd/system/homebridge.service; then
             echo "removing homebridge service"
-        
-            systemctl stop homebridge.service > /dev/null
+
             systemctl disable homebridge.service > /dev/null
         
             rm -f /etc/systemd/system/homebridge.service > /dev/null
@@ -266,8 +262,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         if test -f /etc/systemd/system/homebridge-config-ui-x.service; then
             echo "removing config ui service"
-        
-            systemctl stop homebridge-config-ui-x.service > /dev/null
+
             systemctl disable homebridge-config-ui-x.service > /dev/null
         
             rm -f /etc/systemd/system/homebridge-config-ui-x.service > /dev/null
@@ -275,8 +270,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         if test -f /etc/systemd/system/homebridge.service; then
             echo "removing homebridge service"
-        
-            systemctl stop homebridge.service > /dev/null
+
             systemctl disable homebridge.service > /dev/null
         
             rm -f /etc/systemd/system/homebridge.service > /dev/null
