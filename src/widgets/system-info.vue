@@ -68,6 +68,10 @@
         border-bottom: 1px var(--border) solid;
     }
 
+    #system table tr td:last-child {
+        word-break: break-all;
+    }
+
     #system table tr:last-child td {
         border-bottom: 0 none;
     }

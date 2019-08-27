@@ -1,11 +1,14 @@
 <template>
     <div id="status">
-        <div class="content">
+        <div class="content mobile-hide">
             <grid-layout :layout.sync="grid" :col-num="12" :row-height="30" :is-draggable="true" :is-resizable="true" :is-mirrored="false" :vertical-compact="true" :margin="[10, 10]" :use-css-transforms="true" @layout-updated="updateDashboard">
                 <grid-item class="widget" v-for="(item, index) in grid" :key="index" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i">
                     <component :is="item.component" :item="item" :index="index" :change="updateItem" />
                 </grid-item>
             </grid-layout>
+        </div>
+        <div class="mobile-content mobile-show">
+            <system-info />
         </div>
     </div>
 </template>
@@ -90,5 +93,17 @@
     #status .content {
         flex: 1;
         overflow: auto;
+    }
+
+    #status .mobile-content {
+        flex: 1;
+        overflow: auto;
+        display: none;
+    }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #status .mobile-content {
+            display: flex;
+        }
     }
 </style>

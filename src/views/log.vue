@@ -46,7 +46,7 @@
 
     @media (min-width: 300px) and (max-width: 815px) {
         #logs .message {
-            font-size: 12px;
+            font-size: 10px;
         }
     }
 </style>
