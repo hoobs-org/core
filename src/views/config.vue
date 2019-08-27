@@ -250,6 +250,12 @@
                     text: "Italiano",
                     value: "it"
                 },{
+                    text: "日本人",
+                    value: "ja"
+                },{
+                    text: "한국어",
+                    value: "ko"
+                },{
                     text: "Nederlands",
                     value: "nl"
                 },{

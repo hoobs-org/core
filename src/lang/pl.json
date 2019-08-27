@@ -163,7 +163,7 @@
         "pin_required": "Home PIN jest wymagany.",
         "platform_invalid_json": "Niepoprawny JSON w platformie.",
         "platforms": "Platformy",
-        "platforms_message": "Platformy są definiowane poprzez zainstaloane wtyczki. Sprawdź dokumentację wtyczki po więcej informacji. Platformy mają na celu zdefiniowanie grupy urządzeń (takich jak koncentrator [HUB]).\n",
+        "platforms_message": "Platformy są definiowane poprzez zainstaloane wtyczki. Sprawdź dokumentację wtyczki po więcej informacji. Platformy mają na celu zdefiniowanie grupy urządzeń (takich jak koncentrator [HUB]).",
         "plugins": "Wtyczki",
         "port_ranges": "Zakres Portów",
         "port_ranges_message": "Ta sekcja służy do sterowania zakresem portów, do których powinny być przypisane oddzielne akcesoria (takie jak kamera lub telewizor).",

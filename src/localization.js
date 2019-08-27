@@ -31,6 +31,8 @@ class Language {
             case "fr":
             case "he":
             case "it":
+            case "ja":
+            case "ko":
             case "nl":
             case "no":
             case "pl":

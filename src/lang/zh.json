@@ -3,7 +3,7 @@
         "about": "About",
         "accessories": "配件",
         "accessories_config_message": "配件被定義於您安裝好插件，參考插件的文件的進一少架構。配件被定義為單一裝置。",
-        "accessories_message": "新增和增加屬於此房間的配件\n",
+        "accessories_message": "新增和增加屬於此房間的配件",
         "accessory_invalid_json": "無效JSON在此配件",
         "add": "新增",
         "add_accessories": "新增配件",

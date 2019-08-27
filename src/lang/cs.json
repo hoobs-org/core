@@ -203,7 +203,7 @@
         "service_port_message": "Port na kterém Homebridge běží. Výchozí: 51826.",
         "service_stoped_message": "Služba Homebridge není spuštěna.",
         "setup_admin_account": "Chcete-li začít, musíte si nastavit účet správce.",
-        "setup_id_message": "Naskenujte nebo ručně zadejte tento osmimístný kód v aplikaci Apple Home.\n",
+        "setup_id_message": "Naskenujte nebo ručně zadejte tento osmimístný kód v aplikaci Apple Home.",
         "severe_gale": "Severe Gale",
         "show_setup_pin": "Zobrazit PIN",
         "show_setup_pin_message": "Tato volba zobrazí/skryje PIN a QR kód pro připojení k Domácnosti na obrazovce se stavem.",
