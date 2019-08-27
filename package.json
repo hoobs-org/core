@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.0-beta.19",
+    "version": "3.0.0-beta.20",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -26,7 +26,7 @@
     "scripts": {
         "build": "vue-cli-service build",
         "prepare": "npm run build",
-        "postinstall": "./scripts/install.sh"
+        "postinstall": "./install.sh"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.0.2",
