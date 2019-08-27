@@ -220,17 +220,59 @@
                     platforms: []
                 },
                 locales: [{
-                    text: this.$t("auto"),
-                    value: null
-                },{
                     text: "English",
                     value: "en"
+                },{
+                    text: "عربى",
+                    value: "ar"
+                },{
+                    text: "български",
+                    value: "bg"
+                },{
+                    text: "čeština",
+                    value: "cs"
+                },{
+                    text: "Deutsche",
+                    value: "de"
+                },{
+                    text: "Ελληνικά",
+                    value: "el"
                 },{
                     text: "Español",
                     value: "es"
                 },{
+                    text: "Français",
+                    value: "fr"
+                },{
+                    text: "עברית",
+                    value: "he"
+                },{
+                    text: "Italiano",
+                    value: "it"
+                },{
+                    text: "Nederlands",
+                    value: "nl"
+                },{
+                    text: "norsk",
+                    value: "no"
+                },{
+                    text: "Polskie",
+                    value: "pl"
+                },{
+                    text: "Português",
+                    value: "pt"
+                },{
                     text: "Română",
                     value: "ro"
+                },{
+                    text: "русский",
+                    value: "ru"
+                },{
+                    text: "Tiếng Việt",
+                    value: "vi"
+                },{
+                    text: "中文",
+                    value: "zh"
                 }],
                 themes: [{
                     text: this.$t("hoobs_light"),

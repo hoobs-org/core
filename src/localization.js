@@ -21,9 +21,24 @@ class Language {
 
     static supported(locale) {
         switch (locale) {
+            case "ar":
+            case "bg":
+            case "cs":
+            case "de":
+            case "el":
             case "en":
             case "es":
+            case "fr":
+            case "he":
+            case "it":
+            case "nl":
+            case "no":
+            case "pl":
+            case "pt":
             case "ro":
+            case "ru":
+            case "vi":
+            case "zh":
                 return locale;
 
             default:
