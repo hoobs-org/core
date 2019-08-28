@@ -63,20 +63,16 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         fi
         
         if test -f /etc/systemd/system/homebridge.service; then
-            echo "removing homebridge service"
-
-            systemctl disable homebridge.service > /dev/null
-        
-            rm -f /etc/systemd/system/homebridge.service > /dev/null
-        fi
-        
-        if test -f /etc/systemd/system/hoobs.service; then
-            echo "hoobs service already exists"
+            echo "homebridge set to start service"
+        elif test -f /etc/systemd/system/hoobs.service; then
+            echo "hoobs set to start service"
         else
             echo "creating hoobs service"
         
             curl https://raw.githubusercontent.com/hoobs-org/HOOBS/master/service/fedora-hoobs.service --output /etc/systemd/system/hoobs.service > /dev/null
             chmod 755 /etc/systemd/system/hoobs.service > /dev/null
+
+            systemctl enable hoobs.service > /dev/null
         fi
         
         echo "configuring firewall"
@@ -98,8 +94,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         echo "enabling services"
         
-        systemctl enable nginx.service
-        systemctl enable hoobs.service > /dev/null
+        systemctl enable nginx.service > /dev/null
         
         read -p "press enter to reboot"
         
@@ -166,20 +161,16 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         fi
         
         if test -f /etc/systemd/system/homebridge.service; then
-            echo "removing homebridge service"
-
-            systemctl disable homebridge.service > /dev/null
-        
-            rm -f /etc/systemd/system/homebridge.service > /dev/null
-        fi
-        
-        if test -f /etc/systemd/system/hoobs.service; then
-            echo "hoobs service already exists"
+            echo "homebridge set to start service"
+        elif test -f /etc/systemd/system/hoobs.service; then
+            echo "hoobs set to start service"
         else
             echo "creating hoobs service"
         
             curl https://raw.githubusercontent.com/hoobs-org/HOOBS/master/service/fedora-hoobs.service --output /etc/systemd/system/hoobs.service > /dev/null
             chmod 755 /etc/systemd/system/hoobs.service > /dev/null
+
+            systemctl enable hoobs.service > /dev/null
         fi
         
         echo "configuring firewall"
@@ -201,8 +192,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         echo "enabling services"
         
-        systemctl enable nginx.service
-        systemctl enable hoobs.service > /dev/null
+        systemctl enable nginx.service > /dev/null
         
         read -p "press enter to reboot"
         
@@ -269,26 +259,21 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         fi
         
         if test -f /etc/systemd/system/homebridge.service; then
-            echo "removing homebridge service"
-
-            systemctl disable homebridge.service > /dev/null
-        
-            rm -f /etc/systemd/system/homebridge.service > /dev/null
-        fi
-        
-        if test -f /etc/systemd/system/hoobs.service; then
-            echo "hoobs service already exists"
+            echo "homebridge set to start service"
+        elif test -f /etc/systemd/system/hoobs.service; then
+            echo "hoobs set to start service"
         else
             echo "creating hoobs service"
         
-            curl https://raw.githubusercontent.com/hoobs-org/HOOBS/master/service/debian-hoobs.service --output /etc/systemd/system/hoobs.service > /dev/null
+            curl https://raw.githubusercontent.com/hoobs-org/HOOBS/master/service/fedora-hoobs.service --output /etc/systemd/system/hoobs.service > /dev/null
             chmod 755 /etc/systemd/system/hoobs.service > /dev/null
+
+            systemctl enable hoobs.service > /dev/null
         fi
         
         echo "enabling services"
         
-        systemctl enable nginx.service
-        systemctl enable hoobs.service > /dev/null
+        systemctl enable nginx.service > /dev/null
         
         read -p "press enter to reboot"
         
