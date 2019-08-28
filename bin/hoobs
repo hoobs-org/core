@@ -30,6 +30,10 @@ const installed = JSON.parse(File.readFileSync(join(applicaiton, "package.json")
 let executing = null;
 let throbber = null;
 
+if (!File.existsSync(root)){
+    File.mkdirSync(root);
+}
+
 if (File.existsSync(join(root, "package.json"))) {
     executing = JSON.parse(File.readFileSync(join(join(root, "package.json"))));
 }
