@@ -39,6 +39,8 @@ if (File.existsSync(join(root, "package.json"))) {
 }
 
 if (!executing || installed.version !== executing.version) {
+    const plugins = [];
+
     throbber = Ora("Initilizing").start();
 
     if (executing && executing.dependencies) {
@@ -50,6 +52,8 @@ if (!executing || installed.version !== executing.version) {
 
             if ((name.startsWith("homebridge-") || (name.startsWith("@hoobs/") && name !== "@hoobs/homebridge")) && !installed.dependencies.hasOwnProperty(name)) {
                 installed.dependencies[name] = dependency;
+
+                plugins.push(name);
             }
         }
     }
@@ -83,6 +87,7 @@ if (!executing || installed.version !== executing.version) {
         Remove.sync(join(root, "node_modules"));
     }
 
+    File.copySync(join(applicaiton, "node_modules"), join(root, "node_modules"));
     File.copySync(join(applicaiton, "dist"), join(root, "dist"));
     File.copySync(join(applicaiton, "lib"), join(root, "lib"));
 
@@ -141,13 +146,17 @@ if (!executing || installed.version !== executing.version) {
     
         throbber = Ora("Configuring Server").start();
 
-        exec("npm install --unsafe-perm", {
-            cwd: root
-        }, () => {
-            throbber.stop();
-    
+        if (plugins.length > 0) {
+            exec(`npm install --unsafe-perm ${plugins.join(" ")}`, {
+                cwd: root
+            }, () => {
+                throbber.stop();
+        
+                require(join(root, "lib/cli"))();
+            });
+        } else {
             require(join(root, "lib/cli"))();
-        });
+        }
     });
 } else {
     require(join(root, "lib/cli"))();
