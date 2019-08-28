@@ -232,7 +232,7 @@
                     text: "čeština",
                     value: "cs"
                 },{
-                    text: "Deutsche",
+                    text: "Deutsch",
                     value: "de"
                 },{
                     text: "Ελληνικά",
