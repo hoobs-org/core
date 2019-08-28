@@ -265,7 +265,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         else
             echo "creating hoobs service"
         
-            curl https://raw.githubusercontent.com/hoobs-org/HOOBS/master/service/fedora-hoobs.service --output /etc/systemd/system/hoobs.service > /dev/null
+            curl https://raw.githubusercontent.com/hoobs-org/HOOBS/master/service/debian-hoobs.service --output /etc/systemd/system/hoobs.service > /dev/null
             chmod 755 /etc/systemd/system/hoobs.service > /dev/null
 
             systemctl enable hoobs.service > /dev/null
