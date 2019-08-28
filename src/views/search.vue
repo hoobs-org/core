@@ -122,11 +122,18 @@
             },
 
             categoryName(value) {
-                value = (value || "").replace(/-/gi, "_");
-                value = this.$t(value);
-                value = value.replace("category_", "");
+                let results = value;
 
-                return Inflection.titleize(Decamelize(value.trim()));
+                results = (results || "").replace(/-/gi, "_");
+                results = this.$t(results);
+
+                if (results !== value) {
+                    return results;
+                }
+
+                results = results.replace("category_", "");
+
+                return Inflection.titleize(Decamelize(results.trim()));
             },
 
             async fetchCertified(category) {
