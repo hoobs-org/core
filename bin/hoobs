@@ -155,6 +155,8 @@ if (!executing || installed.version !== executing.version) {
                 require(join(root, "lib/cli"))();
             });
         } else {
+            throbber.stop();
+
             require(join(root, "lib/cli"))();
         }
     });
