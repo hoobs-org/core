@@ -245,6 +245,7 @@
                         return `${!title ? " | " : ""}${this.$t("help")}`;
 
                     case "system":
+                    case "terminal":
                         return `${!title ? " | " : ""}${this.$t("system")}`;
 
                     case "profile":
