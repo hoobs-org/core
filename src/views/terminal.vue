@@ -152,6 +152,7 @@
     #terminal .info {
         width: 210px;
         padding: 20px;
+        background: var(--background-dark);
     }
 
     #terminal .info a,
@@ -159,14 +160,14 @@
     #terminal .info a:active,
     #terminal .info a:visited {
         padding: 10px;
-        border-bottom: 1px var(--border) solid;
-        color: var(--text);
+        border-bottom: 1px var(--background-dark-border) solid;
+        color: var(--background-dark-text);
         text-decoration: none;
         display: block;
     }
 
     #terminal .info a:hover {
-        color: var(--text-dark);
+        color: var(--background-dark-text-dark);
     }
 
     #terminal .info .active {
