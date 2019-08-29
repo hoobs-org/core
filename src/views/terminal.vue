@@ -3,7 +3,7 @@
         <div class="info">
             <router-link to="/system#software">{{ $t("software") }}</router-link>
             <div v-for="(section, title) in info" :key="title">
-                <router-link :to="`/system#h-${title}`">{{ humanize(title) }}</router-link>
+                <router-link :to="`/system#h-${title}`">{{ translate(title) }}</router-link>
             </div>
             <router-link to="/system/terminal" class="active">{{ $t("terminal") }}</router-link>
         </div>
@@ -75,8 +75,17 @@
         },
 
         methods: {
-            humanize(string) {
-                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+            translate(value) {
+                let results = value;
+
+                results = (results || "").replace(/-/gi, "_");
+                results = this.$t(results);
+
+                if (results !== value) {
+                    return results;
+                }
+
+                return Inflection.titleize(Decamelize(results.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
             },
 
             size() {

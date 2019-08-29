@@ -3,7 +3,7 @@
         <div class="info">
             <a href="#software">{{ $t("software") }}</a>
             <div v-for="(section, title) in info" :key="title">
-                <a :href="`#h-${title}`">{{ humanize(title) }}</a>
+                <a :href="`#h-${title}`">{{ translate(title) }}</a>
             </div>
             <router-link to="/system/terminal" class="mobile-hide">{{ $t("terminal") }}</router-link>
         </div>
@@ -27,11 +27,11 @@
             </div>
             <div v-if="info" class="system-content">
                 <div v-for="(section, title) in info" :key="title">
-                    <h2 :id="`h-${title}`">{{ humanize(title) }}</h2>
+                    <h2 :id="`h-${title}`">{{ translate(title) }}</h2>
                     <table>
                         <tbody>
                             <tr v-for="(value, name) in section" :key="name">
-                                <td style="min-width: 250px;">{{ humanize(name) }}</td>
+                                <td style="min-width: 250px;">{{ translate(name) }}</td>
                                 <td style="width: 100%;">{{ value }}</td>
                             </tr>
                         </tbody>
@@ -95,8 +95,17 @@
                 }, 1000);
             },
 
-            humanize(string) {
-                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+            translate(value) {
+                let results = value;
+
+                results = (results || "").replace(/-/gi, "_");
+                results = this.$t(results);
+
+                if (results !== value) {
+                    return results;
+                }
+
+                return Inflection.titleize(Decamelize(results.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
             },
 
             async update() {
