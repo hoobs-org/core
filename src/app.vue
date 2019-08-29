@@ -50,12 +50,12 @@
                         <span v-if="visible['nav']" v-bind:class="activeLink('users')">{{ routeName('users') }}</span>
                     </router-link>
                     <router-link v-if="user.admin" to="/system" @click.native="hide('nav')">
-                        <span v-bind:class="activeIcon('system')">memory</span>
-                        <span v-if="visible['nav']" v-bind:class="activeLink('system')">{{ routeName('system') }}</span>
+                        <span v-bind:class="activeIcon('system', 'terminal')">memory</span>
+                        <span v-if="visible['nav']" v-bind:class="activeLink('system', 'terminal')">{{ routeName('system') }}</span>
                     </router-link>
                     <router-link v-if="user.admin" :to="defaultRoute === 'plugins' ? '/' : '/plugins'" @click.native="hide('nav')" class="mobile-hide">
-                        <span v-bind:class="activeIcon('plugins', 'search')">extension</span>
-                        <span v-if="visible['nav']" v-bind:class="activeLink('plugins', 'search')">{{ routeName('plugins') }}</span>
+                        <span v-bind:class="activeIcon('plugins', 'plugin', 'search')">extension</span>
+                        <span v-if="visible['nav']" v-bind:class="activeLink('plugins', 'plugin', 'search')">{{ routeName('plugins') }}</span>
                     </router-link>
                 </div>
                 <div class="routes">
