@@ -230,6 +230,7 @@
         "system": "System",
         "system_info": "System Information",
         "temperature": "Temperature",
+        "terminal": "Terminal",
         "theme": "Theme",
         "theme_message": "Choose a theme for the interface.",
         "thunderstorm": "Thunderstorm",

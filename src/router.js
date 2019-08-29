@@ -21,6 +21,10 @@ const getRoutes = (defaultRoute) => {
         name: "system",
         component: () => import("./views/system.vue")
     },{
+        path: "/system/terminal",
+        name: "terminal",
+        component: () => import("./views/terminal.vue")
+    },{
         path: "/profile",
         name: "profile",
         component: () => import("./views/profile.vue")

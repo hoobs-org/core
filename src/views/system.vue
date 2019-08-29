@@ -5,6 +5,7 @@
             <div v-for="(section, title) in info" :key="title">
                 <a :href="`#h-${title}`">{{ humanize(title) }}</a>
             </div>
+            <router-link to="/system/terminal" class="mobile-hide">{{ $t("terminal") }}</router-link>
         </div>
         <div class="content">
             <div class="system-content">
@@ -46,7 +47,8 @@
     import Inflection from "inflection";
 
     import Marquee from "@/components/loading-marquee.vue";
-    import { setTimeout } from 'timers';
+
+    import { setTimeout } from "timers";
 
     export default {
         name: "system",
@@ -73,6 +75,12 @@
         async mounted() {
             this.info = await this.api.get("/system");
             this.status = await this.api.get("/");
+
+            if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
+                if (document.querySelector(window.location.hash)) {
+                    document.querySelector(window.location.hash).scrollIntoView();
+                }
+            }
 
             this.checkVersion();
         },
