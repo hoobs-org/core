@@ -119,6 +119,12 @@
             updateJson(name, code) {
                 try {
                     this.configuration = JSON.parse(code);
+
+                    const index = this.errors.indexOf(this.$t("invalid_json"));
+
+                    if (index >= 0) {
+                        this.errors.splice(index, 1);
+                    }
                 } catch {
                     if (this.errors.indexOf(this.$t("invalid_json")) === -1) {
                         this.errors.push(this.$t("invalid_json"));
