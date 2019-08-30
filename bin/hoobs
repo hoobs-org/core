@@ -3,9 +3,9 @@
 process.title = "hoobs-core";
 
 const OS = require("os");
+const Ora = require("../node_modules/ora");
 const File = require("../node_modules/fs-extra/lib");
 const Remove = require("../node_modules/rimraf");
-const Ora = require("../node_modules/ora");
 
 const { dirname, join } = require("path");
 const { exec, spawn } = require("child_process");
@@ -35,10 +35,14 @@ if (!File.existsSync(root)){
 }
 
 if (File.existsSync(join(root, "package.json"))) {
-    executing = JSON.parse(File.readFileSync(join(join(root, "package.json"))));
+    try {
+        executing = JSON.parse(File.readFileSync(join(root, "package.json")));
+    } catch {
+        executing = null;
+    }
 }
 
-if (!executing || installed.version !== executing.version) {
+const preparePackage = function() {
     const plugins = [];
 
     throbber = Ora("Initilizing").start();
@@ -72,7 +76,12 @@ if (!executing || installed.version !== executing.version) {
 
     File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
 
-    throbber.stopAndPersist();
+    throbber.stop();
+
+    return plugins;
+}
+
+const setupUserMode = function() {
     throbber = Ora("Setting Up User Mode").start();
 
     if (File.existsSync(join(root, "dist"))) {
@@ -101,64 +110,78 @@ if (!executing || installed.version !== executing.version) {
 
     File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
 
-    let prompts = 0;
+    throbber.stop();
+}
 
-    throbber.stopAndPersist({
-        text: "User Mode Active"
-    });
+const fixNodeCache = function() {
+    return new Promise((resolve) => {
+        throbber = Ora("Fixing Node Cache").start();
 
-    throbber = Ora("Fixing Node Cache").start();
+        let prompts = 0;
 
-    const process = spawn("sudo", [
-        "-S",
-        "-k",
-        "-p",
-        "#sudo-hoobs#",
-        "rm",
-        "-fR",
-        join(home, ".npm")
-    ]);
+        const process = spawn("sudo", [
+            "-S",
+            "-k",
+            "-p",
+            "#sudo-hoobs#",
+            "rm",
+            "-fR",
+            join(home, ".npm")
+        ]);
 
-    process.stdout.on("data", (data) => {
-        console.log(`${data}`.trimEnd());
-    });
+        process.stderr.on("data", (data) => {
+            const lines = `${data}`.split(/\r?\n/);
 
-    process.stderr.on("data", (data) => {
-        const lines = `${data}`.split(/\r?\n/);
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
 
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-
-            if (line === "#sudo-hoobs#") {
-                if (++prompts > 1) {
-                    process.stdin.write("\n\n\n\n");
-                } else {
-                    process.stdin.write(`${password || ""}\n`);
+                if (line === "#sudo-hoobs#") {
+                    if (++prompts > 1) {
+                        process.stdin.write("\n\n\n\n");
+                    } else {
+                        process.stdin.write(`${password || ""}\n`);
+                    }
                 }
             }
-        }
-    });
-
-    process.on("close", () => {
-        throbber.stopAndPersist({
-            text: "Node Cache Fixed"
         });
-    
-        throbber = Ora("Configuring Server").start();
+
+        process.on("close", () => {
+            throbber.stop();
+        
+            resolve();
+        });
+    });
+}
+
+const installPackages = function(plugins) {
+    return new Promise((resolve) => {
+        throbber = Ora("Initilizing Plugins").start();
 
         if (plugins.length > 0) {
-            exec(`npm install --unsafe-perm ${plugins.join(" ")}`, {
+            exec(`npm set progress=false && npm install --unsafe-perm ${plugins.join(" ")} && npm set progress=true`, {
                 cwd: root
             }, () => {
                 throbber.stop();
         
-                require(join(root, "lib/cli"))();
+                resolve();
             });
         } else {
             throbber.stop();
 
-            require(join(root, "lib/cli"))();
+            resolve();
         }
+    });
+}
+
+if (!executing || installed.version !== executing.version) {
+    const plugins = preparePackage();
+
+    setupUserMode();
+
+    fixNodeCache().then(() => {
+        installPackages(plugins).then(() => {
+            require(join(root, "lib/cli"))();
+        });
     });
 } else {
     require(join(root, "lib/cli"))();

@@ -92,8 +92,8 @@
                 const text = this.char();
 
                 return {
-                    rows: Math.floor(this.$refs.console.clientHeight / text.height),
-                    cols: Math.floor(this.$refs.console.clientWidth / text.width) - 2
+                    rows: Math.floor(this.$refs.console.clientHeight / text.height) - 1,
+                    cols: Math.floor(this.$refs.console.clientWidth / text.width) - 3
                 };
             },
 
@@ -180,7 +180,7 @@
         display: block !important;
         height: 100%;
         width: 100%;
-        padding: 3px 10px 3px 10px;
+        padding: 10px;
         font-size: 14px;
         font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
         background: var(--background-dark);

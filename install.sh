@@ -18,7 +18,9 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         echo "installing node version manager"
         
+        npm set progress=false > /dev/null
         npm install -g n > /dev/null
+        npm set progress=true > /dev/null
         n stable > /dev/null
         
         if test -f /etc/nginx/nginx.conf.bak; then
@@ -116,7 +118,9 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         echo "installing node version manager"
         
+        npm set progress=false > /dev/null
         npm install -g n > /dev/null
+        npm set progress=true > /dev/null
         n stable > /dev/null
         
         if test -f /etc/nginx/nginx.conf.bak; then
@@ -214,7 +218,9 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         echo "installing node version manager"
         
+        npm set progress=false > /dev/null
         npm install -g n > /dev/null
+        npm set progress=true > /dev/null
         n stable > /dev/null
         
         if test -f /etc/nginx/nginx.conf.bak; then

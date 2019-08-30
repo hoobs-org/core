@@ -17,7 +17,8 @@
     "main": "lib/cli.js",
     "bin": {
         "homebridge": "bin/hoobs",
-        "hoobs": "bin/hoobs"
+        "hoobs": "bin/hoobs",
+        "hoobs-init": "install.sh"
     },
     "author": "Michael J Kellsy",
     "engines": {
@@ -25,8 +26,7 @@
     },
     "scripts": {
         "build": "vue-cli-service build",
-        "prepare": "npm run build",
-        "postinstall": "./install.sh"
+        "prepare": "npm run build"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.0.3",
