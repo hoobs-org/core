@@ -7,7 +7,7 @@
             </div>
             <router-link to="/system/terminal" class="mobile-hide">{{ $t("terminal") }}</router-link>
         </div>
-        <div class="content">
+        <div ref="content" class="content">
             <div class="system-content">
                 <h2 id="software">{{ $t("software") }}</h2>
                 <div class="update-card">

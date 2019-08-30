@@ -22,7 +22,7 @@
                 </p>
             </div>
         </div>
-        <div class="content">
+        <div ref="content" class="content">
             <form v-if="loaded" class="form" method="post" action="/config" v-on:submit.prevent="save()">
                 <input type="submit" class="hidden-submit" value="submit">
                 <h2 id="hoobs">{{ $t("interface_settings") }}</h2>

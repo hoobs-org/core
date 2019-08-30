@@ -1,7 +1,7 @@
 <template>
     <div v-if="user.admin" id="terminal">
         <div class="info">
-            <router-link to="/system#software">{{ $t("software") }}</router-link>
+            <router-link to="/system">{{ $t("software") }}</router-link>
             <div v-for="(section, title) in info" :key="title">
                 <router-link :to="`/system#h-${title}`">{{ translate(title) }}</router-link>
             </div>

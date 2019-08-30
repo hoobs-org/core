@@ -19,6 +19,7 @@
         <div v-if="!locked" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
         <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
         <div class="item-seperator"></div>
+        <router-link to="/system" class="item">{{ $t("system") }}</router-link>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
