@@ -7,7 +7,9 @@
             </div>
             <router-link to="/system/terminal" class="active">{{ $t("terminal") }}</router-link>
         </div>
-        <div class="content" ref="console"></div>
+        <div class="content" ref="console">
+            <div ref="terminal" class="shell"></div>
+        </div>
     </div>
 </template>
 
@@ -15,8 +17,9 @@
     import Decamelize from "decamelize";
     import Inflection from "inflection";
 
-    import Client from "socket.io-client";
-    import Terminal from "term.js-cockpit/src/term";
+    import { Terminal } from "xterm";
+    import * as fit from "xterm/lib/addons/fit/fit";
+    import * as attach from "xterm/lib/addons/attach/attach";
 
     export default {
         name: "terminal",
@@ -30,43 +33,35 @@
         data() {
             return {
                 info: null,
-                socket: null,
-                term: null
+                term: null,
+                socket: null
             }
         },
 
         async mounted() {
             this.info = await this.api.get("/system");
-            this.socket = Client(this.$instance);
 
-            const dimensions = this.size();
+            Terminal.applyAddon(attach);
+            Terminal.applyAddon(fit);
 
-            this.socket.on("connect", () => {
-                this.term = new Terminal({
-                    cols: dimensions.cols,
-                    rows: dimensions.rows,
-                    useStyle: true,
-                    screenKeys: true,
-                    cursorBlink: true
-                });
-
-                this.term.on("data", (data) => {
-                    this.socket.emit("data", data);
-                });
-
-                this.socket.on("data", (data) => {
-                    this.term.write(data);
-                });
-
-                this.term.open(this.$refs.console);
-
-                this.socket.on("disconnect", () => {
-                    this.term.destroy();
-                });
-
-                this.socket.emit("data", "\n");
-                this.socket.emit("data", "clear\n");
+            this.term = new Terminal({
+                cursorBlink: true,
+                theme: {
+                    background: "#474746",
+                    foreground: "#f1f1f1"
+                }
             });
+
+            this.term.open(this.$refs.terminal);
+            this.term.fit();
+
+            const url = this.$instance.replace("http://", "ws://").replace("https://", "wss://");
+
+            this.socket = new WebSocket(`${url}${url.endsWith("/") ? "shell" : "/shell"}`);
+
+            this.socket.onopen = (ev) => {
+                this.term.attach(this.socket);
+            };
         },
 
         destroyed() {
@@ -118,26 +113,131 @@
 </script>
 
 <style>
-    .terminal {
-        height: 100%;
+    .shell {
         width: 100%;
-        font-family: monospace;
-        font-size: 14px;
-        color: var(--log-text);
-        background: var(--background-dark) !important;
-        padding: 3px;
-        border: none !important;
-        box-sizing: border-box;
+        height: 100%;
     }
 
-    .terminal div {
-        display: flex;
-        flex-wrap: nowrap;
+    .xterm {
+        font-feature-settings: "liga" 0;
+        position: relative;
+        user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .xterm.focus,
+    .xterm:focus {
+        outline: none;
+    }
+
+    .xterm .xterm-helpers {
+        position: absolute;
+        top: 0;
+        z-index: 10;
+    }
+
+    .xterm .xterm-helper-textarea {
+        position: absolute;
+        opacity: 0;
+        left: -9999em;
+        top: 0;
+        width: 0;
+        height: 0;
+        z-index: -10;
         white-space: nowrap;
+        overflow: hidden;
+        resize: none;
     }
 
-    .terminal-cursor {
-        background: var(--log-text);
+    .xterm .composition-view {
+        background: #474746 !important;
+        color: #FFF;
+        display: none;
+        position: absolute;
+        white-space: nowrap;
+        z-index: 1;
+    }
+
+    .xterm .composition-view.active {
+        display: block;
+    }
+
+    .xterm .xterm-viewport {
+        background-color: #474746 !important;
+        overflow-y: scroll;
+        cursor: default;
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+    .xterm .xterm-screen {
+        position: relative;
+    }
+
+    .xterm .xterm-screen canvas {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .xterm .xterm-scroll-area {
+        visibility: hidden;
+    }
+
+    .xterm-char-measure-element {
+        display: inline-block;
+        visibility: hidden;
+        position: absolute;
+        top: 0;
+        left: -9999em;
+        line-height: normal;
+    }
+
+    .xterm {
+        cursor: text;
+    }
+
+    .xterm.enable-mouse-events {
+        cursor: default;
+    }
+
+    .xterm.xterm-cursor-pointer {
+        cursor: pointer;
+    }
+
+    .xterm.column-select.focus {
+        cursor: crosshair;
+    }
+
+    .xterm .xterm-accessibility,
+    .xterm .xterm-message {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 100;
+        color: transparent;
+    }
+
+    .xterm .live-region {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+
+    .xterm-dim {
+        opacity: 0.5;
+    }
+
+    .xterm-underline {
+        text-decoration: underline;
     }
 </style>
 
@@ -177,14 +277,10 @@
 
     #terminal .content {
         flex: 1;
-        display: block !important;
-        height: 100%;
         width: 100%;
+        height: 100%;
         padding: 10px;
-        font-size: 14px;
-        font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
         background: var(--background-dark);
-        border: none !important;
         box-sizing: border-box;
     }
 </style>

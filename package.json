@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.0-beta.32",
+    "version": "3.0.0-beta.33",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -35,6 +35,7 @@
         "commander": "^2.20.0",
         "cors": "^2.8.5",
         "express": "^4.17.1",
+        "express-ws": "^4.0.0",
         "fs-extra": "^8.1.0",
         "lodash": "^4.17.15",
         "node-pty-prebuilt-multiarch": "^0.8.1",
@@ -42,7 +43,7 @@
         "request": "^2.88.0",
         "rimraf": "^2.7.1",
         "socket.io": "^2.2.0",
-        "term.js-cockpit": "0.0.11"
+        "xterm": "^3.14.5"
     },
     "devDependencies": {
         "@chenfengyuan/vue-qrcode": "^1.0.1",
