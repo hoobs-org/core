@@ -1,7 +1,7 @@
 export default class Versioning {
     static checkVersion(version, latest) {
-        const current = `${version}`.split(".");
-        const release = `${latest}`.split(".");
+        const current = `${version}`.split(/[.-]+/);
+        const release = `${latest}`.split(/[.-]+/);
 
         const length = Math.max(current.length, release.length);
 
