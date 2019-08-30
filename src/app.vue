@@ -246,7 +246,7 @@
 
                     case "system":
                     case "terminal":
-                        return `${!title ? " | " : ""}${this.$t("dashboard")}`;
+                        return `${!title ? " | " : ""}${this.$t("system")}`;
 
                     case "profile":
                         return `${!title ? " | " : ""}${this.$t("profile")}`;
