@@ -274,6 +274,9 @@
                     text: "русский",
                     value: "ru"
                 },{
+                    text: "svenska",
+                    value: "sv"
+                },{
                     text: "Tiếng Việt",
                     value: "vi"
                 },{

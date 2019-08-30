@@ -34,7 +34,7 @@
                         <div></div>
                     </div>
                     <router-link :to="defaultRoute === 'status' ? '/' : '/status'" @click.native="hide('nav')">
-                        <span v-bind:class="activeIcon('status')">settings_power</span>
+                        <span v-bind:class="activeIcon('status')">dashboard</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('status')">{{ routeName('status') }}</span>
                     </router-link>
                     <router-link :to="defaultRoute === 'accessories' ? '/' : '/accessories'" @click.native="hide('nav')">
@@ -250,7 +250,7 @@
 
                     case "system":
                     case "terminal":
-                        return `${!title ? " | " : ""}${this.$t("system")}`;
+                        return `${!title ? " | " : ""}${this.$t("dashboard")}`;
 
                     case "profile":
                         return `${!title ? " | " : ""}${this.$t("profile")}`;

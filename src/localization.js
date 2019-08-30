@@ -39,6 +39,7 @@ class Language {
             case "pt":
             case "ro":
             case "ru":
+            case "sv":
             case "vi":
             case "zh":
                 return locale;
