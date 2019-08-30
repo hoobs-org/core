@@ -220,6 +220,9 @@
                     platforms: []
                 },
                 locales: [{
+                    text: this.$t("auto"),
+                    value: ""
+                },{
                     text: "English",
                     value: "en"
                 },{
