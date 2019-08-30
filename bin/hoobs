@@ -162,7 +162,7 @@ const installPackages = function(plugins) {
         throbber = Ora("Initilizing Plugins").start();
 
         if (plugins.length > 0) {
-            exec(`npm set progress=false && npm install --unsafe-perm ${plugins.join(" ")} && npm set progress=true`, {
+            exec(`npm set progress=false && npm install --unsafe-perm ${plugins.join(" ")}`, {
                 cwd: root
             }, () => {
                 throbber.stop();
