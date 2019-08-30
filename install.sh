@@ -12,15 +12,11 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         else
             echo "creating the hoobs user"
         
-            useradd -m -p $(perl -e 'print crypt($ARGV[0], "password")' "hoobsadmin") hoobs > /dev/null
-            usermod -a -G wheel hoobs > /dev/null
+            useradd -s /bin/bash -m  -d /home/hoobs -p $(perl -e 'print crypt($ARGV[0], "password")' "hoobsadmin") -c "HOOBS" -g hoobs hoobs > /dev/null
+            usermod -a -G wheel > /dev/null
         fi
         
-        echo "installing node version manager"
-        
-        npm set progress=false > /dev/null
-        npm install -g n > /dev/null
-        n stable > /dev/null
+        echo "configuring nginx"
         
         if test -f /etc/nginx/nginx.conf.bak; then
             rm -f /etc/nginx/nginx.conf.bak > /dev/null
@@ -53,7 +49,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
             rm -f /usr/local/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
         fi
         
-        curl https://raw.githubusercontent.com/hoobs-org/nginx-loader/master/nginx-default.json --output /usr/local/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
+        curl https://raw.githubusercontent.com/hoobs-org/nginx-loader/master/nginx-default.json --output /usr/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
         
         if test -f /etc/systemd/system/homebridge-config-ui-x.service; then
             echo "removing config ui service"
