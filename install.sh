@@ -12,8 +12,8 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         else
             echo "creating the hoobs user"
         
-            useradd -s /bin/bash -m  -d /home/hoobs -p $(perl -e 'print crypt($ARGV[0], "password")' "hoobsadmin") -c "HOOBS" -g hoobs hoobs > /dev/null
-            usermod -a -G wheel > /dev/null
+            useradd -s /bin/bash -m -d /home/hoobs -p $(perl -e 'print crypt($ARGV[0], "password")' "hoobsadmin") hoobs > /dev/null
+            usermod -a -G wheel hoobs > /dev/null
         fi
         
         echo "configuring nginx"
