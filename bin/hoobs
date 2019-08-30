@@ -70,6 +70,10 @@ const preparePackage = function() {
         delete installed.scripts;
     }
 
+    if (installed.bin) {
+        delete installed.bin;
+    }
+
     if (File.existsSync(join(root, "package.json"))) {
         File.unlinkSync(join(root, "package.json"));
     }
