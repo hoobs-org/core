@@ -10,7 +10,7 @@
                         {{ $t("temperature") }}
                     </div>
                 </div>
-                <div class="value">{{ Math.round((value.values.temperature * (9/5)) + 32) }}°</div>
+                <div class="value">{{ getTemp(value.values.temperature) }}°</div>
                 <div class="name">{{ value.name || value.service_name }}</div>
             </div>
         </div>
@@ -26,6 +26,16 @@
             lock: {
                 type: Boolean,
                 default: false
+            }
+        },
+
+        methods: {
+            getTemp(value) {
+                if (this.$client.temp_units && this.$client.temp_units === "celsius") {
+                    return Math.round(value);
+                }
+
+                return Math.round((value * (9/5)) + 32);
             }
         }
     };

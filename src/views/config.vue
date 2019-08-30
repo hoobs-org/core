@@ -33,6 +33,9 @@
                 <select-field :name="$t('theme')" :description="$t('theme_message')" :options="themes" v-model="configuration.client.theme" @change="markReload()" />
                 <select-field :name="$t('default_screen')" :description="$t('default_screen_message')" :options="screens" v-model="configuration.client.default_route" @change="markReload()" />
                 <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" :required="true" />
+                <select-field :name="$t('temp_units')" :description="$t('temp_units_message')" :options="units" v-model="configuration.client.temp_units" @change="markReload()" />
+                <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" @change="markReload()" />
+                <integer-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model.number="configuration.client.postal_code" @change="markReload()" :required="true" />
                 <h2 id="bridge">{{ $t("bridge_settings") }}</h2>
                 <p>
                     {{ $t("bridge_settings_message") }}
@@ -130,6 +133,8 @@
     import Marquee from "@/components/loading-marquee.vue";
     import ConfirmDelete from "@/components/confirm-delete.vue";
 
+    import CountryCodes from "../lang/country-codes.json";
+
     export default {
         name: "config",
 
@@ -202,7 +207,10 @@
                         default_route: null,
                         inactive_logoff: null,
                         theme: null,
-                        locale: null
+                        locale: null,
+                        temp_units: null,
+                        country_code: null,
+                        postal_code: null
                     },
                     bridge: {
                         name: null,
@@ -219,6 +227,14 @@
                     accessories: [],
                     platforms: []
                 },
+                countries: CountryCodes,
+                units: [{
+                    text: this.$t("celsius"),
+                    value: "celsius"
+                },{
+                    text: this.$t("fahrenheit"),
+                    value: "fahrenheit"
+                }],
                 locales: [{
                     text: this.$t("auto"),
                     value: ""

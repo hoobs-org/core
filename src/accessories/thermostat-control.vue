@@ -10,7 +10,7 @@
             <path v-if="!lock" fill="#999999" d="M50.4,76.6h-0.8v3.8h0.8V76.6z M52.2,77.4L51.7,78c0.6,0.5,1,1.2,1,2c0,1.5-1.2,2.6-2.6,2.6s-2.6-1.2-2.6-2.6 c0-0.8,0.4-1.6,1-2l-0.5-0.5c-0.7,0.6-1.2,1.5-1.2,2.6c0,1.9,1.5,3.4,3.4,3.4s3.4-1.5,3.4-3.4C53.4,79,52.9,78.1,52.2,77.4z" />
             <circle v-if="!lock" fill="#ffffff00" cx="50" cy="80" r="5.9" style="cursor: pointer;" @click="setMode" />
         </svg>
-        <div class="temp" :style="`color: ${color}`">{{ Math.round((value.values.target_temperature * (9/5)) + 32) }}°</div>
+        <div class="temp" :style="`color: ${color}`">{{ getTemp(value.values.target_temperature) }}°</div>
         <div class="name">{{ accessoryName }}</div>
         <div v-if="lock" class="lock"></div>
     </div>
@@ -155,6 +155,14 @@
         },
 
         methods: {
+            getTemp(value) {
+                if (this.$client.temp_units && this.$client.temp_units === "celsius") {
+                    return Math.round(value);
+                }
+
+                return Math.round((value * (9/5)) + 32);
+            },
+
             getRange(x, inMin, inMax, outMin, outMax) {
                 return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
             },
