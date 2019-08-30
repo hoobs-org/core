@@ -252,7 +252,7 @@
                         return `${!title ? " | " : ""}${this.$t("profile")}`;
 
                     case "status":
-                        return `${!title ? " | " : ""}${this.$t("status")}`;
+                        return `${!title ? " | " : ""}${this.$t("dashboard")}`;
 
                     case "log":
                         return `${!title ? " | " : ""}${this.$t("log")}`;
