@@ -74,7 +74,7 @@
 
         async mounted() {
             this.info = await this.api.get("/system");
-            this.status = await this.api.get("/");
+            this.status = await this.api.get("/status");
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
                 if (document.querySelector(window.location.hash)) {

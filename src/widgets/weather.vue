@@ -71,11 +71,11 @@
             this.units = this.item.units === "metric" ? "metric" : "imperial";
             this.toggleIcon = this.units === "metric" ? "toggle_off" : "toggle_on";
 
-            if (!this.weather || !this.weather.date || new Date().getTime() - this.weather.date.getTime() >= 3600000) {
+            if (!this.weather || !this.weather.date || new Date().getTime() - this.weather.date.getTime() >= 900000) {
                 this.loadWeather(await this.getQuery());
             }
 
-            if (!this.forecast || !this.forecast.date || new Date().getTime() - this.forecast.date.getTime() >= 86400000) {
+            if (!this.forecast || !this.forecast.date || new Date().getTime() - this.forecast.date.getTime() >= 900000) {
                 this.loadForecast(await this.getQuery());
             }
         },

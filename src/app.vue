@@ -142,7 +142,7 @@
                 }
             }, true);
 
-            this.status = await this.api.get("/");
+            this.status = await this.api.get("/status");
             this.instances = await this.$instances();
             this.loaded = true;
         },

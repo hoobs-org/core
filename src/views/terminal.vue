@@ -45,7 +45,7 @@
             Terminal.applyAddon(fit);
 
             this.term = new Terminal({
-                cursorBlink: true,
+                cursorBlink: false,
                 theme: {
                     background: "#474746",
                     foreground: "#f1f1f1"

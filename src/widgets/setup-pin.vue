@@ -30,7 +30,7 @@
         },
 
         async mounted() {
-            this.info = await this.api.get("/");
+            this.info = await this.api.get("/status");
         },
 
         computed: {
