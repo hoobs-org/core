@@ -74,7 +74,7 @@ export default class Config {
             for (let i = 0; i < this._api.length; i++) {
                 queue.push(true);
 
-                Request.get(`${this._api[i]}/config`).then((response) => {
+                Request.get(`${this._api[i]}/api/config`).then((response) => {
                     this._names.push((response.data.bridge || {}).name || "Unavailable");
                 }).catch(() => {
                     this._names.push("Unavailable");
@@ -115,13 +115,13 @@ export default class Config {
         Request.defaults.headers.get["Authorization"] = Cookies.get("token");
 
         try {
-            this._ui = (await Request.get(`${this._api}/config`)).data.client;
+            this._ui = (await Request.get(`${this._api}/api/config`)).data.client;
         } catch {
             this._ui = HOOBS_CONFIG.client;
         }
 
         try {
-            this._configuration = (await Request.get(`${this.instance}/config`)).data;
+            this._configuration = (await Request.get(`${this.instance}/api/config`)).data;
         } catch {
             this._configuration = HOOBS_CONFIG;
         }

@@ -70,6 +70,8 @@ import App from "./app.vue";
             },
 
             async $active(index) {
+                await config.active(index);
+
                 Cookies.set("instance", index, 20160);
 
                 window.location.reload();
@@ -100,14 +102,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.get(`${config.control}${url}`).then((response) => {
+                                Request.get(`${config.control}/api${url}`).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             });
                         } else {
-                            return (await Request.get(`${config.control}${url}`)).data;
+                            return (await Request.get(`${config.control}/api${url}`)).data;
                         }
                     },
     
@@ -116,14 +118,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.post(`${config.control}${url}`, data).then((response) => {
+                                Request.post(`${config.control}/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.post(`${config.control}${url}`, data)).data;
+                            return (await Request.post(`${config.control}/api${url}`, data)).data;
                         }
                     },
     
@@ -132,14 +134,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.put(`${config.control}${url}`, data).then((response) => {
+                                Request.put(`${config.control}/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.put(`${config.control}${url}`, data)).data;
+                            return (await Request.put(`${config.control}/api${url}`, data)).data;
                         }
                     },
     
@@ -148,14 +150,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.delete(`${config.control}${url}`, data).then((response) => {
+                                Request.delete(`${config.control}/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.delete(`${config.control}${url}`, data)).data;
+                            return (await Request.delete(`${config.control}/api${url}`, data)).data;
                         }
                     }
                 },
@@ -166,14 +168,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.get(`${config.instance}${url}`).then((response) => {
+                                Request.get(`${config.instance}/api${url}`).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             });
                         } else {
-                            return (await Request.get(`${config.instance}${url}`)).data;
+                            return (await Request.get(`${config.instance}/api${url}`)).data;
                         }
                     },
     
@@ -182,14 +184,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.post(`${config.instance}${url}`, data).then((response) => {
+                                Request.post(`${config.instance}/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.post(`${config.instance}${url}`, data)).data;
+                            return (await Request.post(`${config.instance}/api${url}`, data)).data;
                         }
                     },
     
@@ -198,14 +200,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.put(`${config.instance}${url}`, data).then((response) => {
+                                Request.put(`${config.instance}/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.put(`${config.instance}${url}`, data)).data;
+                            return (await Request.put(`${config.instance}/api${url}`, data)).data;
                         }
                     },
     
@@ -214,14 +216,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.delete(`${config.instance}${url}`, data).then((response) => {
+                                Request.delete(`${config.instance}/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.delete(`${config.instance}${url}`, data)).data;
+                            return (await Request.delete(`${config.instance}/api${url}`, data)).data;
                         }
                     }
                 }

@@ -39,7 +39,7 @@ export default class Cookies {
         return new Promise((resolve) => {
             Request.defaults.headers.get["Authorization"] = Cookies.get("token");
 
-            Request.get(`${api}/auth/validate`).then((response) => {
+            Request.get(`${api}/api/auth/validate`).then((response) => {
                 resolve(response.data.valid);
             }).catch(() => {
                 resolve(false);

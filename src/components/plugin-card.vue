@@ -11,7 +11,6 @@
 <script>
     import Decamelize from "decamelize";
     import Inflection from "inflection";
-    import Request from "axios";
 
     import Versioning from "../versioning";
     import Dates from "../dates";
