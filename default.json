@@ -8,11 +8,9 @@
     },
     "client": {
         "port": 8080,
-        "config": "http://hoobs.local:51827",
-        "api": [
-            "http://hoobs.local:51827"
-        ],
-        "socket": "http://hoobs.local:51828",
+        "config": 51827,
+        "api": 51827,
+        "socket": 51828,
         "default_route": "status",
         "inactive_logoff": 30,
         "theme": "hoobs-light",

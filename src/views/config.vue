@@ -379,7 +379,9 @@
             async load() {
                 await this.$configure();
 
-                this.configuration.client = this.$client;
+                const client = await this.api.get("/config/client");
+
+                this.configuration.client = client;
                 this.configuration.bridge = this.$bridge;
                 this.configuration.description = this.$description;
                 this.configuration.ports = this.$ports;
