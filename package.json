@@ -41,7 +41,6 @@
         "lodash": "^4.17.15",
         "node-pty-prebuilt-multiarch": "^0.8.1",
         "ora": "^3.4.0",
-        "request": "^2.88.0",
         "rimraf": "^2.7.1",
         "socket.io": "^2.2.0",
         "xterm": "^3.14.5"
