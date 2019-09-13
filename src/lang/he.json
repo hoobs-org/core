@@ -162,6 +162,8 @@
         "motion": "תזוזה",
         "name": "שם",
         "no": "לא",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "לחבילה זו אין קובץ README.",
         "no_results": "אין תוצאות",
         "ok": "אישור",

@@ -162,6 +162,8 @@
         "motion": "Hareket",
         "name": "İsim",
         "no": "Hayır",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "Bu pakette \"beni oku\" dosyası yok.",
         "no_results": "Sonuç bulunamadı",
         "ok": "OK",

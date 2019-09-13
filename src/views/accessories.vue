@@ -10,7 +10,10 @@
                 <router-link to="/accessories/layout" class="button">{{ $t("edit_rooms") }}</router-link>
             </div>
         </div>
-        <div class="content">
+        <div v-if="empty" class="content">
+            <div class="empty">{{ $t("no_accessories") }}</div>
+        </div>
+        <div v-else class="content">
             <div :id="room.name.toLowerCase().replace(/ /gi, '-')" v-for="(room, index) in accessories.rooms" :key="index" class="room-layout">
                 <div v-if="room.accessories.length > 0">
                     <h2>{{ room.name }}</h2>
@@ -66,6 +69,7 @@
             return {
                 skip: false,
                 interval: null,
+                empty: false,
                 pollingSeconds: 15,
                 accessories: {
                     rooms: []
@@ -90,6 +94,7 @@
         async mounted() {
             this.pollingSeconds = this.$server.polling_seconds || 15 < 15 ? 15 : this.$server.polling_seconds || 15;
             this.accessories = await this.api.get("/accessories");
+            this.empty = JSON.stringify(this.accessories.rooms) === "[{\"name\":\"Unassigned\",\"accessories\":[]}]";
 
             if (this.pollingSeconds > 0) {
                 this.interval = setInterval(() => {
@@ -111,6 +116,7 @@
                 if (!this.skip && this.running && !this.locked) {
                     try {
                         this.accessories = await this.api.get("/accessories");
+                        this.empty = JSON.stringify(this.accessories.rooms) === "[{\"name\":\"Unassigned\",\"accessories\":[]}]";
                     } catch {
                         this.skip = true;
                     }
@@ -246,6 +252,12 @@
         width: 190px;
         height: 226px;
         user-select: none;
+    }
+
+    #accessories .empty {
+        width: 90%;
+        padding: 20px;
+        text-align: center;
     }
 
     @media (min-width: 300px) and (max-width: 815px) {

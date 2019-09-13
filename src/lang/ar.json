@@ -162,6 +162,8 @@
         "motion": "حركة",
         "name": "أسم",
         "no": "لا",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "هذه الحزمة لا يوجد بها README.",
         "no_results": "لا توجد نتائج",
         "ok": "OK",

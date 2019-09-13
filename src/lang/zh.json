@@ -162,6 +162,8 @@
         "motion": "移動",
         "name": "名稱",
         "no": "不可",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "這個套件沒有自述",
         "no_results": "無結果",
         "ok": "OK",

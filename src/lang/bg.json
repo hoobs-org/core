@@ -162,6 +162,8 @@
         "motion": "Движение",
         "name": "Име",
         "no": "Не",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "Този пакет няма README.",
         "no_results": "Няма резултати",
         "ok": "OK",

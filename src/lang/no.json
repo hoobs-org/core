@@ -162,6 +162,8 @@
         "motion": "Bevegelse",
         "name": "Navn",
         "no": "Nei",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "Denne pakken har ingen README.",
         "no_results": "Ingen resultater",
         "ok": "OK",

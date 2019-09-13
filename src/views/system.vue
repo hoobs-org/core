@@ -109,6 +109,7 @@
             },
 
             async update() {
+                this.checking = true;
                 this.$store.commit("lock");
 
                 await this.api.post("/service/stop");

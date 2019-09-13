@@ -162,6 +162,8 @@
         "motion": "Mouvement",
         "name": "Nom",
         "no": "Non",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "Cette librairie ne contient pas de fichier README.",
         "no_results": "Aucun résultat",
         "ok": "OK",

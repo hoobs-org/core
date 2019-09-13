@@ -5,7 +5,10 @@
             <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
             <router-link v-on:click="clearSearch()" to="/plugins/search">{{ $t("search") }}</router-link>
         </div>
-        <div class="content">
+        <div v-if="loaded && installed.length === 0" class="content">
+            <div class="empty">{{ $t("no_plugins") }}</div>
+        </div>
+        <div v-else class="content">
             <plugin-list v-for="(plugin, index) in installed" :key="`plugin-${index}`" :plugin="plugin" />
         </div>
     </div>
@@ -22,6 +25,12 @@
 
         components: {
             "plugin-list": PluginList
+        },
+
+        data() {
+            return {
+                loaded: false
+            }
         },
 
         computed: {
@@ -44,6 +53,7 @@
             }
 
             this.$store.commit("cache", await this.api.get("/plugins"));
+            this.loaded = true;
         },
 
         methods: {
@@ -118,5 +128,11 @@
         display: flex;
         flex-direction: column;
         overflow: auto;
+    }
+
+    #plugins .empty {
+        width: 90%;
+        padding: 20px;
+        text-align: center;
     }
 </style>

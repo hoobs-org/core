@@ -51,8 +51,6 @@
                 configuration: {
                     client: {
                         port: null,
-                        api: null,
-                        socket: null,
                         default_route: null,
                         inactive_logoff: null,
                         theme: null,

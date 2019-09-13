@@ -162,6 +162,8 @@
         "motion": "Pohyb",
         "name": "Jméno",
         "no": "NE",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "Tento balíček nemá README.",
         "no_results": "Žádné výsledky",
         "ok": "OK",

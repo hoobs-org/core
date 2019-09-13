@@ -162,6 +162,8 @@
         "motion": "Ruch",
         "name": "Nazwa",
         "no": "Nie",
+        "no_accessories": "No Accessories Available",
+        "no_plugins": "No Plugins Installed",
         "no_readme": "Ten pakiet nie ma pliku README.",
         "no_results": "Brak wyników",
         "ok": "OK",
