@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+process.title = "hoobs-cockpit";
+
+const { realpathSync } = require("fs-extra");
+const { dirname, join } = require("path");
+
+new (require(join(dirname(realpathSync(__filename)), "../lib/cockpit")))().start(true).then((registration) => {
+    console.log("registration code");
+    console.log(registration);
+}).catch((error) => {
+    console.log(error);
+});

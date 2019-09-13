@@ -18,7 +18,8 @@
     "bin": {
         "homebridge": "bin/hoobs",
         "hoobs": "bin/hoobs",
-        "hoobs-init": "install.sh"
+        "hoobs-init": "install.sh",
+        "hoobs-cockpit": "bin/hoobs-cockpit"
     },
     "author": "Michael J Kellsy",
     "engines": {

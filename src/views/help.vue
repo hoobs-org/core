@@ -8,6 +8,9 @@
             <a href="http://hoobs.org" target="_blank" class="button button-primary">HOOBS.org</a>
             <a href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
             <a href="https://www.reddit.com/r/hoobs/" target="_blank" class="button mobile-hide">HOOBS Subreddit</a>
+            <div v-if="registration" class="button mobile-hide" v-on:click="disconnectCockpit()">{{ $t("disconnect") }}</div>
+            <div v-else class="button mobile-hide" v-on:click="startCockpit()">{{ $t("remote_support") }}</div>
+            <div v-if="registration" class="registration mobile-hide">{{ $t("support_code") }}: {{ registration }}</div>
             <h2>{{ $t("software") }}</h2>
             <p>{{ $t("stay_up_to_date") }}</p>
             <div v-if="user.admin">
@@ -73,6 +76,12 @@
             "confirm-delete": ConfirmDelete
         },
 
+        data() {
+            return {
+                registration: null
+            };
+        },
+
         computed: {
             locked() {
                 return this.$store.state.locked;
@@ -88,6 +97,20 @@
         },
 
         methods: {
+            async startCockpit() {
+                try {
+                    this.registration = (await this.api.get("/cockpit/start")).registration;
+                } catch {
+                    this.registration = null;
+                }
+            },
+
+            async disconnectCockpit() {
+                if (await this.api.get("/cockpit/disconnect")) {
+                    this.registration = null;
+                }
+            },
+
             async startService() {
                 if (!this.locked) {
                     this.$store.commit("lock");
@@ -191,6 +214,11 @@
         width: 100%;
         max-width: 990px;
             display: block;
+    }
+
+    #help .registration {
+        display: inline;
+        padding: 10px;
     }
 
     #help h2 {
