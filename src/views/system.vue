@@ -5,6 +5,7 @@
             <div v-for="(section, title) in info" :key="title">
                 <a :href="`#h-${title}`">{{ translate(title) }}</a>
             </div>
+            <a href="#k-filesystem">{{ translate("file_system") }}</a>
             <router-link to="/system/terminal" class="mobile-hide">{{ $t("terminal") }}</router-link>
         </div>
         <div ref="content" class="content">
@@ -37,6 +38,15 @@
                         </tbody>
                     </table>
                 </div>
+                <h2 id="k-filesystem">{{ translate("file_system") }}</h2>
+                <table>
+                    <tbody>
+                        <tr v-for="(item, index) in filesystem" :key="index">
+                            <td style="min-width: 250px;">{{ item.mount }}</td>
+                            <td style="width: 100%;">{{ $t("used") }} {{ item.use }}%</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -67,6 +77,7 @@
             return {
                 info: null,
                 status: null,
+                filesystem: null,
                 checking: true,
                 updates: []
             }
@@ -75,6 +86,7 @@
         async mounted() {
             this.info = await this.api.get("/system");
             this.status = await this.api.get("/status");
+            this.filesystem = await this.api.get("/system/filesystem");
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
                 if (document.querySelector(window.location.hash)) {
