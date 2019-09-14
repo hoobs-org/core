@@ -5,6 +5,7 @@
             <div v-for="(section, title) in info" :key="title">
                 <router-link :to="`/system#h-${title}`">{{ translate(title) }}</router-link>
             </div>
+            <router-link to="/system#k-filesystem">{{ translate("file_system") }}</router-link>
             <router-link to="/system/terminal" class="active">{{ $t("terminal") }}</router-link>
         </div>
         <div class="content" ref="console">
