@@ -11,7 +11,10 @@
                     </div>
                 </div>
                 <div class="value">{{ value.values.relative_humidity }}%</div>
-                <div class="name">{{ value.name || value.service_name }}</div>
+                <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
+                <div class="name" v-show="edit === true">
+                    <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
+                </div>
             </div>
         </div>
         <div v-if="lock" class="lock"></div>
@@ -21,11 +24,35 @@
 <script>
     export default {
         name: "humidity-sensor",
+
         props: {
             value: Object,
             lock: {
                 type: Boolean,
                 default: false
+            }
+        },
+
+        data() {
+            return {
+                edit: false
+            }
+        },
+
+        methods: {
+            mode() {
+                if (this.lock) {
+                    this.edit = true;
+
+                    setTimeout(() => {
+                        this.$refs.field.focus();
+                    }, 10);
+                }
+            },
+
+            rename() {
+                this.edit = false;
+                this.$emit("change", this.value);
             }
         }
     };
@@ -64,12 +91,30 @@
         position: absolute;
         width: 100%;
         height: 100%;
+        z-index: 10;
     }
 
     #sensor .name {
         height: 38px;
         overflow: hidden;
+        position: relative;
         text-overflow: ellipsis;
+        z-index: 20;
+    }
+
+    #sensor .name input {
+        flex: 1;
+        padding: 7px;
+        font-size: 14px;
+        background: var(--input-background);
+        color: var(--input-text);
+        border: 1px var(--border) solid;
+        border-radius: 5px;
+    }
+
+    #sensor .name input:focus {
+        outline: 0 none;
+        border-color: var(--title-text);
     }
 
     #sensor .title {
@@ -87,6 +132,7 @@
 
     #sensor .title-inner {
         display: flex;
+        margin: 0 auto;
         align-content: center;
         align-items: center;
     }

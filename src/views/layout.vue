@@ -32,7 +32,7 @@
                     </p>
                     <draggable class="accessory-tiles" ghost-class="ghost" v-model="layout.rooms[current].accessories" @end="saveLayout()">
                         <div class="accessory" v-for="(aid, index) in layout.rooms[current].accessories" :key="index">
-                            <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" />
+                            <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" @change="updateAccessory(aid, 'alias')" />
                             <div class="accessory-actions">
                                 <div class="action-icons">
                                     <span :class="`icon favorite ${(layout.favorites || []).indexOf(aid) === -1 ? 'favorite-off' : 'favorite-on'}`" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
@@ -52,7 +52,7 @@
                     <div v-if="add" class="available-acessories">
                         <div v-for="(accessory, index) in accessories" :key="index">
                             <div v-if="layout.rooms[current].accessories.indexOf(accessory.aid)" class="available-accessory">
-                                <input type="checkbox" :id="`add-accessory-${index}`" :value="accessory.aid" v-model="selected"> <label :for="`add-accessory-${index}`">{{ accessory.name }}</label>
+                                <input type="checkbox" :id="`add-accessory-${index}`" :value="accessory.aid" v-model="selected"> <label :for="`add-accessory-${index}`">{{ accessory.alias || accessory.name || accessory.service_name }}</label>
                             </div>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                     </p>
                     <div class="accessory-tiles">
                         <div class="accessory" v-for="(aid, index) in layout.rooms[current].accessories" :key="index">
-                            <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" />
+                            <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" @change="updateAccessory(aid, 'alias')" />
                             <div class="accessory-actions">
                                 <div class="action-icons">
                                     <span :class="`icon favorite ${(layout.favorites || []).indexOf(aid) === -1 ? 'favorite-off' : 'favorite-on'}`" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
@@ -390,6 +390,18 @@
                 } catch (error) {
                     console.log(error);
                 }
+            },
+
+            async updateAccessory(aid, item) {
+                const value = this.accessories[this.getAccessoryIndex(aid)][item];
+
+                try {
+                    await this.api.post(`/accessory/${aid}/${item}`, {
+                        value
+                    });
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
     }
@@ -518,6 +530,7 @@
         justify-content: space-around;
         position: absolute;
         top: 4px;
+        z-index: 20;
     }
 
     #layout .form .accessory .accessory-actions .action-icons {

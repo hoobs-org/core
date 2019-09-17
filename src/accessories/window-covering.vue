@@ -14,7 +14,10 @@
                 <path style="fill: var(--text-light); cursor: pointer;" d="M48.1,88.4l1.9-2.1l1.9,2.1l0.6-0.7L50,84.9l-2.4,2.8L48.1,88.4z" />
             </g>
         </svg>
-        <div class="name">{{ value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === true">
+            <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
+        </div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -22,6 +25,7 @@
 <script>
     export default {
         name: "window-covering",
+
         props: {
             value: Object,
             lock: {
@@ -30,7 +34,28 @@
             }
         },
 
+        data() {
+            return {
+                edit: false
+            }
+        },
+
         methods: {
+            mode() {
+                if (this.lock) {
+                    this.edit = true;
+
+                    setTimeout(() => {
+                        this.$refs.field.focus();
+                    }, 10);
+                }
+            },
+
+            rename() {
+                this.edit = false;
+                this.$emit("change", this.value);
+            },
+
             toggle(event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -69,6 +94,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
+        z-index: 10;
     }
 
     #control .name {
@@ -77,5 +103,21 @@
         font-size: 15px;
         overflow: hidden;
         text-overflow: ellipsis;
+        z-index: 20;
+    }
+
+    #control .name input {
+        flex: 1;
+        padding: 7px;
+        font-size: 14px;
+        background: var(--input-background);
+        color: var(--input-text);
+        border: 1px var(--border) solid;
+        border-radius: 5px;
+    }
+
+    #control .name input:focus {
+        outline: 0 none;
+        border-color: var(--title-text);
     }
 </style>

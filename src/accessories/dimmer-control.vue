@@ -8,7 +8,10 @@
             <path fill="#ffffffef" d="M38.9,53.7l5.6,5.6v9.3h11.1v-9.3l5.6-5.6v-9.3H38.9V53.7z M48.2,31.5h3.7V37h-3.7V31.5z M34.3,38.7l2.6-2.6l3.9,3.9 l-2.6,2.6L34.3,38.7z M59.2,40l3.9-3.9l2.6,2.6l-3.9,3.9L59.2,40z" />
             <circle fill="#ffffff00" stroke="none" cx="50" cy="50" r="33.5" @click="toggleSwitch" style="cursor: pointer;" />
         </svg>
-        <div class="name">{{ value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === true">
+            <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
+        </div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -16,11 +19,18 @@
 <script>
     export default {
         name: "dimmer-control",
+
         props: {
             value: Object,
             lock: {
                 type: Boolean,
                 default: false
+            }
+        },
+
+        data() {
+            return {
+                edit: false
             }
         },
 
@@ -77,6 +87,21 @@
         },
 
         methods: {
+            mode() {
+                if (this.lock) {
+                    this.edit = true;
+
+                    setTimeout(() => {
+                        this.$refs.field.focus();
+                    }, 10);
+                }
+            },
+
+            rename() {
+                this.edit = false;
+                this.$emit("change", this.value);
+            },
+
             getRange(x, inMin, inMax, outMin, outMax) {
                 return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
             },
@@ -226,6 +251,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
+        z-index: 10;
     }
 
     #control .name {
@@ -234,5 +260,21 @@
         font-size: 15px;
         overflow: hidden;
         text-overflow: ellipsis;
+        z-index: 20;
+    }
+
+    #control .name input {
+        flex: 1;
+        padding: 7px;
+        font-size: 14px;
+        background: var(--input-background);
+        color: var(--input-text);
+        border: 1px var(--border) solid;
+        border-radius: 5px;
+    }
+
+    #control .name input:focus {
+        outline: 0 none;
+        border-color: var(--title-text);
     }
 </style>

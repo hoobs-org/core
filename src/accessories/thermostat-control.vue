@@ -11,7 +11,10 @@
             <circle v-if="!lock" fill="#ffffff00" cx="50" cy="80" r="5.9" style="cursor: pointer;" @click="setMode" />
         </svg>
         <div class="temp" :style="`color: ${color}`">{{ getTemp(value.values.target_temperature) }}°</div>
-        <div class="name">{{ accessoryName }}</div>
+        <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === true">
+            <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
+        </div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -19,6 +22,7 @@
 <script>
     export default {
         name: "thermostat-control",
+
         props: {
             value: Object,
             lock: {
@@ -27,15 +31,13 @@
             }
         },
 
-        computed: {
-            accessoryName() {
-                if (this.value.manufacturer === "Nest") {
-                    return `${this.value.name} ${this.value.service_name}`;
-                } else {
-                    return this.value.name || this.value.service_name;
-                }
-            },
+        data() {
+            return {
+                edit: false
+            }
+        },
 
+        computed: {
             target() {
                 return Math.round((100 * (this.value.values.target_temperature - 10)) / 22);
             },
@@ -155,6 +157,21 @@
         },
 
         methods: {
+            mode() {
+                if (this.lock) {
+                    this.edit = true;
+
+                    setTimeout(() => {
+                        this.$refs.field.focus();
+                    }, 10);
+                }
+            },
+
+            rename() {
+                this.edit = false;
+                this.$emit("change", this.value);
+            },
+
             getTemp(value) {
                 if (this.$client.temp_units && this.$client.temp_units === "celsius") {
                     return Math.round(value);
@@ -315,6 +332,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
+        z-index: 10;
     }
 
     #control .temp {
@@ -335,5 +353,21 @@
         font-size: 15px;
         overflow: hidden;
         text-overflow: ellipsis;
+        z-index: 20;
+    }
+
+    #control .name input {
+        flex: 1;
+        padding: 7px;
+        font-size: 14px;
+        background: var(--input-background);
+        color: var(--input-text);
+        border: 1px var(--border) solid;
+        border-radius: 5px;
+    }
+
+    #control .name input:focus {
+        outline: 0 none;
+        border-color: var(--title-text);
     }
 </style>

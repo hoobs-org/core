@@ -6,7 +6,10 @@
             <path fill="#ffffffef" :d="icon" />
             <circle fill="#ffffff00" stroke="none" cx="50" cy="50" r="45" @click="toggle" style="cursor: pointer;" />
         </svg>
-        <div class="name">{{ accessoryName }}</div>
+        <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === true">
+            <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
+        </div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -14,6 +17,7 @@
 <script>
     export default {
         name: "switch-control",
+
         props: {
             value: Object,
             lock: {
@@ -32,30 +36,23 @@
                     outlet: "M58.3,39.7l0-8.2h-4.1v8.2h-8.2v-8.2h-4.1v8.2h0c-2,0-4.1,2-4.1,4.1v11.3l7.2,7.3v6.2h10.3v-6.2l7.2-7.2V43.8 C62.4,41.7,60.3,39.7,58.3,39.7z",
                     off: "M59.3,40.7H40.7c-5.1,0-9.3,4.2-9.3,9.3s4.2,9.3,9.3,9.3h18.6c5.1,0,9.3-4.2,9.3-9.3S64.4,40.7,59.3,40.7z M40.7,55.6 c-3.1,0-5.6-2.5-5.6-5.6s2.5-5.6,5.6-5.6s5.6,2.5,5.6,5.6S43.8,55.6,40.7,55.6z",
                     on: "M40.7,59.3h18.6c5.1,0,9.3-4.2,9.3-9.3s-4.2-9.3-9.3-9.3H40.7c-5.1,0-9.3,4.2-9.3,9.3S35.6,59.3,40.7,59.3z M59.3,44.4 c3.1,0,5.6,2.5,5.6,5.6s-2.5,5.6-5.6,5.6s-5.6-2.5-5.6-5.6S56.2,44.4,59.3,44.4z"
-                }
-            };
+                },
+                edit: false
+            }
         },
 
         computed: {
-            accessoryName() {
-                if (this.value.manufacturer === "Nest") {
-                    return `${this.value.name} ${this.value.service_name.replace("Home Occupied", "Occupied")}`;
-                } else {
-                    return this.value.name || this.value.service_name;
-                }
-            },
-
             icon() {
                 if (this.value.name.toLowerCase().includes("light") || this.value.name.toLowerCase().includes("lamp")) {
                     return this.icons.light;
-                } else if (this.value.type === "switch") {
-                    return this.value.values.on ? this.icons.on : this.icons.off;
-                } else if (this.value.name.toLowerCase().includes("fan") || this.value.type === "fan") {
-                    return this.icons.fan;
                 } else if (this.value.name.toLowerCase().includes("garbage")) {
                     return this.icons.garbage;
                 } else if (this.value.name.toLowerCase().includes("fireplace")) {
                     return this.icons.fireplace;
+                } else if (this.value.type === "switch") {
+                    return this.value.values.on ? this.icons.on : this.icons.off;
+                } else if (this.value.name.toLowerCase().includes("fan") || this.value.type === "fan") {
+                    return this.icons.fan;
                 } else if (this.value.type === "outlet") {
                     return this.icons.outlet;
                 }
@@ -66,14 +63,14 @@
             color() {
                 if (this.value.name.toLowerCase().includes("light") || this.value.name.toLowerCase().includes("lamp")) {
                     return "#ffd500";
-                } else if (this.value.type === "switch") {
-                    return "#e75a0e";
-                } else if (this.value.name.toLowerCase().includes("fan") || this.value.type === "fan") {
-                    return "#f9bd2b";
                 } else if (this.value.name.toLowerCase().includes("garbage")) {
                     return "#f9bd2b";
                 } else if (this.value.name.toLowerCase().includes("fireplace")) {
                     return "#f27c05";
+                } else if (this.value.type === "switch") {
+                    return "#e75a0e";
+                } else if (this.value.name.toLowerCase().includes("fan") || this.value.type === "fan") {
+                    return "#f9bd2b";
                 } else if (this.value.type === "outlet") {
                     return "#00d42d";
                 }
@@ -83,6 +80,21 @@
         },
 
         methods: {
+            mode() {
+                if (this.lock) {
+                    this.edit = true;
+
+                    setTimeout(() => {
+                        this.$refs.field.focus();
+                    }, 10);
+                }
+            },
+
+            rename() {
+                this.edit = false;
+                this.$emit("change", this.value);
+            },
+
             toggle(event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -121,6 +133,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
+        z-index: 10;
     }
 
     #control .name {
@@ -129,5 +142,21 @@
         font-size: 15px;
         overflow: hidden;
         text-overflow: ellipsis;
+        z-index: 20;
+    }
+
+    #control .name input {
+        flex: 1;
+        padding: 7px;
+        font-size: 14px;
+        background: var(--input-background);
+        color: var(--input-text);
+        border: 1px var(--border) solid;
+        border-radius: 5px;
+    }
+
+    #control .name input:focus {
+        outline: 0 none;
+        border-color: var(--title-text);
     }
 </style>

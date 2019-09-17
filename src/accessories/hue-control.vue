@@ -24,7 +24,10 @@
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" stroke-miterlimit="10" cx="11.5" cy="11.5" r="11.5" />
             <path fill="#999999" d="M11.5,4.8c-3.7,0-6.7,3-6.7,6.7s3,6.7,6.7,6.7c0.6,0,1.1-0.5,1.1-1.1c0-0.3-0.1-0.5-0.3-0.7 c-0.2-0.2-0.3-0.5-0.3-0.7c0-0.6,0.5-1.1,1.1-1.1h1.3c2,0,3.7-1.7,3.7-3.7C18.2,7.5,15.2,4.8,11.5,4.8z M7.4,11.5 c-0.6,0-1.1-0.5-1.1-1.1s0.5-1.1,1.1-1.1s1.1,0.5,1.1,1.1S8,11.5,7.4,11.5z M9.6,8.5C9,8.5,8.5,8,8.5,7.4S9,6.3,9.6,6.3 s1.1,0.5,1.1,1.1S10.3,8.5,9.6,8.5z M13.4,8.5c-0.6,0-1.1-0.5-1.1-1.1s0.5-1.1,1.1-1.1s1.1,0.5,1.1,1.1S14,8.5,13.4,8.5z M15.6,11.5 c-0.6,0-1.1-0.5-1.1-1.1s0.5-1.1,1.1-1.1s1.1,0.5,1.1,1.1S16.2,11.5,15.6,11.5z" />
         </svg>
-        <div class="name">{{ value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === true">
+            <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
+        </div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -34,6 +37,7 @@
 
     export default {
         name: "hue-control",
+
         props: {
             value: Object,
             lock: {
@@ -46,8 +50,9 @@
             return {
                 picker: null,
                 colorPicker: null,
-                pickerVisible: false
-            };
+                pickerVisible: false,
+                edit: false
+            }
         },
 
         computed: {
@@ -111,6 +116,21 @@
         },
 
         methods: {
+            mode() {
+                if (this.lock) {
+                    this.edit = true;
+
+                    setTimeout(() => {
+                        this.$refs.field.focus();
+                    }, 10);
+                }
+            },
+
+            rename() {
+                this.edit = false;
+                this.$emit("change", this.value);
+            },
+
             togglePicker() {
                 this.pickerVisible = !this.pickerVisible;
 
@@ -290,6 +310,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
+        z-index: 10;
     }
 
     #control .name {
@@ -298,6 +319,22 @@
         font-size: 15px;
         overflow: hidden;
         text-overflow: ellipsis;
+        z-index: 20;
+    }
+
+    #control .name input {
+        flex: 1;
+        padding: 7px;
+        font-size: 14px;
+        background: var(--input-background);
+        color: var(--input-text);
+        border: 1px var(--border) solid;
+        border-radius: 5px;
+    }
+
+    #control .name input:focus {
+        outline: 0 none;
+        border-color: var(--title-text);
     }
 
     #control .picker-container {

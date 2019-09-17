@@ -17,7 +17,10 @@
                 <polygon fill="#333333" points="19.3,58.7 19.3,77.1 19.3,87.3 29.5,77.1 70.5,77.1 80.7,87.3 80.7,77.1 80.7,58.7" style="cursor: pointer;" />
             </g>
         </svg>
-        <div class="name">{{ value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
+        <div class="name" v-show="edit === true">
+            <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
+        </div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -33,7 +36,28 @@
             }
         },
 
+        data() {
+            return {
+                edit: false
+            }
+        },
+
         methods: {
+            mode() {
+                if (this.lock) {
+                    this.edit = true;
+
+                    setTimeout(() => {
+                        this.$refs.field.focus();
+                    }, 10);
+                }
+            },
+
+            rename() {
+                this.edit = false;
+                this.$emit("change", this.value);
+            },
+
             toggle(event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -72,6 +96,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
+        z-index: 10;
     }
 
     #control .name {
@@ -80,5 +105,21 @@
         font-size: 15px;
         overflow: hidden;
         text-overflow: ellipsis;
+        z-index: 20;
+    }
+
+    #control .name input {
+        flex: 1;
+        padding: 7px;
+        font-size: 14px;
+        background: var(--input-background);
+        color: var(--input-text);
+        border: 1px var(--border) solid;
+        border-radius: 5px;
+    }
+
+    #control .name input:focus {
+        outline: 0 none;
+        border-color: var(--title-text);
     }
 </style>

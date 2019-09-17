@@ -233,6 +233,10 @@
         margin: 0 0 30px 0;
     }
 
+    #accessories .content .room-layout:empty {
+        display: none;
+    }
+
     #accessories .content .room-layout h2 {
         margin: 0;
         padding: 0;
