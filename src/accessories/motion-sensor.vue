@@ -10,7 +10,7 @@
                         {{ $t("motion") }}
                     </div>
                 </div>
-                <div class="value" :style="`color: ${color};`">{{ sensorState }}</div>
+                <div :class="color">{{ sensorState }}</div>
                 <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
                 <div class="name" v-show="edit === true">
                     <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
@@ -45,7 +45,7 @@
             },
 
             color() {
-                return this.value.values.motion_detected ? "#00b9f1": "#999999";
+                return this.value.values.motion_detected ? "value value-on": "value";
             }
         },
 
@@ -153,6 +153,10 @@
         font-size: 24px;
         line-height: 24px;
         padding: 20px 0;
+        color: var(--text);
+    }
+
+    #sensor .value-on {
         color: var(--title-text);
     }
 

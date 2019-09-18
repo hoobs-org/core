@@ -202,9 +202,7 @@
                         this.$store.commit("unlock");
                     }
 
-                    this.$router.push({
-                        path: "/plugins"
-                    });
+                    window.location.href = "/plugins";
                 }
             },
             
@@ -228,9 +226,7 @@
                         this.$store.commit("unlock");
                     }
 
-                    this.$router.push({
-                        path: "/plugins"
-                    });
+                    window.location.href = "/plugins";
                 }
             },
 
@@ -254,9 +250,7 @@
                         this.$store.commit("unlock");
                     }
 
-                    this.$router.push({
-                        path: "/plugins"
-                    });
+                    window.location.href = "/plugins";
                 }
             }
         }
@@ -275,7 +269,7 @@
         width: 100%;
         max-width: 390px;
         display: inline-block;
-        padding: 0 0 20px 0;
+        padding: 15px 0 0 0;
     }
 
     #plugin .control {

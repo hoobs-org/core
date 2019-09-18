@@ -39,6 +39,7 @@
         "express-ws": "^4.0.0",
         "fs-extra": "^8.1.0",
         "lodash": "^4.17.15",
+        "node-cache": "^4.2.1",
         "node-pty-prebuilt-multiarch": "^0.8.1",
         "ora": "^3.4.0",
         "request": "^2.88.0",

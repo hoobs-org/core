@@ -37,6 +37,7 @@
     import LockControl from "@/accessories/lock-control.vue";
     import GarageControl from "@/accessories/garage-control.vue";
     import WindowCovering from "@/accessories/window-covering.vue";
+    import SecuritySystem from "@/accessories/security-system.vue";
 
     import BatterySensor from "@/accessories/battery-sensor.vue";
     import HumiditySensor from "@/accessories/humidity-sensor.vue";
@@ -57,6 +58,7 @@
             "lock-control": LockControl,
             "garage-control": GarageControl,
             "window-covering": WindowCovering,
+            "security-system": SecuritySystem,
             "battery-sensor": BatterySensor,
             "humidity-sensor": HumiditySensor,
             "temperature-sensor": TempratureSensor,
@@ -175,6 +177,9 @@
 
                     case "window_covering":
                         return "window-covering";
+
+                    case "security_system":
+                        return "security-system";
                 }
 
                 return "unknown-device";

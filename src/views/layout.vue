@@ -96,6 +96,8 @@
     import ThermostatControl from "@/accessories/thermostat-control.vue";
     import LockControl from "@/accessories/lock-control.vue";
     import GarageControl from "@/accessories/garage-control.vue";
+    import WindowCovering from "@/accessories/window-covering.vue";
+    import SecuritySystem from "@/accessories/security-system.vue";
 
     import BatterySensor from "@/accessories/battery-sensor.vue";
     import HumiditySensor from "@/accessories/humidity-sensor.vue";
@@ -117,6 +119,8 @@
             "thermostat-control": ThermostatControl,
             "lock-control": LockControl,
             "garage-control": GarageControl,
+            "window-covering": WindowCovering,
+            "security-system": SecuritySystem,
             "battery-sensor": BatterySensor,
             "humidity-sensor": HumiditySensor,
             "temperature-sensor": TempratureSensor,
@@ -214,7 +218,7 @@
             addAccessories() {
                 for (let i = 0; i < this.layout.rooms.length; i++) {
                     for (let j = 0; j < this.selected.length; j++) {
-                        const index = this.layout.rooms[i].accessories.indexOf(parseInt(this.selected[j], 10));
+                        const index = this.layout.rooms[i].accessories.indexOf(parseFloat(this.selected[j]));
 
                         if (index > -1) {
                             this.layout.rooms[i].accessories.splice(index, 1);
@@ -223,7 +227,7 @@
                 }
 
                 for (let i = 0; i < this.selected.length; i++) {
-                    const index = this.layout.hidden.indexOf(parseInt(this.selected[i], 10));
+                    const index = this.layout.hidden.indexOf(parseFloat(this.selected[i]));
 
                     if (index > -1) {
                         this.layout.hidden.splice(index, 1);
@@ -231,7 +235,7 @@
                 }
 
                 for (let i = 0; i < this.selected.length; i++) {
-                    this.layout.rooms[this.current].accessories.push(parseInt(this.selected[i], 10));
+                    this.layout.rooms[this.current].accessories.push(parseFloat(this.selected[i]));
                 }
 
                 this.add = false;
@@ -372,6 +376,9 @@
 
                     case "motion_sensor":
                         return "motion-sensor";
+
+                    case "security_system":
+                        return "security-system";
                 }
 
                 return "unknown-device";
