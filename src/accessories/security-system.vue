@@ -179,7 +179,7 @@
         align-content: center;
         flex-direction: column;
         border-radius: 5px;
-        border: 1px var(--text) solid;
+        border: 1px var(--text-light) solid;
     }
 
     #control .actions table {
@@ -193,6 +193,7 @@
         width: 50%;
         text-align: center;
         font-size: 17px;
+        color: var(--text-light);
         padding: 14px 7px;
         cursor: pointer;
     }
