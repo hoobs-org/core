@@ -111,7 +111,7 @@
         "homebridge_path": "Sti for Homebridge.",
         "homebridge_port": "Port for Homebridge",
         "homebridge_service_clash": "The Homebridge service thinks it's paired, but iOS thinks otherwise. Try resetting the connection with the button below. This will delete the persist folder.",
-        "homebridge_service_not_running": "The Homebridge service is not running. Try starting the service. Check the Status screen and if the Homebridge service is not running, click the service menu on the rupper right and click Start Service.",
+        "homebridge_service_not_running": "The Homebridge service is not running. Try starting the service. Check the Status screen and if the Homebridge service is not running, click the service menu on the upper right and click Start Service.",
         "homebridge_stuck": "iOS has gotten your Homebridge username stuck somehow, where it's in the database but inactive. Try regenerating the Homebridge username.",
         "homebridge_username_required": "Hjem-brukernavn er påkrevd.",
         "homebridge_version": "Homebridge-versjon",
