@@ -28,6 +28,7 @@
     import TempratureSensor from "@/accessories/temperature-sensor.vue";
     import ContactSensor from "@/accessories/contact-sensor.vue";
     import MotionSensor from "@/accessories/motion-sensor.vue";
+    import OccupancySensor from "@/accessories/occupancy-sensor.vue";
 
     import UnknownDevice from "@/accessories/unknown-device.vue";
 
@@ -55,6 +56,7 @@
             "temperature-sensor": TempratureSensor,
             "contact-sensor": ContactSensor,
             "motion-sensor": MotionSensor,
+            "occupancy-sensor": OccupancySensor,
             "unknown-device": UnknownDevice
         },
 
@@ -166,6 +168,9 @@
 
                     case "security_system":
                         return "security-system";
+
+                    case "occupancy_sensor":
+                        return "occupancy-sensor";
                 }
 
                 return "unknown-device";
