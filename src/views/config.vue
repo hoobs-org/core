@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user.admin" id="config">
+    <div id="config">
         <div class="info">
             <a href="#hoobs">{{ $t("interface_settings") }}</a>
             <a href="#bridge">{{ $t("bridge_settings") }}</a>
@@ -7,7 +7,7 @@
             <a href="#accessories">{{ $t("accessories") }}</a>
             <a href="#plugins">{{ $t("plugins") }}</a>
             <a href="#backup">{{ $t("backup") }}</a>
-            <router-link to="/config/advanced">{{ $t("advanced_config") }}</router-link>
+            <router-link v-if="user.admin" to="/config/advanced">{{ $t("advanced_config") }}</router-link>
             <div class="actions">
                 <div v-if="!working && loaded" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
                 <div v-if="working" class="loading">
@@ -64,7 +64,7 @@
                         </div>
                         <schema-form :schema="accessories[accessoryKey(accessory)].properties || {}" v-model="configuration.accessories[index]" />
                     </div>
-                    <div v-else>
+                    <div v-else-if="user.admin">
                         <div class="accessory-title">
                             <h3>{{ $t("custom") }}</h3>
                             <confirm-delete :title="$t('delete')" :index="index" :confirmed="removeAccessory" />
@@ -77,7 +77,7 @@
                 </div>
                 <a id="plugins"></a>
                 <div v-for="(plugin, index) in plugins" :key="`${index}-platform`">
-                    <div v-if="plugin.name !== 'homebridge' && platformIndex(plugin) >= 0">
+                    <div v-if="(plugin.name !== 'homebridge' && (user.admin || plugin.scope === 'hoobs')) && platformIndex(plugin) >= 0">
                         <h2 v-if="plugin.name === 'google-home'" :id="plugin.name">Google Home</h2>
                         <h2 v-else :id="plugin.name">{{ platformTitle(plugin) }}</h2>
                         <p v-if="plugin.name === 'google-home'">
@@ -91,7 +91,7 @@
                         <div v-if="plugin.schema && plugin.schema.platform.schema.properties">
                             <schema-form :schema="plugin.schema.platform.schema.properties || {}" v-model="configuration.platforms[platformIndex(plugin)]" />
                         </div>
-                        <div v-else>
+                        <div>
                             <json-editor name="platform" :height="200" :index="platformIndex(plugin)" :change="updateJson" :code="platformCode(plugin)" />
                         </div>
                     </div>

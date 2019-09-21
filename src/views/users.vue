@@ -1,9 +1,9 @@
 <template>
-    <div v-if="user.admin" id="users">
+    <div id="users">
         <div v-if="loaded" class="info">
             <div class="user-list">
-                <div v-for="(user, index) in users" :key="index">
-                    <div class="user-link" @click="showUser(index)">{{ user.name || user.username }}</div>
+                <div v-for="(item, index) in users" :key="index">
+                    <div v-if="user.admin || (!user.admin && !item.admin)" class="user-link" @click="showUser(index)">{{ item.name || item.username }}</div>
                 </div>
             </div>
             <div class="user-list-actions">
@@ -27,11 +27,11 @@
                     <div v-if="confirm" class="button" @click="cancelDelete()">   {{ $t("cancel") }}   </div>
                     <div v-if="confirm" class="button button-warning" @click="deleteUser()">   {{ $t("delete") }}   </div>
                 </div>
-                <h2 v-if="id !== user.id">{{ $t("permissions") }}</h2>
-                <p v-if="id !== user.id">
+                <h2 v-if="user.admin && id !== user.id">{{ $t("permissions") }}</h2>
+                <p v-if="user.admin && id !== user.id">
                     {{ $t("permissions_message") }}
                 </p>
-                <select-field :name="$t('user_type')" :options="options" v-model="admin" :required="true" />
+                <select-field v-if="user.admin && id !== user.id" :name="$t('user_type')" :options="options" v-model="admin" :required="true" />
                 <h2>{{ $t("security") }}</h2>
                 <p>
                     {{ $t("security_message") }}
@@ -97,8 +97,14 @@
         async mounted() {
             this.users = await this.client.get("/users");
 
-            if (this.users.length > 0) {
+            if (this.user.admin && this.users.length > 0) {
                 this.showUser(0);
+            } else if (this.users.length > 0) {
+                for (let i = 0; i < this.users.length; i++) {
+                    if (!this.users[i].admin) {
+                        this.showUser(i);
+                    }
+                }
             }
 
             this.loaded = true;

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user.admin" id="layout">
+    <div id="layout">
         <div v-if="loaded" id="rooms" class="info">
             <div class="room-list">
                 <draggable handle=".icon" ghost-class="ghost" v-model="layout.rooms" @end="saveLayout()">

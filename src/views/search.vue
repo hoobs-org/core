@@ -1,12 +1,12 @@
 <template>
-    <div v-if="user.admin" id="search">
+    <div id="search">
         <div class="info">
             <router-link v-on:click="clearSearch()" to="/plugins">{{ $t("installed_packages") }}</router-link>
             <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" :class="(category || categories[0]) === item ? 'active category-link': 'category-link'">{{ categoryName(item) }}</div>
-            <router-link v-on:click="clearSearch()" to="/plugins/search" :class="category === 'search' ? 'active': ''">{{ $t("search") }}</router-link>
+            <router-link v-if="user.admin" v-on:click="clearSearch()" to="/plugins/search" :class="category === 'search' ? 'active': ''">{{ $t("search") }}</router-link>
         </div>
         <div class="content">
-            <div class="search-field">
+            <div v-if="user.admin" class="search-field">
                 <input type="text" v-model="query" :placeholder="$t('search_packages')" onfocus="this.placeholder = ''" :onblur="`this.placeholder = '${$t('search_packages')}'`" />
             </div>
             <div v-if="query !== ''" class="list">

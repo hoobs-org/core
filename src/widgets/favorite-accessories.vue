@@ -6,7 +6,7 @@
             </div>
         </div>
         <div class="title">{{ $t("favorite_accessories") }}</div>
-        <div v-if="user.admin" class="actions">
+        <div class="actions">
             <router-link to="/accessories/layout" class="icon">settings</router-link>
         </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user.admin" id="logs">
+    <div id="logs">
         <span class="message" v-for="(message, index) in messages" :key="index">{{ message }}</span>
     </div>
 </template>

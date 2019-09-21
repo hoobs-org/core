@@ -41,21 +41,21 @@
                         <span v-bind:class="activeIcon('accessories', 'layout')">highlight</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('accessories', 'layout')">{{ routeName('accessories') }}</span>
                     </router-link>
-                    <router-link v-if="user.admin" :to="defaultRoute === 'log' ? '/' : '/log'" @click.native="hide('nav')">
+                    <router-link :to="defaultRoute === 'log' ? '/' : '/log'" @click.native="hide('nav')">
                         <span v-bind:class="activeIcon('log')">subject</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('log')">{{ routeName('log') }}</span>
                     </router-link>
-                    <router-link v-if="user.admin" to="/users" @click.native="hide('nav')" class="mobile-hide">
+                    <router-link to="/users" @click.native="hide('nav')" class="mobile-hide">
                         <span v-bind:class="activeIcon('users')">people</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('users')">{{ routeName('users') }}</span>
                     </router-link>
-                    <router-link v-if="user.admin" :to="defaultRoute === 'plugins' ? '/' : '/plugins'" @click.native="hide('nav')" class="mobile-hide">
+                    <router-link :to="defaultRoute === 'plugins' ? '/' : '/plugins'" @click.native="hide('nav')" class="mobile-hide">
                         <span v-bind:class="activeIcon('plugins', 'plugin', 'search')">extension</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('plugins', 'plugin', 'search')">{{ routeName('plugins') }}</span>
                     </router-link>
                 </div>
                 <div class="routes">
-                    <router-link v-if="user.admin" to="/config" @click.native="hide('nav')" class="mobile-hide">
+                    <router-link to="/config" @click.native="hide('nav')" class="mobile-hide">
                         <span v-bind:class="activeIcon('config', 'config-advanced')">settings</span>
                     </router-link>
                 </div>
@@ -78,7 +78,7 @@
                     <b>HOOBS Core</b><br>
                     Version {{ status.hoobs_version }}
                 </div>
-                <div v-if="user.admin" class="button" v-on:click="checkUpdates()">{{ $t("check_for_updates") }}</div>
+                <div class="button" v-on:click="checkUpdates()">{{ $t("check_for_updates") }}</div>
             </div>
             <br>
             <a href="https://hoobs.org" target="_blank">HOOBS.org</a><br>
@@ -121,10 +121,6 @@
             },
 
             defaultRoute() {
-                if (!this.user.admin && (this.$client.default_route === "log" || this.$client.default_route === "plugins")) {
-                    return "status";
-                }
-
                 return this.$client.default_route || "status";
             },
 

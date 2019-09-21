@@ -5,35 +5,27 @@
             <p>
                 {{ $t("online_help_message") }}
             </p>
-            <a href="http://hoobs.org" target="_blank" class="button button-primary">HOOBS.org</a>
-            <a href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
-            <a href="https://www.reddit.com/r/hoobs/" target="_blank" class="button mobile-hide">HOOBS Subreddit</a>
-            <div v-if="registration" class="button mobile-hide" v-on:click="disconnectCockpit()">{{ $t("disconnect") }}</div>
-            <div v-else class="button mobile-hide" v-on:click="startCockpit()">{{ $t("remote_support") }}</div>
-            <div v-if="registration" class="registration mobile-hide">{{ $t("support_code") }}: {{ registration }}</div>
+            <div class="help-actions">
+                <a href="http://hoobs.org" target="_blank" class="button button-primary">HOOBS.org</a>
+                <a href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
+                <a href="https://www.reddit.com/r/hoobs/" target="_blank" class="button mobile-hide">HOOBS Subreddit</a>
+                <div v-if="registration" class="button mobile-hide" v-on:click="disconnectCockpit()">{{ $t("disconnect") }}</div>
+                <div v-else class="button mobile-hide" v-on:click="startCockpit()">{{ $t("remote_support") }}</div>
+                <div v-if="registration" class="registration mobile-hide">{{ $t("support_code") }}: {{ registration }}</div>
+            </div>
             <h2>{{ $t("software") }}</h2>
             <p>{{ $t("stay_up_to_date") }}</p>
-            <div v-if="user.admin">
+            <div class="help-actions">
                 <router-link to="/system" class="button button-primary">{{ $t("system") }}</router-link>
-            </div>
-            <div v-else>
-                <p>
-                    <b>{{ $t("login_to_update") }}</b>
-                </p>
             </div>
             <h2>{{ $t("common_issues") }}</h2>
             <p>
                 <b>{{ $t("homekit_cant_find") }}</b> {{ $t("homebridge_service_not_running") }}
             </p>
-            <div v-if="user.admin" class="help-actions">
+            <div class="help-actions">
                 <router-link :to="$client.default_route || 'status' === 'status' ? '/' : '/status'" class="button button-primary">{{ $t("status") }}</router-link>
                 <div v-if="!locked && running" class="button" v-on:click="startService()">{{ $t("restart_service") }}</div>
                 <div v-else-if="!locked" class="button" v-on:click="startService()">{{ $t("start_service") }}</div>
-            </div>
-            <div v-else class="help-actions">
-                <p>
-                    <b>{{ $t("login_to_fix") }}</b>
-                </p>
             </div>
             <p>
                 <b>{{ $t("homekit_cant_find") }}</b> {{ $t("dns_cache_stale") }}
@@ -42,25 +34,15 @@
                 <b>{{ $t("homekit_cant_find") }}</b> {{ $t("homebridge_service_clash") }}<br>
                 <b>{{ $t("warning") }}</b> {{ $t("homekit_disconnect") }}
             </p>
-            <div v-if="user.admin" class="help-actions">
+            <div class="help-actions">
                 <confirm-delete :title="$t('reset_connection')" :subtitle="$t('reset')" :confirmed="resetService" />
-            </div>
-            <div v-else class="help-actions">
-                <p>
-                    <b>{{ $t("login_to_fix") }}</b>
-                </p>
             </div>
             <p>
                 <b>{{ $t("homekit_cant_find") }}</b> {{ $t("homebridge_stuck") }}<br>
                 <b>{{ $t("warning") }}</b> {{ $t("homekit_disconnect") }}
             </p>
-            <div v-if="user.admin" class="help-actions">
+            <div class="help-actions">
                 <confirm-delete :title="$t('generate_new_username')" :subtitle="$t('generate')" :confirmed="generateUsername" />
-            </div>
-            <div v-else class="help-actions">
-                <p>
-                    <b>{{ $t("login_to_fix") }}</b>
-                </p>
             </div>
         </div>
     </div>

@@ -38,6 +38,17 @@
         </div>
         <router-link to="/profile" class="item">{{ $t("profile") }}</router-link>
         <div class="item-seperator"></div>
+        <div v-if="!locked && !running" v-on:click.stop="control('start')" class="item">{{ $t("start_service") }}</div>
+        <div v-else class="item-disabled">{{ $t("start_service") }}</div>
+        <div v-if="!locked && running" v-on:click.stop="control('stop')" class="item">{{ $t("stop_service") }}</div>
+        <div v-else class="item-disabled">{{ $t("stop_service") }}</div>
+        <div v-if="!locked && running" v-on:click.stop="control('restart')" class="item">{{ $t("restart_service") }}</div>
+        <div v-else class="item-disabled">{{ $t("restart_service") }}</div>
+        <div class="item-seperator"></div>
+        <div v-if="!locked" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
+        <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
+        <div class="item-seperator"></div>
+        <router-link to="/system" class="item">{{ $t("system") }}</router-link>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
@@ -79,42 +90,40 @@
             },
 
             async control(action) {
-                if (this.user.admin) {
-                    switch (action) {
-                        case "start":
-                            this.$store.commit("lock");
-                            this.$store.commit("hide", "service");
+                switch (action) {
+                    case "start":
+                        this.$store.commit("lock");
+                        this.$store.commit("hide", "service");
 
-                            await this.api.post("/service/start");
+                        await this.api.post("/service/start");
 
-                            this.$store.commit("unlock");
+                        this.$store.commit("unlock");
 
-                            break;
+                        break;
 
-                        case "stop":
-                            this.$store.commit("lock");
-                            this.$store.commit("hide", "service");
+                    case "stop":
+                        this.$store.commit("lock");
+                        this.$store.commit("hide", "service");
 
-                            await this.api.post("/service/stop");
+                        await this.api.post("/service/stop");
 
-                            this.$store.commit("unlock");
+                        this.$store.commit("unlock");
 
-                            break;
+                        break;
 
-                        case "restart":
-                            this.$store.commit("lock");
-                            this.$store.commit("hide", "service");
+                    case "restart":
+                        this.$store.commit("lock");
+                        this.$store.commit("hide", "service");
 
-                            await this.api.post("/service/restart");
+                        await this.api.post("/service/restart");
 
-                            this.$store.commit("unlock");
+                        this.$store.commit("unlock");
 
-                            break;
+                        break;
 
-                        default:
-                            this.$store.commit("hide", "service");
-                            break;
-                    }
+                    default:
+                        this.$store.commit("hide", "service");
+                        break;
                 }
             }
         }

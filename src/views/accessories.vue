@@ -6,7 +6,7 @@
                     <a v-if="room.accessories.length > 0" class="room-link" :href="`#${room.name.toLowerCase().replace(/ /gi, '-')}`">{{ room.name }}</a>
                 </div>
             </div>
-            <div v-if="user.admin" class="room-list-actions">
+            <div class="room-list-actions">
                 <router-link to="/accessories/layout" class="button">{{ $t("edit_rooms") }}</router-link>
             </div>
         </div>

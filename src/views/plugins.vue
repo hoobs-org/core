@@ -1,15 +1,17 @@
 <template>
-    <div v-if="user.admin" id="plugins">
+    <div id="plugins">
         <div class="info">
             <router-link to="/plugins" class="active">{{ $t("installed_packages") }}</router-link>
             <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
-            <router-link v-on:click="clearSearch()" to="/plugins/search">{{ $t("search") }}</router-link>
+            <router-link v-if="user.admin" v-on:click="clearSearch()" to="/plugins/search">{{ $t("search") }}</router-link>
         </div>
         <div v-if="loaded && installed.length === 0" class="content">
             <div class="empty">{{ $t("no_plugins") }}</div>
         </div>
         <div v-else class="content">
-            <plugin-list v-for="(plugin, index) in installed" :key="`plugin-${index}`" :plugin="plugin" />
+            <div v-for="(plugin, index) in installed" :key="`plugin-${index}`">
+                <plugin-list v-if="user.admin || plugin.scope === 'hoobs'" :plugin="plugin" />
+            </div>
         </div>
     </div>
 </template>
