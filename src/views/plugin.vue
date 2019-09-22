@@ -23,6 +23,9 @@
                         <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>
                         <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
                         <div v-if="plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
+                        <a :href="`https://www.npmjs.com/package/${plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name}`" target="_blank">NPM</a>
+                        <span v-if="plugin.homepage" class="link-seperator">|</span>
+                        <a v-if="plugin.homepage" :href="plugin.homepage" target="_blank">{{ $t("details") }}</a>
                     </div>
                     <div v-else class="loader">
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
@@ -39,6 +42,9 @@
                     <div v-if="!working" class="actions">
                         <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>
                         <div v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
+                        <a :href="`https://www.npmjs.com/package/${plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name}`" target="_blank">NPM</a>
+                        <span v-if="plugin.homepage" class="link-seperator">|</span>
+                        <a v-if="plugin.homepage" :href="plugin.homepage" target="_blank">{{ $t("details") }}</a>
                     </div>
                     <div v-else class="loader">
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
@@ -292,6 +298,10 @@
         display: flex;
         align-content: center;
         align-items: center;
+    }
+
+    #plugin .link-seperator {
+        margin: 0 7px;
     }
 
     #plugin .actions .icon {
