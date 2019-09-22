@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user.admin" id="service-menu">
+    <div v-if="(user || {}).admin" id="service-menu">
         <div class="profile">
             <span class="icon">account_circle</span>
             <div class="profile-details">
