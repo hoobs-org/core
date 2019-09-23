@@ -3,7 +3,7 @@ import Cookies from "./cookies";
 
 export default class Config {
     constructor () {
-        this._api = HOOBS_CONFIG.client.api;
+        this._api = CLIENT_CONFIG.client.api;
 
         if (!Array.isArray(this._api)) {
             this.api = [this._api];
@@ -17,12 +17,16 @@ export default class Config {
         this._names = [];
     }
 
+    get system() {
+        return (CLIENT_CONFIG.system || "hoobs").toLowerCase();
+    }
+
     get socket() {
-        return (HOOBS_CONFIG.client || {}).socket || "http://hoobs.local:5128";
+        return (CLIENT_CONFIG.client || {}).socket || `http://${CLIENT_CONFIG.system || "hoobs"}.local`;
     }
 
     get control() {
-        return HOOBS_CONFIG.client.config;
+        return CLIENT_CONFIG.client.config;
     }
 
     get server() {
@@ -117,13 +121,13 @@ export default class Config {
         try {
             this._ui = (await Request.get(`${this._api}/api/config`)).data.client;
         } catch {
-            this._ui = HOOBS_CONFIG.client;
+            this._ui = CLIENT_CONFIG.client;
         }
 
         try {
             this._configuration = (await Request.get(`${this.instance}/api/config`)).data;
         } catch {
-            this._configuration = HOOBS_CONFIG;
+            this._configuration = CLIENT_CONFIG;
         }
     }
 }

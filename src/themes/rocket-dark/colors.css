@@ -1,4 +1,4 @@
-.hoobs-dark {
+.rocket-dark {
     --primary: #474746;
     --primary-dark: #3f3f3f;
     --background: #474746;
@@ -19,7 +19,7 @@
     --input-background: #575757;
     --input-text: #fff;
     --input-json-text: #feb400;
-    --input-json-number: #e75a0e;
+    --input-json-number: #ccc;
     --text: #999;
     --text-light: #999;
     --text-dark: #fff;

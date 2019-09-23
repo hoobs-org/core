@@ -191,6 +191,10 @@
 
             accessoryKeys() {
                 return Object.keys(this.accessories);
+            },
+
+            system() {
+                return this.$system;
             }
         },
 
@@ -300,13 +304,7 @@
                     text: "中文",
                     value: "zh"
                 }],
-                themes: [{
-                    text: this.$t("hoobs_light"),
-                    value: "hoobs-light"
-                },{
-                    text: this.$t("hoobs_dark"),
-                    value: "hoobs-dark"
-                }],
+                themes: [],
                 screens: [{
                     text: this.$t("status"),
                     value: "status"
@@ -333,6 +331,14 @@
 
         async mounted() {
             await this.load();
+
+            this.themes = [{
+                text: this.$t(`${this.system}_light`),
+                value: `${this.system}-light`
+            },{
+                text: this.$t(`${this.system}_dark`),
+                value: `${this.system}-dark`
+            }];
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
                 if (document.querySelector(window.location.hash)) {

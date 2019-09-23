@@ -88,9 +88,9 @@
     }
 
     #modal-dialog .button-primary {
-        background: #feb400;
-        color: #fff !important;
-        border: 1px #feb400 solid;
+        background: var(--button-primary);
+        color: var(--button-primary-text) !important;
+        border: 1px var(--button-primary) solid;
     }
 
     @media (min-width: 300px) and (max-width: 815px) {

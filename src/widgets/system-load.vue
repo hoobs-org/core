@@ -23,7 +23,7 @@
         computed: {
             graph() {
                 return [{
-                    name: `${this.$t("hoobs")} (${this.running ? this.$t("running") : this.$t("stopped")})`,
+                    name: `${this.$t(this.$system)} (${this.running ? this.$t("running") : this.$t("stopped")})`,
                     data: []
                 }, {
                     name: `${this.$t("cpu")} ${(this.cpu || {}).used || 0}%`,

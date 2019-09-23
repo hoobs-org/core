@@ -16,7 +16,7 @@ import App from "./app.vue";
 (async () => {
     const config = new Config();
     const index = parseInt(Cookies.get("instance") || "0", 10);
-    const loader = Loader();
+    const loader = new Loader();
     const instance = (await config.list())[index];
 
     await config.active(index);
@@ -61,6 +61,16 @@ import App from "./app.vue";
         
             $instance() {
                 return config.instance;
+            },
+
+            $system() {
+                switch (config.system) {
+                    case "rocket":
+                        return "rocket";
+                    
+                    default:
+                        return "hoobs";
+                }
             }
         },
 
@@ -304,10 +314,10 @@ import App from "./app.vue";
             connect_error: () => {
                 fetch("/").then((response) => {
                     if (!response.ok) {
-                        loader.write();
+                        loader.write(config.system);
                     }
                 }).catch(() => {
-                    loader.write();
+                    loader.write(config.system);
                 });
             },
             log: (data) => {

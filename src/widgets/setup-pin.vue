@@ -38,7 +38,7 @@
                 return {
                     width: 238,
                     color: {
-                        dark: (this.$client.theme || "hoobs-light").endsWith("dark") ? "#feb400" : "#515151",
+                        dark: (this.$client.theme || `${this.$system}-light`).endsWith("dark") ? "#feb400" : "#515151",
                         light: "#ffffff00"
                     }
                 };

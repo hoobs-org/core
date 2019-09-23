@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user.admin" id="plugin">
+    <div id="plugin">
         <div class="info">
             <router-link to="/plugins">{{ $t("installed_packages") }}</router-link>
             <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
@@ -13,7 +13,7 @@
                         <span v-else class="status">{{ $t("updated") }}</span>
                     </span>
                     <div v-if="plugin.scope === 'hoobs'" class="certified">
-                        HOOBS Certified
+                        {{ title }} Certified
                     </div>
                     <div class="version">
                         {{ plugin.installed || plugin.version }}
@@ -33,7 +33,7 @@
                 </div>
                 <div v-else class="control">
                     <div v-if="plugin.scope === 'hoobs'" class="certified">
-                        HOOBS Certified
+                        {{ title }} Certified
                     </div>
                     <div class="version">
                         {{ plugin.installed || plugin.version }}
@@ -50,7 +50,7 @@
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
                     </div>
                 </div>
-                <div v-if="formatted !== ''" v-html="formatted" id="markdown"></div>
+                <div v-if="formatted !== ''" v-html="formatted" ref="markdown" id="markdown"></div>
             </div>
         </div>
     </div>
@@ -89,6 +89,16 @@
 
             categories() {
                 return this.$store.state.categories;
+            },
+
+            title() {
+                switch (this.$system) {
+                    case "rocket":
+                        return "Rocket";
+                    
+                    default:
+                        return "HOOBS";
+                }
             }
         },
 
@@ -122,12 +132,10 @@
                 }).makeHtml(this.markdown);
 
                 setTimeout(() => {
-                    Prism.highlightAllUnder(this.$el);
+                    Prism.highlightAllUnder(this.$refs.markdown);
 
-                    const article = this.$el.querySelector("#markdown");
-
-                    if (article) {
-                        const links = article.querySelectorAll("a");
+                    if (this.$refs.markdown) {
+                        const links = this.$refs.markdown.querySelectorAll("a");
 
                         if (links) {
                             for (let i = 0; i < links.length; i++) {

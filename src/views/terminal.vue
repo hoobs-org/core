@@ -28,6 +28,22 @@
         computed: {
             user() {
                 return this.$store.state.user;
+            },
+
+            colors() {
+                switch (this.$system) {
+                    case "rocket":
+                        return {
+                            background: "#262626",
+                            foreground: "#f1f1f1"
+                        };
+
+                    default:
+                        return {
+                            background: "#474746",
+                            foreground: "#f1f1f1"
+                        };
+                }
             }
         },
 
@@ -47,10 +63,7 @@
 
             this.term = new Terminal({
                 cursorBlink: false,
-                theme: {
-                    background: "#474746",
-                    foreground: "#f1f1f1"
-                }
+                theme: this.colors
             });
 
             this.term.open(this.$refs.terminal);
@@ -62,6 +75,7 @@
 
             this.socket.onopen = (ev) => {
                 this.term.attach(this.socket);
+                this.term.focus();
             };
         },
 
@@ -152,8 +166,8 @@
     }
 
     .xterm .composition-view {
-        background: #474746 !important;
-        color: #FFF;
+        background: var(--background-dark) !important;
+        color: #fff;
         display: none;
         position: absolute;
         white-space: nowrap;
@@ -165,7 +179,7 @@
     }
 
     .xterm .xterm-viewport {
-        background-color: #474746 !important;
+        background-color: var(--background-dark) !important;
         overflow-y: scroll;
         cursor: default;
         position: absolute;

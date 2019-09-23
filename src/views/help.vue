@@ -2,20 +2,21 @@
     <div id="help">
         <div class="content">
             <h2>{{ $t("online_help") }}</h2>
-            <p>
+            <p v-if="system === 'hoobs'">
                 {{ $t("online_help_message") }}
             </p>
             <div class="help-actions">
-                <a href="http://hoobs.org" target="_blank" class="button button-primary">HOOBS.org</a>
+                <a v-if="system === 'hoobs'" href="https://hoobs.org" target="_blank" class="button button-primary">HOOBS.org</a>
+                <a v-if="system === 'rocket'" href="https://rocketsmarthome.com" target="_blank" class="button button-primary">RocketSmartHome.com</a>
                 <a href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
-                <a href="https://www.reddit.com/r/hoobs/" target="_blank" class="button mobile-hide">HOOBS Subreddit</a>
+                <a v-if="system === 'hoobs'" href="https://www.reddit.com/r/hoobs/" target="_blank" class="button mobile-hide">HOOBS Subreddit</a>
                 <div v-if="registration" class="button mobile-hide" v-on:click="disconnectCockpit()">{{ $t("disconnect") }}</div>
                 <div v-else class="button mobile-hide" v-on:click="startCockpit()">{{ $t("remote_support") }}</div>
                 <div v-if="registration" class="registration mobile-hide">{{ $t("support_code") }}: {{ registration }}</div>
             </div>
-            <h2>{{ $t("software") }}</h2>
-            <p>{{ $t("stay_up_to_date") }}</p>
-            <div class="help-actions">
+            <h2 v-if="system === 'hoobs'">{{ $t("software") }}</h2>
+            <p v-if="system === 'hoobs'">{{ $t("stay_up_to_date") }}</p>
+            <div v-if="system === 'hoobs'" class="help-actions">
                 <router-link to="/system" class="button button-primary">{{ $t("system") }}</router-link>
             </div>
             <h2>{{ $t("common_issues") }}</h2>
@@ -75,6 +76,10 @@
 
             user() {
                 return this.$store.state.user;
+            },
+
+            system() {
+                return this.$system;
             }
         },
 

@@ -6,7 +6,7 @@
                 <span v-else class="status">{{ $t("updated") }}</span>
             </span>
             <div v-if="plugin.scope === 'hoobs'" class="certified">
-                HOOBS Certified
+                {{ title }} Certified
             </div>
             <h3>{{ humanize(plugin.name) }}</h3>
             <span class="version">
@@ -59,6 +59,16 @@
 
             running() {
                 return this.$store.state.running;
+            },
+
+            title() {
+                switch (this.$system) {
+                    case "rocket":
+                        return "Rocket";
+                    
+                    default:
+                        return "HOOBS";
+                }
             }
         },
 
