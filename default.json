@@ -1,5 +1,4 @@
 {
-    "system": "rocket",
     "server": {
         "port": 51827,
         "socket": 51828,
@@ -14,18 +13,13 @@
         "socket": 51828,
         "default_route": "status",
         "inactive_logoff": 30,
-        "theme": "rocket-light",
+        "theme": "hoobs-light",
         "locale": "en",
         "temp_units": "fahrenheit",
         "country_code": "US",
         "postal_code": "94040"
     },
-    "bridge": {
-        "name": "Rocket",
-        "username": "CD:15:BB:C7:6B:75",
-        "port": 51826,
-        "pin": "131-45-154"
-    },
+    "bridge": {},
     "description": "",
     "ports": {},
     "plugins": [],
