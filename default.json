@@ -1,4 +1,5 @@
 {
+    "system": "rocket",
     "server": {
         "port": 51827,
         "socket": 51828,
@@ -13,7 +14,7 @@
         "socket": 51828,
         "default_route": "status",
         "inactive_logoff": 30,
-        "theme": "hoobs-light",
+        "theme": "rocket-light",
         "locale": "en",
         "temp_units": "fahrenheit",
         "country_code": "US",
