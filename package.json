@@ -29,7 +29,7 @@
         "prepare": "npm run build"
     },
     "dependencies": {
-        "@hoobs/homebridge": "^3.0.3",
+        "@hoobs/homebridge": "^3.0.4",
         "@hoobs/systeminfo": "^4.14.7",
         "axios": "^0.19.0",
         "commander": "^2.20.0",
