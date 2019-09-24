@@ -38,10 +38,20 @@
                 return {
                     width: 238,
                     color: {
-                        dark: (this.$client.theme || `${this.$system}-light`).endsWith("dark") ? "#feb400" : "#515151",
+                        dark: (this.$client.theme || `${this.$system}-light`).endsWith("dark") ? this.color : "#515151",
                         light: "#ffffff00"
                     }
                 };
+            },
+
+            color() {
+                switch (this.$system) {
+                    case "rocket":
+                        return "#e75e0f";
+                    
+                    default:
+                        return "#feb400";
+                }
             }
         }
     };
