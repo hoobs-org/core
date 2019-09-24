@@ -379,6 +379,9 @@
                     case "motion_sensor":
                         return "motion-sensor";
 
+                    case "window_covering":
+                        return "window-covering";
+
                     case "security_system":
                         return "security-system";
 
