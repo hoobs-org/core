@@ -17,7 +17,7 @@
                     </div>
                     <div class="version">
                         {{ plugin.installed || plugin.version }}
-                        <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
+                        <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date.replace(/\s/, "T")) }} {{ getAgeDisplay(plugin.date.replace(/\s/, "T")) }}</span>
                     </div>
                     <div v-if="!working" class="actions">
                         <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>
@@ -37,7 +37,7 @@
                     </div>
                     <div class="version">
                         {{ plugin.installed || plugin.version }}
-                        <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
+                        <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date.replace(/\s/, "T")) }} {{ getAgeDisplay(plugin.date.replace(/\s/, "T")) }}</span>
                     </div>
                     <div v-if="!working" class="actions">
                         <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>

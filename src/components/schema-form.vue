@@ -166,7 +166,7 @@
                         return field.default || false;
                     
                     case "date":
-                        return field.default ? new Date(field.default) : new Date();
+                        return field.default ? new Date(field.default.replace(/\s/, "T")) : new Date();
                 }
 
                 return null;

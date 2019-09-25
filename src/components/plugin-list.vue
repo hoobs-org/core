@@ -11,7 +11,7 @@
             <h3>{{ humanize(plugin.name) }}</h3>
             <span class="version">
                 {{ plugin.installed || plugin.version }}
-                <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date) }} {{ getAgeDisplay(plugin.date) }}</span>
+                <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date.replace(/\s/, "T")) }} {{ getAgeDisplay(plugin.date.replace(/\s/, "T")) }}</span>
             </span>
             <p v-if="!plugin.local">{{ plugin.description }}</p>
             <p v-if="plugin.local">{{ plugin.links.directory }}</p>

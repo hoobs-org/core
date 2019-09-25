@@ -13,7 +13,6 @@
     import Inflection from "inflection";
 
     import Versioning from "../versioning";
-    import Dates from "../dates";
 
     export default {
         name: "plugin-card",
@@ -42,20 +41,6 @@
         },
 
         methods: {
-            formatDate(date) {
-                return Dates.formatDate(date);
-            },
-
-            getAgeDisplay(date) {
-                const age = Dates.getAgeDisplay(date);
-
-                if (age !== "") {
-                    return `• ${age}`;
-                }
-
-                return "";
-            },
-
             checkVersion(version, latest) {
                 return Versioning.checkVersion(version, latest);
             },
