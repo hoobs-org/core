@@ -13,8 +13,8 @@
             </div>
             <div class="forecast">
                 <div v-for="(day, index) in forecast.data.list" :key="index">
-                    <div v-if="isNoon((day.dt + forecast.data.city.timezone) * 1000)" class="forecast-weather">
-                        <span class="forecast-title">{{ $t(forecastDay(new Date((day.dt + forecast.data.city.timezone) * 1000))) }}</span>
+                    <div v-if="isNoon(openWeatherDate(day.dt_txt))" class="forecast-weather">
+                        <span class="forecast-title">{{ $t(forecastDay(openWeatherDate(day.dt_txt))) }}</span>
                         <div class="forecast-weather-icon" :class="`wi wi-day-${icon[day.weather[0].id].icon}`"></div>
                         <span class="forecast-description">{{ $t(icon[day.weather[0].id].label) }}</span>
                         <span class="forecast-temp">{{ Math.round(day.main.temp) }}°</span>
@@ -130,6 +130,22 @@
                 }
 
                 return false;
+            },
+
+            openWeatherDate(value) {
+                const p = value.split(" ");
+                const d = p[0].split("-");
+                const t = p[1].split(":");
+
+                const year = parseInt(d[0], 10);
+                const month = parseInt(d[1], 10) - 1;
+                const date = parseInt(d[2], 10);
+
+                const hour = parseInt(t[0], 10);
+                const minute = parseInt(t[1], 10);
+                const second = parseInt(t[2], 10);
+
+                return new Date(year, month, date, hour, minute, second);
             },
 
             getQuery() {
