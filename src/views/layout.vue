@@ -50,9 +50,12 @@
                         {{ $t("available_accessories_message") }}
                     </p>
                     <div v-if="add" class="available-acessories">
-                        <div v-for="(accessory, index) in accessories" :key="index">
-                            <div v-if="layout.rooms[current].accessories.indexOf(accessory.aid)" class="available-accessory">
-                                <input type="checkbox" :id="`add-accessory-${index}`" :value="accessory.aid" v-model="selected"> <label :for="`add-accessory-${index}`">{{ accessory.alias || accessory.name || accessory.service_name }}</label>
+                        <div v-for="(room, index) in available" :key="index">
+                            <div v-if="room.name !== 'Unassigned' && room.name !== layout.rooms[current].name" class="available-title">{{ room.name }}</div>
+                            <div v-for="(accessory, index) in room.accessories" :key="index">
+                                <div v-if="layout.rooms[current].accessories.indexOf(accessory.aid) < 0" class="available-accessory">
+                                    <input type="checkbox" :id="`add-accessory-${index}`" :value="accessory.aid" v-model="selected"> <label :for="`add-accessory-${index}`">{{ accessory.hidden ? "(Hidden) " : "" }}{{ accessory.alias || accessory.name || accessory.service_name }}</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -139,6 +142,7 @@
                     rooms: []
                 },
                 accessories: [],
+                available: [],
                 confirm: false,
                 selected: [],
                 add: false
@@ -154,6 +158,7 @@
         async mounted() {
             this.layout = await this.api.get("/layout");
             this.accessories = await this.api.get("/accessories/list");
+            this.available = await this.api.get("/accessories/available");
 
             if (this.layout.rooms.length > 0) {
                 this.current = 0;
@@ -405,6 +410,12 @@
                 } catch (error) {
                     console.log(error);
                 }
+
+                try {
+                    this.available = await this.api.get("/accessories/available");
+                } catch (error) {
+                    console.log(error);
+                }
             },
 
             async updateAccessory(aid, item) {
@@ -414,6 +425,12 @@
                     await this.api.post(`/accessory/${aid}/${item}`, {
                         value
                     });
+                } catch (error) {
+                    console.log(error);
+                }
+
+                try {
+                    this.available = await this.api.get("/accessories/available");
                 } catch (error) {
                     console.log(error);
                 }
@@ -596,5 +613,10 @@
 
     #layout .form .available-acessories .available-accessory input {
         margin: 0 7px 0 0;
+    }
+
+    #layout .available-title {
+        margin: 20px 0 0 0;
+        font-weight: bold;
     }
 </style>

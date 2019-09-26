@@ -193,7 +193,15 @@
         },
 
         async mounted() {
-            Chart.defaults.global.defaultFontColor = (this.$client.theme || `${this.system}-light`).endsWith("dark") ? "#f9bd2b" : "#999";
+            switch (this.$system) {
+                case "rocket":
+                    Chart.defaults.global.defaultFontColor = (this.$client.theme || `${this.system}-light`).endsWith("dark") ? "#e75e0f" : "#999";
+                    break;
+                
+                default:
+                    Chart.defaults.global.defaultFontColor = (this.$client.theme || `${this.system}-light`).endsWith("dark") ? "#f9bd2b" : "#999";
+                    break;
+            }
 
             document.body.addEventListener("error", (event) => {
                 if (event.target.tagName === "IMG") {
