@@ -13,8 +13,8 @@
             </div>
             <div class="forecast">
                 <div v-for="(day, index) in forecast.data.list" :key="index">
-                    <div v-if="isNoon(day.dt_txt.replace(/\s/, 'T'))" class="forecast-weather">
-                        <span class="forecast-title">{{ $t(forecastDay(day.dt_txt.replace(/\s/, "T"))) }}</span>
+                    <div v-if="isNoon((day.dt + forecast.data.city.timezone) * 1000)" class="forecast-weather">
+                        <span class="forecast-title">{{ $t(forecastDay(new Date((day.dt + forecast.data.city.timezone) * 1000))) }}</span>
                         <div class="forecast-weather-icon" :class="`wi wi-day-${icon[day.weather[0].id].icon}`"></div>
                         <span class="forecast-description">{{ $t(icon[day.weather[0].id].label) }}</span>
                         <span class="forecast-temp">{{ Math.round(day.main.temp) }}°</span>
