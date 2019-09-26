@@ -54,7 +54,7 @@
                             <div v-if="room.name !== 'Unassigned' && room.name !== layout.rooms[current].name" class="available-title">{{ room.name }}</div>
                             <div v-for="(accessory, index) in room.accessories" :key="index">
                                 <div v-if="layout.rooms[current].accessories.indexOf(accessory.aid) < 0" class="available-accessory">
-                                    <input type="checkbox" :id="`add-accessory-${index}`" :value="accessory.aid" v-model="selected"> <label :for="`add-accessory-${index}`">{{ accessory.hidden ? "(Hidden) " : "" }}{{ accessory.alias || accessory.name || accessory.service_name }}</label>
+                                    <input type="checkbox" :id="`add-accessory-${index}`" :value="accessory.aid" v-model="selected"> <label :for="`add-accessory-${index}`">{{ accessory.hidden ? `(${$t("hidden")}) ` : "" }}{{ accessory.alias || accessory.name || accessory.service_name }}</label>
                                 </div>
                             </div>
                         </div>
