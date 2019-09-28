@@ -45,12 +45,6 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         mkdir /usr/share/hoobs > /dev/null
         curl https://raw.githubusercontent.com/hoobs-org/nginx-loader/master/loader.html --output /usr/share/hoobs/loader.html > /dev/null
         
-        if test -f /usr/local/lib/node_modules/@hoobs/hoobs/default.json; then
-            rm -f /usr/local/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
-        fi
-        
-        curl https://raw.githubusercontent.com/hoobs-org/nginx-loader/master/nginx-default.json --output /usr/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
-        
         if test -f /etc/systemd/system/homebridge-config-ui-x.service; then
             echo "removing config ui service"
 
@@ -77,17 +71,12 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         firewall-cmd --zone=FedoraServer --add-port=80/tcp --permanent > /dev/null
         firewall-cmd --zone=FedoraServer --add-port=8080/tcp --permanent > /dev/null
         firewall-cmd --zone=FedoraServer --add-port=51826/tcp --permanent > /dev/null
-        firewall-cmd --zone=FedoraServer --add-port=51827/tcp --permanent > /dev/null
-        firewall-cmd --zone=FedoraServer --add-port=51828/tcp --permanent > /dev/null
         
         firewall-cmd --reload > /dev/null
         
         echo "configuring selinux"
         
         setsebool -P httpd_can_network_connect 1 > /dev/null
-        
-        semanage port -a -t http_port_t -p tcp 51827 > /dev/null
-        semanage port -a -t http_port_t -p tcp 51828 > /dev/null
         
         echo "enabling services"
         
@@ -144,12 +133,6 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         mkdir /usr/share/hoobs > /dev/null
         curl https://raw.githubusercontent.com/hoobs-org/nginx-loader/master/loader.html --output /usr/share/hoobs/loader.html > /dev/null
         
-        if test -f /usr/local/lib/node_modules/@hoobs/hoobs/default.json; then
-            rm -f /usr/local/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
-        fi
-        
-        curl https://raw.githubusercontent.com/hoobs-org/nginx-loader/master/nginx-default.json --output /usr/local/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
-        
         if test -f /etc/systemd/system/homebridge-config-ui-x.service; then
             echo "removing config ui service"
 
@@ -176,17 +159,12 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         firewall-cmd --zone=FedoraServer --add-port=80/tcp --permanent > /dev/null
         firewall-cmd --zone=FedoraServer --add-port=8080/tcp --permanent > /dev/null
         firewall-cmd --zone=FedoraServer --add-port=51826/tcp --permanent > /dev/null
-        firewall-cmd --zone=FedoraServer --add-port=51827/tcp --permanent > /dev/null
-        firewall-cmd --zone=FedoraServer --add-port=51828/tcp --permanent > /dev/null
         
         firewall-cmd --reload > /dev/null
         
         echo "configuring selinux"
         
         setsebool -P httpd_can_network_connect 1 > /dev/null
-        
-        semanage port -a -t http_port_t -p tcp 51827 > /dev/null
-        semanage port -a -t http_port_t -p tcp 51828 > /dev/null
         
         echo "enabling services"
         
@@ -242,12 +220,6 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "linux-gnueabihf" ]]; then
         
         mkdir /usr/share/hoobs > /dev/null
         curl https://raw.githubusercontent.com/hoobs-org/nginx-loader/master/loader.html --output /usr/share/hoobs/loader.html > /dev/null
-        
-        if test -f /usr/local/lib/node_modules/@hoobs/hoobs/default.json; then
-            rm -f /usr/local/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
-        fi
-        
-        curl https://raw.githubusercontent.com/hoobs-org/nginx-loader/master/nginx-default.json --output /usr/local/lib/node_modules/@hoobs/hoobs/default.json > /dev/null
         
         if test -f /etc/systemd/system/homebridge-config-ui-x.service; then
             echo "removing config ui service"
