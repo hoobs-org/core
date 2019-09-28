@@ -11,6 +11,8 @@ import Store from "./store";
 import App from "./app.vue";
 
 (async () => {
+    window.jsonlint = require("jsonlint-mod");
+
     const config = new Config();
     const index = parseInt(Cookies.get("instance") || "0", 10);
 
