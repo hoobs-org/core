@@ -71,7 +71,7 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/plugins"
+                    window.location.href = "/config"
                 }
             },
 

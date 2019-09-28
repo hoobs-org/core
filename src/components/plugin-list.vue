@@ -124,7 +124,7 @@
                         this.$store.commit("unlock");
                     }
 
-                    window.location.href = "/plugins";
+                    window.location.href = "/config";
                 }
             },
 
