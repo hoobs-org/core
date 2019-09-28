@@ -1,1 +1,0 @@
-HOOBS_CONFIG = {};

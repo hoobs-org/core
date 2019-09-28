@@ -1,6 +1,4 @@
 import Vue from "vue";
-import Socket from "vue-socket.io";
-import Client from "socket.io-client";
 import Graphing from "./graphing";
 import Request from "axios";
 
@@ -9,28 +7,18 @@ import Cookies from "./cookies";
 import Config from "./config";
 import Router from "./router";
 import Themes from "./themes/themes";
-import Loader from "./loader";
 import Store from "./store";
 import App from "./app.vue";
 
 (async () => {
     const config = new Config();
     const index = parseInt(Cookies.get("instance") || "0", 10);
-    const loader = new Loader();
-    const instance = (await config.list())[index];
 
+    await config.list();
     await config.active(index);
 
     Vue.mixin({
         computed: {
-            $socket() {
-                return config.socket;
-            },
-        
-            $control() {
-                return config.control;
-            },
-        
             $server() {
                 return config.server;
             },
@@ -112,14 +100,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.get(`${config.control}/api${url}`).then((response) => {
+                                Request.get(`/api${url}`).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             });
                         } else {
-                            return (await Request.get(`${config.control}/api${url}`)).data;
+                            return (await Request.get(`/api${url}`)).data;
                         }
                     },
     
@@ -128,14 +116,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.post(`${config.control}/api${url}`, data).then((response) => {
+                                Request.post(`/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.post(`${config.control}/api${url}`, data)).data;
+                            return (await Request.post(`/api${url}`, data)).data;
                         }
                     },
     
@@ -144,14 +132,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.put(`${config.control}/api${url}`, data).then((response) => {
+                                Request.put(`/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.put(`${config.control}/api${url}`, data)).data;
+                            return (await Request.put(`/api${url}`, data)).data;
                         }
                     },
     
@@ -160,14 +148,14 @@ import App from "./app.vue";
     
                         if (sync) {
                             return new Promise((resolve, reject) => {
-                                Request.delete(`${config.control}/api${url}`, data).then((response) => {
+                                Request.delete(`/api${url}`, data).then((response) => {
                                     resolve(response.data);
                                 }).catch((error) => {
                                     reject(error);
                                 });
                             })
                         } else {
-                            return (await Request.delete(`${config.control}/api${url}`, data)).data;
+                            return (await Request.delete(`/api${url}`, data)).data;
                         }
                     }
                 },
@@ -254,18 +242,11 @@ import App from "./app.vue";
     
     Vue.use(Graphing.use(Chart));
     
-    Vue.use(new Socket({
-        connection: Client(config.socket),
-        vuex: {
-            Store
-        }
-    }));
-    
     const localization = Localization(config.client.locale);
     const router = Router(config.client.default_route || "status");
     
     router.beforeEach(async (to, from, next) => {
-        if (to.path !== "/login" && !(await Cookies.validate(config.control))) {
+        if (to.path !== "/login" && !(await Cookies.validate())) {
             router.push({
                 path: "/login",
                 query: {
@@ -300,54 +281,6 @@ import App from "./app.vue";
         i18n: localization,
         store: Store,
         themes: Themes,
-        sockets: {
-            connect: () => {
-                if (loader.loading) {
-                    loader.load();
-                }
-            },
-            reconnect: () => {
-                if (loader.loading) {
-                    loader.load();
-                }
-            },
-            connect_error: () => {
-                fetch("/").then((response) => {
-                    if (!response.ok) {
-                        loader.write(config.system);
-                    }
-                }).catch(() => {
-                    loader.write(config.system);
-                });
-            },
-            log: (data) => {
-                Store.commit("log", data);
-            },
-            push: (data) => {
-                try {
-                    data = JSON.parse(data);
-                } catch {
-                    data = null;
-                }
-    
-                if (data) {
-                    Store.commit("push", data);
-                }
-            },
-            monitor: (status) => {
-                try {
-                    status = JSON.parse(status);
-                } catch {
-                    status = null;
-                }
-        
-                if (status) {
-                    if (status.data.instance === instance) {
-                        Store.commit("monitor", status);
-                    }
-                }
-            }
-        },
         render: view => view(App)
     }).$mount("#app");
 })()

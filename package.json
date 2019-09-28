@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.0-beta.59",
+    "version": "3.0.0-beta.60",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -44,7 +44,7 @@
         "ora": "^3.4.0",
         "request": "^2.88.0",
         "rimraf": "^2.7.1",
-        "socket.io": "^2.2.0"
+        "ws": "^7.1.2"
     },
     "devDependencies": {
         "@chenfengyuan/vue-qrcode": "^1.0.1",
@@ -62,7 +62,6 @@
         "vue-grid-layout": "^2.3.4",
         "vue-i18n": "^8.14.0",
         "vue-router": "^3.1.2",
-        "vue-socket.io": "^3.0.7",
         "vue-template-compiler": "^2.6.10",
         "vuedraggable": "^2.23.0",
         "vuex": "^3.1.1",

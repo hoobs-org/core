@@ -1,6 +1,6 @@
 <template>
     <div v-if="(user || {}).admin" id="service-menu">
-        <div class="profile">
+        <div v-if="user" class="profile">
             <span class="icon">account_circle</span>
             <div class="profile-details">
                 <span class="sub-title">{{ $t("loged_in_as") }}</span>
@@ -31,7 +31,7 @@
     <div v-else id="service-menu">
         <div class="profile">
             <span class="icon">account_circle</span>
-            <div class="profile-details">
+            <div v-if="user" class="profile-details">
                 <span class="sub-title">{{ $t("loged_in_as") }}</span>
                 <span class="identity">{{ user.name || user.username }}</span>
             </div>

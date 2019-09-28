@@ -3,8 +3,8 @@
 process.title = "hoobs-core";
 
 const OS = require("os");
-const Ora = require("../node_modules/ora");
 const File = require("../node_modules/fs-extra/lib");
+const Ora = require("../node_modules/ora");
 const Remove = require("../node_modules/rimraf");
 
 const { dirname, join } = require("path");
@@ -12,7 +12,7 @@ const { exec, spawn } = require("child_process");
 
 let password = null;
 
-process.argv.forEach((value, index) => {
+process.argv.forEach((value) => {
     if (value === "-p") {
         password = "#sudo-password#"
     } else if (password === "#sudo-password#") {
@@ -44,6 +44,7 @@ if (File.existsSync(join(root, "package.json"))) {
 
 const preparePackage = function() {
     const plugins = [];
+    const linked = Object.keys(installed.dependencies);
 
     throbber = Ora("Initilizing").start();
 
@@ -54,7 +55,7 @@ const preparePackage = function() {
             const name = dependencies[i];
             const dependency = executing.dependencies[dependencies[i]];
 
-            if ((name.startsWith("homebridge-") || (name.startsWith("@hoobs/") && name !== "@hoobs/homebridge")) && !installed.dependencies.hasOwnProperty(name)) {
+            if ((name.startsWith("homebridge-") || (name.startsWith("@hoobs/") && name !== "@hoobs/homebridge" && name !== "@hoobs/systeminfo")) && !installed.dependencies.hasOwnProperty(name)) {
                 installed.dependencies[name] = dependency;
 
                 plugins.push(name);
@@ -82,39 +83,49 @@ const preparePackage = function() {
 
     throbber.stop();
 
-    return plugins;
+    return {
+        dependencies: linked,
+        plugins
+    };
 }
 
-const setupUserMode = function() {
-    throbber = Ora("Setting Up User Mode").start();
+const setupUserMode = function(dependencies) {
+    return new Promise((resolve) => {
+        throbber = Ora("Setting Up User Mode").start();
 
-    if (File.existsSync(join(root, "dist"))) {
-        Remove.sync(join(root, "dist"));
-    }
+        if (File.existsSync(join(root, "dist"))) {
+            Remove.sync(join(root, "dist"));
+        }
 
-    if (File.existsSync(join(root, "lib"))) {
-        Remove.sync(join(root, "lib"));
-    }
+        if (File.existsSync(join(root, "lib"))) {
+            Remove.sync(join(root, "lib"));
+        }
 
-    if (File.existsSync(join(root, "node_modules"))) {
-        Remove.sync(join(root, "node_modules"));
-    }
+        if (File.existsSync(join(root, "node_modules"))) {
+            Remove.sync(join(root, "node_modules"));
+        }
 
-    File.copySync(join(applicaiton, "node_modules"), join(root, "node_modules"));
-    File.copySync(join(applicaiton, "dist"), join(root, "dist"));
-    File.copySync(join(applicaiton, "lib"), join(root, "lib"));
+        File.copySync(join(applicaiton, "dist"), join(root, "dist"));
+        File.copySync(join(applicaiton, "lib"), join(root, "lib"));
 
-    if (File.existsSync(join(root, "package-lock.json"))) {
-        File.unlinkSync(join(root, "package-lock.json"));
-    }
+        if (File.existsSync(join(root, "package-lock.json"))) {
+            File.unlinkSync(join(root, "package-lock.json"));
+        }
 
-    if (File.existsSync(join(root, "default.json"))) {
-        File.unlinkSync(join(root, "default.json"));
-    }
+        if (File.existsSync(join(root, "default.json"))) {
+            File.unlinkSync(join(root, "default.json"));
+        }
 
-    File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
+        File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
 
-    throbber.stop();
+        exec(`npm set progress=false && npm install --unsafe-perm ${dependencies.join(" ")}`, {
+            cwd: root
+        }, () => {
+            throbber.stop();
+
+            resolve();
+        });
+    });
 }
 
 const fixNodeCache = function() {
@@ -178,13 +189,13 @@ const installPackages = function(plugins) {
 }
 
 if (!executing || installed.version !== executing.version) {
-    const plugins = preparePackage();
+    const data = preparePackage();
 
-    setupUserMode();
-
-    fixNodeCache().then(() => {
-        installPackages(plugins).then(() => {
-            require(join(root, "lib/cli"))();
+    setupUserMode(data.dependencies).then(() => {
+        fixNodeCache().then(() => {
+            installPackages(data.plugins).then(() => {
+                require(join(root, "lib/cli"))();
+            });
         });
     });
 } else {

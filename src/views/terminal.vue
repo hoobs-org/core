@@ -69,14 +69,7 @@
             this.term.open(this.$refs.terminal);
             this.term.fit();
 
-            const url = this.$instance.replace("http://", "ws://").replace("https://", "wss://");
-
-            this.socket = new WebSocket(`${url}${url.endsWith("/") ? "shell" : "/shell"}`);
-
-            this.socket.onopen = (ev) => {
-                this.term.attach(this.socket);
-                this.term.focus();
-            };
+            this.connect();
         },
 
         destroyed() {
@@ -85,6 +78,34 @@
         },
 
         methods: {
+            connect() {
+                let url = this.$instance;
+
+                if (url === "") {
+                    const uri = window.location.href.split("/");
+
+                    url = `${uri[0]}//${uri[2]}`;
+                }
+
+                url = url.replace("http://", "ws://");
+                url = url.replace("https://", "wss://");
+
+                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "shell" : "/shell"}`);
+
+                this.socket.onopen = () => {
+                    this.term.attach(this.socket);
+                    this.term.focus();
+                };
+
+                this.socket.onclose = () => {
+                    this.connect();
+                };
+
+                this.socket.onerror = () => {
+                    this.socket.close();
+                };
+            },
+
             translate(value) {
                 let results = value;
 

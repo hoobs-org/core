@@ -1,16 +1,11 @@
 {
     "server": {
-        "port": 51827,
-        "socket": 51828,
+        "port": 8080,
         "autostart": true,
         "home_setup_id": "X-HM://",
         "polling_seconds": 2
     },
     "client": {
-        "port": 8080,
-        "config": 51827,
-        "api": 51827,
-        "socket": 51828,
         "default_route": "status",
         "inactive_logoff": 30,
         "theme": "hoobs-light",

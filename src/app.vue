@@ -138,6 +138,8 @@
 </template>
 
 <script>
+    import Loader from "./loader";
+
     import ModalDialog from "@/components/modal-dialog.vue";
     import ServiceMenu from "@/components/service-menu.vue";
     import InstanceMenu from "@/components/instance-menu.vue";
@@ -156,7 +158,9 @@
                 status: null,
                 loaded: false,
                 about: false,
-                instances: []
+                instances: [],
+                socket: null,
+                loader: null
             }
         },
 
@@ -193,6 +197,9 @@
         },
 
         async mounted() {
+            this.loader = new Loader();
+            this.connect();
+
             switch (this.$system) {
                 case "rocket":
                     Chart.defaults.global.defaultFontColor = (this.$client.theme || `${this.system}-light`).endsWith("dark") ? "#e75e0f" : "#999";
@@ -219,6 +226,63 @@
         },
 
         methods: {
+            connect() {
+                let url = this.$instance;
+
+                if (url === "") {
+                    const uri = window.location.href.split("/");
+
+                    url = `${uri[0]}//${uri[2]}`;
+                }
+
+                url = url.replace("http://", "ws://");
+                url = url.replace("https://", "wss://");
+
+                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "monitor" : "/monitor"}`);
+
+                this.socket.onmessage = (message) => {
+                    message = JSON.parse(message.data);
+
+                    switch (message.event) {
+                        case "log":
+                            this.$store.commit("log", message.data);
+                            break;
+
+                        case "push":
+                            this.$store.commit("push", message.data);
+                            break;
+                        
+                        case "monitor":
+                            this.$store.commit("monitor", message.data);
+                            break;
+                    }
+                };
+
+                this.socket.onopen = () => {
+                    if (this.loader.loading) {
+                        this.loader.load();
+                    }
+                };
+
+                this.socket.onclose = () => {
+                    setTimeout(() => {
+                        this.connect();
+                    }, 1000);
+                };
+
+                this.socket.onerror = () => {
+                    fetch("/").then((response) => {
+                        if (!response.ok) {
+                            this.loader.write(this.$system);
+                        }
+                    }).catch(() => {
+                        this.loader.write(this.$system);
+                    });
+
+                    this.socket.close();
+                };
+            },
+
             showAbout() {
                 this.about = true;
             },

@@ -3,30 +3,17 @@ import Cookies from "./cookies";
 
 export default class Config {
     constructor () {
-        this._api = CLIENT_CONFIG.client.api;
-
-        if (!Array.isArray(this._api)) {
-            this.api = [this._api];
-        }
-
         this._index = 0;
 
         this._configuration = {};
+        this._system = "hoobs";
         this._ui = {};
 
         this._names = [];
     }
 
     get system() {
-        return (CLIENT_CONFIG.system || "hoobs").toLowerCase();
-    }
-
-    get socket() {
-        return (CLIENT_CONFIG.client || {}).socket || `http://${CLIENT_CONFIG.system || "hoobs"}.local`;
-    }
-
-    get control() {
-        return CLIENT_CONFIG.client.config;
+        return (this._system || "hoobs").toLowerCase();
     }
 
     get server() {
@@ -58,27 +45,37 @@ export default class Config {
     }
 
     get instance() {
-        return this._api[this._index];
+        return this._instances[this._index];
     }
 
     get count() {
-        return this._api.length;
+        return this._instances.length;
     }
 
     list() {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
             if (this._names.length > 0) {
                 return resolve(this._names);
+            }
+
+            this._instances = (await Request.get("/api/config")).data.client.instances;
+
+            if (!this._instances) {
+                this._instances = [""];
+            }
+
+            if (!Array.isArray(this._instances)) {
+                this._instances = [this._instances];
             }
 
             Request.defaults.headers.get["Authorization"] = Cookies.get("token");
    
             const queue = [];
 
-            for (let i = 0; i < this._api.length; i++) {
+            for (let i = 0; i < this._instances.length; i++) {
                 queue.push(true);
 
-                Request.get(`${this._api[i]}/api/config`).then((response) => {
+                Request.get(`${this._instances[i]}/api/config`).then((response) => {
                     this._names.push((response.data.bridge || {}).name || "Unavailable");
                 }).catch(() => {
                     this._names.push("Unavailable");
@@ -106,8 +103,8 @@ export default class Config {
             index = 0;
         }
 
-        if (index >= this._api.length) {
-            index = this._api.length - 1;
+        if (index >= this._instances.length) {
+            index = this._instances.length - 1;
         }
 
         this._index = index;
@@ -118,16 +115,10 @@ export default class Config {
     async configure() {
         Request.defaults.headers.get["Authorization"] = Cookies.get("token");
 
-        try {
-            this._ui = (await Request.get(`${this._api}/api/config`)).data.client;
-        } catch {
-            this._ui = CLIENT_CONFIG.client;
-        }
+        const config = (await Request.get("/api/config")).data;
 
-        try {
-            this._configuration = (await Request.get(`${this.instance}/api/config`)).data;
-        } catch {
-            this._configuration = CLIENT_CONFIG;
-        }
+        this._ui = config.client;
+        this._system = config.system;
+        this._configuration = (await Request.get(`${this.instance}/api/config`)).data;
     }
 }
