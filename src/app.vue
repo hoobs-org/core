@@ -23,7 +23,7 @@
                 </div>
                 <h1 class="mobile-hide" v-html="routeName()"></h1>
             </div>
-            <div v-if="instances.length > 1" class="instance" v-on:click.stop="toggle('instance')">
+            <div v-if="user && instances.length > 1" class="instance" v-on:click.stop="toggle('instance')">
                 {{ $bridge.name }}
                 <span class="icon">arrow_drop_down</span>
             </div>

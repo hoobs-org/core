@@ -54,10 +54,6 @@ export default class Config {
 
     list() {
         return new Promise(async (resolve) => {
-            if (this._names.length > 0) {
-                return resolve(this._names);
-            }
-
             this._instances = (await Request.get("/api/config")).data.client.instances;
 
             if (!this._instances) {
@@ -71,14 +67,19 @@ export default class Config {
             Request.defaults.headers.get["Authorization"] = Cookies.get("token");
    
             const queue = [];
+            this._names = []
+
+            for (let i = 0; i < this._instances.length; i++) {
+                this._names.push("Unavailable");
+            }
 
             for (let i = 0; i < this._instances.length; i++) {
                 queue.push(true);
 
                 Request.get(`${this._instances[i]}/api/config`).then((response) => {
-                    this._names.push((response.data.bridge || {}).name || "Unavailable");
+                    this._names[i] = (response.data.bridge || {}).name || "Unavailable";
                 }).catch(() => {
-                    this._names.push("Unavailable");
+                    this._names[i] = "Unavailable";
                 }).finally(() => {
                     queue.pop();
 
