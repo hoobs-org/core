@@ -99,7 +99,7 @@
             async load() {
                 await this.$configure();
 
-                const client = await this.api.get("/config/client");
+                const client = await this.client.get("/config/client");
 
                 this.configuration.client = client;
                 this.configuration.bridge = this.$bridge;
