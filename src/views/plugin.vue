@@ -270,19 +270,14 @@
                 }
             },
 
-            oninstall(type, name) {
+            oninstall(type, name, alias, plugin) {
                 switch (type) {
-                    case "platform":
-                    case "both":
-                        window.location.href = `/config#${name}`;
-                        break;
-                    
                     case "accessory":
-                        window.location.href = "/config#accessories";
+                        window.location.href = "/config#add-accessory";
                         break;
                     
                     default:
-                        window.location.href = "/config";
+                        window.location.href = `/config#${plugin.name}`;
                         break;
                 }
             },

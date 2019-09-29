@@ -5,7 +5,11 @@
             <a href="#bridge">{{ $t("bridge_settings") }}</a>
             <a href="#ports">{{ $t("port_ranges") }}</a>
             <a href="#accessories">{{ $t("accessories") }}</a>
-            <a href="#plugins">{{ $t("plugins") }}</a>
+            <div v-for="(plugin, index) in plugins" :key="`${index}-platform-link`">
+                <div v-if="(plugin.name !== 'homebridge' && (user.admin || plugin.scope === 'hoobs')) && platformIndex(plugin) >= 0">
+                    <a :href="`#${plugin.name}`">{{ platformTitle(plugin) }}</a>
+                </div>
+            </div>
             <a href="#backup">{{ $t("backup") }}</a>
             <router-link v-if="user.admin" to="/config/advanced">{{ $t("advanced_config") }}</router-link>
             <div class="actions">
@@ -91,7 +95,7 @@
                         <div v-if="plugin.schema && plugin.schema.platform.schema.properties">
                             <schema-form :schema="plugin.schema.platform.schema.properties || {}" v-model="configuration.platforms[platformIndex(plugin)]" />
                         </div>
-                        <div>
+                        <div v-else>
                             <json-editor name="platform" :height="200" :index="platformIndex(plugin)" :change="updateJson" :code="platformCode(plugin)" />
                         </div>
                     </div>
@@ -341,7 +345,7 @@
             }];
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
-                if (window.location.hash === "#accessories") {
+                if (window.location.hash === "#add-accessory") {
                     document.querySelector("#accessories").scrollIntoView();
 
                     this.addAccessory();
@@ -350,6 +354,8 @@
                 } else {
                     document.querySelector("#accessories").scrollIntoView();
                 }
+
+                window.history.pushState("", document.title, window.location.pathname);
             }
 
             window.addEventListener("message", this.gshListner, false);
@@ -562,7 +568,14 @@
             },
 
             humanize(string) {
-                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+                string = Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+
+                string = string.replace(/smart things/gi, "SmartThings");
+                string = string.replace(/smartthings/gi, "SmartThings");
+                string = string.replace(/my q/gi, "myQ");
+                string = string.replace(/myq/gi, "myQ");
+
+                return string;
             },
 
             async save() {
