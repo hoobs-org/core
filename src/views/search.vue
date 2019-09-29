@@ -10,11 +10,11 @@
                 <input type="text" v-model="query" :placeholder="$t('search_packages')" onfocus="this.placeholder = ''" :onblur="`this.placeholder = '${$t('search_packages')}'`" />
             </div>
             <div v-if="query !== ''" class="list">
-                <plugin-list v-for="(plugin, index) in results" :key="`plugin-${index}`" :plugin="plugin" />
+                <plugin-list v-for="(plugin, index) in results" :key="`plugin-${index}`" :plugin="plugin" :oninstall="oninstall" :onuninstall="onuninstall" :onupdate="onupdate" />
                 <div v-if="results.length === 0 && !working" class="empty">{{ $t("no_results") }}</div>
             </div>
             <div v-else class="cards">
-                <plugin-card v-for="(plugin, index) in certified" :key="`certified-${index}`" :plugin="plugin" />
+                <plugin-card v-for="(plugin, index) in certified" :key="`certified-${index}`" :plugin="plugin" :oninstall="oninstall" :onuninstall="onuninstall" :onupdate="onupdate" />
                 <div v-if="certified.length === 0 && !working" class="empty">{{ $t("no_results") }}</div>
             </div>
         </div>
@@ -148,6 +148,31 @@
                 this.certified = await this.api.get(`/plugins/certified/${category}`);
 
                 this.working = false;
+            },
+
+            oninstall(type, name) {
+                switch (type) {
+                    case "platform":
+                    case "both":
+                        window.location.href = `/config#${name}`;
+                        break;
+                    
+                    case "accessory":
+                        window.location.href = "/config#accessories";
+                        break;
+                    
+                    default:
+                        window.location.href = "/config";
+                        break;
+                }
+            },
+
+            onuninstall() {
+                window.location.href = "/plugins";
+            },
+
+            onupdate() {
+                window.location.href = "/plugins";
             }
         }
     }

@@ -10,7 +10,7 @@
         </div>
         <div v-else class="content">
             <div v-for="(plugin, index) in installed" :key="`plugin-${index}`">
-                <plugin-list v-if="user.admin || plugin.scope === 'hoobs'" :plugin="plugin" />
+                <plugin-list v-if="user.admin || plugin.scope === 'hoobs'" :plugin="plugin" :oninstall="oninstall" :onuninstall="onuninstall" :onupdate="onupdate" />
             </div>
         </div>
     </div>
@@ -83,6 +83,31 @@
                 this.$router.push({
                     path: `/plugins/${category}`,
                 });
+            },
+
+            oninstall(type, name) {
+                switch (type) {
+                    case "platform":
+                    case "both":
+                        window.location.href = `/config#${name}`;
+                        break;
+                    
+                    case "accessory":
+                        window.location.href = "/config#accessories";
+                        break;
+                    
+                    default:
+                        window.location.href = "/config";
+                        break;
+                }
+            },
+
+            onuninstall() {
+                window.location.href = "/plugins";
+            },
+
+            onupdate() {
+                window.location.href = "/plugins";
             }
         }
     }

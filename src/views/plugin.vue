@@ -208,7 +208,7 @@
                         await this.api.post("/service/stop");
                     }
 
-                    await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
+                    const results = await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
 
                     if (this.server && restart) {
                         await this.api.post("/service/start");
@@ -216,7 +216,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    window.location.href = "/config";
+                    if (results.success) {
+                        this.oninstall(results.details.type, results.details.name, results.details.alias, results.plugin);
+                    }
                 }
             },
             
@@ -240,7 +242,7 @@
                         this.$store.commit("unlock");
                     }
 
-                    window.location.href = "/plugins";
+                    this.onuninstall();
                 }
             },
 
@@ -264,8 +266,33 @@
                         this.$store.commit("unlock");
                     }
 
-                    window.location.href = "/plugins";
+                    this.onupdate();
                 }
+            },
+
+            oninstall(type, name) {
+                switch (type) {
+                    case "platform":
+                    case "both":
+                        window.location.href = `/config#${name}`;
+                        break;
+                    
+                    case "accessory":
+                        window.location.href = "/config#accessories";
+                        break;
+                    
+                    default:
+                        window.location.href = "/config";
+                        break;
+                }
+            },
+
+            onuninstall() {
+                window.location.href = "/plugins";
+            },
+
+            onupdate() {
+                window.location.href = "/plugins";
             }
         }
     }

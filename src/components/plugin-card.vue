@@ -18,7 +18,10 @@
         name: "plugin-card",
 
         props: {
-            plugin: Object
+            plugin: Object,
+            oninstall: Function,
+            onuninstall: Function,
+            onupdate: Function
         },
 
         computed: {
@@ -61,7 +64,7 @@
                         await this.api.post("/service/stop");
                     }
 
-                    await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
+                    const results = await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
 
                     if (this.server && restart) {
                         await this.api.post("/service/start");
@@ -71,7 +74,9 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/config"
+                    if (results.success && this.oninstall) {
+                        this.oninstall(results.details.type, results.details.name, results.details.alias, results.plugin);
+                    }
                 }
             },
 
@@ -97,7 +102,9 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/plugins"
+                    if (this.onuninstall) {
+                        this.onuninstall();
+                    }
                 }
             },
 
@@ -123,7 +130,9 @@
 
                     await this.api.post("/service/reload");
 
-                    window.location.href = "/plugins"
+                    if (this.onupdate) {
+                        this.onupdate();
+                    }
                 }
             }
         }

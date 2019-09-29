@@ -341,7 +341,11 @@
             }];
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
-                if (document.querySelector(window.location.hash)) {
+                if (window.location.hash === "#accessories") {
+                    document.querySelector("#accessories").scrollIntoView();
+
+                    this.addAccessory();
+                } else if (document.querySelector(window.location.hash)) {
                     document.querySelector(window.location.hash).scrollIntoView();
                 } else {
                     document.querySelector("#accessories").scrollIntoView();

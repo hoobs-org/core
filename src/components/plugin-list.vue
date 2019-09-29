@@ -57,12 +57,18 @@
 
     export default {
         name: "plugin-list",
+
         components: {
             "loading-marquee": Marquee
         },
+
         props: {
-            plugin: Object
+            plugin: Object,
+            oninstall: Function,
+            onuninstall: Function,
+            onupdate: Function
         },
+
         computed: {
             locked() {
                 return this.$store.state.locked;
@@ -131,7 +137,7 @@
                         await this.api.post("/service/stop");
                     }
 
-                    await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
+                    const results = await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
 
                     if (this.server && restart) {
                         await this.api.post("/service/start");
@@ -139,7 +145,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    window.location.href = "/config";
+                    if (results.success && this.oninstall) {
+                        this.oninstall(results.details.type, results.details.name, results.details.alias, results.plugin);
+                    }
                 }
             },
 
@@ -163,7 +171,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    window.location.href = "/plugins";
+                    if (this.onuninstall) {
+                        this.onuninstall();
+                    }
                 }
             },
 
@@ -187,7 +197,9 @@
                         this.$store.commit("unlock");
                     }
 
-                    window.location.href = "/plugins";
+                    if (this.onupdate) {
+                        this.onupdate();
+                    }
                 }
             }
         }
