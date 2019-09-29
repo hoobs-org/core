@@ -205,6 +205,7 @@
         "range_name_message": "ポート範囲の記述は、ポート範囲を識別するために使用されます。",
         "reboot_device": "リブート",
         "reenter_password": "パスワード再入力",
+        "remember_me": "私を覚えてますか",
         "remote_support": "遠隔サポート",
         "reset": "リセット",
         "reset_connection": "接続をリセット",

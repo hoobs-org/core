@@ -62,6 +62,7 @@
         "vue": "^2.6.10",
         "vue-grid-layout": "^2.3.4",
         "vue-i18n": "^8.14.0",
+        "vue-material-checkbox": "^2.1.0",
         "vue-router": "^3.1.2",
         "vue-template-compiler": "^2.6.10",
         "vuedraggable": "^2.23.0",

@@ -533,6 +533,28 @@
         -webkit-font-smoothing: antialiased;
     }
 
+    .m-chckbox--container {
+        margin: 0 !important;
+    }
+
+    .m-chckbox--container .m-chckbox--group {
+        background-color: var(--input-background);
+        border: 1px var(--border) solid;
+    }
+
+    .m-chckbox--container.active .m-chckbox--group {
+        background-color: var(--title-text) !important;
+        border: 1px var(--title-text) solid !important;
+    }
+
+    .m-chckbox--ripple {
+        display: none !important;
+    }
+
+    .m-chckbox--label {
+        padding-left: 7px !important;
+    }
+
     #app {
         margin: 0;
         padding: 0;

@@ -55,14 +55,19 @@
                 <div v-if="errors.length > 0" class="errors">
                     <span v-for="(error, index) in errors" :key="index">{{ error }}</span>
                 </div>
-                <form autocomplete="false" class="group">
-                    <div class="upper">
-                        <label for="username" class="title">{{ $t("username") }}</label>
-                        <input type="text" id="username" autocomplete="false" v-model="username" v-on:keyup.enter="login" :required="true" />
+                <form autocomplete="false">
+                    <div class="group">
+                        <div class="upper">
+                            <label for="username" class="title">{{ $t("username") }}</label>
+                            <input type="text" id="username" autocomplete="false" v-model="username" v-on:keyup.enter="login" :required="true" />
+                        </div>
+                        <div class="lower">
+                            <label for="password" class="title">{{ $t("password") }}</label>
+                            <input type="password" id="password" autocomplete="false" v-model="password" v-on:keyup.enter="login" :required="true" />
+                        </div>
                     </div>
-                    <div class="lower">
-                        <label for="password" class="title">{{ $t("password") }}</label>
-                        <input type="password" id="password" autocomplete="false" v-model="password" v-on:keyup.enter="login" :required="true" />
+                    <div class="remember">
+                        <checkbox id="remember" v-model="remember"> <label for="remember">{{ $t("remember_me") }}</label>
                     </div>
                 </form>
                 <div class="actions">
@@ -74,6 +79,7 @@
 </template>
 
 <script>
+    import Checkbox from "vue-material-checkbox";
     import TextField from "@/components/text-field.vue";
     import PasswordField from "@/components/password-field.vue";
 
@@ -83,6 +89,7 @@
         name: "login",
 
         components: {
+            "checkbox": Checkbox,
             "text-field": TextField,
             "password-field": PasswordField
         },
@@ -100,6 +107,7 @@
                 username: "",
                 password: "",
                 challenge: "",
+                remember: false,
                 errors: [],
                 url: "/"
             }
@@ -130,11 +138,12 @@
                 if (this.errors.length === 0) {
                     const response = await this.client.post("/auth", {
                         username: this.username,
-                        password: this.password
+                        password: this.password,
+                        remember: this.remember
                     });
 
                     if (response.token) {
-                        Cookies.set("token", response.token, this.$client.inactive_logoff || 30);
+                        Cookies.set("token", response.token, this.remember ? 525600 : this.$client.inactive_logoff || 30);
 
                         this.$router.push({
                             path: this.url
@@ -362,6 +371,13 @@
         margin: 10px -10px 0 0;
         display: flex;
         justify-content: flex-end;
+    }
+
+    #login .form .remember {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        padding: 7px 0 0 2px;
     }
 
     @media (min-width: 300px) and (max-width: 815px) {
