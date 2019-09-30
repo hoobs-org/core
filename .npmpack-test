@@ -1,16 +1,16 @@
 hoobs-core
 ------------------------------------------------------------------------
 1. npm pack
-2. sudo mv ./hoobs-hoobs-3.0.0-beta.60.tgz ~/
+2. sudo mv ./hoobs-hoobs-3.0.0-beta.60.tgz ~/hoobs-hoobs.tgz
 3. cd ~/
-4. sudo npm install -g --unsafe-perm ~/hoobs-hoobs-3.0.0-beta.60.tgz
+4. sudo npm install -g --unsafe-perm ~/hoobs-hoobs.tgz
 
 homebridge-to-hoobs
 ------------------------------------------------------------------------
 1. npm pack
-2. sudo mv ./homebridge-to-hoobs-1.0.19.tgz ~/
+2. sudo mv ./homebridge-to-hoobs-1.0.19.tgz ~/homebridge-to-hoobs.tgz
 3. cd ~/
-4. sudo npm install -g --unsafe-perm ~/homebridge-to-hoobs-1.0.19.tgz
+4. sudo npm install -g --unsafe-perm ~/homebridge-to-hoobs.tgz
 
 ------------------------------------------------------------------------
 NOTE: This will need a modified version of 2.1.1 to override the UI-X
