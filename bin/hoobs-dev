@@ -2,7 +2,7 @@
 
 process.title = "hoobs-core";
 
-const { realpathSync } = require("fs-extra");
-const { dirname, join } = require("path");
+const File = require("fs");
+const Path = require("path");
 
-require(join(dirname(realpathSync(__filename)), "../lib/cli"))();
+require(Path.join(Path.dirname(File.realpathSync(__filename)), "../lib/cli"))();

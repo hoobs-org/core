@@ -3,12 +3,12 @@
 process.title = "hoobs-core";
 
 const OS = require("os");
+const Path = require("path");
+const Process = require("child_process");
+
 const File = require("../node_modules/fs-extra/lib");
 const Ora = require("../node_modules/ora");
 const Remove = require("../node_modules/rimraf");
-
-const { dirname, join } = require("path");
-const { exec, spawn } = require("child_process");
 
 let password = null;
 
@@ -23,9 +23,9 @@ process.argv.forEach((value) => {
 });
 
 const home = OS.userInfo().homedir;
-const root = join(home, ".hoobs");
-const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
-const installed = JSON.parse(File.readFileSync(join(applicaiton, "package.json")));
+const root = Path.join(home, ".hoobs");
+const applicaiton = Path.join(Path.dirname(File.realpathSync(__filename)), "../");
+const installed = JSON.parse(File.readFileSync(Path.join(applicaiton, "package.json")));
 
 let executing = null;
 let throbber = null;
@@ -34,9 +34,9 @@ if (!File.existsSync(root)){
     File.mkdirSync(root);
 }
 
-if (File.existsSync(join(root, "package.json"))) {
+if (File.existsSync(Path.join(root, "package.json"))) {
     try {
-        executing = JSON.parse(File.readFileSync(join(root, "package.json")));
+        executing = JSON.parse(File.readFileSync(Path.join(root, "package.json")));
     } catch {
         executing = null;
     }
@@ -75,11 +75,11 @@ const preparePackage = function() {
         delete installed.bin;
     }
 
-    if (File.existsSync(join(root, "package.json"))) {
-        File.unlinkSync(join(root, "package.json"));
+    if (File.existsSync(Path.join(root, "package.json"))) {
+        File.unlinkSync(Path.join(root, "package.json"));
     }
 
-    File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
+    File.appendFileSync(Path.join(root, "package.json"), JSON.stringify(installed, null, 4));
 
     throbber.stop();
 
@@ -93,32 +93,32 @@ const setupUserMode = function(dependencies) {
     return new Promise((resolve) => {
         throbber = Ora("Setting Up User Mode").start();
 
-        if (File.existsSync(join(root, "dist"))) {
-            Remove.sync(join(root, "dist"));
+        if (File.existsSync(Path.join(root, "dist"))) {
+            Remove.sync(Path.join(root, "dist"));
         }
 
-        if (File.existsSync(join(root, "lib"))) {
-            Remove.sync(join(root, "lib"));
+        if (File.existsSync(Path.join(root, "lib"))) {
+            Remove.sync(Path.join(root, "lib"));
         }
 
-        if (File.existsSync(join(root, "node_modules"))) {
-            Remove.sync(join(root, "node_modules"));
+        if (File.existsSync(Path.join(root, "node_modules"))) {
+            Remove.sync(Path.join(root, "node_modules"));
         }
 
-        File.copySync(join(applicaiton, "dist"), join(root, "dist"));
-        File.copySync(join(applicaiton, "lib"), join(root, "lib"));
+        File.copySync(Path.join(applicaiton, "dist"), Path.join(root, "dist"));
+        File.copySync(Path.join(applicaiton, "lib"), Path.join(root, "lib"));
 
-        if (File.existsSync(join(root, "package-lock.json"))) {
-            File.unlinkSync(join(root, "package-lock.json"));
+        if (File.existsSync(Path.join(root, "package-lock.json"))) {
+            File.unlinkSync(Path.join(root, "package-lock.json"));
         }
 
-        if (File.existsSync(join(root, "default.json"))) {
-            File.unlinkSync(join(root, "default.json"));
+        if (File.existsSync(Path.join(root, "default.json"))) {
+            File.unlinkSync(Path.join(root, "default.json"));
         }
 
-        File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
+        File.copySync(Path.join(applicaiton, "default.json"), Path.join(root, "default.json"));
 
-        exec(`npm set progress=false && npm install --unsafe-perm ${dependencies.join(" ")}`, {
+        Process.exec(`npm set progress=false && npm install --unsafe-perm ${dependencies.join(" ")}`, {
             cwd: root
         }, () => {
             throbber.stop();
@@ -134,14 +134,14 @@ const fixNodeCache = function() {
 
         let prompts = 0;
 
-        const process = spawn("sudo", [
+        const process = Process.spawn("sudo", [
             "-S",
             "-k",
             "-p",
             "#sudo-hoobs#",
             "rm",
             "-fR",
-            join(home, ".npm")
+            Path.join(home, ".npm")
         ]);
 
         process.stderr.on("data", (data) => {
@@ -173,7 +173,7 @@ const installPackages = function(plugins) {
         throbber = Ora("Initilizing Plugins").start();
 
         if (plugins.length > 0) {
-            exec(`npm set progress=false && npm install --unsafe-perm ${plugins.join(" ")}`, {
+            Process.exec(`npm set progress=false && npm install --unsafe-perm ${plugins.join(" ")}`, {
                 cwd: root
             }, () => {
                 throbber.stop();
@@ -194,10 +194,10 @@ if (!executing || installed.version !== executing.version) {
     setupUserMode(data.dependencies).then(() => {
         fixNodeCache().then(() => {
             installPackages(data.plugins).then(() => {
-                require(join(root, "lib/cli"))();
+                require(Path.join(root, "lib/cli"))();
             });
         });
     });
 } else {
-    require(join(root, "lib/cli"))();
+    require(Path.join(root, "lib/cli"))();
 }

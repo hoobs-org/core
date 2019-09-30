@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+process.title = "hoobs-init";
+
+const File = require("fs");
+const Path = require("path");
+
+require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/prerequisites"))();
+require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/systemd"))();
+require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/nginx"))(true);
+require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/reboot"))();
