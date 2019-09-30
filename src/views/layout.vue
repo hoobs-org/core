@@ -35,9 +35,9 @@
                             <component :is="getComponent(aid)" v-model="accessories[getAccessoryIndex(aid)]" :lock="true" @change="updateAccessory(aid, 'alias')" />
                             <div class="accessory-actions">
                                 <div class="action-icons">
-                                    <span :class="`icon favorite ${(layout.favorites || []).indexOf(aid) === -1 ? 'favorite-off' : 'favorite-on'}`" @click="targetFavorite(aid)">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
-                                    <span class="icon delete" @click="removeAccessory(aid)">delete</span>
-                                    <span class="icon hide" @click="hideAccessory(aid)">visibility_off</span>
+                                    <span :class="`icon favorite ${(layout.favorites || []).indexOf(aid) === -1 ? 'favorite-off' : 'favorite-on'}`" @click="targetFavorite(aid)" :title="$t('add_favorites')">{{ (layout.favorites || []).indexOf(aid) === -1 ? "star_border" : "star" }}</span>
+                                    <span class="icon delete" @click="removeAccessory(aid)" :title="$t('remove_accessory')">delete</span>
+                                    <span class="icon hide" @click="hideAccessory(aid)" :title="$t('hide_accessory')">visibility_off</span>
                                 </div>
                             </div>
                         </div>

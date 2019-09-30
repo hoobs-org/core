@@ -197,6 +197,17 @@
         position: relative;
     }
 
+    #favorites .accessory {
+        margin: .4rem 0;
+        min-width: 190px;
+        padding: 0 20px 0 0;
+        height: 226px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
     #favorites .title {
         font-weight: bold;
         font-size: 18px;
