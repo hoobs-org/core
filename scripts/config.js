@@ -84,6 +84,4 @@ const reConfigure = function(filename) {
     delete config.server.socket;
 
     File.writeFileSync(filename, JSON.stringify(config, null, 4));
-
-    throbber.stop();
 }
