@@ -75,11 +75,13 @@ const reConfigure = function(filename) {
         }
     }
 
+    delete config.client.domain;
     delete config.client.port;
     delete config.client.config;
-    delete config.server.socket;
     delete config.client.socket;
     delete config.client.api;
+
+    delete config.server.socket;
 
     File.writeFileSync(filename, JSON.stringify(config, null, 4));
 

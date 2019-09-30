@@ -1,20 +1,17 @@
 hoobs-core
-------------------------------------------------------------------------
-1. npm pack
-2. sudo mv ./hoobs-hoobs-3.0.0-beta.60.tgz ~/hoobs-hoobs.tgz
-3. cd ~/
-4. sudo npm install -g --unsafe-perm ~/hoobs-hoobs.tgz
+---------------------------------------------------------------------------------------------------------------
+1. npm pack && rm -f ~/hoobs-hoobs.tgz && mv ./hoobs-hoobs-3.0.0-beta.60.tgz ~/hoobs-hoobs.tgz
+2. cd ~/
+3. sudo npm install -g --unsafe-perm ~/hoobs-hoobs.tgz
 
 homebridge-to-hoobs
-------------------------------------------------------------------------
-1. npm pack
-2. sudo mv ./homebridge-to-hoobs-1.0.19.tgz ~/homebridge-to-hoobs.tgz
-3. cd ~/
-4. sudo npm install -g --unsafe-perm ~/homebridge-to-hoobs.tgz
+---------------------------------------------------------------------------------------------------------------
+1. npm pack && rm -f ~/homebridge-to-hoobs.tgz && mv ./homebridge-to-hoobs-1.0.19.tgz ~/homebridge-to-hoobs.tgz
+2. cd ~/
+3. sudo npm install -g --unsafe-perm ~/homebridge-to-hoobs.tgz
 
-------------------------------------------------------------------------
-NOTE: This will need a modified version of 2.1.1 to override the UI-X
-      install process to use the packs instead of live NPM data. You
-      also need to modify the homebridge-to-hoobs install script to use
-      hoobs-core pack instead of live NPM data.
-------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+NOTE: This will need a modified version of 2.1.1 to override the UI-X install process to use the packs instead
+      of live NPM data. You also need to modify the homebridge-to-hoobs install script to use hoobs-core pack
+      instead of live NPM data.
+---------------------------------------------------------------------------------------------------------------
