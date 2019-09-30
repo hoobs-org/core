@@ -6,3 +6,4 @@ const File = require("fs");
 const Path = require("path");
 
 require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/nginx"))(false);
+require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/config"))();
