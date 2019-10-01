@@ -10,6 +10,10 @@ module.exports = (install) => {
         const pms = getPms();
         const root = Path.dirname(File.realpathSync(Path.join(__filename, "../")));
 
+        if (File.existsSync("/etc/nginx/nginx.conf")) {
+            install = false;
+        }
+
         if (install && pms) {
             switch (pms) {
                 case "dnf":
@@ -87,14 +91,6 @@ module.exports = (install) => {
 
             Process.execSync("systemctl daemon-reload");
             Process.execSync("systemctl enable nginx.service");
-
-            throbber.stopAndPersist();
-        } else if (File.existsSync("/etc/nginx/nginx.conf") && pms) {
-            throbber = Ora("Restarting NGINX Service").start();
-
-            Process.execSync("systemctl stop nginx.service");
-            Process.execSync("systemctl daemon-reload");
-            Process.execSync("systemctl start nginx.service");
 
             throbber.stopAndPersist();
         }
