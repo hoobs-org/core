@@ -18,20 +18,10 @@ NOTE: This will need a modified version of 2.1.1 to override the UI-X install pr
       NPM data. You also need to modify the homebridge-to-hoobs install script to use hoobs-core pack instead of live
       NPM data.
 -----------------------------------------------------------------------------------------------------------------------
-const Process = require("child_process");
-const Ora = require("ora");
+#!/bin/bash
 
-module.exports = () => {
-    let throbber = null;
-
-    throbber = Ora("Configuring NPM").start();
-    Process.execSync("npm set progress=false");
-    throbber.stopAndPersist();
-
-    throbber = Ora("installing HOOBS").start();
-    Process.execSync("npm install -g --unsafe-perm /tmp/hoobs-hoobs.tgz");
-    throbber.stopAndPersist();
-
-    Process.execSync("hoobs-init");
-}
+npm set progress=false
+echo "Installing HOOBS"
+npm install -g --unsafe-perm /home/hoobs/hoobs-hoobs.tgz
+hoobs-init
 -----------------------------------------------------------------------------------------------------------------------
