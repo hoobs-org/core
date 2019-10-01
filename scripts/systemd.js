@@ -3,72 +3,76 @@ const Path = require("path");
 const Process = require("child_process");
 const Ora = require("ora");
 
-module.exports = async () => {
-    let throbber = null;
+module.exports = () => {
+    return new Promise(async (resolve) => {
+        let throbber = null;
 
-    const pms = getPms();
+        const pms = getPms();
 
-    if (pms) {
-        if (!(await checkUser("hoobs"))) {
-            throbber = Ora("Creating HOOBS User").start();
+        if (pms) {
+            if (!(await checkUser("hoobs"))) {
+                throbber = Ora("Creating HOOBS User").start();
 
-            Process.execSync("useradd -s /bin/bash -m -d /home/hoobs -p $(perl -e 'print crypt($ARGV[0], \"password\")' \"hoobsadmin\") hoobs");
-            Process.execSync("usermod -a -G wheel hoobs");
+                Process.execSync("useradd -s /bin/bash -m -d /home/hoobs -p $(perl -e 'print crypt($ARGV[0], \"password\")' \"hoobsadmin\") hoobs");
+                Process.execSync("usermod -a -G wheel hoobs");
 
-            throbber.stopAndPersist();
-        }
-
-        if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
-            throbber = Ora("Removing UI-X Service").start();
-
-            Process.execSync("systemctl disable homebridge-config-ui-x.service");
-            File.unlinkSync("/etc/systemd/system/homebridge-config-ui-x.service");
-
-            throbber.stopAndPersist();
-        }
-
-        if (!File.existsSync("/etc/systemd/system/hoobs.service") && !File.existsSync("/etc/systemd/system/homebridge.service")) {
-            throbber = Ora("Installing HOOBS Service").start();
-
-            if (!File.existsSync("/etc/systemd/system")){
-                File.mkdirSync("/etc/systemd/system");
+                throbber.stopAndPersist();
             }
 
-            File.writeFileSync("/etc/systemd/system/hoobs.service", File.readFileSync(Path.join(root, "config", `hoobs.${pms}.service`)));
-            Process.execSync("chmod 755 /etc/systemd/system/hoobs.service");
-            Process.execSync("systemctl daemon-reload");
-            Process.execSync("systemctl enable hoobs.service");
+            if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
+                throbber = Ora("Removing UI-X Service").start();
 
-            throbber.stopAndPersist();
-        }
+                Process.execSync("systemctl disable homebridge-config-ui-x.service");
+                File.unlinkSync("/etc/systemd/system/homebridge-config-ui-x.service");
 
-        if (File.existsSync("/usr/bin/firewall-cmd")) {
-            throbber = Ora("Fetching Default Firewall Zone").start();
+                throbber.stopAndPersist();
+            }
 
-            const zone = await getDefaultZone();
+            if (!File.existsSync("/etc/systemd/system/hoobs.service") && !File.existsSync("/etc/systemd/system/homebridge.service")) {
+                throbber = Ora("Installing HOOBS Service").start();
 
-            throbber.stopAndPersist();
+                if (!File.existsSync("/etc/systemd/system")){
+                    File.mkdirSync("/etc/systemd/system");
+                }
 
-            if (zone && zone !== "") {
-                throbber = Ora("Configuring Firewall").start();
+                File.writeFileSync("/etc/systemd/system/hoobs.service", File.readFileSync(Path.join(root, "config", `hoobs.${pms}.service`)));
+                Process.execSync("chmod 755 /etc/systemd/system/hoobs.service");
+                Process.execSync("systemctl daemon-reload");
+                Process.execSync("systemctl enable hoobs.service");
 
-                Process.execSync(`firewall-cmd --zone=${zone} --add-port=8080/tcp --permanent`);
-                Process.execSync(`firewall-cmd --zone=${zone} --add-port=51826/tcp --permanent`);
+                throbber.stopAndPersist();
+            }
 
-                Process.execSync("firewall-cmd --reload");
+            if (File.existsSync("/usr/bin/firewall-cmd")) {
+                throbber = Ora("Fetching Default Firewall Zone").start();
+
+                const zone = await getDefaultZone();
+
+                throbber.stopAndPersist();
+
+                if (zone && zone !== "") {
+                    throbber = Ora("Configuring Firewall").start();
+
+                    Process.execSync(`firewall-cmd --zone=${zone} --add-port=8080/tcp --permanent`);
+                    Process.execSync(`firewall-cmd --zone=${zone} --add-port=51826/tcp --permanent`);
+
+                    Process.execSync("firewall-cmd --reload");
+
+                    throbber.stopAndPersist();
+                }
+            }
+
+            if (pms === "yum" || pms === "dnf") {
+                throbber = Ora("Configuring SELinux").start();
+
+                Process.execSync("setsebool -P httpd_can_network_connect 1");
 
                 throbber.stopAndPersist();
             }
         }
 
-        if (pms === "yum" || pms === "dnf") {
-            throbber = Ora("Configuring SELinux").start();
-
-            Process.execSync("setsebool -P httpd_can_network_connect 1");
-
-            throbber.stopAndPersist();
-        }
-    }
+        resolve();
+    });
 }
 
 const getPms = function() {

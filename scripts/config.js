@@ -3,51 +3,55 @@ const Path = require("path");
 const Ora = require("ora");
 
 module.exports = () => {
-    let throbber;
+    return new Promise((resolve) => {
+        let throbber;
 
-    if (File.existsSync("/home")) {
-        throbber = Ora("Checking Configuration").start();
+        if (File.existsSync("/home")) {
+            throbber = Ora("Checking Configuration").start();
 
-        const folders = File.readdirSync("/home").filter(file => File.lstatSync(Path.join("/home", file)).isDirectory());
+            const folders = File.readdirSync("/home").filter(file => File.lstatSync(Path.join("/home", file)).isDirectory());
 
-        for (let i = 0; i < folders.length; i++) {
-            if (File.existsSync(Path.join("/home", folders[i], ".hoobs/etc/config.json"))) {
-                reConfigure(Path.join("/home", folders[i], ".hoobs/etc/config.json"));
+            for (let i = 0; i < folders.length; i++) {
+                if (File.existsSync(Path.join("/home", folders[i], ".hoobs/etc/config.json"))) {
+                    reConfigure(Path.join("/home", folders[i], ".hoobs/etc/config.json"));
+                }
             }
+
+            throbber.stopAndPersist();
         }
 
-        throbber.stopAndPersist();
-    }
+        if (File.existsSync("/root/.hoobs/etc/config.json")) {
+            throbber = Ora("Checking Configuration").start();
 
-    if (File.existsSync("/root/.hoobs/etc/config.json")) {
-        throbber = Ora("Checking Configuration").start();
+            reConfigure("/root/.hoobs/etc/config.json");
 
-        reConfigure("/root/.hoobs/etc/config.json");
-
-        throbber.stopAndPersist();
-    }
-
-    if (File.existsSync("/Users")) {
-        throbber = Ora("Checking Configuration").start();
-
-        const folders = File.readdirSync("/Users").filter(file => File.lstatSync(Path.join("/Users", file)).isDirectory());
-
-        for (let i = 0; i < folders.length; i++) {
-            if (File.existsSync(Path.join("/Users", folders[i], ".hoobs/etc/config.json"))) {
-                reConfigure(Path.join("/Users", folders[i], ".hoobs/etc/config.json"));
-            }
+            throbber.stopAndPersist();
         }
 
-        throbber.stopAndPersist();
-    }
+        if (File.existsSync("/Users")) {
+            throbber = Ora("Checking Configuration").start();
 
-    if (File.existsSync("/var/root/.hoobs/etc/config.json")) {
-        throbber = Ora("Checking Configuration").start();
+            const folders = File.readdirSync("/Users").filter(file => File.lstatSync(Path.join("/Users", file)).isDirectory());
 
-        reConfigure("/var/root/.hoobs/etc/config.json");
+            for (let i = 0; i < folders.length; i++) {
+                if (File.existsSync(Path.join("/Users", folders[i], ".hoobs/etc/config.json"))) {
+                    reConfigure(Path.join("/Users", folders[i], ".hoobs/etc/config.json"));
+                }
+            }
 
-        throbber.stopAndPersist();
-    }
+            throbber.stopAndPersist();
+        }
+
+        if (File.existsSync("/var/root/.hoobs/etc/config.json")) {
+            throbber = Ora("Checking Configuration").start();
+
+            reConfigure("/var/root/.hoobs/etc/config.json");
+
+            throbber.stopAndPersist();
+        }
+
+        resolve();
+    });
 }
 
 const reConfigure = function(filename) {

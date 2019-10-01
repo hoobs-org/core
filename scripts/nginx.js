@@ -3,100 +3,104 @@ const Path = require("path");
 const Process = require("child_process");
 const Ora = require("ora");
 
-module.exports = async (install) => {
-    let throbber = null;
+module.exports = (install) => {
+    return new Promise(async (resolve) => {
+        let throbber = null;
 
-    const pms = getPms();
-    const root = Path.dirname(File.realpathSync(Path.join(__filename, "../")));
+        const pms = getPms();
+        const root = Path.dirname(File.realpathSync(Path.join(__filename, "../")));
 
-    if (install && pms) {
-        switch (pms) {
-            case "dnf":
-            case "yum":
-                throbber = Ora("Installing NGINX").start();
+        if (install && pms) {
+            switch (pms) {
+                case "dnf":
+                case "yum":
+                    throbber = Ora("Installing NGINX").start();
 
-                Process.execSync(`${pms} install -y nginx`);
+                    Process.execSync(`${pms} install -y nginx`);
 
-                throbber.stopAndPersist();
-                break;
+                    throbber.stopAndPersist();
+                    break;
 
-            case "apt":
-                throbber = Ora("Installing NGINX").start();
+                case "apt":
+                    throbber = Ora("Installing NGINX").start();
 
-                Process.execSync("apt-get install -y nginx");
+                    Process.execSync("apt-get install -y nginx");
 
-                throbber.stopAndPersist();
-                break;
-        }
-    }
-
-    if ((install || File.existsSync("/etc/nginx/nginx.conf")) && pms) {
-        throbber = Ora("Configuring NGINX").start();
-
-        if (!File.existsSync("/etc/nginx")){
-            File.mkdirSync("/etc/nginx");
+                    throbber.stopAndPersist();
+                    break;
+            }
         }
 
-        if (install || !File.existsSync("/etc/nginx/nginx.conf")) {
-            File.writeFileSync("/etc/nginx/nginx.conf", File.readFileSync(Path.join(root, "config", `nginx.${pms}.conf`)));
-        }
+        if ((install || File.existsSync("/etc/nginx/nginx.conf")) && pms) {
+            throbber = Ora("Configuring NGINX").start();
 
-        if (!File.existsSync("/etc/nginx/conf.d")){
-            File.mkdirSync("/etc/nginx/conf.d");
-        }
+            if (!File.existsSync("/etc/nginx")){
+                File.mkdirSync("/etc/nginx");
+            }
 
-        File.writeFileSync("/etc/nginx/conf.d/hoobs.conf", File.readFileSync(Path.join(root, "config", "hoobs.conf")));
+            if (install || !File.existsSync("/etc/nginx/nginx.conf")) {
+                File.writeFileSync("/etc/nginx/nginx.conf", File.readFileSync(Path.join(root, "config", `nginx.${pms}.conf`)));
+            }
 
-        if (!File.existsSync("/usr/share/hoobs")){
-            File.mkdirSync("/usr/share/hoobs");
-        }
+            if (!File.existsSync("/etc/nginx/conf.d")){
+                File.mkdirSync("/etc/nginx/conf.d");
+            }
 
-        File.writeFileSync("/usr/share/hoobs/loader.html", File.readFileSync(Path.join(root, "config", "loader.html")));
+            File.writeFileSync("/etc/nginx/conf.d/hoobs.conf", File.readFileSync(Path.join(root, "config", "hoobs.conf")));
 
-        throbber.stopAndPersist();
-    }
+            if (!File.existsSync("/usr/share/hoobs")){
+                File.mkdirSync("/usr/share/hoobs");
+            }
 
-    if (install && File.existsSync("/usr/bin/firewall-cmd")) {
-        throbber = Ora("Fetching Default Firewall Zone").start();
-
-        const zone = await getDefaultZone();
-
-        throbber.stopAndPersist();
-
-        if (zone && zone !== "") {
-            throbber = Ora("Configuring Firewall").start();
-
-            Process.execSync(`firewall-cmd --zone=${zone} --add-port=80/tcp --permanent`);
-            Process.execSync("firewall-cmd --reload");
+            File.writeFileSync("/usr/share/hoobs/loader.html", File.readFileSync(Path.join(root, "config", "loader.html")));
 
             throbber.stopAndPersist();
         }
-    }
 
-    if (install && (pms === "yum" || pms === "dnf")) {
-        throbber = Ora("Configuring SELinux").start();
+        if (install && File.existsSync("/usr/bin/firewall-cmd")) {
+            throbber = Ora("Fetching Default Firewall Zone").start();
 
-        Process.execSync("setsebool -P httpd_can_network_connect 1");
+            const zone = await getDefaultZone();
 
-        throbber.stopAndPersist();
-    }
+            throbber.stopAndPersist();
 
-    if (install && pms) {
-        throbber = Ora("Installing NGINX Service").start();
+            if (zone && zone !== "") {
+                throbber = Ora("Configuring Firewall").start();
 
-        Process.execSync("systemctl daemon-reload");
-        Process.execSync("systemctl enable nginx.service");
+                Process.execSync(`firewall-cmd --zone=${zone} --add-port=80/tcp --permanent`);
+                Process.execSync("firewall-cmd --reload");
 
-        throbber.stopAndPersist();
-    } else if (File.existsSync("/etc/nginx/nginx.conf") && pms) {
-        throbber = Ora("Restarting NGINX Service").start();
+                throbber.stopAndPersist();
+            }
+        }
 
-        Process.execSync("systemctl stop nginx.service");
-        Process.execSync("systemctl daemon-reload");
-        Process.execSync("systemctl start nginx.service");
+        if (install && (pms === "yum" || pms === "dnf")) {
+            throbber = Ora("Configuring SELinux").start();
 
-        throbber.stopAndPersist();
-    }
+            Process.execSync("setsebool -P httpd_can_network_connect 1");
+
+            throbber.stopAndPersist();
+        }
+
+        if (install && pms) {
+            throbber = Ora("Installing NGINX Service").start();
+
+            Process.execSync("systemctl daemon-reload");
+            Process.execSync("systemctl enable nginx.service");
+
+            throbber.stopAndPersist();
+        } else if (File.existsSync("/etc/nginx/nginx.conf") && pms) {
+            throbber = Ora("Restarting NGINX Service").start();
+
+            Process.execSync("systemctl stop nginx.service");
+            Process.execSync("systemctl daemon-reload");
+            Process.execSync("systemctl start nginx.service");
+
+            throbber.stopAndPersist();
+        }
+
+        resolve();
+    });
 }
 
 const getPms = function() {

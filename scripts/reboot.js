@@ -3,17 +3,21 @@ const Process = require("child_process");
 const Ora = require("ora");
 
 module.exports = () => {
-    let throbber = null;
+    return new Promise(async (resolve) => {
+        let throbber = null;
 
-    const pms = getPms();
+        const pms = getPms();
 
-    if (pms) {
-        throbber = Ora("Rebooting").start();
+        if (pms) {
+            throbber = Ora("Rebooting").start();
 
-        Process.exec("shutdown -r -t sec 3", () => {
-            throbber.stopAndPersist();
-        });
-    }
+            Process.exec("shutdown -r now", () => {
+                throbber.stopAndPersist();
+            });
+        }
+
+        resolve();
+    });
 }
 
 const getPms = function() {

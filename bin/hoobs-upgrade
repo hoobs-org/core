@@ -5,5 +5,7 @@ process.title = "hoobs-upgrade";
 const File = require("fs");
 const Path = require("path");
 
-require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/nginx"))(false);
-require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/config"))();
+(async () => {
+    await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/nginx")))(false);
+    await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/config")))();
+})();
