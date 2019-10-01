@@ -15,7 +15,7 @@ module.exports = async () => {
             Process.execSync("useradd -s /bin/bash -m -d /home/hoobs -p $(perl -e 'print crypt($ARGV[0], \"password\")' \"hoobsadmin\") hoobs");
             Process.execSync("usermod -a -G wheel hoobs");
 
-            throbber.stop();
+            throbber.stopAndPersist();
         }
 
         if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
@@ -24,7 +24,7 @@ module.exports = async () => {
             Process.execSync("systemctl disable homebridge-config-ui-x.service");
             File.unlinkSync("/etc/systemd/system/homebridge-config-ui-x.service");
 
-            throbber.stop();
+            throbber.stopAndPersist();
         }
 
         if (!File.existsSync("/etc/systemd/system/hoobs.service") && !File.existsSync("/etc/systemd/system/homebridge.service")) {
@@ -39,7 +39,7 @@ module.exports = async () => {
             Process.execSync("systemctl daemon-reload");
             Process.execSync("systemctl enable hoobs.service");
 
-            throbber.stop();
+            throbber.stopAndPersist();
         }
 
         if (File.existsSync("/usr/bin/firewall-cmd")) {
@@ -47,7 +47,7 @@ module.exports = async () => {
 
             const zone = await getDefaultZone();
 
-            throbber.stop();
+            throbber.stopAndPersist();
 
             if (zone && zone !== "") {
                 throbber = Ora("Configuring Firewall").start();
@@ -57,7 +57,7 @@ module.exports = async () => {
 
                 Process.execSync("firewall-cmd --reload");
 
-                throbber.stop();
+                throbber.stopAndPersist();
             }
         }
 
@@ -66,7 +66,7 @@ module.exports = async () => {
 
             Process.execSync("setsebool -P httpd_can_network_connect 1");
 
-            throbber.stop();
+            throbber.stopAndPersist();
         }
     }
 }

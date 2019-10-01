@@ -17,7 +17,7 @@ module.exports = async (install) => {
 
                 Process.execSync(`${pms} install -y nginx`);
 
-                throbber.stop();
+                throbber.stopAndPersist();
                 break;
 
             case "apt":
@@ -25,7 +25,7 @@ module.exports = async (install) => {
 
                 Process.execSync("apt-get install -y nginx");
 
-                throbber.stop();
+                throbber.stopAndPersist();
                 break;
         }
     }
@@ -53,7 +53,7 @@ module.exports = async (install) => {
 
         File.writeFileSync("/usr/share/hoobs/loader.html", File.readFileSync(Path.join(root, "config", "loader.html")));
 
-        throbber.stop();
+        throbber.stopAndPersist();
     }
 
     if (install && File.existsSync("/usr/bin/firewall-cmd")) {
@@ -61,7 +61,7 @@ module.exports = async (install) => {
 
         const zone = await getDefaultZone();
 
-        throbber.stop();
+        throbber.stopAndPersist();
 
         if (zone && zone !== "") {
             throbber = Ora("Configuring Firewall").start();
@@ -69,7 +69,7 @@ module.exports = async (install) => {
             Process.execSync(`firewall-cmd --zone=${zone} --add-port=80/tcp --permanent`);
             Process.execSync("firewall-cmd --reload");
 
-            throbber.stop();
+            throbber.stopAndPersist();
         }
     }
 
@@ -78,7 +78,7 @@ module.exports = async (install) => {
 
         Process.execSync("setsebool -P httpd_can_network_connect 1");
 
-        throbber.stop();
+        throbber.stopAndPersist();
     }
 
     if (install && pms) {
@@ -87,7 +87,7 @@ module.exports = async (install) => {
         Process.execSync("systemctl daemon-reload");
         Process.execSync("systemctl enable nginx.service");
 
-        throbber.stop();
+        throbber.stopAndPersist();
     } else if (File.existsSync("/etc/nginx/nginx.conf") && pms) {
         throbber = Ora("Restarting NGINX Service").start();
 
@@ -95,7 +95,7 @@ module.exports = async (install) => {
         Process.execSync("systemctl daemon-reload");
         Process.execSync("systemctl start nginx.service");
 
-        throbber.stop();
+        throbber.stopAndPersist();
     }
 }
 

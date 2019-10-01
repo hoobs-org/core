@@ -11,7 +11,7 @@ module.exports = () => {
         throbber = Ora("Rebooting").start();
 
         Process.exec("shutdown -r now", (error, stdout, stderr) => {
-            throbber.stop();
+            throbber.stopAndPersist();
         });
     }
 }

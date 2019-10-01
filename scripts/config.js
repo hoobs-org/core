@@ -16,7 +16,7 @@ module.exports = () => {
             }
         }
 
-        throbber.stop();
+        throbber.stopAndPersist();
     }
 
     if (File.existsSync("/root/.hoobs/etc/config.json")) {
@@ -24,7 +24,7 @@ module.exports = () => {
 
         reConfigure("/root/.hoobs/etc/config.json");
 
-        throbber.stop();
+        throbber.stopAndPersist();
     }
 
     if (File.existsSync("/Users")) {
@@ -38,7 +38,7 @@ module.exports = () => {
             }
         }
 
-        throbber.stop();
+        throbber.stopAndPersist();
     }
 
     if (File.existsSync("/var/root/.hoobs/etc/config.json")) {
@@ -46,7 +46,7 @@ module.exports = () => {
 
         reConfigure("/var/root/.hoobs/etc/config.json");
 
-        throbber.stop();
+        throbber.stopAndPersist();
     }
 }
 

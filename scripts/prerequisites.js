@@ -13,15 +13,15 @@ module.exports = () => {
 
             Process.execSync("dnf install -y perl curl avahi-compat-libdns_sd-devel");
 
-            throbber.stop();
+            throbber.stopAndPersist();
             break;
-        
+
         case "yum":
             throbber = Ora("Installing Prerequisites").start();
 
             Process.execSync("yum install -y perl curl avahi-compat-libdns_sd-devel");
 
-            throbber.stop();
+            throbber.stopAndPersist();
             break;
 
         case "apt":
@@ -29,7 +29,7 @@ module.exports = () => {
 
             Process.execSync("apt-get install -y perl curl libavahi-compat-libdnssd-dev");
 
-            throbber.stop();
+            throbber.stopAndPersist();
             break;
     }
 }
