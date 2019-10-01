@@ -9,6 +9,14 @@ module.exports = () => {
         const pms = getPms();
 
         if (pms) {
+            console.log("---------------------------------------------------------");
+            console.log("HOOBS is Installed");
+            console.log("Pleade refresh your browser.");
+            console.log("---------------------------------------------------------");
+            console.log("The HOOBS interface should apear in 5 - 10 minutes");
+            console.log("depending on how many plugins you have installed.");
+            console.log("---------------------------------------------------------");
+
             throbber = Ora("Rebooting").start();
 
             Process.exec("shutdown -r now", () => {
