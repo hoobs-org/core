@@ -22,7 +22,7 @@
                     <div v-if="!working" class="actions">
                         <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>
                         <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
-                        <div v-if="plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
+                        <confirm-delete v-if="plugin.name !== 'homebridge'" class="uninstall" :title="$t('uninstall')" :subtitle="$t('uninstall')" :confirmed="uninstall" />
                         <a :href="`https://www.npmjs.com/package/${plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name}`" target="_blank">NPM</a>
                         <span v-if="plugin.homepage" class="link-seperator">|</span>
                         <a v-if="plugin.homepage" :href="plugin.homepage" target="_blank">{{ $t("details") }}</a>
@@ -66,12 +66,14 @@
     import Dates from "../dates";
 
     import Marquee from "@/components/loading-marquee.vue";
+    import ConfirmDelete from "@/components/confirm-delete.vue";
 
     export default {
         name: "plugin",
 
         components: {
-            "loading-marquee": Marquee
+            "loading-marquee": Marquee,
+            "confirm-delete": ConfirmDelete
         },
 
         computed: {
@@ -342,6 +344,11 @@
 
     #plugin .actions .icon:hover {
         color: var(--text-dark);
+    }
+
+    #plugin .uninstall {
+        display: inline;
+        margin: 0 10px 0 -10px;
     }
 
     #plugin .info a,

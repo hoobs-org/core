@@ -31,7 +31,7 @@
             <div v-if="plugin.installed">
                 <router-link :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`" class="button">{{ $t("details") }}</router-link>
                 <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
-                <div v-if="plugin.name !== 'homebridge'" v-on:click.stop="uninstall()" class="button">{{ $t("uninstall") }}</div>
+                <confirm-delete v-if="plugin.name !== 'homebridge'" class="uninstall" :title="$t('uninstall')" :subtitle="$t('uninstall')" :confirmed="uninstall" />
                 <router-link v-if="plugin.name !== 'homebridge'" class="config-link" :to="`/config#${plugin.name}`"><span class="icon">settings</span> {{ $t("config") }}</router-link>
             </div>
             <div v-else>
@@ -53,13 +53,16 @@
 
     import Versioning from "../versioning";
     import Dates from "../dates";
+
     import Marquee from "@/components/loading-marquee.vue";
+    import ConfirmDelete from "@/components/confirm-delete.vue";
 
     export default {
         name: "plugin-list",
 
         components: {
-            "loading-marquee": Marquee
+            "loading-marquee": Marquee,
+            "confirm-delete": ConfirmDelete
         },
 
         props: {
@@ -253,6 +256,11 @@
 
     #plugin .actions .button {
         margin: 0 10px 20px 0;
+    }
+
+    #plugin .uninstall {
+        display: inline;
+        margin: 0 10px 0 -10px;
     }
 
     #plugin p {
