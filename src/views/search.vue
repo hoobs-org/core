@@ -252,7 +252,6 @@
         display: flex;
         flex-wrap: wrap;
         padding: 10px 0 0 20px;
-        flex: 1;
         overflow: auto;
     }
 

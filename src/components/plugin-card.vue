@@ -141,8 +141,8 @@
 
 <style scoped>
     #plugin {
-        width: 12rem;
-        height: 18rem;
+        width: 192px;
+        height: 300px;
         padding: 20px 20px 0 20px;
         margin: 0 20px 20px 0;
         background: var(--background-light);

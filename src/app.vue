@@ -505,6 +505,10 @@
         box-shadow: var(--elevation-small);
     }
 
+    ::placeholder {
+        color: var(--text-light);
+    }
+
     .vue-grid-placeholder {
         background: var(--button-primary) !important;
     }
