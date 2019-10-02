@@ -2,6 +2,7 @@ const File = require("fs");
 const Path = require("path");
 const Ora = require("ora");
 
+// Remove this file on first release
 module.exports = () => {
     return new Promise((resolve) => {
         let throbber;

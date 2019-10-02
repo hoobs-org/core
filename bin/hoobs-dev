@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-
-process.title = "hoobs-core";
-
-const File = require("fs");
-const Path = require("path");
-
-require(Path.join(Path.dirname(File.realpathSync(__filename)), "../lib/cli"))();
