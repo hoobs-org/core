@@ -2,7 +2,7 @@
     <div id="control">
         <svg width="190" height="190" viewBox="0 0 100 100">
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" cx="50" cy="50" r="45" />
-            <circle :fill="value.values.on ? color : (($client.theme || `${system}-light`).endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
+            <circle :fill="value.values[characteristic] ? color : (($client.theme || `${system}-light`).endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
             <path fill="#ffffffef" :d="icon" />
             <circle fill="#ffffff00" stroke="none" cx="50" cy="50" r="45" @click="toggle" style="cursor: pointer;" />
         </svg>
@@ -42,6 +42,14 @@
         },
 
         computed: {
+            characteristic() {
+                if (this.value.characteristics.filter(c => c.type === "active").length > 0) {
+                    return "active"
+                }
+
+                return "on";
+            },
+
             icon() {
                 if (this.value.name.toLowerCase().includes("light") || this.value.name.toLowerCase().includes("lamp")) {
                     return this.icons.light;
@@ -50,7 +58,7 @@
                 } else if (this.value.name.toLowerCase().includes("fireplace")) {
                     return this.icons.fireplace;
                 } else if (this.value.type === "switch") {
-                    return this.value.values.on ? this.icons.on : this.icons.off;
+                    return this.value.values[this.characteristic] ? this.icons.on : this.icons.off;
                 } else if (this.value.name.toLowerCase().includes("fan") || this.value.type === "fan") {
                     return this.icons.fan;
                 } else if (this.value.type === "outlet") {
@@ -103,9 +111,9 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                this.value.values.on = !this.value.values.on;
+                this.value.values[this.characteristic] = !this.value.values[this.characteristic];
 
-                this.control("on", this.value.values.on);
+                this.control(this.characteristic, this.value.values[this.characteristic]);
             },
 
             async control(type, value) {
