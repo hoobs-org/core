@@ -6,49 +6,46 @@ module.exports = () => {
     return new Promise((resolve) => {
         let throbber;
 
-        if (File.existsSync("/home")) {
-            throbber = Ora("Checking Configuration").start();
+        throbber = Ora("Checking Configuration").start();
 
+        if (File.existsSync("/home")) {
             const folders = File.readdirSync("/home").filter(file => File.lstatSync(Path.join("/home", file)).isDirectory());
 
             for (let i = 0; i < folders.length; i++) {
+                throbber.start(Path.join("/home", folders[i]));
+
                 if (File.existsSync(Path.join("/home", folders[i], ".hoobs/etc/config.json"))) {
                     reConfigure(Path.join("/home", folders[i], ".hoobs/etc/config.json"));
                 }
             }
-
-            throbber.stopAndPersist();
         }
 
         if (File.existsSync("/root/.hoobs/etc/config.json")) {
-            throbber = Ora("Checking Configuration").start();
+            throbber.start("/root");
 
             reConfigure("/root/.hoobs/etc/config.json");
-
-            throbber.stopAndPersist();
         }
 
         if (File.existsSync("/Users")) {
-            throbber = Ora("Checking Configuration").start();
-
             const folders = File.readdirSync("/Users").filter(file => File.lstatSync(Path.join("/Users", file)).isDirectory());
 
             for (let i = 0; i < folders.length; i++) {
+                throbber.start(Path.join("/Users", folders[i]));
+
                 if (File.existsSync(Path.join("/Users", folders[i], ".hoobs/etc/config.json"))) {
                     reConfigure(Path.join("/Users", folders[i], ".hoobs/etc/config.json"));
                 }
             }
-
-            throbber.stopAndPersist();
         }
 
         if (File.existsSync("/var/root/.hoobs/etc/config.json")) {
-            throbber = Ora("Checking Configuration").start();
+            throbber.start("/var/roo");
 
             reConfigure("/var/root/.hoobs/etc/config.json");
-
-            throbber.stopAndPersist();
         }
+
+        throbber.start("Checking Configuration");
+        throbber.stopAndPersist();
 
         resolve();
     });

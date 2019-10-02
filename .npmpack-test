@@ -1,6 +1,6 @@
 hoobs-core
 -----------------------------------------------------------------------------------------------------------------------
-1. npm pack && rm -f ~/hoobs-hoobs.tgz && mv ./hoobs-hoobs-3.0.0-beta.61.tgz ~/hoobs-hoobs.tgz
+1. npm pack && rm -f ~/hoobs-hoobs.tgz && mv ./hoobs-hoobs-3.0.0-beta.62.tgz ~/hoobs-hoobs.tgz
 2. scp ~/hoobs-hoobs.tgz hoobs@hoobs.local:~/
 
 homebridge-to-hoobs
