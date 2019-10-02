@@ -547,10 +547,10 @@
                 const platformSchema = (plugin.schema || {}).platform || {};
 
                 if (index === -1) {
-                    return this.humanize(platformSchema.plugin_alias || plugin.name);
+                    return this.humanize((platformSchema.plugin_alias || plugin.name || "").split(".")[0]);
                 }
 
-                return this.humanize(platformSchema.plugin_alias || this.configuration.platforms[index].platform || plugin.name);
+                return this.humanize((platformSchema.plugin_alias || this.configuration.platforms[index].platform || plugin.name || "").split(".")[0]);
             },
 
             platformCode(plugin) {

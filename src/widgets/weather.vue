@@ -23,9 +23,7 @@
             </div>
         </div>
         <div class="actions">
-            <span class="action-label">°C</span>
-            <span class="icon" v-on:click="toggleUnits()">{{ toggleIcon }}</span>
-            <span class="action-label">°F</span>
+            <router-link to="/config" class="icon">settings</router-link>
         </div>
     </div>
 </template>
@@ -68,9 +66,6 @@
         },
 
         async mounted() {
-            this.units = this.item.units === "metric" ? "metric" : "imperial";
-            this.toggleIcon = this.units === "metric" ? "toggle_off" : "toggle_on";
-
             if (!this.weather || !this.weather.date || new Date().getTime() - this.weather.date.getTime() >= 900000) {
                 this.loadWeather(await this.getQuery());
             }
@@ -82,7 +77,7 @@
 
         methods: {
             loadWeather(query) {
-                Request(`https://api.openweathermap.org/data/2.5/weather?${query}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+                Request(`https://api.openweathermap.org/data/2.5/weather?${query}&units=${this.$client.temp_units === "celsius" ? "metric" : "imperial"}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
                     if (!error) {
                         this.$store.commit("current", response);
                     }
@@ -90,28 +85,11 @@
             },
 
             loadForecast(query) {
-                Request(`https://api.openweathermap.org/data/2.5/forecast?${query}&units=${this.units}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+                Request(`https://api.openweathermap.org/data/2.5/forecast?${query}&units=${this.$client.temp_units === "celsius" ? "metric" : "imperial"}&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
                     if (!error) {
                         this.$store.commit("future", response);
                     }
                 });
-            },
-
-            async toggleUnits() {
-                if (this.item.units === "metric") {
-                    this.units = "imperial";
-                    this.toggleIcon = "toggle_on";
-                } else {
-                    this.units = "metric";
-                    this.toggleIcon = "toggle_off";
-                }
-
-                this.item.units = this.units;
-
-                this.change(this.index, "units", this.units);
-
-                this.loadWeather(await this.getQuery());
-                this.loadForecast(await this.getQuery());
             },
 
             forecastDay(value) {
@@ -329,14 +307,10 @@
         user-select: none;
     }
 
-    #weather .action-label {
-        font-size: 12px;
-        margin: 0 5px;
-    }
-
-    #weather .actions .icon {
-        font-size: 28px;
-        color: var(--title-text);
-        cursor: pointer;
+    #weather .actions .icon,
+    #weather .actions a:link {
+        font-size: 18px;
+        color: var(--text) !important;
+        text-decoration: none !important;
     }
 </style>
