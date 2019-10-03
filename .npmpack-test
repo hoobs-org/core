@@ -1,11 +1,11 @@
 hoobs-core
 -----------------------------------------------------------------------------------------------------------------------
-1. npm pack && rm -f ~/hoobs-hoobs.tgz && mv ./hoobs-hoobs-3.0.0-beta.62.tgz ~/hoobs-hoobs.tgz
+1. npm pack && rm -f ~/hoobs-hoobs.tgz && mv ./hoobs-hoobs-3.0.0-beta.63.tgz ~/hoobs-hoobs.tgz
 2. scp ~/hoobs-hoobs.tgz hoobs@hoobs.local:~/
 
 homebridge-to-hoobs
 -----------------------------------------------------------------------------------------------------------------------
-1. npm pack && rm -f ~/homebridge-to-hoobs.tgz && mv ./homebridge-to-hoobs-1.0.19.tgz ~/homebridge-to-hoobs.tgz
+1. npm pack && rm -f ~/homebridge-to-hoobs.tgz && mv ./homebridge-to-hoobs-1.0.20.tgz ~/homebridge-to-hoobs.tgz
 2. scp ~/homebridge-to-hoobs.tgz hoobs@hoobs.local:~/
 
 homebridge-config-ui-x
@@ -22,6 +22,6 @@ NOTE: This will need a modified version of 2.1.1 to override the UI-X install pr
 
 npm set progress=false
 echo "Installing HOOBS"
-npm install -g --unsafe-perm /home/hoobs/hoobs-hoobs.tgz
+npm install -g --unsafe-perm --ignore-scripts /home/hoobs/hoobs-hoobs.tgz
 hoobs-init
 -----------------------------------------------------------------------------------------------------------------------
