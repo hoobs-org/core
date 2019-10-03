@@ -2,7 +2,6 @@ const File = require("fs");
 const Path = require("path");
 const Ora = require("ora");
 
-// Remove this file on first release
 module.exports = () => {
     return new Promise((resolve) => {
         let throbber;
@@ -76,6 +75,8 @@ const reConfigure = function(filename) {
             config.client.instances = instances;
         }
     }
+
+    delete current.server.socket;
 
     delete config.client.domain;
     delete config.client.port;

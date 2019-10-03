@@ -7,7 +7,5 @@ const Path = require("path");
 
 (async () => {
     await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/nginx")))(false);
-
-    // Remove this on first release
     await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/config")))();
 })();
