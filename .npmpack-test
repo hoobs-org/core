@@ -22,6 +22,7 @@ NOTE: This will need a modified version of 2.1.1 to override the UI-X install pr
 
 npm set progress=false
 echo "Installing HOOBS"
-npm install -g --unsafe-perm --ignore-scripts /home/hoobs/hoobs-hoobs.tgz
+npm install -g --unsafe-perm /home/hoobs/hoobs-hoobs.tgz
 hoobs-init
 -----------------------------------------------------------------------------------------------------------------------
+scp ~/*.tgz hoobs@hoobs.local:~/
