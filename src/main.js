@@ -268,7 +268,7 @@ import App from "./app.vue";
         }
     
         try {
-            Store.commit("session", JSON.parse(atob(token)));
+            Store.commit("session", JSON.parse(Cookies.decode(token)));
         } catch {
             Store.commit("session", null);
         }

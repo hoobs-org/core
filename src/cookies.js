@@ -46,4 +46,10 @@ export default class Cookies {
             });
         });
     }
+
+    static decode(value) {
+        return decodeURIComponent(Array.prototype.map.call(atob(value), function(c) {
+            return `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`
+        }).join(""))
+    }
 }
