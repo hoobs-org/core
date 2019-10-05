@@ -76,7 +76,7 @@ const reConfigure = function(filename) {
         }
     }
 
-    delete current.server.socket;
+    delete config.server.socket;
 
     delete config.client.domain;
     delete config.client.port;
