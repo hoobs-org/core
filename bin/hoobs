@@ -24,6 +24,7 @@ process.argv.forEach((value, index) => {
 
 const home = OS.userInfo().homedir;
 const root = join(home, ".hoobs");
+const pkg = File.existsSync("/usr/local/bin/yarn") || File.existsSync("/usr/bin/yarn") ? "yarn" : "npm";
 const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
 const installed = JSON.parse(File.readFileSync(join(applicaiton, "package.json")));
 
@@ -119,41 +120,45 @@ const setupUserMode = function() {
 
 const fixNodeCache = function() {
     return new Promise((resolve) => {
-        throbber = Ora("Fixing Node Cache").start();
+        if (pkg === "yarn") {
+            resolve();
+        } else {
+            throbber = Ora("Fixing Node Cache").start();
 
-        let prompts = 0;
+            let prompts = 0;
 
-        const process = spawn("sudo", [
-            "-S",
-            "-k",
-            "-p",
-            "#sudo-hoobs#",
-            "rm",
-            "-fR",
-            join(home, ".npm")
-        ]);
+            const process = spawn("sudo", [
+                "-S",
+                "-k",
+                "-p",
+                "#sudo-hoobs#",
+                "rm",
+                "-fR",
+                join(home, ".npm")
+            ]);
 
-        process.stderr.on("data", (data) => {
-            const lines = `${data}`.split(/\r?\n/);
+            process.stderr.on("data", (data) => {
+                const lines = `${data}`.split(/\r?\n/);
 
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
 
-                if (line === "#sudo-hoobs#") {
-                    if (++prompts > 1) {
-                        process.stdin.write("\n\n\n\n");
-                    } else {
-                        process.stdin.write(`${password || ""}\n`);
+                    if (line === "#sudo-hoobs#") {
+                        if (++prompts > 1) {
+                            process.stdin.write("\n\n\n\n");
+                        } else {
+                            process.stdin.write(`${password || ""}\n`);
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        process.on("close", () => {
-            throbber.stop();
-        
-            resolve();
-        });
+            process.on("close", () => {
+                throbber.stop();
+            
+                resolve();
+            });
+        }
     });
 }
 
@@ -162,13 +167,23 @@ const installPackages = function(plugins) {
         throbber = Ora("Initilizing Plugins").start();
 
         if (plugins.length > 0) {
-            exec(`npm set progress=false && npm install --unsafe-perm ${plugins.join(" ")}`, {
-                cwd: root
-            }, () => {
-                throbber.stop();
-        
-                resolve();
-            });
+            if (pkg === "yarn") {
+                exec(`yarn add --unsafe-perm --ignore-engines ${plugins.join(" ")}`, {
+                    cwd: root
+                }, () => {
+                    throbber.stop();
+            
+                    resolve();
+                });
+            } else {
+                exec(`npm set progress=false && npm install --unsafe-perm ${plugins.join(" ")}`, {
+                    cwd: root
+                }, () => {
+                    throbber.stop();
+            
+                    resolve();
+                });
+            }
         } else {
             throbber.stop();
 

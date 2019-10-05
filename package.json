@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.0-beta.65",
+    "version": "3.0.0-beta.66",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -23,7 +23,7 @@
     },
     "author": "Michael J Kellsy",
     "engines": {
-        "node": ">=10.16.3"
+        "node": ">=10.16.0"
     },
     "scripts": {
         "build": "vue-cli-service build",
@@ -31,7 +31,7 @@
         "postinstall": "bin/hoobs-upgrade"
     },
     "dependencies": {
-        "@hoobs/homebridge": "^3.0.4",
+        "@hoobs/homebridge": "^3.0.5",
         "@hoobs/systeminfo": "^4.14.7",
         "axios": "^0.19.0",
         "commander": "^2.20.0",
