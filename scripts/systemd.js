@@ -8,6 +8,7 @@ module.exports = () => {
         let throbber = null;
 
         const pms = getPms();
+        const root = Path.dirname(File.realpathSync(Path.join(__filename, "../")));
 
         if (pms) {
             if (!(await checkUser("hoobs"))) {
@@ -36,6 +37,7 @@ module.exports = () => {
                 }
 
                 File.writeFileSync("/etc/systemd/system/hoobs.service", File.readFileSync(Path.join(root, "config", `hoobs.${pms}.service`)));
+
                 Process.execSync("chmod 755 /etc/systemd/system/hoobs.service");
                 Process.execSync("systemctl daemon-reload");
                 Process.execSync("systemctl enable hoobs.service");
