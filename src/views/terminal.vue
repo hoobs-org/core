@@ -94,6 +94,8 @@
 
                 this.socket.onopen = () => {
                     this.term.attach(this.socket);
+
+                    this.term.clear();
                     this.term.focus();
                 };
 
