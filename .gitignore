@@ -73,5 +73,6 @@ etc/layout.json
 etc/access.json
 
 # Homebridge(X) cache
+builds/
 cache/
 dist/

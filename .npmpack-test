@@ -1,28 +1,27 @@
 hoobs-core
------------------------------------------------------------------------------------------------------------------------
-1. npm pack && rm -f ~/hoobs-hoobs.tgz && mv ./hoobs-hoobs-3.0.0-beta.63.tgz ~/hoobs-hoobs.tgz
-2. scp ~/hoobs-hoobs.tgz hoobs@hoobs.local:~/
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+1. npm pack && rm -f ./builds/hoobs-hoobs.tgz && mv ./hoobs-hoobs-3.0.0-beta.64.tgz ./builds/hoobs-hoobs.tgz
+2. scp ./builds/hoobs-hoobs.tgz hoobs@hoobs.local:~/
 
 homebridge-to-hoobs
------------------------------------------------------------------------------------------------------------------------
-1. npm pack && rm -f ~/homebridge-to-hoobs.tgz && mv ./homebridge-to-hoobs-1.0.20.tgz ~/homebridge-to-hoobs.tgz
-2. scp ~/homebridge-to-hoobs.tgz hoobs@hoobs.local:~/
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+1. npm pack && rm -f ../hoobs-core/builds/homebridge-to-hoobs.tgz && mv ./homebridge-to-hoobs-1.0.20.tgz ../hoobs-core/builds/homebridge-to-hoobs.tgz
+2. scp ./builds/homebridge-to-hoobs.tgz hoobs@hoobs.local:~/
 
 homebridge-config-ui-x
------------------------------------------------------------------------------------------------------------------------
-1. npm pack && rm -f ~/homebridge-config-ui-x.tgz && mv ./homebridge-config-ui-x-4.6.1.tgz ~/homebridge-config-ui-x.tgz
-2. scp ~/homebridge-config-ui-x.tgz hoobs@hoobs.local:~/
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+1. npm pack && rm -f ../../HOOBS/hoobs-core/builds/ui-x.tgz && mv ./homebridge-config-ui-x-4.6.1.tgz ../../HOOBS/hoobs-core/builds/ui-x.tgz
+2. scp ./builds/ui-x.tgz hoobs@hoobs.local:~/
 
------------------------------------------------------------------------------------------------------------------------
-NOTE: This will need a modified version of 2.1.1 to override the UI-X install process to use the packs instead of live
-      NPM data. You also need to modify the homebridge-to-hoobs install script to use hoobs-core pack instead of live
-      NPM data.
------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+NOTE: This will need a modified version of 2.1.1 to override the UI-X install process to use the packs instead of live NPM data. You also need to
+      modify the homebridge-to-hoobs install script to use hoobs-core pack instead of live NPM data.
+-----------------------------------------------------------------------------------------------------------------------------------------------------
 #!/bin/bash
 
 npm set progress=false
 echo "Installing HOOBS"
 npm install -g --unsafe-perm /home/hoobs/hoobs-hoobs.tgz
 hoobs-init
------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------
 scp ~/*.tgz hoobs@hoobs.local:~/
