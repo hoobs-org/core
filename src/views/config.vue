@@ -39,7 +39,7 @@
                 <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" :required="true" />
                 <select-field :name="$t('temp_units')" :description="$t('temp_units_message')" :options="units" v-model="configuration.client.temp_units" @change="markReload()" />
                 <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" @change="markReload()" />
-                <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model.number="configuration.client.postal_code" @change="markReload()" :required="true" />
+                <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model="configuration.client.postal_code" @change="markReload()" :required="true" />
                 <h2 id="bridge">{{ $t("bridge_settings") }}</h2>
                 <p>
                     {{ $t("bridge_settings_message") }}
