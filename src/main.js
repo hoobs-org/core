@@ -269,7 +269,7 @@ import App from "./app.vue";
             decoded = null;
         }
 
-        Cookies.set("token", token, decoded.ttl || config.client.inactive_logoff || 30);
+        Cookies.set("token", token, (decoded || {}).ttl || config.client.inactive_logoff || 30);
     
         if (!token) {
             Store.commit("session", null);
