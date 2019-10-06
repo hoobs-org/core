@@ -260,18 +260,22 @@ import App from "./app.vue";
         }
     
         const token = Cookies.get("token");
-    
-        Cookies.set("token", token, config.client.inactive_logoff || 30);
+
+        let decoded = null;
+
+        try {
+            decoded = JSON.parse(Cookies.decode(token));
+        } catch {
+            decoded = null;
+        }
+
+        Cookies.set("token", token, decoded.ttl || config.client.inactive_logoff || 30);
     
         if (!token) {
             Store.commit("session", null);
         }
     
-        try {
-            Store.commit("session", JSON.parse(Cookies.decode(token)));
-        } catch {
-            Store.commit("session", null);
-        }
+        Store.commit("session", decoded);
     
         next();
     });
