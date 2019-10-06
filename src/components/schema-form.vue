@@ -9,7 +9,7 @@
             </div>
             <div v-else-if="fieldType(field) === 'json'">
                 <div class="field">
-                    <span class="title">{{ field.title || field.name }}</span>
+                    <span class="title">{{ field.title || humanize(field.name) }}</span>
                     <json-editor :name="field.name" :height="200" :index="0" :change="updateJson()" :code="getJson(field)" />
                 </div>
             </div>
