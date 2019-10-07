@@ -129,7 +129,11 @@
             getQuery() {
                 return new Promise((resolve) => {
                     if (this.$client.country_code && this.$client.postal_code) {
-                        resolve(`zip=${this.$client.postal_code},${this.$client.country_code}`);
+                        if (this.$client.country_code === "CA") {
+                            resolve(`zip=${(`${this.$client.postal_code}000`).substring(0, 3)},CA`);
+                        } else {
+                            resolve(`zip=${this.$client.postal_code},${this.$client.country_code}`);
+                        }
                     } else {
                         const query = this.$cookie("weather_query");
 
