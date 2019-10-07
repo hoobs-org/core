@@ -1,5 +1,11 @@
-node_modules
 .vscode
-docs
+builds
 etc
+node_modules
 schema
+src
+.gitignore
+.npmignore
+.npmpack-test
+postcss.config.js
+vue.config.js
