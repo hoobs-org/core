@@ -13,7 +13,7 @@
         "add_room": "Add Room",
         "add_user": "Add User",
         "administrator": "Administrator",
-        "advanced_config": "Advanced Configuration",
+        "advanced": "Advanced",
         "application_path": "Application Path",
         "auto": "Auto",
         "available_accessories": "Available Accessories",
@@ -313,6 +313,7 @@
         "welcome_message": "Welcome to Homebridge.",
         "welcome_message_hoobs": "Welcome to HOOBS.",
         "windy": "Windy",
-        "yes": "Yes"
+        "yes": "Yes",
+        "accessory": "Accessory"
     }
 }

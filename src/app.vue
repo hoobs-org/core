@@ -64,8 +64,8 @@
                     </router-link>
                 </div>
                 <div class="routes">
-                    <router-link to="/config" @click.native="hide('nav')" class="mobile-hide">
-                        <span v-bind:class="activeIcon('config', 'config-advanced')">settings</span>
+                    <router-link to="/config/interface" @click.native="hide('nav')" class="mobile-hide">
+                        <span v-bind:class="activeIcon('config')">settings</span>
                     </router-link>
                 </div>
             </div>

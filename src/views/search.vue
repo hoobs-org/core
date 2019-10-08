@@ -151,15 +151,7 @@
             },
 
             oninstall(type, name, alias, plugin) {
-                switch (type) {
-                    case "accessory":
-                        window.location.href = "/config#add-accessory";
-                        break;
-                    
-                    default:
-                        window.location.href = `/config#${plugin.name}`;
-                        break;
-                }
+                window.location.href = `/config/${plugin.name}`;
             },
 
             onuninstall() {

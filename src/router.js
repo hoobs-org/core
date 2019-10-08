@@ -58,18 +58,10 @@ const getRoutes = (defaultRoute) => {
         name: "layout",
         component: () => import("./views/layout.vue")
     },{
-        path: "/config",
+        path: "/config/:section",
         name: "config",
-        component: () => import("./views/config.vue")
-    },{
-        path: "/config/advanced",
-        name: "config-advanced",
-        component: () => import("./views/config-advanced.vue")
-    },{
-        path: "*",
-        redirect: () => {
-            window.location.href = "/";
-        }
+        component: () => import("./views/config.vue"),
+        props: true
     }];
 
     return routes;

@@ -1,17 +1,16 @@
 <template>
     <div id="config">
-        <div class="info">
-            <a href="#hoobs">{{ $t("interface_settings") }}</a>
-            <a href="#bridge">{{ $t("bridge_settings") }}</a>
-            <a href="#ports">{{ $t("port_ranges") }}</a>
-            <a href="#accessories">{{ $t("accessories") }}</a>
+        <div v-if="loaded" class="info">
+            <router-link to="/config/interface" :class="section === 'interface' ? 'active': ''">{{ $t("interface_settings") }}</router-link>
+            <router-link to="/config/bridge" :class="section === 'bridge' ? 'active': ''">{{ $t("bridge_settings") }}</router-link>
+            <router-link to="/config/ports" :class="section === 'ports' ? 'active': ''">{{ $t("port_ranges") }}</router-link>
             <div v-for="(plugin, index) in plugins" :key="`${index}-platform-link`">
-                <div v-if="(plugin.name !== 'homebridge' && (user.admin || plugin.scope === 'hoobs')) && platformIndex(plugin) >= 0">
-                    <a :href="`#${plugin.name}`">{{ platformTitle(plugin) }}</a>
+                <div v-if="user.admin || plugin.scope === 'hoobs'">
+                    <router-link :to="`/config/${plugin.name}`" :class="section === plugin.name ? 'active': ''">{{ pluginTitle(plugin) }}</router-link>
                 </div>
             </div>
-            <a href="#backup">{{ $t("backup") }}</a>
-            <router-link v-if="user.admin" to="/config/advanced">{{ $t("advanced_config") }}</router-link>
+            <router-link v-if="user.admin" to="/config/advanced" :class="section === 'advanced' ? 'active': ''">{{ $t("advanced") }}</router-link>
+            <router-link to="/config/backup" :class="section === 'backup' ? 'active': ''">{{ $t("backup") }}</router-link>
             <div class="actions">
                 <div v-if="!working && loaded" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
                 <div v-if="working" class="loading">
@@ -26,97 +25,62 @@
                 </p>
             </div>
         </div>
-        <div ref="content" class="content">
-            <form v-if="loaded" class="form" method="post" action="/config" autocomplete="false" v-on:submit.prevent="save()">
+        <div v-if="loaded" ref="content" class="content">
+            <form v-if="loaded" ref="main" :class="section === 'advanced' ? 'form form-lock': 'form'" method="post" action="/config" autocomplete="false" v-on:submit.prevent="save()">
                 <input type="submit" class="hidden-submit" value="submit">
-                <h2 id="hoobs">{{ $t("interface_settings") }}</h2>
-                <p>
-                    {{ $t("interface_settings_message") }}
-                </p>
-                <select-field :name="$t('language')" :description="$t('language_message')" :options="locales" v-model="configuration.client.locale" @change="markReload()" />
-                <select-field :name="$t('theme')" :description="$t('theme_message')" :options="themes" v-model="configuration.client.theme" @change="markReload()" />
-                <select-field :name="$t('default_screen')" :description="$t('default_screen_message')" :options="screens" v-model="configuration.client.default_route" @change="markReload()" />
-                <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" :required="true" />
-                <select-field :name="$t('temp_units')" :description="$t('temp_units_message')" :options="units" v-model="configuration.client.temp_units" @change="markReload()" />
-                <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" @change="markReload()" />
-                <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model="configuration.client.postal_code" @change="markReload()" :required="true" />
-                <h2 id="bridge">{{ $t("bridge_settings") }}</h2>
-                <p>
-                    {{ $t("bridge_settings_message") }}
-                </p>
-                <text-field :name="$t('service_name')" :description="$t('service_name_message')" v-model="configuration.bridge.name" :required="true" />
-                <description-field :name="$t('service_description')" :description="$t('service_description_message')" v-model="configuration.description" />
-                <port-field :name="$t('service_port')" :description="$t('service_port_message')" v-model.number="configuration.bridge.port" :required="true" />
-                <hex-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" :required="true" />
-                <text-field :name="$t('home_pin')" :description="$t('home_pin_message')" v-model="configuration.bridge.pin" :required="true" />
-                <h2 id="ports">{{ $t("port_ranges") }}</h2>
-                <p>
-                    {{ $t("port_ranges_message") }}
-                </p>
-                <text-field :name="$t('range_name')" :description="$t('range_name_message')" v-model="configuration.ports.comment" />
-                <port-field :name="$t('start_port')" :description="$t('start_port_message')" v-model.number="configuration.ports.start" />
-                <port-field :name="$t('end_port')" :description="$t('end_port_message')" v-model.number="configuration.ports.end" />
-                <h2 id="accessories">{{ $t("accessories") }}</h2>
-                <p>
-                    {{ $t("accessories_config_message") }}
-                </p>
-                <div v-for="(accessory, index) in configuration.accessories" :key="`${index}-accessory`">
-                    <div v-if="accessory.plugin_map && accessories[accessoryKey(accessory)]">
-                        <div class="accessory-title">
-                            <h3>{{ accessories[accessoryKey(accessory)].title || humanize(pluginAlias[accessory.plugin_map.plugin_name]) }}</h3>
-                            <confirm-delete :title="$t('delete')" :index="index" :confirmed="removeAccessory" />
-                        </div>
-                        <schema-form :schema="accessories[accessoryKey(accessory)].properties || {}" v-model="configuration.accessories[index]" />
-                    </div>
-                    <div v-else-if="user.admin">
-                        <div class="accessory-title">
-                            <h3>{{ $t("custom") }}</h3>
-                            <confirm-delete :title="$t('delete')" :index="index" :confirmed="removeAccessory" />
-                        </div>
-                        <json-editor name="accessory" :height="200" :index="index" :change="updateJson" :code="accessoryCode(index)" />
+                <div class="section" v-if="section === 'interface'">
+                    <h2>{{ $t("interface_settings") }}</h2>
+                    <p>
+                        {{ $t("interface_settings_message") }}
+                    </p>
+                    <select-field :name="$t('language')" :description="$t('language_message')" :options="locales" v-model="configuration.client.locale" @change="markReload()" />
+                    <select-field :name="$t('theme')" :description="$t('theme_message')" :options="themes" v-model="configuration.client.theme" @change="markReload()" />
+                    <select-field :name="$t('default_screen')" :description="$t('default_screen_message')" :options="screens" v-model="configuration.client.default_route" @change="markReload()" />
+                    <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" :required="true" />
+                    <select-field :name="$t('temp_units')" :description="$t('temp_units_message')" :options="units" v-model="configuration.client.temp_units" @change="markReload()" />
+                    <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" @change="markReload()" />
+                    <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model="configuration.client.postal_code" @change="markReload()" :required="true" />
+                </div>
+                <div class="section" v-if="section === 'bridge'">
+                    <h2>{{ $t("bridge_settings") }}</h2>
+                    <p>
+                        {{ $t("bridge_settings_message") }}
+                    </p>
+                    <text-field :name="$t('service_name')" :description="$t('service_name_message')" v-model="configuration.bridge.name" :required="true" />
+                    <description-field :name="$t('service_description')" :description="$t('service_description_message')" v-model="configuration.description" />
+                    <port-field :name="$t('service_port')" :description="$t('service_port_message')" v-model.number="configuration.bridge.port" :required="true" />
+                    <hex-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" :required="true" />
+                    <text-field :name="$t('home_pin')" :description="$t('home_pin_message')" v-model="configuration.bridge.pin" :required="true" />
+                </div>
+                <div class="section" v-if="section === 'ports'">
+                    <h2>{{ $t("port_ranges") }}</h2>
+                    <p>
+                        {{ $t("port_ranges_message") }}
+                    </p>
+                    <text-field :name="$t('range_name')" :description="$t('range_name_message')" v-model="configuration.ports.comment" />
+                    <port-field :name="$t('start_port')" :description="$t('start_port_message')" v-model.number="configuration.ports.start" />
+                    <port-field :name="$t('end_port')" :description="$t('end_port_message')" v-model.number="configuration.ports.end" />
+                </div>
+                <div v-for="(plugin, index) in plugins" :key="`${index}-plugin`">
+                    <div class="section" v-if="section === plugin.name && (user.admin || plugin.scope === 'hoobs')">
+                        <h2>{{ pluginTitle(plugin) }}</h2>
+                        <plugin-config :plugin="plugin" :save="save" :error="addError" :fix="fixError" v-model="configuration" />
                     </div>
                 </div>
-                <div class="action">
-                    <div v-on:click.stop="addAccessory()" class="button">{{ $t("add_accessory") }}</div>
+                <div v-if="ready && user.admin && section === 'advanced'">
+                    <json-editor name="config" :height="jsonHeight" :change="updateJson" :code="configCode()" />
                 </div>
-                <a id="plugins"></a>
-                <div v-for="(plugin, index) in plugins" :key="`${index}-platform`">
-                    <div v-if="(plugin.name !== 'homebridge' && (user.admin || plugin.scope === 'hoobs')) && platformIndex(plugin) >= 0">
-                        <h2 v-if="plugin.name === 'google-home'" :id="plugin.name">Google Home</h2>
-                        <h2 v-else :id="plugin.name">{{ platformTitle(plugin) }}</h2>
-                        <p v-if="plugin.name === 'google-home'">
-                            <span>
-                                <div class="button button-primary" v-on:click="gsh">Link Account</div>
-                            </span>
-                        </p>
-                        <p v-else-if="plugin.description !== ''">
-                            {{ plugin.description }}
-                        </p>
-                        <div v-if="plugin.schema && plugin.schema.platform.schema.properties">
-                            <schema-form :schema="plugin.schema.platform.schema.properties || {}" v-model="configuration.platforms[platformIndex(plugin)]" />
-                        </div>
-                        <div v-else>
-                            <json-editor name="platform" :height="200" :index="platformIndex(plugin)" :change="updateJson" :code="platformCode(plugin)" />
-                        </div>
+                <div class="section" v-if="section === 'backup'">
+                    <h2>{{ $t("backup") }}</h2>
+                    <p>
+                        {{ $t("backup_message") }}
+                    </p>
+                    <div class="action">
+                        <div v-on:click.stop="backup()" class="button button-primary">{{ $t("download") }}</div>
                     </div>
-                </div>
-                <h2 id="backup">{{ $t("backup") }}</h2>
-                <p>
-                    {{ $t("backup_message") }}
-                </p>
-                <div class="action">
-                    <div v-on:click.stop="backup()" class="button button-primary">{{ $t("download") }}</div>
                 </div>
             </form>
         </div>
-        <modal-dialog v-if="show.accessories" width="450px" :title="$t('add_accessory')" :cancel="cancelAccessory">
-            <div v-for="(key, index) in accessoryKeys" :key="`${index}-add-accessory`" class="button button-primary add-accessory-button" v-on:click="insertAccessory(key)">
-                {{ accessories[key].title }} <span class="icon">chevron_right</span>
-            </div>
-            <div class="button button-primary add-accessory-button" v-on:click="insertAccessory()">
-                {{ $t("custom") }} <span class="icon">chevron_right</span>
-            </div>
-        </modal-dialog>
     </div>
 </template>
 
@@ -132,10 +96,8 @@
     import PortField from "@/components/port-field.vue";
     import HexField from "@/components/hex-field.vue";
 
-    import ModalDialog from "@/components/modal-dialog.vue";
-    import SchemaForm from "@/components/schema-form.vue";
+    import PluginConfig from "@/components/plugin-config.vue";
     import Marquee from "@/components/loading-marquee.vue";
-    import ConfirmDelete from "@/components/confirm-delete.vue";
 
     import CountryCodes from "../lang/country-codes.json";
 
@@ -150,10 +112,12 @@
             "select-field": SelectField,
             "port-field": PortField,
             "hex-field": HexField,
-            "modal-dialog": ModalDialog,
-            "schema-form": SchemaForm,
-            "loading-marquee": Marquee,
-            "confirm-delete": ConfirmDelete
+            "plugin-config": PluginConfig,
+            "loading-marquee": Marquee
+        },
+
+        props: {
+            section: String
         },
 
         computed: {
@@ -165,40 +129,12 @@
                 return this.$store.state.user;
             },
 
-            pluginAlias() {
-                const schemas = {};
-
-                for (let i = 0; i < this.plugins.length; i++) {
-                    if (this.plugins[i].schema && this.plugins[i].schema.accessories) {
-                        schemas[this.plugins[i].name] = this.plugins[i].schema.accessories.plugin_alias;
-                    } else if (this.plugins[i].schema && this.plugins[i].schema.platform) {
-                        schemas[this.plugins[i].name] = this.plugins[i].schema.platform.plugin_alias;
-                    }
-                }
-
-                return schemas;
-            },
-
-            accessories() {
-                const schemas = {};
-
-                for (let i = 0; i < this.plugins.length; i++) {
-                    if (this.plugins[i].schema) {
-                        for (let j = 0; j < this.plugins[i].schema.accessories.schemas.length; j++) {
-                            schemas[`${this.plugins[i].name}-:-${j}`] = this.plugins[i].schema.accessories.schemas[j];
-                        }
-                    }
-                }
-
-                return schemas;
-            },
-
-            accessoryKeys() {
-                return Object.keys(this.accessories);
-            },
-
             system() {
                 return this.$system;
+            },
+
+            jsonHeight() {
+                return (this.$refs.main || {}).offsetHeight || 500;
             }
         },
 
@@ -206,6 +142,7 @@
             return {
                 loaded: false,
                 working: false,
+                ready: false,
                 reload: false,
                 configuration: {
                     client: {
@@ -316,18 +253,8 @@
                     text: this.$t("accessories"),
                     value: "accessories"
                 }],
-                binaryReverse: [{
-                    text: this.$t("yes"),
-                    value: false
-                },{
-                    text: this.$t("no"),
-                    value: true
-                }],
                 plugins: [],
                 errors: [],
-                show: {
-                    accessories: false
-                },
                 gshPopup: null,
                 gshOriginCheck: null
             };
@@ -343,34 +270,10 @@
                 text: this.$t(`${this.system}_dark`),
                 value: `${this.system}-dark`
             }];
-
-            if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
-                if (window.location.hash === "#add-accessory") {
-                    document.querySelector("#accessories").scrollIntoView();
-
-                    this.addAccessory();
-                } else if (document.querySelector(window.location.hash)) {
-                    document.querySelector(window.location.hash).scrollIntoView();
-                } else {
-                    document.querySelector("#accessories").scrollIntoView();
-                }
-
-                window.history.pushState("", document.title, window.location.pathname);
-            }
-
-            window.addEventListener("message", this.gshListner, false);
         },
 
-        destroyed() {
-            if (this.gshOriginCheck) {
-                clearInterval(this.gshOriginCheck);
-            }
-
-            window.removeEventListener("message", this.gshListner);
-
-            if (this.gshPopup) {
-                this.gshPopup.close();
-            }
+        updated() {
+            this.ready = true;
         },
 
         filters: {
@@ -412,49 +315,17 @@
                 this.reload = true;
             },
 
-            updateJson(section, code, index) {
-                switch (section) {
-                    case "accessory":
-                        const currentAccessory = JSON.parse(JSON.stringify(this.configuration.accessories[index], null, 4));
+            addError(message) {
+                if (this.errors.indexOf(message) === -1) {
+                    this.errors.push(message);
+                }
+            },
 
-                        try {
-                            this.configuration.accessories[index] = JSON.parse(code);
+            fixError(message) {
+                const index = this.errors.indexOf(message);
 
-                            const accessoryIndex = this.errors.indexOf(this.$t("accessory_invalid_json"));
-
-                            if (accessoryIndex >= 0) {
-                                this.errors.splice(accessoryIndex, 1);
-                            }
-                        } catch {
-                            if (this.errors.indexOf(this.$t("accessory_invalid_json")) === -1) {
-                                this.errors.push(this.$t("accessory_invalid_json"));
-                            }
-                        } finally {
-                            this.configuration.accessories[index].plugin_map = currentAccessory.plugin_map;
-                        }
-
-                        break;
-
-                    case "platform":
-                        const currentPlatform = JSON.parse(JSON.stringify(this.configuration.platforms[index], null, 4));
-
-                        try {
-                            this.configuration.platforms[index] = JSON.parse(code);
-
-                            const platformIndex = this.errors.indexOf(this.$t("platform_invalid_json"));
-
-                            if (platformIndex >= 0) {
-                                this.errors.splice(platformIndex, 1);
-                            }
-                        } catch {
-                            if (this.errors.indexOf(this.$t("platform_invalid_json")) === -1) {
-                                this.errors.push(this.$t("platform_invalid_json"));
-                            }
-                        } finally {
-                            this.configuration.platforms[index].plugin_map = currentPlatform.plugin_map;
-                        }
-                        
-                        break;
+                if (index >= 0) {
+                    this.errors.splice(index, 1);
                 }
             },
 
@@ -480,91 +351,33 @@
                 }
             },
 
-            cancelAccessory() {
-                this.show.accessories = false;
+            configCode() {
+                return JSON.stringify(this.configuration, null, 4)
             },
 
-            addAccessory() {
-                this.show.accessories = true;
-            },
-
-            insertAccessory(key) {
-                if (key) {
-                    const plugin = key.split("-:-")[0];
-                    const index = parseInt(key.split("-:-")[1]);
-
-                    this.show.accessories = false;
-
-                    const accessory = {
-                        accessory: this.pluginAlias[plugin],
-                        plugin_map: {
-                            plugin_name: plugin,
-                            index
-                        }
-                    };
-
-                    this.configuration.accessories.push(accessory);
-                } else {
-                    this.show.accessories = false;
-
-                    this.configuration.accessories.push({
-                        accessory: ""
-                    });
+            updateJson(name, code) {
+                try {
+                    this.configuration = JSON.parse(code);
+                    this.fixError(this.$t("invalid_json"));
+                } catch {
+                    this.addError(this.$t("invalid_json"));
                 }
             },
 
-            removeAccessory(index) {
-                this.configuration.accessories.splice(index, 1);
-            },
-
-            accessoryKey(accessory) {
-                return `${accessory.plugin_map.plugin_name}-:-${accessory.plugin_map.index}`;
-            },
-
-            accessoryPlugin(accessory) {
-                const index = this.plugins.findIndex(p => p.name === accessory.plugin_map.plugin_name);
-
-                return this.humanize(this.plugins[index].schema.accessories.plugin_alias);
-            },
-
-            accessoryCode(index) {
-                return JSON.stringify(this.configuration.accessories[index], null, 4);
-            },
-
-            platformIndex(plugin) {
-                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === plugin.name);
-                const platformSchema = (plugin.schema || {}).platform || {};
-
-                if (index >= 0 && platformSchema.plugin_alias && (!this.configuration.platforms[index].platform || this.configuration.platforms[index].platform !== platformSchema.plugin_alias)) {
-                    this.configuration.platforms[index].platform = platformSchema.plugin_alias;
+            pluginTitle(plugin) {
+                if (plugin.name === "google-home") {
+                    return "Google Home";
                 }
 
-                return index;
-            },
-
-            platformTitle(plugin) {
-                const index = this.platformIndex(plugin);
-                const platformSchema = (plugin.schema || {}).platform || {};
+                const index = this.configuration.platforms.findIndex(p => p.platform === plugin.details.alias || (p.plugin_map || {}).plugin_name === plugin.name);
+                const platform = (plugin.schema || {}).platform || {};
+                const accessory = (plugin.schema || {}).accessories || {};
 
                 if (index === -1) {
-                    return this.humanize((platformSchema.plugin_alias || plugin.name || "").split(".")[0]);
+                    return this.humanize((platform.plugin_alias || accessory.plugin_alias || plugin.name || "Unknown Plugin").split(".")[0]);
                 }
 
-                return this.humanize((platformSchema.plugin_alias || this.configuration.platforms[index].platform || plugin.name || "").split(".")[0]);
-            },
-
-            platformCode(plugin) {
-                const index = this.platformIndex(plugin);
-
-                if (index === -1) {
-                    return {};
-                }
-
-                const copy = JSON.parse(JSON.stringify(this.configuration.platforms[index]));
-
-                delete copy.plugin_map;
-
-                return JSON.stringify(copy, null, 4);
+                return this.humanize((platform.plugin_alias || this.configuration.platforms[index].platform || plugin.name || "Unknown Plugin").split(".")[0]);
             },
 
             humanize(string) {
@@ -641,13 +454,15 @@
 
                     this.errors = [];
 
+                    this.$store.commit("lock");
+
                     if (this.running) {
-                        this.$store.commit("lock");
-
                         await this.api.post("/service/restart");
-
-                        this.$store.commit("unlock");
+                    } else {
+                        await this.api.post("/service/start");
                     }
+
+                    this.$store.commit("unlock");
 
                     if (this.reload) {
                         window.location.reload();
@@ -657,57 +472,6 @@
                 } else {
                     this.working = false;
                 }
-            },
-
-            gsh() {
-                const width = 450;
-                const height = 700;
-                const top = window.top.outerHeight / 2 + window.top.screenY - (height / 2);
-                const left = window.top.outerWidth / 2 + window.top.screenX - (width / 2);
-
-                this.gshPopup = window.open(
-                    "https://homebridge-gsh.iot.oz.nu/link-account",
-                    "oznu-google-smart-home-auth",
-                    `toolbar=no, location=no, directories=no, status=no, menubar=no scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${top}, left=${left}`,
-                );
-
-                this.gshOriginCheck = setInterval(() => {
-                    this.gshPopup.postMessage("origin-check", "https://homebridge-gsh.iot.oz.nu");
-                }, 2000);
-            },
-
-            gshListner(event) {
-                if (event.origin === "https://homebridge-gsh.iot.oz.nu") {
-                    try {
-                        const data = JSON.parse(event.data);
-
-                        if (data.token) {
-                            this.gshProcessToken(data.token);
-                        }
-                    } catch (error) {
-                        console.error(error);
-                    }
-                }
-            },
-
-            gshProcessToken(token) {
-                if (this.gshOriginCheck) {
-                    clearInterval(this.gshOriginCheck);
-                }
-
-                this.gshOriginCheck = null;
-
-                if (this.gshPopup) {
-                    this.gshPopup.close();
-                }
-
-                this.gshPopup = null;
-
-                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "google-home");
-
-                this.configuration.platforms[index].token = token;
-
-                this.save();
             }
         }
     }
@@ -741,6 +505,11 @@
         color: var(--text-dark);
     }
 
+    #config .info .active {
+        font-weight: bold;
+        color: var(--title-text) !important;
+    }
+
     #config .info .actions {
         padding: 20px 0 0 0;
     }
@@ -769,7 +538,17 @@
     }
 
     #config .content .form {
+        flex: 1;
         width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #config .content .form-lock {
+        overflow: hidden;
+    }
+
+    #config .content .section {
         max-width: 780px;
     }
 
