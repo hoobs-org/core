@@ -1,6 +1,6 @@
 <template>
     <div id="config">
-        <div v-if="loaded" class="info">
+        <div v-if="loaded" class="info mobile-hide">
             <router-link to="/config/interface" :class="section === 'interface' ? 'active': ''">{{ $t("interface_settings") }}</router-link>
             <router-link to="/config/bridge" :class="section === 'bridge' ? 'active': ''">{{ $t("bridge_settings") }}</router-link>
             <router-link to="/config/ports" :class="section === 'ports' ? 'active': ''">{{ $t("port_ranges") }}</router-link>
@@ -9,7 +9,7 @@
                     <router-link :to="`/config/${plugin.name}`" :class="section === plugin.name ? 'active': ''">{{ pluginTitle(plugin) }}</router-link>
                 </div>
             </div>
-            <router-link v-if="user.admin" to="/config/advanced" :class="section === 'advanced' ? 'active': ''">{{ $t("advanced") }}</router-link>
+            <router-link v-if="user.admin" to="/config/advanced" :class="section === 'advanced' ? 'active mobile-hide': 'mobile-hide'">{{ $t("advanced") }}</router-link>
             <router-link to="/config/backup" :class="section === 'backup' ? 'active': ''">{{ $t("backup") }}</router-link>
             <div class="actions">
                 <div v-if="!working && loaded" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
@@ -28,7 +28,7 @@
         <div v-if="loaded" ref="content" class="content">
             <form v-if="loaded" ref="main" :class="section === 'advanced' ? 'form form-lock': 'form'" method="post" action="/config" autocomplete="false" v-on:submit.prevent="save()">
                 <input type="submit" class="hidden-submit" value="submit">
-                <div class="section" v-if="section === 'interface'">
+                <div class="section" v-if="section === 'interface' || screen.width <= 815">
                     <h2>{{ $t("interface_settings") }}</h2>
                     <p>
                         {{ $t("interface_settings_message") }}
@@ -41,7 +41,7 @@
                     <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" @change="markReload()" />
                     <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model="configuration.client.postal_code" @change="markReload()" :required="true" />
                 </div>
-                <div class="section" v-if="section === 'bridge'">
+                <div class="section" v-if="section === 'bridge' || screen.width <= 815">
                     <h2>{{ $t("bridge_settings") }}</h2>
                     <p>
                         {{ $t("bridge_settings_message") }}
@@ -52,7 +52,7 @@
                     <hex-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" :required="true" />
                     <text-field :name="$t('home_pin')" :description="$t('home_pin_message')" v-model="configuration.bridge.pin" :required="true" />
                 </div>
-                <div class="section" v-if="section === 'ports'">
+                <div class="section" v-if="section === 'ports' || screen.width <= 815">
                     <h2>{{ $t("port_ranges") }}</h2>
                     <p>
                         {{ $t("port_ranges_message") }}
@@ -62,22 +62,36 @@
                     <port-field :name="$t('end_port')" :description="$t('end_port_message')" v-model.number="configuration.ports.end" />
                 </div>
                 <div v-for="(plugin, index) in plugins" :key="`${index}-plugin`">
-                    <div class="section" v-if="section === plugin.name && (user.admin || plugin.scope === 'hoobs')">
+                    <div class="section" v-if="(section === plugin.name || screen.width <= 815) && (user.admin || plugin.scope === 'hoobs')">
                         <h2>{{ pluginTitle(plugin) }}</h2>
                         <plugin-config :plugin="plugin" :save="save" :error="addError" :fix="fixError" v-model="configuration" />
                     </div>
                 </div>
-                <div v-if="ready && user.admin && section === 'advanced'">
+                <div v-if="ready && user.admin && section === 'advanced'" class="mobile-hide">
                     <json-editor name="config" :height="jsonHeight" :change="updateJson" :code="configCode()" />
                 </div>
-                <div class="section" v-if="section === 'backup'">
+                <div class="section" v-if="section === 'backup' || screen.width <= 815">
                     <h2>{{ $t("backup") }}</h2>
                     <p>
                         {{ $t("backup_message") }}
                     </p>
                     <div class="action">
-                        <div v-on:click.stop="backup()" class="button button-primary">{{ $t("download") }}</div>
+                        <div v-on:click.stop="backup()" class="button">{{ $t("download") }}</div>
                     </div>
+                </div>
+                <div class="mobile-show">
+                    <h2>{{ $t("save_changes") }}</h2>
+                    <div v-if="!working && loaded && errors.length === 0" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
+                    <div v-if="working && errors.length === 0" class="loading">
+                        <loading-marquee v-if="working" :height="3" color="--title-text" background="--title-text-dim" />
+                    </div>
+                    <p v-if="errors.length > 0">
+                        {{ $t("save_failed") }}<br />
+                        {{ $t("save_validation") }}
+                    </p>
+                    <p v-if="errors.length > 0" class="errors">
+                        <span class="error" v-for="(error, index) in errors" :key="index">{{ error }}</span>
+                    </p>
                 </div>
             </form>
         </div>
@@ -131,6 +145,10 @@
 
             system() {
                 return this.$system;
+            },
+
+            screen() {
+                return this.$store.state.screen;
             },
 
             jsonHeight() {
@@ -654,5 +672,11 @@
 
     #config .add-accessory-button:first-child {
         margin: 0;
+    }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #config .content .section {
+            max-width: unset;
+        }
     }
 </style>

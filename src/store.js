@@ -18,6 +18,10 @@ export default new Vuex.Store({
         version: null,
         running: false,
         locked: false,
+        screen: {
+            width: null,
+            height: null
+        },
         uptime: 0,
         uptime: {
             days: 0,
@@ -84,6 +88,10 @@ export default new Vuex.Store({
 
         toggle(state, menu) {
             state.menus[menu] = !state.menus[menu];
+        },
+
+        resize(state, dimension) {
+            state.screen = dimension;
         },
 
         log(state, message) {

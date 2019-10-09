@@ -148,10 +148,5 @@
         #sensor {
             padding: 0;
         }
-
-        #sensor .inner {
-            border-radius: unset;
-            box-shadow: unset;
-        }
     }
 </style>

@@ -112,10 +112,5 @@
         #device {
             padding: 0;
         }
-
-        #device .inner {
-            border-radius: unset;
-            box-shadow: unset;
-        }
     }
 </style>

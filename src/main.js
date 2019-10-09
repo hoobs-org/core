@@ -229,6 +229,7 @@ import App from "./app.vue";
                 }
             }
         },
+
         methods: {
             getPlugin(name) {
                 const plugin = config.platforms.filter(p => p.platform === name);
@@ -241,7 +242,7 @@ import App from "./app.vue";
             }
         }
     });
-    
+
     Vue.use(Graphing.use(Chart));
     
     const localization = Localization(config.client.locale);

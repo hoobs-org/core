@@ -20,7 +20,7 @@
         <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
-        <router-link to="/config/interface" class="item mobile-hide">{{ $t("config") }}</router-link>
+        <router-link to="/config/interface" class="item">{{ $t("config") }}</router-link>
         <router-link to="/system" class="item">{{ $t("system") }}</router-link>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator mobile-hide"></div>
@@ -50,7 +50,7 @@
         <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
-        <router-link to="/config/interface" class="item mobile-hide">{{ $t("config") }}</router-link>
+        <router-link to="/config/interface" class="item">{{ $t("config") }}</router-link>
         <router-link to="/system" class="item">{{ $t("system") }}</router-link>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
@@ -207,11 +207,12 @@
             position: absolute;
             top: 0;
             right: 0;
+            padding: 57px 0 0 0;
             background: var(--background);
             box-shadow: unset;
             width: 100%;
             height: 100%;
-            z-index: 300;
+            z-index: 150;
         }
 
         .menu-cancel {

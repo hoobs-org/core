@@ -236,6 +236,10 @@
             padding: 0;
         }
 
+        #control .title {
+            margin: 15px 0 0 0;
+        }
+
         #control .inner {
             border-radius: unset;
             box-shadow: unset;

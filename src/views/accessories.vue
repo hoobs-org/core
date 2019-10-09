@@ -13,6 +13,18 @@
         <div v-if="empty" class="content">
             <div class="empty">{{ $t("no_accessories") }}</div>
         </div>
+        <div v-else-if="screen.width <= 815" class="content">
+            <div :id="room.name.toLowerCase().replace(/ /gi, '-')" v-for="(room, index) in accessories.rooms" :key="index" class="room-layout">
+                <div v-if="room.accessories.length > 0">
+                    <h2>{{ room.name }}</h2>
+                    <div class="accessory-tiles">
+                        <div class="accessory" v-for="(accessory, index) in room.accessories" :key="index">
+                            <component :is="getComponent(accessory)" v-model="room.accessories[index]" @change="skip = true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div v-else class="content">
             <div v-if="current !== undefined" class="room-layout">
                 <h2>{{ accessories.rooms[current].name }}</h2>
@@ -84,6 +96,10 @@
         computed: {
             user() {
                 return this.$store.state.user;
+            },
+
+            screen() {
+                return this.$store.state.screen;
             },
 
             running() {
@@ -313,13 +329,14 @@
         }
 
         #accessories .content .accessory-tiles .accessory {
-            margin: 10px;
+            margin: 7px;
             width: 100%;
-            padding: 10px 0 0 0;
+            height: auto;
+            padding: 0;
             border-radius: 3px;
             display: flex;
             justify-content: space-around;
-            box-shadow: var(--elevation-small);
+            box-shadow: unset;
         }
     }
 </style>
