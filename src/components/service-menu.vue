@@ -20,7 +20,7 @@
         <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
-        <router-link to="/config" class="item">{{ $t("config") }}</router-link>
+        <router-link to="/config/interface" class="item mobile-hide">{{ $t("config") }}</router-link>
         <router-link to="/system" class="item">{{ $t("system") }}</router-link>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator mobile-hide"></div>
@@ -50,7 +50,7 @@
         <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
-        <router-link to="/config" class="item">{{ $t("config") }}</router-link>
+        <router-link to="/config/interface" class="item mobile-hide">{{ $t("config") }}</router-link>
         <router-link to="/system" class="item">{{ $t("system") }}</router-link>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>

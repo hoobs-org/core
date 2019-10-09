@@ -35,11 +35,11 @@
         <div v-if="loaded" class="layout">
             <div v-if="user" class="nav">
                 <div class="routes">
-                    <div class="action-link" v-on:click.stop="toggle('nav')">
+                    <div class="action-link mobile-hide" v-on:click.stop="toggle('nav')">
                         <span v-if="visible['nav']" class="icon">chevron_left</span>
                         <span v-else class="icon">chevron_right</span>
                     </div>
-                    <div class="action-seperator">
+                    <div class="action-seperator mobile-hide">
                         <div></div>
                     </div>
                     <router-link :to="defaultRoute === 'status' ? '/' : '/status'" @click.native="hide('nav')">
