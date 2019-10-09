@@ -6,6 +6,7 @@ schema
 src
 .gitignore
 .npmignore
-.npmpack-test
+BUILDING.md
 postcss.config.js
+TESTING.md
 vue.config.js
