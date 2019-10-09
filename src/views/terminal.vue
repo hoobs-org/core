@@ -90,7 +90,7 @@
                 url = url.replace("http://", "ws://");
                 url = url.replace("https://", "wss://");
 
-                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "shell" : "/shell"}`);
+                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "shell" : "/shell"}?t=${new Date().getTime()}`);
 
                 this.socket.onopen = () => {
                     this.term.attach(this.socket);

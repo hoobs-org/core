@@ -258,7 +258,7 @@
                 url = url.replace("http://", "ws://");
                 url = url.replace("https://", "wss://");
 
-                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "monitor" : "/monitor"}`);
+                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "monitor" : "/monitor"}?t=${new Date().getTime()}`);
 
                 this.socket.onmessage = (message) => {
                     message = JSON.parse(message.data);
