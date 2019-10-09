@@ -95,10 +95,14 @@ export default new Vuex.Store({
         },
 
         log(state, message) {
-            state.messages.push(message)
+            if (message === "{CLEAR}") {
+                state.messages = [];
+            } else {
+                state.messages.push(message)
 
-            while (state.messages.length > 1024) {
-                state.messages.shift();
+                while (state.messages.length > 1024) {
+                    state.messages.shift();
+                }
             }
         },
 
