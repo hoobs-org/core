@@ -3,7 +3,7 @@
         <div class="info">
             <div class="room-list">
                 <div v-for="(room, index) in accessories.rooms" :key="index">
-                    <a v-if="room.accessories.length > 0" class="room-link" :href="`#${room.name.toLowerCase().replace(/ /gi, '-')}`">{{ room.name }}</a>
+                    <div v-if="room.accessories.length > 0" :class="index === current ? 'room-link active' : 'room-link'" v-on:click="showRoom(index)">{{ room.name }}</div>
                 </div>
             </div>
             <div class="room-list-actions">
@@ -14,13 +14,11 @@
             <div class="empty">{{ $t("no_accessories") }}</div>
         </div>
         <div v-else class="content">
-            <div :id="room.name.toLowerCase().replace(/ /gi, '-')" v-for="(room, index) in accessories.rooms" :key="index" class="room-layout">
-                <div v-if="room.accessories.length > 0">
-                    <h2>{{ room.name }}</h2>
-                    <div class="accessory-tiles">
-                        <div class="accessory" v-for="(accessory, index) in room.accessories" :key="index">
-                            <component :is="getComponent(accessory)" v-model="room.accessories[index]" @change="skip = true" />
-                        </div>
+            <div v-if="current !== undefined" class="room-layout">
+                <h2>{{ accessories.rooms[current].name }}</h2>
+                <div class="accessory-tiles">
+                    <div class="accessory" v-for="(accessory, index) in accessories.rooms[current].accessories" :key="index">
+                        <component :is="getComponent(accessory)" v-model="accessories.rooms[current].accessories[index]" @change="skip = true" />
                     </div>
                 </div>
             </div>
@@ -50,6 +48,7 @@
 
     export default {
         name: "accessories",
+
         components: {
             "switch-control": SwitchControl,
             "dimmer-control": DimmerControl,
@@ -72,6 +71,7 @@
         data() {
             return {
                 skip: false,
+                current: undefined,
                 interval: null,
                 empty: false,
                 pollingSeconds: 15,
@@ -106,6 +106,7 @@
                 }, this.pollingSeconds * 1000);
             }
 
+            this.showRoom(0);
             this.heartbeat();
         },
 
@@ -126,6 +127,20 @@
                     }
                 } else {
                     this.skip = false;
+                }
+            },
+
+            showRoom(index) {
+                if (!this.empty) {
+                    if (index < 0) {
+                        index = 0;
+                    }
+
+                    if (index >= this.accessories.rooms.length) {
+                        index = this.accessories.rooms.length - 1;
+                    }
+
+                    this.current = index;
                 }
             },
 
@@ -221,6 +236,11 @@
 
     #accessories .info .room-link:hover {
         color: var(--text-dark);
+    }
+
+    #accessories .info .active {
+        font-weight: bold;
+        color: var(--title-text) !important;
     }
 
     #accessories .info .room-list {

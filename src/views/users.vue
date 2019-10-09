@@ -3,7 +3,7 @@
         <div v-if="loaded" class="info">
             <div class="user-list">
                 <div v-for="(item, index) in users" :key="index">
-                    <div v-if="user.admin || (!user.admin && !item.admin)" class="user-link" @click="showUser(index)">{{ item.name || item.username }}</div>
+                    <div v-if="user.admin || (!user.admin && !item.admin)" :class="index === current ? 'user-link active' : 'user-link'" @click="showUser(index)">{{ item.name || item.username }}</div>
                 </div>
             </div>
             <div class="user-list-actions">
@@ -292,6 +292,11 @@
 
     #users .info .user-link:hover {
         color: var(--text-dark);
+    }
+
+    #users .info .active {
+        font-weight: bold;
+        color: var(--title-text) !important;
     }
 
     #users .content {

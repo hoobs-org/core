@@ -2,12 +2,12 @@
     <div id="layout">
         <div v-if="loaded" id="rooms" class="info">
             <div class="room-list">
-                <draggable handle=".icon" ghost-class="ghost" v-model="layout.rooms" @end="saveLayout()">
+                <draggable handle=".icon" ghost-class="ghost" v-model="layout.rooms" @end="saveLayout">
                     <div v-for="(room, index) in layout.rooms" :key="index">
-                        <div v-if="room.name !== 'Unassigned'" class="room-link" @click="showRoom(index)"><span class="icon">reorder</span> {{ room.name }}</div>
+                        <div v-if="room.name !== 'Unassigned'" :class="index === current ? 'room-link active' : 'room-link'" @click="showRoom(index)"><span class="icon">reorder</span> {{ room.name }}</div>
                     </div>
                 </draggable>
-                <div class="room-link" @click="showRoom(layout.rooms.length - 1)">{{ $t("unassigned") }}</div>
+                <div :class="layout.rooms.length - 1 === current ? 'room-link active' : 'room-link'" @click="showRoom(layout.rooms.length - 1)">{{ $t("unassigned") }}</div>
             </div>
             <div class="room-list-actions">
                 <div class="button" @click="addRoom()">{{ $t("add_room") }}</div>
@@ -399,7 +399,17 @@
                 return "unknown-device";
             },
 
-            async saveLayout() {
+            async saveLayout(event) {
+                if (event) {
+                    if (event.oldIndex === this.current) {
+                        this.showRoom(event.newIndex);
+                    } else if (event.oldIndex < this.current && event.newIndex >= this.current) {
+                        this.showRoom(this.current - 1);
+                    } else if (event.oldIndex > this.current && event.newIndex <= this.current) {
+                        this.showRoom(this.current + 1);
+                    }
+                }
+
                 const data = JSON.parse(JSON.stringify(this.layout));
                 const index = data.rooms.findIndex(r => r.name === "Unassigned");
 
@@ -477,6 +487,15 @@
 
     #layout .info .room-link:hover {
         color: var(--text-dark);
+    }
+
+    #layout .info .active {
+        font-weight: bold;
+        color: var(--title-text) !important;
+    }
+
+    #layout .info .active .icon {
+        color: var(--title-text) !important;
     }
 
     #layout .info .ghost {
