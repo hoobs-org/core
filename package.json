@@ -28,7 +28,9 @@
     "scripts": {
         "build": "vue-cli-service build",
         "prepare": "npm run build",
-        "postinstall": "bin/hoobs-upgrade"
+        "postinstall": "bin/hoobs-upgrade",
+        "pack": "npm pack && rm -f ./builds/hoobs-hoobs.tgz && mv ./hoobs-hoobs-*.tgz ./builds/hoobs-hoobs.tgz",
+        "serve": "npm run build && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && cp -r ./dist ~/.hoobs/ && cp -r ./lib ~/.hoobs/ && ./bin/hoobs"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.0.5",
