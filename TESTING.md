@@ -23,7 +23,7 @@ Now you need to push the file to your device. But first you need to check to see
 
 ```bash
 ~]% ssh hoobs@hoobs.local
-~]$ rm -f ~/hoobs-hoobs.tgz
+~]$ rm -f ~/hoobs-core.tgz
 ```
 
 Now exit your SSH session.
@@ -32,24 +32,24 @@ Now exit your SSH session.
 ~]$ exit
 ```
 
-Now push the `hoobs-hoobs.tgz` file to your device.
+Now push the `hoobs-core.tgz` file to your device.
 
 ```bash
-~]% scp ~/Downloads/hoobs-hoobs.tgz hoobs@hoobs.local:~/
+~]% scp ~/Downloads/hoobs-core.tgz hoobs@hoobs.local:~/
 ```
 
 Now SSH back in to your device. And set the permissions on the file.
 
 ```bash
 ~]% ssh hoobs@hoobs.local
-~]$ chmod 755 ~/hoobs-hoobs.tgz
+~]$ chmod 755 ~/hoobs-core.tgz
 ```
 
 ## Install
 Now you are ready to update the code.
 
 ```bash
-~]$ sudo npm install -g --unsafe-perm ~/hoobs-hoobs.tgz
+~]$ sudo npm install -g --unsafe-perm ~/hoobs-core.tgz
 ```
 
 Once the install is finished, you will need to reboot.
