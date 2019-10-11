@@ -10,7 +10,7 @@
             <div v-else-if="fieldType(field) === 'json'">
                 <div class="field">
                     <span class="title">{{ field.title || humanize(field.name) }}</span>
-                    <json-editor :name="field.name" :height="200" :index="0" :change="updateJson()" :code="getJson(field)" />
+                    <json-editor :name="field.name" :height="200" :index="0" :change="updateJson" :code="getJson(field)" />
                 </div>
             </div>
         </div>
@@ -60,11 +60,37 @@
 
                     field.name = keys[i];
 
+                    if (field.default !== undefined && this.value[field.name] === undefined) {
+                        this.value[field.name] = field.default;
+                    }
+
+                    if (field.const !== undefined) {
+                        this.value[field.name] = field.const;
+                    }
+
                     results.push(field);
                 }
 
                 return results;
             }
+        },
+
+        mounted() {
+            const keys = Object.keys(this.schema);
+
+            for (let i = 0; i < keys.length; i++) {
+                const field = this.schema[keys[i]];
+
+                if (field.default !== undefined && this.value[keys[i]] === undefined) {
+                    this.value[keys[i]] = field.default;
+                }
+
+                if (field.const !== undefined) {
+                    this.value[keys[i]] = field.const;
+                }
+            }
+
+            this.$emit("input", this.value);
         },
 
         methods: {
@@ -77,10 +103,14 @@
                     current = null;
                 }
 
-                try {
-                    this.value[name] = JSON.parse(code);
-                } catch {
-                    this.value[name] = current;
+                if (!code || (code || "").length === 0) {
+                    delete this.value[name];
+                } else {
+                    try {
+                        this.value[name] = JSON.parse(code);
+                    } catch {
+                        this.value[name] = current;
+                    }
                 }
             },
 
@@ -98,7 +128,7 @@
                 if (field && !field.readOnly && type !== "object") {
                     return "input";
                 } else if (field && !field.readOnly && type === "object" && field.properties) {
-                    if (!this.value[field.name]) {
+                    if (field.name && !this.value[field.name]) {
                         this.value[field.name] = {};
                     }
 
