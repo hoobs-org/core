@@ -101,8 +101,6 @@ const setupUserMode = function() {
     }
 
     File.copySync(join(applicaiton, "node_modules"), join(root, "node_modules"));
-    File.copySync(join(applicaiton, "dist"), join(root, "dist"));
-    File.copySync(join(applicaiton, "lib"), join(root, "lib"));
 
     if (File.existsSync(join(root, "package-lock.json"))) {
         File.unlinkSync(join(root, "package-lock.json"));
@@ -137,12 +135,15 @@ const installPackages = function(plugins) {
     });
 }
 
-if (!executing || installed.version !== executing.version) {
+if (!executing || installed.version !== executing.version || !File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
     const plugins = preparePackage();
 
     setupUserMode();
 
     installPackages(plugins).then(() => {
+        File.copySync(join(applicaiton, "dist"), join(root, "dist"));
+        File.copySync(join(applicaiton, "lib"), join(root, "lib"));
+
         require(join(root, "lib/cli"))();
     });
 } else {
