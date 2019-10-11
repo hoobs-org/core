@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="actions">
-            <router-link to="/config" class="icon">settings</router-link>
+            <router-link to="/config/interface" class="icon">settings</router-link>
         </div>
     </div>
 </template>
