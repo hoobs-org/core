@@ -319,7 +319,7 @@
                 this.closeAbout();
 
                 this.$router.push({
-                    path: "/system"
+                    path: "/system/software"
                 });
             },
 

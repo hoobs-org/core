@@ -4,7 +4,7 @@
             <tbody v-if="running">
                 <tr v-for="(value, name) in info" :key="name">
                     <td>{{ $t(name) }}</td>
-                    <td v-if="name === `${$system}_version`">{{ value }}&nbsp;&nbsp;&nbsp;<router-link to="/system">{{ $t("check_for_updates") }}</router-link></td>
+                    <td v-if="name === `${$system}_version`">{{ value }}&nbsp;&nbsp;&nbsp;<router-link to="/system/software">{{ $t("check_for_updates") }}</router-link></td>
                     <td v-else>{{ value }}</td>
                 </tr>
             </tbody>

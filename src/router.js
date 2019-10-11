@@ -17,13 +17,14 @@ const getRoutes = (defaultRoute) => {
         name: "help",
         component: () => import("./views/help.vue")
     },{
-        path: "/system",
-        name: "system",
-        component: () => import("./views/system.vue")
-    },{
         path: "/system/terminal",
         name: "terminal",
         component: () => import("./views/terminal.vue")
+    },{
+        path: "/system/:section",
+        name: "system",
+        component: () => import("./views/system.vue"),
+        props: true
     },{
         path: "/profile",
         name: "profile",

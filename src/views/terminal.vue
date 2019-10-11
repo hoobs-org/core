@@ -1,11 +1,11 @@
 <template>
     <div v-if="user.admin" id="terminal">
-        <div class="info">
-            <router-link to="/system">{{ $t("software") }}</router-link>
+        <div v-if="info" class="info">
+            <router-link to="/system/software">{{ $t("software") }}</router-link>
             <div v-for="(section, title) in info" :key="title">
-                <router-link :to="`/system#h-${title}`">{{ translate(title) }}</router-link>
+                <router-link :to="`/system/${title}`">{{ translate(title) }}</router-link>
             </div>
-            <router-link to="/system#k-filesystem">{{ translate("file_system") }}</router-link>
+            <router-link to="/system/filesystem">{{ translate("file_system") }}</router-link>
             <router-link to="/system/terminal" class="active">{{ $t("terminal") }}</router-link>
         </div>
         <div class="content" ref="console">

@@ -1,16 +1,16 @@
 <template>
     <div id="system">
-        <div class="info">
-            <a href="#software">{{ $t("software") }}</a>
-            <div v-for="(section, title) in info" :key="title">
-                <a :href="`#h-${title}`">{{ translate(title) }}</a>
+        <div v-if="info" class="info">
+            <router-link to="/system/software" :class="section === 'software' ? 'active' : ''">{{ $t("software") }}</router-link>
+            <div v-for="(item, title) in info" :key="title">
+                <router-link :to="`/system/${title}`" :class="section === title ? 'active' : ''">{{ translate(title) }}</router-link>
             </div>
-            <a href="#k-filesystem">{{ translate("file_system") }}</a>
+            <router-link to="/system/filesystem" :class="section === 'filesystem' ? 'active' : ''">{{ translate("file_system") }}</router-link>
             <router-link v-if="user.admin" to="/system/terminal" class="mobile-hide">{{ $t("terminal") }}</router-link>
         </div>
-        <div ref="content" class="content">
-            <div class="system-content">
-                <h2 id="software">{{ $t("software") }}</h2>
+        <div v-if="info" ref="content" class="content">
+            <div v-if="section === 'software' || screen.width <= 815" class="system-content">
+                <h2>{{ $t("software") }}</h2>
                 <div v-if="system === 'hoobs'" class="update-card">
                     <b>HOOBS Core</b>
                     <span v-if="status">Current Version: {{ status[`${system}_version`] }}</span>
@@ -39,20 +39,30 @@
                         <b>{{ $t("up_to_date") }}</b>
                     </div>
                 </div>
+                <table>
+                    <tbody>
+                        <tr v-for="(value, name) in status" :key="name">
+                            <td style="min-width: 250px;">{{ translate(name) }}</td>
+                            <td style="width: 100%;">{{ value }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div v-if="info" class="system-content">
-                <div v-for="(section, title) in info" :key="title">
-                    <h2 :id="`h-${title}`">{{ translate(title) }}</h2>
+            <div v-for="(item, title) in info" :key="title">
+                <div v-if="section === title || screen.width <= 815" class="system-content">
+                    <h2>{{ translate(title) }}</h2>
                     <table>
                         <tbody>
-                            <tr v-for="(value, name) in section" :key="name">
+                            <tr v-for="(value, name) in item" :key="name">
                                 <td style="min-width: 250px;">{{ translate(name) }}</td>
                                 <td style="width: 100%;">{{ value }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <h2 id="k-filesystem">{{ translate("file_system") }}</h2>
+            </div>
+            <div v-if="section === 'filesystem' || screen.width <= 815" class="system-content">
+                <h2>{{ translate("file_system") }}</h2>
                 <table>
                     <tbody>
                         <tr v-for="(item, index) in filesystem" :key="index">
@@ -81,6 +91,10 @@
             "loading-marquee": Marquee
         },
 
+        props: {
+            section: String
+        },
+
         computed: {
             user() {
                 return this.$store.state.user;
@@ -88,6 +102,10 @@
 
             system() {
                 return this.$system;
+            },
+
+            screen() {
+                return this.$store.state.screen;
             }
         },
 
@@ -178,6 +196,11 @@
         color: var(--text-dark);
     }
 
+    #system .info .active {
+        font-weight: bold;
+        color: var(--title-text) !important;
+    }
+
     #system .content {
         flex: 1;
         padding: 20px;
@@ -189,10 +212,6 @@
     #system .system-content {
         width: 100%;
         max-width: 780px;
-        margin: 20px 0 0 0;
-    }
-
-    #system .system-content:first-child {
         margin: 0;
     }
 
@@ -204,6 +223,7 @@
         box-shadow: var(--elevation-small);
         border-radius: 3px;
         color: var(--text) !important;
+        margin: 10px 0;
     }
 
     #system .update-card .update-actions {

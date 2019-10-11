@@ -21,7 +21,7 @@
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
         <router-link to="/config/interface" class="item">{{ $t("config") }}</router-link>
-        <router-link to="/system" class="item">{{ $t("system") }}</router-link>
+        <router-link to="/system/software" class="item">{{ $t("system") }}</router-link>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator mobile-hide"></div>
         <router-link to="/system/terminal" class="item mobile-hide">{{ $t("terminal") }}</router-link>
@@ -51,7 +51,7 @@
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
         <router-link to="/config/interface" class="item">{{ $t("config") }}</router-link>
-        <router-link to="/system" class="item">{{ $t("system") }}</router-link>
+        <router-link to="/system/software" class="item">{{ $t("system") }}</router-link>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
         <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
