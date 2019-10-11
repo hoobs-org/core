@@ -4,6 +4,7 @@
         "accessories": "Accessories",
         "accessories_config_message": "Accessories are defined by the plugins you have installed. Refer to the plugin's documentation for further instructions. Accessories are intended to define a single device.",
         "accessories_message": "Add and order the accessories that belong to this room.",
+        "accessory": "Accessory",
         "accessory_invalid_json": "Invalid JSON in an accessory.",
         "add": "Add",
         "add_accessories": "Add Accessories",
@@ -313,7 +314,6 @@
         "welcome_message": "Welcome to Homebridge.",
         "welcome_message_hoobs": "Welcome to HOOBS.",
         "windy": "Windy",
-        "yes": "Yes",
-        "accessory": "Accessory"
+        "yes": "Yes"
     }
 }
