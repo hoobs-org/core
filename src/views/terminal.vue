@@ -6,6 +6,7 @@
                 <router-link :to="`/system/${title}`">{{ translate(title) }}</router-link>
             </div>
             <router-link to="/system/filesystem">{{ translate("file_system") }}</router-link>
+            <router-link v-if="temp && (temp || {}).main >= 0" to="/system/temp">{{ translate("temperature") }}</router-link>
             <router-link to="/system/terminal" class="active">{{ $t("terminal") }}</router-link>
         </div>
         <div class="content" ref="console">
@@ -56,6 +57,7 @@
         },
 
         async mounted() {
+            this.temp = await this.api.get("/system/temp");
             this.info = await this.api.get("/system");
 
             Terminal.applyAddon(attach);

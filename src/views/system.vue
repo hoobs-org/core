@@ -6,6 +6,7 @@
                 <router-link :to="`/system/${title}`" :class="section === title ? 'active' : ''">{{ translate(title) }}</router-link>
             </div>
             <router-link to="/system/filesystem" :class="section === 'filesystem' ? 'active' : ''">{{ translate("file_system") }}</router-link>
+            <router-link v-if="temp && (temp || {}).main >= 0" to="/system/temp" :class="section === 'temp' ? 'active' : ''">{{ translate("temperature") }}</router-link>
             <router-link v-if="user.admin" to="/system/terminal" class="mobile-hide">{{ $t("terminal") }}</router-link>
         </div>
         <div v-if="info" ref="content" class="content">
@@ -72,6 +73,21 @@
                     </tbody>
                 </table>
             </div>
+            <div v-if="temp && (temp || {}).main >= 0 && (section === 'temp' || screen.width <= 815)" class="system-content">
+                <h2>{{ translate("temperature") }}</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="min-width: 250px;">{{ $t("current") }}</td>
+                            <td style="width: 100%;">{{ getTemp(temp.main) }}°</td>
+                        </tr>
+                        <tr>
+                            <td style="min-width: 250px;">{{ $t("max") }}</td>
+                            <td style="width: 100%;">{{ getTemp(temp.max) }}°</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </template>
@@ -114,15 +130,17 @@
                 info: null,
                 status: null,
                 filesystem: null,
+                temp: null,
                 checking: true,
                 updates: []
             }
         },
 
         async mounted() {
-            this.info = await this.api.get("/system");
-            this.status = await this.api.get("/status");
             this.filesystem = await this.api.get("/system/filesystem");
+            this.temp = await this.api.get("/system/temp");
+            this.status = await this.api.get("/status");
+            this.info = await this.api.get("/system");
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
                 if (document.querySelector(window.location.hash)) {
@@ -163,6 +181,14 @@
                 await this.api.post("/service/stop");
 
                 this.api.put("/update");
+            },
+
+            getTemp(value) {
+                if (this.$client.temp_units && this.$client.temp_units === "celsius") {
+                    return Math.round(value);
+                }
+
+                return Math.round((value * (9/5)) + 32);
             }
         }
     }
