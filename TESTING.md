@@ -52,6 +52,13 @@ Now you are ready to update the code.
 ~]$ sudo npm install -g --unsafe-perm ~/hoobs-core.tgz
 ```
 
+If you are installing an updated version with the same version number, you will need to remove the `dist` and `lib` folders.
+
+```bash
+~]% rm -fR ~/.hoobs/dist
+~]% rm -fR ~/.hoobs/lib
+```
+
 Once the install is finished, you will need to reboot.
 
 ```bash
@@ -59,6 +66,13 @@ Once the install is finished, you will need to reboot.
 ```
 
 > Note: I know there is a reboot command, but not all operating systems have it. Plus this is what the upgrade process does, so it is best to use the same commands.
+
+Or you can restart the HOBOS service.
+
+```bash
+~]% sudo systemctrl stop hoobs
+~]% sudo systemctrl start hoobs
+```
 
 ## Test the 2.1.1 Upgrade Process
 We also can test upgrading to 3.0.0 from 2.1.1. You will need to upload more NPM packages. This also requires a modified version of UI-X.
