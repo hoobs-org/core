@@ -15,10 +15,13 @@
                             <path class="logo-svg" d="M13.5,11c-0.8,0-1.5,0.7-1.5,1.5c0,0.8,0.7,1.5,1.5,1.5c0.8,0,1.5-0.7,1.5-1.5C15.1,11.6,14.4,11,13.5,11z" />
                         </svg>
                     </div>
-                    {{ $t("welcome") }}
+                    {{ $t("welcome_message_hoobs") }}
                 </h2>
-                <p>
-                    {{ $t(`welcome_message_${system}`) }} {{ $t("setup_admin_account")}}
+                <p v-if="system === 'hoobs'">
+                    {{ $t("setup_admin_account")}}
+                </p>
+                <p v-if="system === 'rocket'">
+                    {{ $t("setup_user_account")}}
                 </p>
                 <div v-if="errors.length > 0" class="errors">
                     <span v-for="(error, index) in errors" :key="index">{{ error }}</span>
@@ -67,7 +70,7 @@
                         </div>
                     </div>
                     <div class="remember">
-                        <checkbox id="remember" v-model="remember"> <label for="remember">{{ $t("remember_me") }}</label>
+                        <checkbox id="remember" v-model="remember" /> <label for="remember">{{ $t("remember_me") }}</label>
                     </div>
                 </form>
                 <div class="actions">

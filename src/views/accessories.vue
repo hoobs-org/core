@@ -236,7 +236,7 @@
         width: 210px;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: flex-start;
         overflow: auto;
     }
 
