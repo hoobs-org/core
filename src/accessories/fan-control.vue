@@ -1,10 +1,9 @@
 <template>
     <div id="control">
-        <div v-if="lock" class="name name-edit" v-show="edit === false" v-on:dblclick="mode()">{{ value.alias || value.name || value.service_name }}<span class="icon" v-on:click="mode()">edit</span></div>
-        <div v-else class="name">{{ value.alias || value.name || value.service_name }}</div>
-        <div v-if="lock" class="name" v-show="edit === true">
+        <div v-if="lock" class="name">
             <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
         </div>
+        <div v-else class="name">{{ value.alias || value.name || value.service_name }}</div>
         <div v-if="lock" class="lock"></div>
     </div>
 </template>
@@ -21,25 +20,8 @@
             }
         },
 
-        data() {
-            return {
-                edit: false
-            }
-        },
-
         methods: {
-            mode() {
-                if (this.lock) {
-                    this.edit = true;
-
-                    setTimeout(() => {
-                        this.$refs.field.focus();
-                    }, 10);
-                }
-            },
-
             rename() {
-                this.edit = false;
                 this.$emit("change", this.value);
             }
         }
@@ -72,24 +54,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
         z-index: 20;
-    }
-
-    #control .name-edit {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        align-content: center;
-        box-sizing: border-box;
-        border-top: 1px var(--border) solid;
-        padding: 0 20px 0 20px;
-        z-index: 20;
-    }
-
-    #control .name-edit .icon {
-        font-size: 14px;
-        margin: 0 0 0 5px;
-        cursor: pointer;
     }
 
     #control .name input {
