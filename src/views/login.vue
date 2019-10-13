@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <div class="remember">
-                        <checkbox id="remember" v-model="remember" /> <label for="remember">{{ $t("remember_me") }}</label>
+                        <checkbox id="remember" v-model="remember"> <label for="remember">{{ $t("remember_me") }}</label></checkbox>
                     </div>
                 </form>
                 <div class="actions">

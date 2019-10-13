@@ -1,6 +1,6 @@
 <template>
     <div id="accessories">
-        <div class="info">
+        <div v-if="accessories.rooms.length > 0" class="info">
             <div class="room-list">
                 <div v-for="(room, index) in accessories.rooms" :key="index">
                     <div v-if="room.accessories.length > 0" :class="index === current ? 'room-link active' : 'room-link'" v-on:click="showRoom(index)">{{ room.name }}</div>
