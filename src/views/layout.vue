@@ -50,11 +50,11 @@
                         {{ $t("available_accessories_message") }}
                     </p>
                     <div v-if="add" class="available-acessories">
-                        <div v-for="(room, index) in available" :key="index">
+                        <div v-for="(room, ridx) in available" :key="ridx">
                             <div v-if="room.name !== 'Unassigned' && room.name !== layout.rooms[current].name" class="available-title">{{ room.name }}</div>
-                            <div v-for="(accessory, index) in room.accessories" :key="index">
+                            <div v-for="(accessory, aidx) in room.accessories" :key="aidx">
                                 <div v-if="layout.rooms[current].accessories.indexOf(accessory.aid) < 0" class="available-accessory">
-                                    <checkbox :id="`add-accessory-${index}`" :value="accessory.aid" v-model="selected"> <label :for="`add-accessory-${index}`">{{ accessory.hidden ? `(${$t("hidden")}) ` : "" }}{{ accessory.alias || accessory.name || accessory.service_name }}</label></checkbox>
+                                    <checkbox :id="`add-accessory-${ridx}-${aidx}`" :value="accessory.aid" v-model="selected"> <label :for="`add-accessory-${ridx}-${aidx}`">{{ accessory.hidden ? `(${$t("hidden")}) ` : "" }}{{ accessory.alias || accessory.name || accessory.service_name }}</label></checkbox>
                                 </div>
                             </div>
                         </div>

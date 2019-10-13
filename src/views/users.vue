@@ -31,7 +31,7 @@
                 <p v-if="user.admin && id !== user.id">
                     {{ $t("permissions_message") }}
                 </p>
-                <select-field v-if="user.admin && id !== user.id" :name="$t('user_type')" :options="options" v-model="admin" :required="true" />
+                <checkbox v-if="user.admin && id !== user.id" id="admin" v-model="admin"> <label for="admin">{{ $t("terminal_access") }}</label></checkbox>
                 <h2>{{ $t("security") }}</h2>
                 <p>
                     {{ $t("security_message") }}
@@ -51,6 +51,7 @@
 </template>
 
 <script>
+    import Checkbox from "vue-material-checkbox";
     import TextField from "@/components/text-field.vue";
     import PasswordField from "@/components/password-field.vue";
     import SelectField from "@/components/select-field.vue";
@@ -59,6 +60,7 @@
         name: "users",
 
         components: {
+            "checkbox": Checkbox,
             "text-field": TextField,
             "password-field": PasswordField,
             "select-field": SelectField
@@ -77,14 +79,7 @@
                 confirm: false,
                 current: undefined,
                 identityErrors: [],
-                passwordErrors: [],
-                options: [{
-                    text: this.$t("user"),
-                    value: false
-                },{
-                    text: this.$t("administrator"),
-                    value: true
-                }]
+                passwordErrors: []
             }
         },
 

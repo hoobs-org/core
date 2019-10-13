@@ -559,6 +559,12 @@
 
     .m-chckbox--container {
         margin: 0 !important;
+        height: 28px !important;
+        min-height: 28px !important;
+    }
+
+    .m-chckbox--container label {
+        user-select: none;
     }
 
     .m-chckbox--container .m-chckbox--group {
