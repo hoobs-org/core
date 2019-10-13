@@ -109,7 +109,7 @@
     }
 
     #plugins .info {
-        width: 210px;
+        width: 230px;
         padding: 20px 0 20px 20px;
     }
 

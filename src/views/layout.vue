@@ -10,6 +10,7 @@
                 <div :class="layout.rooms.length - 1 === current ? 'room-link active' : 'room-link'" @click="showRoom(layout.rooms.length - 1)">{{ $t("unassigned") }}</div>
             </div>
             <div class="room-list-actions">
+                <router-link :to="defaultRoute === 'accessories' ? '/' : '/accessories'" class="button button-primary">{{ $t("done") }}</router-link>
                 <div class="button" @click="addRoom()">{{ $t("add_room") }}</div>
             </div>
         </div>
@@ -154,6 +155,10 @@
         computed: {
             user() {
                 return this.$store.state.user;
+            },
+
+            defaultRoute() {
+                return this.$client.default_route || "status";
             }
         },
 
@@ -460,7 +465,7 @@
     }
 
     #layout .info {
-        width: 210px;
+        width: 250px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;

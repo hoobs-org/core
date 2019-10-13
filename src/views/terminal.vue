@@ -290,7 +290,7 @@
     }
 
     #terminal .info {
-        width: 210px;
+        width: 230px;
         padding: 20px;
         background: var(--background-dark);
     }

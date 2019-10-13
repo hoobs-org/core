@@ -67,6 +67,7 @@
         "disconnect": "Disconnect",
         "dns_cache_stale": "iOS DNS cache has gone stale or gotten misconfigured. Try turning airplane mode on and back off to flush the DNS cache.",
         "donate": "Donate",
+        "done": "Done",
         "download": "Download",
         "downtime": "Downtime",
         "drizzle": "Drizzle",
