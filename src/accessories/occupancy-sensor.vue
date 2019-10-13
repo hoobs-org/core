@@ -11,8 +11,9 @@
                     </div>
                 </div>
                 <div :class="color">{{ sensorState }}</div>
-                <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
-                <div class="name" v-show="edit === true">
+                <div v-if="lock" class="name name-edit" v-show="edit === false" v-on:dblclick="mode()">{{ value.alias || value.name || value.service_name }}<span class="icon" v-on:click="mode()">edit</span></div>
+                <div v-else class="name">{{ value.alias || value.name || value.service_name }}</div>
+                <div v-if="lock" class="name" v-show="edit === true">
                     <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
                 </div>
             </div>
@@ -110,6 +111,22 @@
         position: relative;
         text-overflow: ellipsis;
         z-index: 20;
+    }
+
+    #sensor .name-edit {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        align-content: center;
+        border-top: 1px var(--border) solid;
+        z-index: 20;
+    }
+
+    #sensor .name-edit .icon {
+        font-size: 14px;
+        margin: 0 0 0 5px;
+        cursor: pointer;
     }
 
     #sensor .name input {

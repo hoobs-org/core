@@ -14,8 +14,9 @@
                 <path style="fill: var(--text-light); cursor: pointer;" d="M48.1,88.4l1.9-2.1l1.9,2.1l0.6-0.7L50,84.9l-2.4,2.8L48.1,88.4z" />
             </g>
         </svg>
-        <div class="name" v-show="edit === false" @dblclick="mode()">{{ value.alias || value.name || value.service_name }}</div>
-        <div class="name" v-show="edit === true">
+        <div v-if="lock" class="name name-edit" v-show="edit === false" v-on:dblclick="mode()">{{ value.alias || value.name || value.service_name }}<span class="icon" v-on:click="mode()">edit</span></div>
+        <div v-else class="name">{{ value.alias || value.name || value.service_name }}</div>
+        <div v-if="lock" class="name" v-show="edit === true">
             <input type="text" ref="field" v-model="value.alias" v-on:blur="rename()" @keyup.enter="rename()" :placeholder="value.name || value.service_name" />
         </div>
         <div v-if="lock" class="lock"></div>
@@ -104,6 +105,24 @@
         overflow: hidden;
         text-overflow: ellipsis;
         z-index: 20;
+    }
+
+    #control .name-edit {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        align-content: center;
+        box-sizing: border-box;
+        border-top: 1px var(--border) solid;
+        padding: 0 20px 0 20px;
+        z-index: 20;
+    }
+
+    #control .name-edit .icon {
+        font-size: 14px;
+        margin: 0 0 0 5px;
+        cursor: pointer;
     }
 
     #control .name input {
