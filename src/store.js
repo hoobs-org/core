@@ -51,6 +51,7 @@ export default new Vuex.Store({
                 [16, -1], [17, -1], [18, -1], [19, -1]
             ]
         },
+        temp: -1,
         menus: {
             nav: false,
             service: false,
@@ -172,6 +173,7 @@ export default new Vuex.Store({
                             state.memory.history[i][0] = `${i}`;
                         }
 
+                        state.temp = payload.data.temp.main;
                         state.cpu.history[state.cpu.history.length - 1] = [state.cpu.history.length - 1, state.cpu.used];
                         state.memory.history[state.memory.history.length - 1] = [state.memory.history.length - 1, state.memory.load];
                     }
