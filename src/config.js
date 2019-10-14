@@ -13,7 +13,7 @@ export default class Config {
     }
 
     get system() {
-        return (this._system || "hoobs").toLowerCase();
+        return (this._system || "hoobs").split("-")[0].toLowerCase();
     }
 
     get server() {
