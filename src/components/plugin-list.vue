@@ -125,7 +125,16 @@
             },
 
             humanize(string) {
-                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").trim()));
+                string = Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+
+                string = string.replace(/smart things/gi, "SmartThings");
+                string = string.replace(/smartthings/gi, "SmartThings");
+                string = string.replace(/my q/gi, "myQ");
+                string = string.replace(/myq/gi, "myQ");
+                string = string.replace(/rgb/gi, "RGB");
+                string = string.replace(/ffmpeg/gi, "FFMPEG");
+
+                return string;
             },
 
             async check() {

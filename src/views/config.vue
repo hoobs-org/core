@@ -405,6 +405,8 @@
                 string = string.replace(/smartthings/gi, "SmartThings");
                 string = string.replace(/my q/gi, "myQ");
                 string = string.replace(/myq/gi, "myQ");
+                string = string.replace(/rgb/gi, "RGB");
+                string = string.replace(/ffmpeg/gi, "FFMPEG");
 
                 return string;
             },
