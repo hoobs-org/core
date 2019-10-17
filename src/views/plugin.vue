@@ -246,6 +246,8 @@
 
                     if (results.success) {
                         this.oninstall(results.details.type, results.details.name, results.details.alias, results.plugin);
+                    } else {
+                        this.onuninstall();
                     }
                 }
             },

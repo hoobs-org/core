@@ -185,6 +185,8 @@
 
                     if (results.success && this.oninstall) {
                         this.oninstall(results.details.type, results.details.name, results.details.alias, results.plugin);
+                    } else if (this.onuninstall) {
+                        this.onuninstall();
                     }
                 }
             },
