@@ -18,6 +18,7 @@ We’re a small team from around the world who are passionate about making the h
 ## Documentation
 * [**Welcome**](https://github.com/hoobs-org/HOOBS/wiki)  
 * [**Community**](https://github.com/hoobs-org/HOOBS/wiki/1.0-Community)
+* [**News**](https://github.com/hoobs-org/HOOBS/wiki/1.1-News)  
 * [**Getting Started**](https://github.com/hoobs-org/HOOBS/wiki/2.0-Getting-Started)
   * [**HOOBS Box**](https://github.com/hoobs-org/HOOBS/wiki/2.1-HOOBS-Box)
   * [**HOOBS SD Card**](https://github.com/hoobs-org/HOOBS/wiki/2.2-HOOBS-SD-Card)
