@@ -45,7 +45,6 @@ We’re a small team from around the world who are passionate about making the h
   * [**Architecture**](https://github.com/hoobs-org/HOOBS/wiki/6.2-Architecture)
   * [**API Reference**](https://github.com/hoobs-org/HOOBS/wiki/6.3-API-Reference)
   * [**Developing Plugins**](https://github.com/hoobs-org/HOOBS/wiki/6.4-Developing-Plugins)
-  * [**Interface Plugins**](https://github.com/hoobs-org/HOOBS/wiki/6.5-Interface-Plugins)
 * [**Legal**](https://github.com/hoobs-org/HOOBS/wiki/7.0-Legal)
   * [**Terms & Conditions**](https://github.com/hoobs-org/HOOBS/wiki/7.1-Terms-and-Conditions)
   * [**Shipping & Taxes**](https://github.com/hoobs-org/HOOBS/wiki/7.2-Shipping-and-Taxes)
