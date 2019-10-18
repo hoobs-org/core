@@ -128,22 +128,46 @@
             },
 
             configNav(url) {
-                let domain = this.$instance;
+                const regex = /\{\{(.*?)\}\}/mg;
 
-                if (domain === "") {
-                    domain = `${window.location}`;
+                let match;
+                let results = url;
+
+                while ((match = regex.exec(url)) !== null) {
+                    if (match.index === regex.lastIndex) {
+                        regex.lastIndex++;
+                    }
+
+                    match.forEach((match, index) => {
+                        if (index === 0) {
+                            switch (match) {
+                                case "{{domain}}":
+                                    let domain = this.$instance;
+
+                                    if (domain === "") {
+                                        domain = `${window.location}`;
+                                    }
+
+                                    domain = domain.split("/")[2];
+                                    domain = domain.split(":")[0];
+
+                                    results = results.replace(/{{domain}}/gi, domain);
+                                    break;
+                                
+                                default:
+                                    const key = match.replace("{{", "").replace("}}", "");
+
+                                    if (this.value[key]) {
+                                        results = results.replace(new RegExp(match, "gi"), this.value[key]);
+                                    }
+
+                                    break;
+                            }
+                        }
+                    });
                 }
 
-                domain = domain.split("/")[2];
-                domain = domain.split(":")[0];
-
-                url = url.replace(/{{domain}}/gi, domain);
-
-                if (this.value.port) {
-                    url = url.replace(/{{port}}/gi, this.value.port);
-                }
-
-                window.open(url);
+                window.open(results);
             },
 
             fieldType(field) {
