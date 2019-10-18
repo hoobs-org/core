@@ -76,7 +76,8 @@
                         {{ $t("backup_message") }}
                     </p>
                     <div class="action">
-                        <div v-on:click.stop="backup()" class="button">{{ $t("download") }}</div>
+                        <div v-on:click.stop="backup()" class="button">{{ $t("config") }}</div>
+                        <div v-on:click.stop="logs()" class="button">{{ $t("log") }}</div>
                     </div>
                 </div>
                 <div class="mobile-show">
@@ -367,6 +368,20 @@
 
                     document.body.removeChild(element);
                 }
+            },
+
+            logs() {
+                const element = document.createElement("a");
+
+                element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(this.$store.state.messages.join("\r\n"))}`);
+                element.setAttribute("download", "logs.txt");
+
+                element.style.display = "none";
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
             },
 
             configCode() {

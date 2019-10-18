@@ -17,14 +17,22 @@
             <h2 v-if="system === 'hoobs'">{{ $t("software") }}</h2>
             <p v-if="system === 'hoobs'">{{ $t("stay_up_to_date") }}</p>
             <div v-if="system === 'hoobs'" class="help-actions">
-                <router-link to="/system" class="button button-primary">{{ $t("system") }}</router-link>
+                <router-link to="/system" class="button">{{ $t("system") }}</router-link>
+            </div>
+            <h2>{{ $t("backup") }}</h2>
+            <p>
+                {{ $t("backup_message") }}
+            </p>
+            <div class="help-actions">
+                <div v-on:click.stop="backup()" class="button">{{ $t("config") }}</div>
+                <div v-on:click.stop="logs()" class="button">{{ $t("log") }}</div>
             </div>
             <h2>{{ $t("common_issues") }}</h2>
             <p>
                 <b>{{ $t("homekit_cant_find") }}</b> {{ $t("homebridge_service_not_running") }}
             </p>
             <div class="help-actions">
-                <router-link :to="$client.default_route || 'status' === 'status' ? '/' : '/status'" class="button button-primary">{{ $t("status") }}</router-link>
+                <router-link :to="$client.default_route || 'status' === 'status' ? '/' : '/status'" class="button">{{ $t("status") }}</router-link>
                 <div v-if="!locked && running" class="button" v-on:click="startService()">{{ $t("restart_service") }}</div>
                 <div v-else-if="!locked" class="button" v-on:click="startService()">{{ $t("start_service") }}</div>
             </div>
@@ -84,6 +92,39 @@
         },
 
         methods: {
+            async backup() {
+                const response = await this.api.post("/config/backup");
+
+                if (response.success) {
+                    const element = document.createElement("a");
+
+                    element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(response.config, null, 4))}`);
+                    element.setAttribute("download", "config.json");
+
+                    element.style.display = "none";
+                    document.body.appendChild(element);
+
+                    element.click();
+
+                    document.body.removeChild(element);
+                }
+            },
+
+            logs() {
+                this.$store.state.messages
+                const element = document.createElement("a");
+
+                element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(this.$store.state.messages.join("\r\n"))}`);
+                element.setAttribute("download", "logs.txt");
+
+                element.style.display = "none";
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            },
+
             async startCockpit() {
                 try {
                     this.registration = (await this.api.get("/cockpit/start")).registration;
