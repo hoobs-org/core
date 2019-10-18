@@ -134,7 +134,7 @@
             async login() {
                 this.errors = [];
 
-                if (this.username === "" || this.username.length < 5) {
+                if (this.username === "" || this.username.length < 3) {
                     this.errors.push(this.$t("invalid_username_password"));
                 }
 
@@ -165,7 +165,7 @@
             async createAccount() {
                 this.errors = [];
 
-                if (this.username === "" || this.username.length < 5) {
+                if (this.username === "" || this.username.length < 3) {
                     this.errors.push(this.$t("username_required"));
                 }
 

@@ -170,7 +170,7 @@
                 this.identityErrors = [];
                 this.passwordErrors = [];
 
-                if (this.username === "" || this.username.length < 5) {
+                if (this.username === "" || this.username.length < 3) {
                     this.identityErrors.push(this.$t("username_required"));
                 }
 
@@ -207,7 +207,7 @@
                 this.identityErrors = [];
                 this.passwordErrors = [];
 
-                if (this.username === "" || this.username.length < 5) {
+                if (this.username === "" || this.username.length < 3) {
                     this.identityErrors.push(this.$t("username_required"));
                 }
 
