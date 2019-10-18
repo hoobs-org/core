@@ -131,15 +131,19 @@
                 let domain = this.$instance;
 
                 if (domain === "") {
-                    domain = window.location;
+                    domain = `${window.location}`;
                 }
 
-                domain = domain.replace("http://", "");
-                domain = domain.replace("https://", "");
-                domain = domain.split("/")[0];
+                domain = domain.split("/")[2];
                 domain = domain.split(":")[0];
 
-                window.open(url.replace(/domain/gi, domain));
+                url = url.replace(/{{domain}}/gi, domain);
+
+                if (this.value.port) {
+                    url = url.replace(/{{port}}/gi, this.value.port);
+                }
+
+                window.open(url);
             },
 
             fieldType(field) {
