@@ -140,7 +140,7 @@
 
                 if (this.errors.length === 0) {
                     const response = await this.client.post("/auth", {
-                        username: this.username,
+                        username: this.username.toLowerCase(),
                         password: this.password,
                         remember: this.remember
                     });
@@ -181,7 +181,7 @@
                     const response = await this.client.put("/auth", {
                         name: this.name,
                         admin: true,
-                        username: this.username,
+                        username: this.username.toLowerCase(),
                         password: this.password
                     });
 

@@ -191,7 +191,7 @@
 
                     await this.client.put("/users", {
                         name: this.name,
-                        username: this.username,
+                        username: this.username.toLowerCase(),
                         password: this.password,
                         admin: this.admin
                     });
@@ -228,7 +228,7 @@
 
                     if ((await this.client.post(`/user/${this.id}`, {
                         name: this.name,
-                        username: this.username,
+                        username: this.username.toLowerCase(),
                         password: this.password !== "" ? this.password : null,
                         admin: this.admin
                     })).success) {
