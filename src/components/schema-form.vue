@@ -7,6 +7,11 @@
             <div v-else-if="fieldType(field) === 'form'">
                 <schema-form :schema="field.properties" v-model="value[field.name]" />
             </div>
+            <div v-else-if="fieldType(field) === 'button'">
+                <div class="field">
+                    <div v-on:click.stop="configNav(field.url)" class="button">{{ field.title || humanize(field.name) }}</div>
+                </div>
+            </div>
             <div v-else-if="fieldType(field) === 'json'">
                 <div class="field">
                     <span class="title">{{ field.title || humanize(field.name) }}</span>
@@ -122,10 +127,27 @@
                 return JSON.stringify(this.value[field.name], null, 4);
             },
 
+            configNav(url) {
+                let domain = this.$instance;
+
+                if (domain === "") {
+                    domain = window.location;
+                }
+
+                domain = domain.replace("http://", "");
+                domain = domain.replace("https://", "");
+                domain = domain.split("/")[0];
+                domain = domain.split(":")[0];
+
+                window.open(url.replace(/domain/gi, domain));
+            },
+
             fieldType(field) {
                 const type = (field.type || "").toLowerCase();
 
-                if (field && !field.readOnly && type !== "object") {
+                if (type === "button" && field.url && field.url !== "") {
+                    return "button";
+                } else if (field && !field.readOnly && type !== "object") {
                     return "input";
                 } else if (field && !field.readOnly && type === "object" && field.properties) {
                     if (field.name && !this.value[field.name]) {
