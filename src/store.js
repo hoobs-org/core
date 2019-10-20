@@ -101,7 +101,7 @@ export default new Vuex.Store({
             } else {
                 state.messages.push(message)
 
-                while (state.messages.length > 1024) {
+                while (state.messages.length > 500) {
                     state.messages.shift();
                 }
             }

@@ -201,7 +201,6 @@
 
         async mounted() {
             this.loader = new Loader();
-            this.connect();
 
             switch (this.$system) {
                 case "rocket":
@@ -227,11 +226,15 @@
         created() {
             window.addEventListener("resize", this.resize);
 
+            this.connect();
             this.resize();
         },
 
         destroyed() {
             window.removeEventListener("resize", this.resize);
+
+            this.socket.close();
+            this.loaded = false;
         },
 
         updated() {
@@ -282,6 +285,8 @@
                     if (this.loader.loading) {
                         this.loader.load();
                     }
+
+                    this.socket.send("{HISTORY}");
                 };
 
                 this.socket.onclose = () => {
