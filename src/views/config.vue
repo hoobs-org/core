@@ -2,6 +2,7 @@
     <div id="config">
         <div v-if="loaded" class="info mobile-hide">
             <router-link to="/config/interface" :class="section === 'interface' ? 'active': ''">{{ $t("interface_settings") }}</router-link>
+            <router-link to="/config/server" :class="section === 'server' ? 'active': ''">{{ $t("server_settings") }}</router-link>
             <router-link to="/config/bridge" :class="section === 'bridge' ? 'active': ''">{{ $t("bridge_settings") }}</router-link>
             <router-link to="/config/ports" :class="section === 'ports' ? 'active': ''">{{ $t("port_ranges") }}</router-link>
             <div v-for="(plugin, index) in plugins" :key="`${index}-platform-link`">
@@ -40,6 +41,15 @@
                     <select-field :name="$t('temp_units')" :description="$t('temp_units_message')" :options="units" v-model="configuration.client.temp_units" @change="markReload()" />
                     <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" @change="markReload()" />
                     <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model="configuration.client.postal_code" @change="markReload()" :required="true" />
+                </div>
+                <div class="section" v-if="section === 'server' || screen.width <= 815">
+                    <h2>{{ $t("server_settings") }}</h2>
+                    <p>
+                        {{ $t("server_settings_message") }}
+                    </p>
+                    <port-field :name="$t('server_port')" :description="$t('server_port_message')" v-model.number="configuration.server.port" :required="true" @change="markReboot()" />
+                    <integer-field :name="$t('autostart_after')" :description="$t('autostart_after_message')" v-model.number="configuration.server.autostart" :required="false" @change="markReboot()" />
+                    <integer-field :name="$t('polling_seconds')" :description="$t('polling_seconds_message')" v-model.number="configuration.server.polling_seconds" :required="true" @change="markReboot()" />
                 </div>
                 <div class="section" v-if="section === 'bridge' || screen.width <= 815">
                     <h2>{{ $t("bridge_settings") }}</h2>
@@ -96,6 +106,9 @@
                 </div>
             </form>
         </div>
+        <modal-dialog v-if="confirmReboot" width="440px" :ok="rebootDevice" :cancel="cancelReboot">
+            <div class="dialog-message">{{ $t("config_reboot_confirm") }}</div>
+        </modal-dialog>
     </div>
 </template>
 
@@ -112,6 +125,7 @@
     import HexField from "@/components/hex-field.vue";
 
     import PluginConfig from "@/components/plugin-config.vue";
+    import ModalDialog from "@/components/modal-dialog.vue";
     import Marquee from "@/components/loading-marquee.vue";
 
     import CountryCodes from "../lang/country-codes.json";
@@ -128,6 +142,7 @@
             "port-field": PortField,
             "hex-field": HexField,
             "plugin-config": PluginConfig,
+            "modal-dialog": ModalDialog,
             "loading-marquee": Marquee
         },
 
@@ -163,7 +178,15 @@
                 working: false,
                 ready: false,
                 reload: false,
+                reboot: false,
+                confirmReboot: false,
                 configuration: {
+                    server: {
+                        port: null,
+                        autostart: null,
+                        home_setup_id: null,
+                        polling_seconds: null
+                    },
                     client: {
                         port: null,
                         default_route: null,
@@ -317,6 +340,7 @@
 
                 const client = await this.client.get("/config/client");
 
+                this.configuration.server = this.$server;
                 this.configuration.client = client;
                 this.configuration.bridge = this.$bridge;
                 this.configuration.description = this.$description;
@@ -330,8 +354,27 @@
                 this.working = false;
             },
 
+            markReboot() {
+                this.reboot = true;
+            },
+
             markReload() {
                 this.reload = true;
+            },
+
+            rebootDevice() {
+                this.confirmReboot = false;
+
+                this.$store.commit("lock");
+                this.$store.commit("hide", "service");
+
+                await this.api.post("/service/stop");
+
+                this.api.put("/reboot");
+            },
+            
+            cancelReboot() {
+                this.confirmReboot = false;
             },
 
             addError(message) {
@@ -430,12 +473,21 @@
                 this.working = true;
 
                 const data = {
+                    server: this.configuration.server,
                     client: this.configuration.client,
                     bridge: this.configuration.bridge,
                     description: this.configuration.description,
                     ports: this.configuration.ports,
                     accessories: this.configuration.accessories || [],
                     platforms: this.configuration.platforms || []
+                }
+
+                if (!data.server.port || Number.isNaN(parseInt(data.server.port, 10)) || data.server.port < 1 || data.server.port > 65535) {
+                    this.errors.push(this.$t("server_port_invalid"));
+                }
+
+                if (!data.server.polling_seconds || data.server.polling_seconds < 1 || data.server.polling_seconds > 1800) {
+                    this.errors.push(this.$t("polling_seconds_invalid"));
                 }
 
                 if (!data.client.inactive_logoff || data.client.inactive_logoff < 5 || data.client.inactive_logoff > 60) {
@@ -480,6 +532,7 @@
                     });
 
                     await this.api.post("/config", {
+                        server: data.server,
                         bridge: data.bridge,
                         description: data.description,
                         ports: data.ports,
@@ -499,8 +552,10 @@
 
                     this.$store.commit("unlock");
 
-                    if (this.reload) {
+                    if (this.reload && !this.reboot) {
                         window.location.reload();
+                    } else if (this.reboot) {
+                        this.confirmReboot = true;
                     }
 
                     this.load();
@@ -689,6 +744,11 @@
 
     #config .add-accessory-button:first-child {
         margin: 0;
+    }
+
+    #config .dialog-message {
+        margin: 20px 0 10px 0;
+        text-align: center;
     }
 
     @media (min-width: 300px) and (max-width: 815px) {

@@ -1,7 +1,7 @@
 {
     "server": {
         "port": 8080,
-        "autostart": true,
+        "autostart": 0,
         "home_setup_id": "X-HM://",
         "polling_seconds": 2
     },
