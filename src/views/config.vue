@@ -362,7 +362,7 @@
                 this.reload = true;
             },
 
-            rebootDevice() {
+            async rebootDevice() {
                 this.confirmReboot = false;
 
                 this.$store.commit("lock");
