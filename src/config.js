@@ -65,7 +65,7 @@ export default class Config {
             }
 
             Request.defaults.headers.get["Authorization"] = Cookies.get("token");
-   
+
             const queue = [];
             this._names = []
 
