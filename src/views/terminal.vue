@@ -20,8 +20,9 @@
     import Inflection from "inflection";
 
     import { Terminal } from "xterm";
-    import * as fit from "xterm/lib/addons/fit/fit";
-    import * as attach from "xterm/lib/addons/attach/attach";
+    import { AttachAddon } from "xterm-addon-attach";
+    import { FitAddon } from "xterm-addon-fit";
+    import { WebLinksAddon } from "xterm-addon-web-links";
 
     export default {
         name: "terminal",
@@ -60,16 +61,18 @@
             this.temp = await this.api.get("/system/temp");
             this.info = await this.api.get("/system");
 
-            Terminal.applyAddon(attach);
-            Terminal.applyAddon(fit);
-
             this.term = new Terminal({
                 cursorBlink: false,
                 theme: this.colors
             });
 
+            this.screen = new FitAddon();
+
+            this.term.loadAddon(this.screen);
+            this.term.loadAddon(new WebLinksAddon());
             this.term.open(this.$refs.terminal);
-            this.term.fit();
+
+            this.screen.fit();
 
             this.connect();
         },
@@ -95,7 +98,7 @@
                 this.socket = new WebSocket(`${url}${url.endsWith("/") ? "shell" : "/shell"}?t=${new Date().getTime()}`);
 
                 this.socket.onopen = () => {
-                    this.term.attach(this.socket);
+                    this.term.loadAddon(new AttachAddon(this.socket));
 
                     this.term.clear();
                     this.term.focus();
