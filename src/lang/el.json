@@ -18,7 +18,7 @@
         "application_path": "Διαδρομή εφαρμογής",
         "auto": "Αυτόματο",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Διαθέσιμα Αξεσουάρ",
         "available_accessories_message": "Επιλέξτε τα εξαρτήματα που θέλετε να προσθέσετε σε αυτό το δωμάτιο.",
         "away": "Μακριά",

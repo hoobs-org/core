@@ -18,7 +18,7 @@
         "application_path": "Caminho da aplicação",
         "auto": "Automático",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Acessórios disponiveis",
         "available_accessories_message": "Selecione os acessórios que você deseja adicionar a esta sala.",
         "away": "Longe",

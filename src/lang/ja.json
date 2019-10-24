@@ -18,7 +18,7 @@
         "application_path": "アプリケーションパス",
         "auto": "オート",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "利用可能なアクセサリー",
         "available_accessories_message": "あなたはこの部屋に追加するアクセサリーを選択します。",
         "away": "先に",

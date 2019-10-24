@@ -18,7 +18,7 @@
         "application_path": "Applica percorso",
         "auto": "auto",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Accessori disponibili",
         "available_accessories_message": "Seleziona gli accessori che vuoi aggiungere alla stanza",
         "away": "Lontano",

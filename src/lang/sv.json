@@ -18,7 +18,7 @@
         "application_path": "Application Path",
         "auto": "Bil",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "tillgängliga tillbehör",
         "available_accessories_message": "Välj de tillbehör som du vill lägga till detta rum.",
         "away": "Bort",

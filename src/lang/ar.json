@@ -18,7 +18,7 @@
         "application_path": "مسار التطبيق",
         "auto": "تلقائي",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "الملحقات المتاحة",
         "available_accessories_message": "حدد الملحقات التي تريد إضافتها إلى هذه الغرفة.",
         "away": "بعيدا",

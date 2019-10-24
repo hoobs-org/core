@@ -18,7 +18,7 @@
         "application_path": "Путь к приложению",
         "auto": "Автоматически",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Доступные аксессуары",
         "available_accessories_message": "Выберите аксессуары, которые вы хотите добавить в эту комнату.",
         "away": "Прочь",

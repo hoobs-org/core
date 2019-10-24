@@ -18,7 +18,7 @@
         "application_path": "Programmpfad",
         "auto": "Auto",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Verfügbare Geräte",
         "available_accessories_message": "Wählen die Geräte die diesem Raum hinzufügen werden sollen.",
         "away": "Weg",

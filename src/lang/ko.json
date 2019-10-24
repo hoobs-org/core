@@ -18,7 +18,7 @@
         "application_path": "응용 프로그램 경로",
         "auto": "자동",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "사용 가능한 액세서리",
         "available_accessories_message": "당신이 방에 추가 할 액세서리를 선택합니다.",
         "away": "떨어져",

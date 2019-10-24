@@ -18,7 +18,7 @@
         "application_path": "Пътека на приложението",
         "auto": "Автоматично",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Налични Аксесоари",
         "available_accessories_message": "Изберете аксесоарите, който искате да добавите в тази стая.",
         "away": "далеч",

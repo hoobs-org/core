@@ -18,7 +18,7 @@
         "application_path": "Applicatie pad",
         "auto": "Auto",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Beschikbare accessoires",
         "available_accessories_message": "Selecteer de accessoires die je aan deze kamer wilt toevoegen.",
         "away": "Weg",

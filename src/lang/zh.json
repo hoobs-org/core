@@ -18,7 +18,7 @@
         "application_path": "應用路徑",
         "auto": "自動",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "有效配件",
         "available_accessories_message": "選擇配件加入你想要的房間。",
         "away": "远",

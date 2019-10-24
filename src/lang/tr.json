@@ -18,7 +18,7 @@
         "application_path": "Uygulama Yolu",
         "auto": "Otomatik",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Kullanılabilir Aksesuarlar",
         "available_accessories_message": "Bu odaya eklemek istediğiniz aksesuarları seçin.",
         "away": "Uzakta",

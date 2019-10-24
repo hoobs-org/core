@@ -18,7 +18,7 @@
         "application_path": "Applikasjonssti",
         "auto": "Auto",
         "autostart_after": "Bridge Auto Start",
-        "autostart_after_message": "Automaticall start the bridge service, in seconds.",
+        "autostart_after_message": "Automatically start the bridge service, in seconds.",
         "available_accessories": "Tilgjengelige tilbehør",
         "available_accessories_message": "Velg tilbehøret du vil legge til i dette rommet.",
         "away": "Borte",
