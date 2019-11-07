@@ -178,7 +178,7 @@
                     this.name = this.username;
                 }
 
-                if (!this.strongPassword()) {
+                if (this.password.length < 5) {
                     this.passwordErrors.push(this.$t("password_weak"));
                 }
 
@@ -215,7 +215,7 @@
                     this.name = this.username;
                 }
 
-                if ((this.password !== "" || this.challenge !== "") && !this.strongPassword()) {
+                if ((this.password !== "" || this.challenge !== "") && this.password.length < 5) {
                     this.passwordErrors.push(this.$t("password_weak"));
                 }
 
@@ -240,10 +240,6 @@
                         }
                     }
                 }
-            },
-
-            strongPassword() {
-                return (/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()]).{8,}/).test(this.password);
             }
         }
     }

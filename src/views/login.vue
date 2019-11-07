@@ -165,11 +165,11 @@
             async createAccount() {
                 this.errors = [];
 
-                if (this.username === "" || this.username.length < 3) {
+                if (this.username.length < 3) {
                     this.errors.push(this.$t("username_required"));
                 }
 
-                if (!this.strongPassword()) {
+                if (this.password.length < 5) {
                     this.errors.push(this.$t("password_weak"));
                 }
 
@@ -197,10 +197,6 @@
                         }
                     }
                 }
-            },
-
-            strongPassword() {
-                return (/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()]).{8,}/).test(this.password);
             }
         }
     };
