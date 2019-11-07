@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.0-beta.69",
+    "version": "3.0.0-beta.70",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -63,7 +63,7 @@
         "jsonlint-mod": "^1.7.5",
         "jsonp": "^0.2.1",
         "prismjs": "^1.17.1",
-        "showdown": "^1.9.0",
+        "showdown": "^1.9.1",
         "vue": "^2.6.10",
         "vue-grid-layout": "^2.3.6",
         "vue-i18n": "^8.15.0",
