@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.0-beta.70",
+    "version": "3.0.0-beta.71",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -45,6 +45,7 @@
         "node-cache": "^5.0.0",
         "node-pty": "^0.9.0",
         "ora": "^4.0.2",
+        "recursive-copy": "^2.0.10",
         "request": "^2.88.0",
         "rimraf": "^3.0.0",
         "ws": "^7.2.0"

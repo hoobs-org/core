@@ -81,6 +81,8 @@
         "end_port_invalid": "End port is invalid. It must be a number between 1 and 65535.",
         "end_port_message": "The port range ending number.",
         "extreme_rain": "Heavy Rain",
+        "factory_reset": "Factory Reset",
+        "factory_reset_message": "This will remove all plugins, configurations and settings.",
         "fahrenheit": "Fahrenheit",
         "favorite_accessories": "Favorite Accessories",
         "few_clouds": "Light Clouds",

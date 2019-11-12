@@ -53,6 +53,15 @@
             <div class="help-actions">
                 <confirm-delete :title="$t('generate_new_username')" :subtitle="$t('generate')" :confirmed="generateUsername" />
             </div>
+            
+
+            <h2>{{ $t("factory_reset") }}</h2>
+            <p>
+                <b>{{ $t("warning") }}</b> {{ $t("factory_reset_message") }}
+            </p>
+            <div class="help-actions">
+                <confirm-delete :title="$t('reset')" :subtitle="$t('reset')" :confirmed="reset" />
+            </div>
         </div>
     </div>
 </template>
@@ -123,6 +132,13 @@
                 element.click();
 
                 document.body.removeChild(element);
+            },
+
+            reset() {
+                this.$store.commit("lock");
+                this.$store.commit("hide", "service");
+
+                this.api.put("/reset");
             },
 
             async startCockpit() {

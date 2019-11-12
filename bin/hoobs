@@ -5,10 +5,10 @@ process.title = "hoobs-core";
 const OS = require("os");
 const Ora = require("../node_modules/ora");
 const File = require("../node_modules/fs-extra/lib");
+const Copy = require("../node_modules/recursive-copy");
 const Remove = require("../node_modules/rimraf");
 
-const { dirname, join } = require("path");
-const { exec, spawn } = require("child_process");
+const { dirname, join, basename } = require("path");
 
 let password = null;
 
@@ -43,9 +43,8 @@ if (File.existsSync(join(root, "package.json"))) {
 }
 
 const preparePackage = function() {
-    const plugins = [];
-
-    throbber = Ora("Initilizing").start();
+    throbber = Ora("Plugins").start();
+    throbber.color = "yellow";
 
     if (executing && executing.dependencies) {
         const dependencies = Object.keys(executing.dependencies);
@@ -55,9 +54,10 @@ const preparePackage = function() {
             const dependency = executing.dependencies[dependencies[i]];
 
             if ((name.startsWith("homebridge-") || (name.startsWith("@hoobs/") && name !== "@hoobs/homebridge")) && !installed.dependencies.hasOwnProperty(name)) {
-                installed.dependencies[name] = dependency;
+                throbber.text = `Plugins: ${name}`;
+                throbber.color = "yellow";
 
-                plugins.push(name);
+                installed.dependencies[name] = dependency;
             }
         }
     }
@@ -80,71 +80,81 @@ const preparePackage = function() {
 
     File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
 
+    throbber.text = "Plugins";
     throbber.stop();
-
-    return plugins;
 }
 
 const setupUserMode = function() {
-    throbber = Ora("Setting Up User Mode").start();
-
-    if (File.existsSync(join(root, "dist"))) {
-        Remove.sync(join(root, "dist"));
-    }
-
-    if (File.existsSync(join(root, "lib"))) {
-        Remove.sync(join(root, "lib"));
-    }
-
-    if (File.existsSync(join(root, "node_modules"))) {
-        Remove.sync(join(root, "node_modules"));
-    }
-
-    File.copySync(join(applicaiton, "node_modules"), join(root, "node_modules"));
-
-    if (File.existsSync(join(root, "package-lock.json"))) {
-        File.unlinkSync(join(root, "package-lock.json"));
-    }
-
-    if (File.existsSync(join(root, "default.json"))) {
-        File.unlinkSync(join(root, "default.json"));
-    }
-
-    File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
-
-    throbber.stop();
-}
-
-const installPackages = function(plugins) {
     return new Promise((resolve) => {
-        throbber = Ora("Initilizing Plugins").start();
+        throbber = Ora("Dependencies").start();
+        throbber.color = "yellow";
 
-        if (plugins.length > 0) {
-            exec(`npm set progress=false && npm install --unsafe-perm ${plugins.join(" ")}`, {
-                cwd: root
-            }, () => {
-                throbber.stop();
+        if (File.existsSync(join(root, "dist"))) {
+            Remove.sync(join(root, "dist"));
+        }
+
+        if (File.existsSync(join(root, "lib"))) {
+            Remove.sync(join(root, "lib"));
+        }
+
+        Copy(join(applicaiton, "node_modules"), join(root, "node_modules"), {
+            overwrite: true,
+            dot: true,
+            junk: false
+        }).on(Copy.events.COPY_FILE_START, (data) => {
+            throbber.text = `Dependencies: ${basename(data.src)}`;
+            throbber.color = "yellow";
+        }).finally(() => {
+            if (File.existsSync(join(root, "package-lock.json"))) {
+                File.unlinkSync(join(root, "package-lock.json"));
+            }
         
-                resolve();
-            });
-        } else {
+            if (File.existsSync(join(root, "default.json"))) {
+                File.unlinkSync(join(root, "default.json"));
+            }
+
+            throbber.text = "Dependencies: default.json";
+            throbber.color = "yellow";
+
+            File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
+        
+            throbber.text = "Dependencies";
             throbber.stop();
 
             resolve();
-        }
+        });
     });
 }
 
 if (!executing || installed.version !== executing.version || !File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
-    const plugins = preparePackage();
+    preparePackage();
 
-    setupUserMode();
+    setupUserMode().then(() => {
+        throbber = Ora("Application").start();
+        throbber.color = "yellow";
 
-    installPackages(plugins).then(() => {
-        File.copySync(join(applicaiton, "dist"), join(root, "dist"));
-        File.copySync(join(applicaiton, "lib"), join(root, "lib"));
+        Copy(join(applicaiton, "dist"), join(root, "dist"), {
+            overwrite: true,
+            dot: true,
+            junk: false
+        }).on(Copy.events.COPY_FILE_START, (data) => {
+            throbber.text = `Application: ${basename(data.src)}`;
+            throbber.color = "yellow";
+        }).finally(() => {
+            Copy(join(applicaiton, "lib"), join(root, "lib"), {
+                overwrite: true,
+                dot: true,
+                junk: false
+            }).on(Copy.events.COPY_FILE_START, (data) => {
+                throbber.text = `Application: ${basename(data.src)}`;
+                throbber.color = "yellow";
+            }).finally(() => {
+                throbber.text = "Application";
+                throbber.stop();
 
-        require(join(root, "lib/cli"))();
+                require(join(root, "lib/cli"))();
+            });
+        });
     });
 } else {
     require(join(root, "lib/cli"))();
