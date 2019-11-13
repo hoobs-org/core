@@ -128,34 +128,54 @@
 
             getQuery() {
                 return new Promise((resolve) => {
-                    if (this.$client.country_code && this.$client.postal_code) {
+                    const query = this.$cookie("weather_query");
+
+                    if (query && query !== "undefined" && query !== "") {
+                        return resolve(query.replace(/\|/gi, "="));
+                    }
+
+                    let results;
+
+                    if (this.$client.longitude && this.$client.latitude && !Number.isNaN(parseFloat(this.$client.latitude)) && !Number.isNaN(parseFloat(this.$client.longitude))) {
+                        const position = {
+                            latitude: Math.round(parseFloat(this.$client.latitude) * 10 ) / 10,
+                            longitude: Math.round(parseFloat(this.$client.longitude) * 10 ) / 10
+                        }
+
+                        Request(`https://api.openweathermap.org/data/2.5/find?lat=${position.latitude}&lon=${position.longitude}&cnt=10&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+                            if (!error && response.list && Array.isArray(response.list) && response.list.length > 0) {
+                                results = `id|${response.list[0].id}`;
+                            } else {
+                                results = `lat|${position.latitude}&lon=${position.longitude}`;
+                            }
+
+                            this.$cookie("weather_query", results, 20160);
+
+                            return resolve(results.replace(/\|/gi, "="));
+                        });
+                    } else if (this.$client.country_code && this.$client.postal_code && this.$client.country_code !== "" && this.$client.postal_code !== "") {
                         if (this.$client.country_code === "CA") {
-                            resolve(`zip=${(`${this.$client.postal_code}000`).substring(0, 3)},CA`);
+                            return resolve(`zip=${(`${this.$client.postal_code}000`).substring(0, 3)},CA`);
                         } else {
-                            resolve(`zip=${this.$client.postal_code},${this.$client.country_code}`);
+                            return resolve(`zip=${this.$client.postal_code},${this.$client.country_code}`);
                         }
                     } else {
-                        const query = this.$cookie("weather_query");
+                        this.geolocation().then((position) => {
+                            position.latitude = Math.round(parseFloat(position.latitude) * 10 ) / 10,
+                            position.longitude = Math.round(parseFloat(position.longitude) * 10 ) / 10;
 
-                        if (query && query !== "undefined" && query !== "") {
-                            resolve(query.replace(/\|/gi, "="));
-                        } else {
-                            let results = null;
+                            Request(`https://api.openweathermap.org/data/2.5/find?lat=${position.latitude}&lon=${position.longitude}&cnt=10&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
+                                if (!error && response.list && Array.isArray(response.list) && response.list.length > 0) {
+                                    results = `id|${response.list[0].id}`;
+                                } else {
+                                    results = `lat|${position.latitude}&lon=${position.longitude}`;
+                                }
 
-                            this.geolocation().then((position) => {
-                                Request(`https://api.openweathermap.org/data/2.5/find?lat=${position.latitude}&lon=${position.longitude}&cnt=10&appid=${atob("ZmVjNjdiNTVmN2Y3NGRlYWEyOGRmODliYTZhNjA4MjE=")}`, null, (error, response) => {
-                                    if (!error && response.list && Array.isArray(response.list) && response.list.length > 0) {
-                                        results = `id|${response.list[0].id}`;
-                                    } else {
-                                        results = `lat|${position.latitude}&lon=${position.longitude}`;
-                                    }
+                                this.$cookie("weather_query", results, 20160);
 
-                                    this.$cookie("weather_query", results, 20160);
-
-                                    resolve(results.replace(/\|/gi, "="));
-                                });
+                                return resolve(results.replace(/\|/gi, "="));
                             });
-                        }
+                        });
                     }
                 });
             },

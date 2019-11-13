@@ -194,7 +194,7 @@
                 switch((field.type || "").toLowerCase()) {
                     case "text":
                     case "string":
-                        if (field.oneOf || field.enum) {
+                        if (field.enum) {
                             return "select-field";
                         }
 
@@ -208,7 +208,7 @@
                     case "decimal":
                     case "double":
                     case "number":
-                        if (field.oneOf || field.enum) {
+                        if (field.enum) {
                             return "select-field";
                         }
 
@@ -216,7 +216,7 @@
 
                     case "int":
                     case "integer":
-                        if (field.oneOf || field.enum) {
+                        if (field.enum) {
                             return "select-field";
                         }
 
@@ -276,27 +276,6 @@
                             options.push({
                                 text: `${field.enum[i]}`,
                                 value: field.enum[i]
-                            });
-                        }
-                    }
-                } else if (field.oneOf && Array.isArray(field.oneOf)) {
-                    if (!field.required) {
-                        options.push({
-                            text: "",
-                            value: this.defaultValue(field)
-                        });
-                    }
-
-                    for (let i = 0; i < field.oneOf.length; i++) {
-                        if (field.oneOf[i].title && field.oneOf[i].enum && Array.isArray(field.oneOf[i].enum) && field.oneOf[i].enum.length > 0) {
-                            options.push({
-                                text: field.oneOf[i].title,
-                                value: field.oneOf[i].enum[0]
-                            });
-                        } else if (field.oneOf[i].title) {
-                            options.push({
-                                text: field.oneOf[i].title,
-                                value: field.oneOf[i].title
                             });
                         }
                     }

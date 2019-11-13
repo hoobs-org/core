@@ -42,6 +42,8 @@
                     <select-field :name="$t('temp_units')" :description="$t('temp_units_message')" :options="units" v-model="configuration.client.temp_units" @change="markReload()" />
                     <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" @change="markReload()" />
                     <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model="configuration.client.postal_code" @change="markReload()" :required="true" />
+                    <text-field :name="$t('latitude')" :description="$t('latitude_message')" v-model="configuration.client.latitude" @change="markReload()" :required="true" />
+                    <text-field :name="$t('longitude')" :description="$t('longitude_message')" v-model="configuration.client.longitude" @change="markReload()" :required="true" />
                 </div>
                 <div class="section" v-if="section === 'server' || screen.width <= 815">
                     <h2>{{ $t("server_settings") }}</h2>
@@ -222,7 +224,9 @@
                         locale: null,
                         temp_units: null,
                         country_code: null,
-                        postal_code: null
+                        postal_code: null,
+                        longitude: null,
+                        latitude: null
                     },
                     bridge: {
                         name: null,
@@ -640,6 +644,10 @@
                     } else {
                         await this.api.post("/service/start");
                     }
+
+                    this.$cookie("latitude", null, 0);
+                    this.$cookie("longitude", null, 0);
+                    this.$cookie("weather_query", null, 0);
 
                     this.$store.commit("unlock");
 
