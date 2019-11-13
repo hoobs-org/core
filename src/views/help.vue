@@ -55,23 +55,23 @@
                 <div v-on:click.stop="backup('config')" class="button">{{ $t("config") }}</div>
                 <div v-on:click.stop="backup('logs')" class="button">{{ $t("log") }}</div>
             </div>
-            <h2>{{ $t("restore") }}</h2>
-            <p>
+            <h2 v-if="user.admin">{{ $t("restore") }}</h2>
+            <p v-if="user.admin">
                 {{ $t("restore_message") }}<br>
                 <b>{{ $t("warning") }}</b> {{ $t("restore_warning") }}
             </p>
-            <div v-if="writing" class="help-actions">
+            <div v-if="writing && user.admin" class="help-actions">
                 <div class="button disabled">{{ $t("select_backup") }}</div>
             </div>
-            <div v-else class="help-actions">
+            <div v-else-if="user.admin" class="help-actions">
                 <input type="file" ref="file" v-on:change="restore()" accept=".hbf" hidden />
                 <div v-on:click.stop="upload()" class="button">{{ $t("select_backup") }}</div>
             </div>
-            <h2>{{ $t("factory_reset") }}</h2>
-            <p>
+            <h2 v-if="user.admin">{{ $t("factory_reset") }}</h2>
+            <p v-if="user.admin">
                 <b>{{ $t("warning") }}</b> {{ $t("factory_reset_message") }}
             </p>
-            <div class="help-actions">
+            <div v-if="user.admin" class="help-actions">
                 <confirm-delete :title="$t('reset')" :subtitle="$t('reset')" :confirmed="reset" />
             </div>
         </div>

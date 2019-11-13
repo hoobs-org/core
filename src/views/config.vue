@@ -12,7 +12,7 @@
             </div>
             <router-link v-if="user.admin" to="/config/advanced" :class="section === 'advanced' ? 'active mobile-hide': 'mobile-hide'">{{ $t("advanced") }}</router-link>
             <router-link to="/config/backup" :class="section === 'backup' ? 'active': ''">{{ $t("backup") }}</router-link>
-            <router-link to="/config/restore" :class="section === 'restore' ? 'active': ''">{{ $t("restore") }}</router-link>
+            <router-link v-if="user.admin" to="/config/restore" :class="section === 'restore' ? 'active': ''">{{ $t("restore") }}</router-link>
             <div class="actions">
                 <div v-if="!working && loaded" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
                 <div v-if="working" class="loading">
@@ -99,7 +99,7 @@
                         <div v-on:click.stop="backup('logs')" class="button">{{ $t("log") }}</div>
                     </div>
                 </div>
-                <div class="section" v-if="section === 'restore' || screen.width <= 815">
+                <div class="section" v-if="(section === 'restore' || screen.width <= 815) && user.admin">
                     <h2>{{ $t("restore") }}</h2>
                     <p>
                         {{ $t("restore_message") }}<br>
