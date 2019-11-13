@@ -530,6 +530,10 @@
         box-shadow: var(--elevation-small);
     }
 
+    .disabled {
+        opacity: 0.5;
+    }
+
     ::placeholder {
         color: var(--text-light);
     }

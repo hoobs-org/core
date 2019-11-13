@@ -14,19 +14,6 @@
                 <div v-else class="button mobile-hide" v-on:click="startCockpit()">{{ $t("remote_support") }}</div>
                 <div v-if="registration" class="registration mobile-hide">{{ $t("support_code") }}: {{ registration }}</div>
             </div>
-            <h2 v-if="system === 'hoobs'">{{ $t("software") }}</h2>
-            <p v-if="system === 'hoobs'">{{ $t("stay_up_to_date") }}</p>
-            <div v-if="system === 'hoobs'" class="help-actions">
-                <router-link to="/system" class="button">{{ $t("system") }}</router-link>
-            </div>
-            <h2>{{ $t("backup") }}</h2>
-            <p>
-                {{ $t("backup_message") }}
-            </p>
-            <div class="help-actions">
-                <div v-on:click.stop="backup()" class="button">{{ $t("config") }}</div>
-                <div v-on:click.stop="logs()" class="button">{{ $t("log") }}</div>
-            </div>
             <h2>{{ $t("common_issues") }}</h2>
             <p>
                 <b>{{ $t("homekit_cant_find") }}</b> {{ $t("homebridge_service_not_running") }}
@@ -35,6 +22,7 @@
                 <router-link :to="$client.default_route || 'status' === 'status' ? '/' : '/status'" class="button">{{ $t("status") }}</router-link>
                 <div v-if="!locked && running" class="button" v-on:click="startService()">{{ $t("restart_service") }}</div>
                 <div v-else-if="!locked" class="button" v-on:click="startService()">{{ $t("start_service") }}</div>
+                <div v-else class="button disabled">{{ $t("restart_service") }}</div>
             </div>
             <p>
                 <b>{{ $t("homekit_cant_find") }}</b> {{ $t("dns_cache_stale") }}
@@ -53,8 +41,32 @@
             <div class="help-actions">
                 <confirm-delete :title="$t('generate_new_username')" :subtitle="$t('generate')" :confirmed="generateUsername" />
             </div>
-            
-
+            <h2>{{ $t("backup") }}</h2>
+            <p>
+                {{ $t("backup_message") }}
+            </p>
+            <div v-if="writing" class="help-actions">
+                <div class="button disabled">{{ $t("system") }}</div>
+                <div class="button disabled">{{ $t("config") }}</div>
+                <div class="button disabled">{{ $t("log") }}</div>
+            </div>
+            <div v-else class="help-actions">
+                <div v-on:click.stop="backup('system')" class="button">{{ $t("system") }}</div>
+                <div v-on:click.stop="backup('config')" class="button">{{ $t("config") }}</div>
+                <div v-on:click.stop="backup('logs')" class="button">{{ $t("log") }}</div>
+            </div>
+            <h2>{{ $t("restore") }}</h2>
+            <p>
+                {{ $t("restore_message") }}<br>
+                <b>{{ $t("warning") }}</b> {{ $t("restore_warning") }}
+            </p>
+            <div v-if="writing" class="help-actions">
+                <div class="button disabled">{{ $t("select_backup") }}</div>
+            </div>
+            <div v-else class="help-actions">
+                <input type="file" ref="file" v-on:change="restore()" accept=".hbf" hidden />
+                <div v-on:click.stop="upload()" class="button">{{ $t("select_backup") }}</div>
+            </div>
             <h2>{{ $t("factory_reset") }}</h2>
             <p>
                 <b>{{ $t("warning") }}</b> {{ $t("factory_reset_message") }}
@@ -63,22 +75,32 @@
                 <confirm-delete :title="$t('reset')" :subtitle="$t('reset')" :confirmed="reset" />
             </div>
         </div>
+        <modal-dialog v-if="error" width="440px" :ok="confirmError">
+            <div class="dialog-message">{{ message }}</div>
+        </modal-dialog>
     </div>
 </template>
 
 <script>
+    import Request from "axios";
+
     import ConfirmDelete from "@/components/confirm-delete.vue";
+    import ModalDialog from "@/components/modal-dialog.vue";
 
     export default {
         name: "help",
 
         components: {
-            "confirm-delete": ConfirmDelete
+            "confirm-delete": ConfirmDelete,
+            "modal-dialog": ModalDialog
         },
 
         data() {
             return {
-                registration: null
+                registration: null,
+                error: false,
+                message: "Unable to create backup",
+                writing: false
             };
         },
 
@@ -101,44 +123,113 @@
         },
 
         methods: {
-            async backup() {
-                const response = await this.api.post("/config/backup");
+            async backup(type) {
+                if (!this.locked) {
+                    this.$store.commit("lock");
+                    this.writing = true;
 
-                if (response.success) {
-                    const element = document.createElement("a");
+                    let response;
+                    let element;
 
-                    element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(response.config, null, 4))}`);
-                    element.setAttribute("download", "config.json");
+                    switch (type) {
+                        case "system":
+                            response = await this.api.post("/backup");
 
-                    element.style.display = "none";
-                    document.body.appendChild(element);
+                            if (response.success) {
+                                window.open(response.filename);
+                            } else {
+                                this.message = response.error;
+                                this.error = true;
+                            }
 
-                    element.click();
+                            this.writing = false;
+                            this.$store.commit("unlock");
+                            break;
+                        
+                        case "config":
+                            response = await this.api.post("/config/backup");
 
-                    document.body.removeChild(element);
+                            if (response.success) {
+                                element = document.createElement("a");
+
+                                element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(response.config, null, 4))}`);
+                                element.setAttribute("download", "config.json");
+
+                                element.style.display = "none";
+
+                                document.body.appendChild(element);
+
+                                element.click();
+
+                                document.body.removeChild(element);
+                            } else {
+                                this.message = "Unable to download configuration";
+                                this.error = true;
+                            }
+
+                            this.writing = false;
+                            this.$store.commit("unlock");
+                            break;
+                        
+                        case "logs":
+                            this.$store.state.messages
+
+                            element = document.createElement("a");
+
+                            element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(this.$store.state.messages.join("\r\n"))}`);
+                            element.setAttribute("download", "logs.txt");
+
+                            element.style.display = "none";
+
+                            document.body.appendChild(element);
+
+                            element.click();
+
+                            document.body.removeChild(element);
+
+                            this.writing = false;
+                            this.$store.commit("unlock");
+                            break;
+                        
+                        default:
+                            this.writing = false;
+                            this.$store.commit("unlock");
+                            break;
+                    }
                 }
             },
 
-            logs() {
-                this.$store.state.messages
-                const element = document.createElement("a");
+            upload() {
+                this.$refs.file.click();
+            },
 
-                element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(this.$store.state.messages.join("\r\n"))}`);
-                element.setAttribute("download", "logs.txt");
+            restore() {
+                this.writing = true;
 
-                element.style.display = "none";
-                document.body.appendChild(element);
+                const data = new FormData();
 
-                element.click();
+                data.append("file", this.$refs.file.files[0]);
 
-                document.body.removeChild(element);
+                Request.post("/api/restore", data, {
+                    headers: {
+                        "Authorization": this.$cookie("token"),
+                        "Content-Type": "multipart/form-data"
+                    }
+                });
+            },
+
+            confirmError() {
+                this.error = false;
+                this.message = "Unhandled error";
             },
 
             reset() {
-                this.$store.commit("lock");
-                this.$store.commit("hide", "service");
+                if (!this.locked) {
+                    this.$store.commit("lock");
+                    this.$store.commit("hide", "service");
 
-                this.api.put("/reset");
+                    this.api.put("/reset");
+                }
             },
 
             async startCockpit() {
@@ -288,5 +379,10 @@
 
     #help .button {
         margin: 0 0 0 10px;
+    }
+
+    #help .dialog-message {
+        margin: 20px 0 10px 0;
+        text-align: center;
     }
 </style>

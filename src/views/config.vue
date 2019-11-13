@@ -12,6 +12,7 @@
             </div>
             <router-link v-if="user.admin" to="/config/advanced" :class="section === 'advanced' ? 'active mobile-hide': 'mobile-hide'">{{ $t("advanced") }}</router-link>
             <router-link to="/config/backup" :class="section === 'backup' ? 'active': ''">{{ $t("backup") }}</router-link>
+            <router-link to="/config/restore" :class="section === 'restore' ? 'active': ''">{{ $t("restore") }}</router-link>
             <div class="actions">
                 <div v-if="!working && loaded" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
                 <div v-if="working" class="loading">
@@ -85,9 +86,29 @@
                     <p>
                         {{ $t("backup_message") }}
                     </p>
-                    <div class="action">
-                        <div v-on:click.stop="backup()" class="button">{{ $t("config") }}</div>
-                        <div v-on:click.stop="logs()" class="button">{{ $t("log") }}</div>
+                    <div v-if="working" class="action">
+                        <div class="button disabled">{{ $t("system") }}</div>
+                        <div class="button disabled">{{ $t("config") }}</div>
+                        <div class="button disabled">{{ $t("log") }}</div>
+                    </div>
+                    <div v-else class="action">
+                        <div v-on:click.stop="backup('system')" class="button">{{ $t("system") }}</div>
+                        <div v-on:click.stop="backup('config')" class="button">{{ $t("config") }}</div>
+                        <div v-on:click.stop="backup('logs')" class="button">{{ $t("log") }}</div>
+                    </div>
+                </div>
+                <div class="section" v-if="section === 'restore' || screen.width <= 815">
+                    <h2>{{ $t("restore") }}</h2>
+                    <p>
+                        {{ $t("restore_message") }}<br>
+                        <b>{{ $t("warning") }}</b> {{ $t("restore_warning") }}
+                    </p>
+                    <div v-if="working" class="action">
+                        <div class="button disabled">{{ $t("select_backup") }}</div>
+                    </div>
+                    <div v-else class="action">
+                        <input type="file" ref="file" v-on:change="restore()" accept=".hbf" hidden />
+                        <div v-on:click.stop="upload()" class="button">{{ $t("select_backup") }}</div>
                     </div>
                 </div>
                 <div class="mobile-show">
@@ -109,10 +130,14 @@
         <modal-dialog v-if="confirmReboot" width="440px" :ok="rebootDevice" :cancel="cancelReboot">
             <div class="dialog-message">{{ $t("config_reboot_confirm") }}</div>
         </modal-dialog>
+        <modal-dialog v-if="error" width="440px" :ok="confirmError">
+            <div class="dialog-message">{{ message }}</div>
+        </modal-dialog>
     </div>
 </template>
 
 <script>
+    import Request from "axios";
     import Decamelize from "decamelize";
     import Inflection from "inflection";
 
@@ -179,6 +204,8 @@
                 ready: false,
                 reload: false,
                 reboot: false,
+                error: false,
+                message: "Unhandled error",
                 confirmReboot: false,
                 configuration: {
                     server: {
@@ -391,40 +418,104 @@
                 }
             },
 
-            async backup() {
-                this.working = true;
+            async backup(type) {
+                if (!this.locked) {
+                    this.$store.commit("lock");
+                    this.working = true;
 
-                const response = await this.api.post("/config/backup");
+                    let response;
+                    let element;
 
-                this.working = false;
+                    switch (type) {
+                        case "system":
+                            response = await this.api.post("/backup");
 
-                if (response.success) {
-                    const element = document.createElement("a");
+                            if (response.success) {
+                                window.open(response.filename);
+                            } else {
+                                this.message = response.error;
+                                this.error = true;
+                            }
 
-                    element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(response.config, null, 4))}`);
-                    element.setAttribute("download", "config.json");
+                            this.working = false;
+                            this.$store.commit("unlock");
+                            break;
+                        
+                        case "config":
+                            response = await this.api.post("/config/backup");
 
-                    element.style.display = "none";
-                    document.body.appendChild(element);
+                            if (response.success) {
+                                element = document.createElement("a");
 
-                    element.click();
+                                element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(response.config, null, 4))}`);
+                                element.setAttribute("download", "config.json");
 
-                    document.body.removeChild(element);
+                                element.style.display = "none";
+
+                                document.body.appendChild(element);
+
+                                element.click();
+
+                                document.body.removeChild(element);
+                            } else {
+                                this.message = "Unable to download configuration";
+                                this.error = true;
+                            }
+
+                            this.working = false;
+                            this.$store.commit("unlock");
+                            break;
+                        
+                        case "logs":
+                            this.$store.state.messages
+
+                            element = document.createElement("a");
+
+                            element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(this.$store.state.messages.join("\r\n"))}`);
+                            element.setAttribute("download", "logs.txt");
+
+                            element.style.display = "none";
+
+                            document.body.appendChild(element);
+
+                            element.click();
+
+                            document.body.removeChild(element);
+
+                            this.working = false;
+                            this.$store.commit("unlock");
+                            break;
+                        
+                        default:
+                            this.working = false;
+                            this.$store.commit("unlock");
+                            break;
+                    }
                 }
             },
 
-            logs() {
-                const element = document.createElement("a");
+            upload() {
+                this.$refs.file.click();
+            },
 
-                element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(this.$store.state.messages.join("\r\n"))}`);
-                element.setAttribute("download", "logs.txt");
+            restore() {
+                this.working = true;
 
-                element.style.display = "none";
-                document.body.appendChild(element);
+                const data = new FormData();
 
-                element.click();
+                data.append("file", this.$refs.file.files[0]);
 
-                document.body.removeChild(element);
+                Request.post("/api/restore", data, {
+                    headers: {
+                        "Authorization": this.$cookie("token"),
+                        "Content-Type": "multipart/form-data"
+                    }
+                });
+            },
+
+            confirmError() {
+                this.error = false;
+                this.message = "Unhandled error";
             },
 
             configCode() {
