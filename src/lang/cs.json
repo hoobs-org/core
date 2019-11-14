@@ -26,7 +26,6 @@
         "backup_message": "Stáhnout aktuální konfiguraci.",
         "battery": "Baterie",
         "bridge_name": "Jméno bridge",
-        "bridge_settings": "HOOBS Nastavení bridge",
         "bridge_settings_message": "Tato část identifikuje Homebridge v systému a v Apple Home.",
         "broken_clouds": "Oblačno",
         "browse_packages": "Procházet balíčky",

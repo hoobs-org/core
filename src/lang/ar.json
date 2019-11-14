@@ -26,7 +26,6 @@
         "backup_message": "التقط لقطة وقم بتنزيل التكوين الحالي.",
         "battery": "البطارية",
         "bridge_name": "اسم الجسر",
-        "bridge_settings": "إعدادات الجسر HOOBS",
         "bridge_settings_message": "يحدد هذا القسم Homebridge على النظام وفي Apple Home.",
         "broken_clouds": "نسيم عليل",
         "browse_packages": "تصفح الحزم",

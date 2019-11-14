@@ -26,7 +26,6 @@
         "backup_message": "Tirar um instantâneo e descarregue sua configuração atual.",
         "battery": "Bateria",
         "bridge_name": "Nome Ponte",
-        "bridge_settings": "HOOBS Configurações de ponte",
         "bridge_settings_message": "Esta seção identifica Homebridge no sistema e em Apple Home.",
         "broken_clouds": "Nuvens de luz",
         "browse_packages": "Procurar Pacotes",

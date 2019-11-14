@@ -26,7 +26,6 @@
         "backup_message": "Fa un snapshot si descarca configuratia actuala.",
         "battery": "Baterie",
         "bridge_name": "Nume bridge",
-        "bridge_settings": "HOOBS Setari Bridge",
         "bridge_settings_message": "Aceasta sectiune identifica Homebridge in sistem si in Apple Home.",
         "broken_clouds": "Light Clouds",
         "browse_packages": "Rasfoieste pachete",

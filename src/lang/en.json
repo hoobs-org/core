@@ -26,7 +26,6 @@
         "backup_message": "Take a snapshot and download your current configuration.",
         "battery": "Battery",
         "bridge_name": "Bridge Name",
-        "bridge_settings": "HOOBS Bridge Settings",
         "bridge_settings_message": "This section identifies Homebridge on the system and in Apple Home.",
         "broken_clouds": "Light Clouds",
         "browse_packages": "Browse Packages",

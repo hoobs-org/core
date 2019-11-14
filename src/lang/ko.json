@@ -26,7 +26,6 @@
         "backup_message": "스냅 샷을 가지고 현재 구성을 다운로드 할 수 있습니다.",
         "battery": "배터리",
         "bridge_name": "교량 명",
-        "bridge_settings": "HOOBS 브리지 설정",
         "bridge_settings_message": "이 섹션은 시스템에 애플 홈에서 Homebridge를 식별합니다.",
         "broken_clouds": "빛 구름",
         "browse_packages": "패키지 검색",

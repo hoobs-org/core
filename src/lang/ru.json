@@ -26,7 +26,6 @@
         "backup_message": "Сохраните текущую конфигурацию.",
         "battery": "Аккумулятор",
         "bridge_name": "Имя Моста",
-        "bridge_settings": "HOOBS Настройки моста",
         "bridge_settings_message": "данный раздел идентифицирует Homebridge в системе и в Apple Home.",
         "broken_clouds": "Легкие облака",
         "browse_packages": "Просмотр пакетов",

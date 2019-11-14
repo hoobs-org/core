@@ -3,8 +3,8 @@
         <div v-if="loaded" class="info mobile-hide">
             <router-link to="/config/interface" :class="section === 'interface' ? 'active': ''">{{ $t("interface_settings") }}</router-link>
             <router-link to="/config/server" :class="section === 'server' ? 'active': ''">{{ $t("server_settings") }}</router-link>
-            <router-link to="/config/bridge" :class="section === 'bridge' ? 'active': ''">{{ $t("bridge_settings") }}</router-link>
             <router-link to="/config/ports" :class="section === 'ports' ? 'active': ''">{{ $t("port_ranges") }}</router-link>
+            <router-link to="/config/bridge" :class="section === 'bridge' ? 'active': ''">Apple Home</router-link>
             <div v-for="(plugin, index) in plugins" :key="`${index}-platform-link`">
                 <div v-if="user.admin || plugin.scope === 'hoobs'">
                     <router-link :to="`/config/${plugin.name}`" :class="section === plugin.name ? 'active': ''">{{ pluginTitle(plugin) }}</router-link>
@@ -54,17 +54,6 @@
                     <integer-field :name="$t('autostart_after')" :description="$t('autostart_after_message')" v-model.number="configuration.server.autostart" :required="false" @change="markReboot()" />
                     <integer-field :name="$t('polling_seconds')" :description="$t('polling_seconds_message')" v-model.number="configuration.server.polling_seconds" :required="true" @change="markReboot()" />
                 </div>
-                <div class="section" v-if="section === 'bridge' || screen.width <= 815">
-                    <h2>{{ $t("bridge_settings") }}</h2>
-                    <p>
-                        {{ $t("bridge_settings_message") }}
-                    </p>
-                    <text-field :name="$t('service_name')" :description="$t('service_name_message')" v-model="configuration.bridge.name" :required="true" />
-                    <description-field :name="$t('service_description')" :description="$t('service_description_message')" v-model="configuration.description" />
-                    <port-field :name="$t('service_port')" :description="$t('service_port_message')" v-model.number="configuration.bridge.port" :required="true" />
-                    <hex-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" :required="true" />
-                    <text-field :name="$t('home_pin')" :description="$t('home_pin_message')" v-model="configuration.bridge.pin" :required="true" />
-                </div>
                 <div class="section" v-if="section === 'ports' || screen.width <= 815">
                     <h2>{{ $t("port_ranges") }}</h2>
                     <p>
@@ -73,6 +62,17 @@
                     <text-field :name="$t('range_name')" :description="$t('range_name_message')" v-model="configuration.ports.comment" />
                     <port-field :name="$t('start_port')" :description="$t('start_port_message')" v-model.number="configuration.ports.start" />
                     <port-field :name="$t('end_port')" :description="$t('end_port_message')" v-model.number="configuration.ports.end" />
+                </div>
+                <div class="section" v-if="section === 'bridge' || screen.width <= 815">
+                    <h2>Apple Home</h2>
+                    <p>
+                        {{ $t("bridge_settings_message") }}
+                    </p>
+                    <text-field :name="$t('service_name')" :description="$t('service_name_message')" v-model="configuration.bridge.name" :required="true" />
+                    <description-field :name="$t('service_description')" :description="$t('service_description_message')" v-model="configuration.description" />
+                    <port-field :name="$t('service_port')" :description="$t('service_port_message')" v-model.number="configuration.bridge.port" :required="true" />
+                    <hex-field :name="$t('home_username')" :description="$t('home_username_message')" v-model="configuration.bridge.username" :required="true" />
+                    <text-field :name="$t('home_pin')" :description="$t('home_pin_message')" v-model="configuration.bridge.pin" :required="true" />
                 </div>
                 <div v-for="(plugin, index) in plugins" :key="`${index}-plugin`">
                     <div class="section" v-if="(section === plugin.name || screen.width <= 815) && (user.admin || plugin.scope === 'hoobs')">

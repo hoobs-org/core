@@ -26,7 +26,6 @@
         "backup_message": "スナップショットを取り、あなたの現在の設定をダウンロードしてください。",
         "battery": "電池",
         "bridge_name": "橋の名前",
-        "bridge_settings": "HOOBS ブリッジの設定",
         "bridge_settings_message": "このセクションでは、システム上とAppleホームでHomebridgeを識別します。",
         "broken_clouds": "光雲",
         "browse_packages": "パッケージを閲覧",

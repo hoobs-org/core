@@ -26,7 +26,6 @@
         "backup_message": "Ta en ögonblicksbild och ladda ner den aktuella konfigurationen.",
         "battery": "Batteri",
         "bridge_name": "Bridge Namn",
-        "bridge_settings": "HOOBS Bridge Inställningar",
         "bridge_settings_message": "Detta avsnitt identifierar Homebridge på systemet och i Apple Home.",
         "broken_clouds": "Lätta moln",
         "browse_packages": "Bläddra paket",
