@@ -42,7 +42,7 @@ export default {
         background: "#feb400"
     },
     charts: {
-        foreground: "#f9bd2b",
+        foreground: "#515151",
         running: "#019420",
         stopped: "#940101",
         cpu: "#f9bd2b",
