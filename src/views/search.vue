@@ -87,7 +87,7 @@
 
         methods: {
             async search() {
-                if (this.query.length > 3) {
+                if (this.query.length >= 3) {
                     this.working = true;
 
                     this.results = await this.api.post(`/plugins/${encodeURIComponent(this.query)}/50`);
