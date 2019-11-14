@@ -6,7 +6,7 @@
                 <span v-else class="status">{{ $t("updated") }}</span>
             </span>
             <div v-if="plugin.scope === 'hoobs'" class="certified">
-                <div v-html="$theme.logo.certified"></div>
+                <div class="logo" v-html="$theme.logo.certified"></div>
                 <span><b>{{ $brand }}</b> Certified</span>
             </div>
             <h3>{{ humanize(plugin.name) }}</h3>
@@ -316,7 +316,7 @@
         align-items: center;
     }
 
-    #plugin .certified svg {
+    #plugin .certified .logo {
         margin: 0 5px 0 0;
     }
 </style>
