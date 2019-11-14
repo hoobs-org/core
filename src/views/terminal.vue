@@ -30,22 +30,6 @@
         computed: {
             user() {
                 return this.$store.state.user;
-            },
-
-            colors() {
-                switch (this.$system) {
-                    case "rocket":
-                        return {
-                            background: "#262626",
-                            foreground: "#f1f1f1"
-                        };
-
-                    default:
-                        return {
-                            background: "#474746",
-                            foreground: "#f1f1f1"
-                        };
-                }
             }
         },
 
@@ -63,7 +47,10 @@
 
             this.term = new Terminal({
                 cursorBlink: false,
-                theme: this.colors
+                theme: {
+                    background: this.$theme.terminal.background,
+                    foreground: this.$theme.terminal.foreground
+                }
             });
 
             this.screen = new FitAddon();

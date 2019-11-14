@@ -39,10 +39,10 @@
 
             colors() {
                 return [
-                    this.running ? "#019420" : "#940101",
-                    "#f9bd2b",
-                    "#e75a0e",
-                    "#999999"
+                    this.running ? this.$theme.charts.running : this.$theme.charts.stopped,
+                    this.$theme.charts.cpu,
+                    this.$theme.charts.memory,
+                    this.$theme.charts.uptime
                 ];
             },
 

@@ -53,6 +53,14 @@ import App from "./app.vue";
                 return config.instance;
             },
 
+            $theme() {
+                return Themes[this.$client.theme || `${this.$system}-light`];
+            },
+
+            $themes() {
+                return Themes;
+            },
+
             $system() {
                 switch (config.system) {
                     case "rocket":
@@ -60,6 +68,16 @@ import App from "./app.vue";
                     
                     default:
                         return "hoobs";
+                }
+            },
+
+            $brand() {
+                switch (config.system) {
+                    case "rocket":
+                        return "Rocket";
+                    
+                    default:
+                        return "HOOBS";
                 }
             }
         },

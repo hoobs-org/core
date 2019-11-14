@@ -6,7 +6,7 @@
                 <slot />
             </div>
             <div class="dialog-footer">
-                <div v-if="donate" class="button" v-on:click="donate()">{{ $t("donate") }}</div>
+                <div v-if="$theme.donate && donate" class="button" v-on:click="donate()">{{ $t("donate") }}</div>
                 <div v-if="cancel" class="button" v-on:click="cancel()">{{ $t("cancel") }}</div>
                 <div v-if="ok" class="button button-primary" v-on:click="ok()">{{ $t("ok") }}</div>
             </div>

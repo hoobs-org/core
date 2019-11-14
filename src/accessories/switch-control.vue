@@ -2,7 +2,7 @@
     <div id="control">
         <svg width="190" height="190" viewBox="0 0 100 100">
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" cx="50" cy="50" r="45" />
-            <circle :fill="value.values[characteristic] ? color : (($client.theme || `${system}-light`).endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
+            <circle :fill="value.values[characteristic] ? color : $theme.accessories.off" cx="50" cy="50" r="43.5" />
             <path fill="#ffffffef" :d="icon" />
             <circle fill="#ffffff00" stroke="none" cx="50" cy="50" r="45" @click="toggle" style="cursor: pointer;" />
         </svg>

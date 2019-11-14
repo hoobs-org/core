@@ -2,9 +2,9 @@
     <div id="control">
         <svg width="190" height="190" viewBox="0 0 100 100" v-on:click="setTarget" v-on:mousedown="captureMouse" v-on:mouseup="releaseMouse" v-on:touchstart="beginTouch" v-on:touchend="endTouch">
             <circle style="fill: var(--background); stroke: var(--text-light);" stroke-width="0.5" cx="50" cy="50" r="45" />
-            <circle :fill="value.values.on ? '#ffd500' : (($client.theme || `${system}-light`).endsWith('dark') ? '#777777' : '#cccccc')" cx="50" cy="50" r="43.5" />
-            <path :d="`M ${this.min.x} ${this.min.y} A 40 40 0 1 1 ${this.max.x} ${this.max.y}`" stroke-width="5" :stroke="luminance(value.values.on ? '#ffd500' : (($client.theme || `${system}-light`).endsWith('dark') ? '#777777' : '#cccccc'), 0.05)" fill="none" style="transition: stroke 0.1s ease-in; cursor: pointer;" />
-            <path v-if="visible" :d="`M ${this.zero.x} ${this.zero.y} A 40 40 0 ${this.arc} ${this.sweep} ${this.position.x} ${this.position.y}`" stroke-width="5" :stroke="luminance(value.values.on ? '#ffd500' : (($client.theme || `${system}-light`).endsWith('dark') ? '#777777' : '#cccccc'), -0.07)" fill="none" ref="path-value" :style="style" />
+            <circle :fill="value.values.on ? '#ffd500' : $theme.accessories.off" cx="50" cy="50" r="43.5" />
+            <path :d="`M ${this.min.x} ${this.min.y} A 40 40 0 1 1 ${this.max.x} ${this.max.y}`" stroke-width="5" :stroke="luminance(value.values.on ? '#ffd500' : $theme.accessories.off, 0.05)" fill="none" style="transition: stroke 0.1s ease-in; cursor: pointer;" />
+            <path v-if="visible" :d="`M ${this.zero.x} ${this.zero.y} A 40 40 0 ${this.arc} ${this.sweep} ${this.position.x} ${this.position.y}`" stroke-width="5" :stroke="luminance(value.values.on ? '#ffd500' : $theme.accessories.off, -0.07)" fill="none" ref="path-value" :style="style" />
             <path fill="#ffffffef" d="M38.9,53.7l5.6,5.6v9.3h11.1v-9.3l5.6-5.6v-9.3H38.9V53.7z M48.2,31.5h3.7V37h-3.7V31.5z M34.3,38.7l2.6-2.6l3.9,3.9 l-2.6,2.6L34.3,38.7z M59.2,40l3.9-3.9l2.6,2.6l-3.9,3.9L59.2,40z" />
             <circle fill="#ffffff00" stroke="none" cx="50" cy="50" r="33.5" v-on:click.stop="toggleSwitch" v-on:mousedown.stop="nullEvent" v-on:mouseup.stop="nullEvent" v-on:touchstart.stop="nullEvent" v-on:touchend.stop="nullEvent" style="cursor: pointer;" />
         </svg>

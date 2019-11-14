@@ -13,7 +13,7 @@
                         <span v-else class="status">{{ $t("updated") }}</span>
                     </span>
                     <div v-if="plugin.scope === 'hoobs'" class="certified">
-                        {{ title }} Certified
+                        {{ $brand }} Certified
                     </div>
                     <div class="version">
                         {{ plugin.installed || plugin.version }}
@@ -33,7 +33,7 @@
                 </div>
                 <div v-else class="control">
                     <div v-if="plugin.scope === 'hoobs'" class="certified">
-                        {{ title }} Certified
+                        {{ $brand }} Certified
                     </div>
                     <div class="version">
                         {{ plugin.installed || plugin.version }}
@@ -91,16 +91,6 @@
 
             categories() {
                 return this.$store.state.categories;
-            },
-
-            title() {
-                switch (this.$system) {
-                    case "rocket":
-                        return "Rocket";
-                    
-                    default:
-                        return "HOOBS";
-                }
             }
         },
 

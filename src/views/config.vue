@@ -186,10 +186,6 @@
                 return this.$store.state.user;
             },
 
-            system() {
-                return this.$system;
-            },
-
             screen() {
                 return this.$store.state.screen;
             },
@@ -336,13 +332,16 @@
         async mounted() {
             await this.load();
 
-            this.themes = [{
-                text: this.$t(`${this.system}_light`),
-                value: `${this.system}-light`
-            },{
-                text: this.$t(`${this.system}_dark`),
-                value: `${this.system}-dark`
-            }];
+            this.themes = [];
+
+            const keys = Object.keys(this.$themes);
+
+            for (let i = 0; i < keys.length; i++) {
+                this.themes.push({
+                    text: this.$themes[keys[i]].translate ? this.$t(this.$themes[keys[i]].translate) : this.$themes[keys[i]].title ? this.$themes[keys[i]].title : keys[i],
+                    value: keys[i]
+                });
+            }
         },
 
         updated() {
