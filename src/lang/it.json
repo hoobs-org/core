@@ -26,7 +26,7 @@
         "backup_message": "Fai una istantanea e scarica la configurazione attuale.",
         "battery": "Batteria",
         "bridge_name": "Nome del bridge",
-        "bridge_settings": "Impostazioni bridge",
+        "bridge_settings": "HOOBS Impostazioni bridge",
         "bridge_settings_message": "Questa sezione identifica Homebridge nel sistema e nell’app Casa",
         "broken_clouds": "Nuvole di luce",
         "browse_packages": "Naviga tra i pacchetti",

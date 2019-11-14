@@ -26,7 +26,7 @@
         "backup_message": "Lade die aktuellen Einstellungen als Backup herunter",
         "battery": "Batterie",
         "bridge_name": "Bridge Name",
-        "bridge_settings": "Bridge Einstellungen",
+        "bridge_settings": "HOOBS Bridge Einstellungen",
         "bridge_settings_message": "Dieser Bereich indentifiziert Homebridge auf dem System und in Apple Homekit",
         "broken_clouds": "Leicht Bewölkt",
         "browse_packages": "Nach zu installierenden Paketen suchen",
