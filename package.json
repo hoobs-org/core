@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.0.1",
+    "version": "3.0.0-beta.72",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -60,7 +60,7 @@
         "@vue/cli-plugin-router": "^4.0.5",
         "@vue/cli-plugin-vuex": "^4.0.5",
         "@vue/cli-service": "^4.0.5",
-        "chartkick": "^3.1.1",
+        "chartkick": "^3.2.0",
         "decamelize": "^3.2.0",
         "deep-equal": "^1.1.0",
         "deepmerge": "^4.2.1",
