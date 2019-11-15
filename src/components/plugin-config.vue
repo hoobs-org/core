@@ -335,9 +335,9 @@
 
                 this.gshPopup = null;
 
-                const index = this.configuration.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "google-home");
+                const index = this.value.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "google-home");
 
-                this.configuration.platforms[index].token = token;
+                this.value.platforms[index].token = token;
 
                 if (this.save) {
                     this.save();
