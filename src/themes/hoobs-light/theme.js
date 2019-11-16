@@ -3,6 +3,10 @@ export default {
     title: "HOOBS Light",
     translate: "hoobs_light",
     donate: "https://www.paypal.me/hoobsofficial",
+    homepage: {
+        name: "HOOBS.org",
+        url: "https://hoobs.org"
+    },
     logo: {
         text: true,
         title: `

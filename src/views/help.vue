@@ -6,7 +6,7 @@
                 {{ $t("online_help_message") }}
             </p>
             <div class="help-actions">
-                <a :href="$theme.homepage.url" target="_blank" class="button button-primary">{{ $theme.homepage.name }}</a>
+                <a v-if="$theme.homepage" :href="$theme.homepage.url" target="_blank" class="button button-primary">{{ $theme.homepage.name }}</a>
                 <a href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
                 <a v-if="system === 'hoobs'" href="https://www.reddit.com/r/hoobs/" target="_blank" class="button mobile-hide">HOOBS Subreddit</a>
                 <div v-if="registration" class="button mobile-hide" v-on:click="disconnectCockpit()">{{ $t("disconnect") }}</div>
@@ -135,7 +135,7 @@
                             response = await this.api.post("/backup");
 
                             if (response.success) {
-                                window.open(response.filename);
+                                window.location.href = response.filename;
                             } else {
                                 this.message = response.error;
                                 this.error = true;

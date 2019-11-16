@@ -434,7 +434,7 @@
                             response = await this.api.post("/backup");
 
                             if (response.success) {
-                                window.open(response.filename);
+                                window.location.href = response.filename;
                             } else {
                                 this.message = response.error;
                                 this.error = true;

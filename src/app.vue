@@ -72,7 +72,7 @@
                 <div class="button" v-on:click="checkUpdates()">{{ $t("check_for_updates") }}</div>
             </div>
             <br>
-            <a :href="$theme.homepage.url" target="_blank">{{ $theme.homepage.name }}</a><br>
+            <a v-if="$theme.homepage" :href="$theme.homepage.url" target="_blank">{{ $theme.homepage.name }}</a><br>
             <br>
             Copyright &copy; {{ new Date().getFullYear() }} {{ $brand }}. All rights reserved.
         </modal-dialog>
