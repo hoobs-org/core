@@ -2,9 +2,13 @@
     <div id="login">
         <div v-if="init" class="content create">
             <div class="form">
-                <h2>
+                <h2 v-if="system === 'hoobs'">
                     <div class="logo" v-html="$theme.logo.login"></div>
                     {{ $t("welcome_message_hoobs") }}
+                </h2>
+                <h2 v-if="system === 'rocket'">
+                    <div class="logo" v-html="$theme.logo.login"></div>
+                    {{ $t("welcome_message_rocket") }}
                 </h2>
                 <p v-if="system === 'hoobs'">
                     {{ $t("setup_admin_account")}}

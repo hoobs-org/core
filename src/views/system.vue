@@ -29,16 +29,6 @@
                 <div v-if="system === 'rocket'" class="update-card">
                     <b>Rocket Core</b>
                     <span v-if="status">Current Version: {{ status[`${system}_version`] }}</span>
-                    <div v-if="checking" class="update-actions">
-                        <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
-                    </div>
-                    <div v-else-if="updates.length > 0" class="update-actions">
-                        <b>{{ updates[0].version }} {{ $t("update_available") }}</b><br>
-                        <div class="button button-primary" v-on:click="update()">{{ $t("update") }}</div>
-                    </div>
-                    <div v-else class="update-actions">
-                        <b>{{ $t("up_to_date") }}</b>
-                    </div>
                 </div>
                 <table>
                     <tbody>

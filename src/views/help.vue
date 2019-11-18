@@ -2,12 +2,12 @@
     <div id="help">
         <div class="content">
             <h2>{{ $t("online_help") }}</h2>
-            <p v-if="system === 'hoobs'">
+            <p>
                 {{ $t("online_help_message") }}
             </p>
             <div class="help-actions">
                 <a v-if="$theme.homepage" :href="$theme.homepage.url" target="_blank" class="button button-primary">{{ $theme.homepage.name }}</a>
-                <a href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
+                <a v-if="system === 'hoobs'" href="https://m.me/HOOBSofficial" target="_blank" class="button">{{ $t("chat_with_us") }}</a>
                 <a v-if="system === 'hoobs'" href="https://www.reddit.com/r/hoobs/" target="_blank" class="button mobile-hide">HOOBS Subreddit</a>
                 <div v-if="registration" class="button mobile-hide" v-on:click="disconnectCockpit()">{{ $t("disconnect") }}</div>
                 <div v-else class="button mobile-hide" v-on:click="startCockpit()">{{ $t("remote_support") }}</div>
