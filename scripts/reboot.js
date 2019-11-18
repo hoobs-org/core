@@ -11,7 +11,7 @@ module.exports = () => {
         if (pms) {
             console.log("---------------------------------------------------------");
             console.log("HOOBS is Installed");
-            console.log("Please redirect your browser to http://hoobs.local")
+            console.log("Please redirect your browser to http://hoobs.local");
             console.log("---------------------------------------------------------");
             console.log("The HOOBS interface should apear in 5 - 10 minutes");
             console.log("depending on how many plugins you have installed.");
