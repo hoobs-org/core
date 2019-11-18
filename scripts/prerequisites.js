@@ -28,6 +28,7 @@ module.exports = () => {
             case "apt":
                 throbber = Ora("Installing Prerequisites").start();
 
+                Process.execSync("apt-get update");
                 Process.execSync("apt-get install -y perl python make gcc curl libavahi-compat-libdnssd-dev");
 
                 throbber.stopAndPersist();
