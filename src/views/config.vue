@@ -106,11 +106,14 @@
                         <b>{{ $t("warning") }}</b> {{ $t("restore_warning") }}
                     </p>
                     <div v-if="working" class="action">
-                        <div class="button disabled">{{ $t("select_backup") }}</div>
+                        <div class="button disabled">{{ $t("system") }}</div>
+                        <div class="button disabled">{{ $t("config") }}</div>
                     </div>
                     <div v-else class="action">
-                        <input type="file" ref="file" v-on:change="restore()" accept=".hbf" hidden />
-                        <div v-on:click.stop="upload()" class="button">{{ $t("select_backup") }}</div>
+                        <input type="file" ref="hbf" v-on:change="restore('hbf')" accept=".hbf" hidden />
+                        <div v-on:click.stop="upload('hbf')" class="button">{{ $t("system") }}</div>
+                        <input type="file" ref="cfg" v-on:change="restore('cfg')" accept=".json" hidden />
+                        <div v-on:click.stop="upload('cfg')" class="button">{{ $t("config") }}</div>
                     </div>
                 </div>
                 <div class="mobile-show">
@@ -497,23 +500,40 @@
                 }
             },
 
-            upload() {
-                this.$refs.file.click();
+            upload(field) {
+                this.$refs[field].click();
             },
 
-            restore() {
+            restore(field) {
                 this.working = true;
 
                 const data = new FormData();
 
-                data.append("file", this.$refs.file.files[0]);
+                switch (field) {
+                    case "hbf":
+                        data.append("file", this.$refs.hbf.files[0]);
 
-                Request.post("/api/restore", data, {
-                    headers: {
-                        "Authorization": this.$cookie("token"),
-                        "Content-Type": "multipart/form-data"
-                    }
-                });
+                        Request.post("/api/restore", data, {
+                            headers: {
+                                "Authorization": this.$cookie("token"),
+                                "Content-Type": "multipart/form-data"
+                            }
+                        });
+
+                        break;
+
+                    case "cfg":
+                        data.append("file", this.$refs.cfg.files[0]);
+
+                        Request.post("/api/config/restore", data, {
+                            headers: {
+                                "Authorization": this.$cookie("token"),
+                                "Content-Type": "multipart/form-data"
+                            }
+                        });
+
+                        break;
+                }
             },
 
             confirmError() {

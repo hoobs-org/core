@@ -30,7 +30,7 @@
         "prepare": "npm run build",
         "postinstall": "bin/hoobs-upgrade",
         "pack": "npm pack && rm -f ./builds/hoobs-core.tgz && mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz",
-        "serve": "npm run build && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && cp -r ./dist ~/.hoobs/ && cp -r ./lib ~/.hoobs/ && ./bin/hoobs"
+        "serve": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.0.5",
