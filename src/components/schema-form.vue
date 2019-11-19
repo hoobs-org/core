@@ -171,7 +171,13 @@
             },
 
             fieldType(field) {
-                const type = (field.type || "").toLowerCase();
+                let type = "string";
+
+                if (Array.isArray(field.type)) {
+                    type = field.type[field.type.length - 1].toLowerCase();
+                } else {
+                    type = (field.type || "").toLowerCase();
+                }
 
                 if (type === "button" && field.url && field.url !== "") {
                     return "button";
@@ -191,7 +197,15 @@
             },
 
             getComponent(field) {
-                switch((field.type || "").toLowerCase()) {
+                let type = "string";
+
+                if (Array.isArray(field.type)) {
+                    type = field.type[field.type.length - 1].toLowerCase();
+                } else {
+                    type = (field.type || "").toLowerCase();
+                }
+
+                switch(type) {
                     case "text":
                     case "string":
                         if (field.enum) {
@@ -231,7 +245,15 @@
             },
 
             defaultValue(field) {
-                switch((field.type || "").toLowerCase()) {
+                let type = "string";
+
+                if (Array.isArray(field.type)) {
+                    type = field.type[field.type.length - 1].toLowerCase();
+                } else {
+                    type = (field.type || "").toLowerCase();
+                }
+
+                switch(type) {
                     case "text":
                     case "string":
                         return field.default || "";
@@ -256,6 +278,14 @@
             },
 
             getOptions(field) {
+                let type = "string";
+
+                if (Array.isArray(field.type)) {
+                    type = field.type[field.type.length - 1].toLowerCase();
+                } else {
+                    type = (field.type || "").toLowerCase();
+                }
+
                 const options = [];
 
                 if (field.enum && Array.isArray(field.enum)) {
@@ -279,7 +309,7 @@
                             });
                         }
                     }
-                } else if ((field.type || "").toLowerCase() === "boolean" || (field.type || "").toLowerCase() === "bool") {
+                } else if (type === "boolean" || type === "bool") {
                     options.push({
                         text: this.$t("yes"),
                         value: true
