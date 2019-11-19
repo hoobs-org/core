@@ -1,22 +1,23 @@
 .hoobs-dark {
-    --primary: #474746;
-    --primary-dark: #3f3f3f;
-    --background: #474746;
-    --background-light: #4a4a49;
-    --background-dark: #474746;
+    --primary: #262626;
+    --primary-dark: #000;
+    --background: #262626;
+    --background-light: #262626;
+    --background-dark: #262626;
     --background-dark-text: #999;
-    --background-dark-border: #3d3d3d;
+    --background-dark-border: #333;
     --background-dark-text-dark: #fff;
-    --background-accent: #575757;
-    --background-highlight: #575757;
-    --nav-background: #474746;
+    --background-accent: #444;
+    --background-highlight: #444;
+    --nav-background: #262626;
     --nav-lignt: #585857;
     --warning: #e30505;
-    --button: #3d3d3d;
+    --button: #1a1a1a;
     --button-text: #fff;
+    --button-border: #1a1a1a;
     --button-primary: #feb400;
     --button-primary-text: #fff;
-    --input-background: #575757;
+    --input-background: #444;
     --input-text: #fff;
     --input-json-text: #feb400;
     --input-json-number: #e75a0e;
@@ -34,9 +35,9 @@
     --nav-text: #bababa;
     --nav-text-light: #fff;
     --log-text: #d1d1d1;
-    --border: #3d3d3d;
-    --border-dark: #303030;
-    --modal: #474746b8;
+    --border: #333;
+    --border-dark: #000;
+    --modal: #262626b8;
     --elevation-small: 0 1px 1px 0 rgba(0, 0, 0, 0.24),
                        0 2px 1px -1px rgba(0, 0, 0, 0.22),
                        0 1px 3px 1px rgba(0, 0, 0, 0.3);

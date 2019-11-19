@@ -59,7 +59,7 @@ export default {
     },
     terminal: {
         foreground: "#f1f1f1",
-        background: "#474746"
+        background: "#262626"
     },
     accessories: {
         off: "#777",

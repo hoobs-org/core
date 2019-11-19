@@ -424,7 +424,7 @@
         color: var(--button-text) !important;
         text-decoration: none !important;
         display: inline-block;
-        border: 1px var(--border) solid;
+        border: 1px var(--button-border) solid;
         border-radius: 3px;
         padding: 10px;
         cursor: pointer;
