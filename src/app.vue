@@ -672,7 +672,7 @@
     }
 
     #app .nav .action-seperator div {
-        background: var(--nav-lignt);
+        background: var(--nav-light);
         height: 1px;
     }
 
