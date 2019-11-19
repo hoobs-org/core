@@ -579,6 +579,8 @@
                 string = string.replace(/myq/gi, "myQ");
                 string = string.replace(/rgb/gi, "RGB");
                 string = string.replace(/ffmpeg/gi, "FFMPEG");
+                string = string.replace(/webos/gi, "LG webOS");
+                string = string.replace(/webostv/gi, "webOS");
 
                 return string;
             },
