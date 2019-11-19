@@ -1,0 +1,51 @@
+.hunters-green {
+    --primary: #232b21;
+    --primary-dark: #344f2f;
+    --background: #2a3926;
+    --background-light: #2a3926;
+    --background-dark: #2a3926;
+    --background-dark-text: #a1b29d;
+    --background-dark-border: #232b21;
+    --background-dark-text-dark: #fff;
+    --background-accent: #42513e;
+    --background-highlight: #232b21;
+    --nav-background: #232b21;
+    --nav-light: #3d3d3d;
+    --warning: #e30505;
+    --button: #232b21;
+    --button-text: #fff;
+    --button-border: #232b21;
+    --button-primary: #417a36;
+    --button-primary-text: #fff;
+    --input-background: #52604f;
+    --input-text: #fff;
+    --input-json-text: #3bcb1f;
+    --input-json-number: #cf8600;
+    --text: #a1b29d;
+    --text-light: #a1b29d;
+    --text-dark: #fff;
+    --text-dim: #606d5d;
+    --text-highlight: #e75a0e;
+    --title-text: #417a36;
+    --title-text-dim: #344f2f;
+    --error-text: #e30505;
+    --primary-text: #417a36;
+    --link-text: #417a36;
+    --warning-text: #fff;
+    --nav-text: #bababa;
+    --nav-text-light: #fff;
+    --log-text: #a1b29d;
+    --border: #232b21;
+    --border-dark: #232b21;
+    --modal: #232b21b8;
+    --elevation-small: 0 1px 1px 0 rgba(0, 0, 0, 0.24),
+                       0 2px 1px -1px rgba(0, 0, 0, 0.22),
+                       0 1px 3px 1px rgba(0, 0, 0, 0.3);
+    --elevation-large: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
+                       0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                       0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --elevation-bottom: 0 2px 4px 7px rgba(0, 0, 0, 0.2),
+                        0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                        0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --snapshot: url("./snapshot.jpg");
+}

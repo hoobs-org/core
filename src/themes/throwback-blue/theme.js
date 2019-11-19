@@ -1,6 +1,6 @@
 export default {
-    name: "homebridge",
-    title: "Homebridge Blue",
+    name: "throwback-blue",
+    title: "Throwback Blue",
     donate: "https://www.paypal.me/hoobsofficial",
     homepage: {
         name: "HOOBS.org",
