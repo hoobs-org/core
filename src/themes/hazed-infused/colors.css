@@ -1,0 +1,51 @@
+.hazed-infused {
+    --primary: #7900bd;
+    --primary-dark: #4e0079;
+    --background: #f8f8f8;
+    --background-light: #f8f8f8;
+    --background-dark: #474746;
+    --background-dark-text: #999;
+    --background-dark-border: #3d3d3d;
+    --background-dark-text-dark: #fff;
+    --background-accent: #fcfcfc;
+    --background-highlight: #e2e2e2;
+    --nav-background: #474746;
+    --nav-light: #585857;
+    --warning: #e30505;
+    --button: #fff;
+    --button-text: #777;
+    --button-border: #e5e5e5;
+    --button-primary: #9107e0;
+    --button-primary-text: #fff;
+    --input-background: #fff;
+    --input-text: #000;
+    --input-json-text: #00b9f1;
+    --input-json-number: #7900bd;
+    --text: #515151;
+    --text-light: #ccc;
+    --text-dark: #000;
+    --text-dim: #999;
+    --text-highlight: #e75a0e;
+    --title-text: #00b9f1;
+    --title-text-dim: #fce2a4;
+    --error-text: #a11;
+    --primary-text: #fff;
+    --link-text: #00b9f1;
+    --warning-text: #fff;
+    --nav-text: #bababa;
+    --nav-text-light: #fff;
+    --log-text: #f1f1f1;
+    --border: #e5e5e5;
+    --border-dark: #acacac;
+    --modal: #ffffff94;
+    --elevation-small: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+                       0 2px 1px -1px rgba(0, 0, 0, 0.12),
+                       0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    --elevation-large: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
+                       0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                       0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --elevation-bottom: 0 2px 4px 7px rgba(0, 0, 0, 0.2),
+                        0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                        0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --snapshot: url("./snapshot.jpg");
+}
