@@ -1,0 +1,51 @@
+.orient-red {
+    --primary: #a00202;
+    --primary-dark: #690404;
+    --background: #262626;
+    --background-light: #262626;
+    --background-dark: #262626;
+    --background-dark-text: #999;
+    --background-dark-border: #333;
+    --background-dark-text-dark: #fff;
+    --background-accent: #444;
+    --background-highlight: #444;
+    --nav-background: #262626;
+    --nav-light: #3d3d3d;
+    --warning: #e30505;
+    --button: #1a1a1a;
+    --button-text: #fff;
+    --button-border: #1a1a1a;
+    --button-primary: #e30505;
+    --button-primary-text: #fff;
+    --input-background: #444;
+    --input-text: #fff;
+    --input-json-text: #fff;
+    --input-json-number: #e30505;
+    --text: #999;
+    --text-light: #999;
+    --text-dark: #fff;
+    --text-dim: #999;
+    --text-highlight: #e75a0e;
+    --title-text: #e30505;
+    --title-text-dim: #851212;
+    --error-text: #e30505;
+    --primary-text: #fff;
+    --link-text: #e30505;
+    --warning-text: #fff;
+    --nav-text: #bababa;
+    --nav-text-light: #fff;
+    --log-text: #d1d1d1;
+    --border: #333;
+    --border-dark: #000;
+    --modal: #262626b8;
+    --elevation-small: 0 1px 1px 0 rgba(0, 0, 0, 0.24),
+                       0 2px 1px -1px rgba(0, 0, 0, 0.22),
+                       0 1px 3px 1px rgba(0, 0, 0, 0.3);
+    --elevation-large: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
+                       0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                       0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --elevation-bottom: 0 2px 4px 7px rgba(0, 0, 0, 0.2),
+                        0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                        0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --snapshot: url("./snapshot.jpg");
+}
