@@ -15,7 +15,12 @@ module.exports = () => {
                 throbber = Ora("Creating HOOBS User").start();
 
                 Process.execSync("useradd -s /bin/bash -m -d /home/hoobs -p $(perl -e 'print crypt($ARGV[0], \"password\")' \"hoobsadmin\") hoobs");
-                Process.execSync("usermod -a -G wheel hoobs");
+
+                if (pms === "yum" || pms === "dnf") {
+                    Process.execSync("usermod -a -G wheel hoobs");
+                } else {
+                    Process.execSync("usermod -a -G sudo hoobs");
+                }
 
                 throbber.stopAndPersist();
             }
