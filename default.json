@@ -3,7 +3,7 @@
         "port": 8080,
         "autostart": 0,
         "home_setup_id": "X-HM://",
-        "polling_seconds": 2
+        "polling_seconds": 5
     },
     "client": {
         "default_route": "status",
