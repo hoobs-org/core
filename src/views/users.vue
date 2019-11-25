@@ -187,17 +187,23 @@
                 }
 
                 if (this.identityErrors.length === 0 && this.passwordErrors.length === 0) {
-                    this.current = undefined;
-
-                    await this.client.put("/users", {
+                    const results = await this.client.put("/users", {
                         name: this.name,
                         username: this.username.toLowerCase(),
                         password: this.password,
                         admin: this.admin
                     });
 
-                    this.users = await this.client.get("/users");
-                    this.showUser(this.users.length - 1);
+                    if (results && results.success) {
+                        this.current = undefined;
+                        this.users = await this.client.get("/users");
+
+                        this.showUser(this.users.length - 1);
+                    } else if (results && results.error) {
+                        this.identityErrors.push(results.error);
+                    } else {
+                        this.identityErrors.push("Unable to create user");
+                    }
                 }
             },
 
@@ -224,20 +230,27 @@
                 }
 
                 if (this.identityErrors.length === 0 && this.passwordErrors.length === 0) {
-                    this.current = undefined;
-
-                    if ((await this.client.post(`/user/${this.id}`, {
+                    const results = await this.client.post(`/user/${this.id}`, {
                         name: this.name,
                         username: this.username.toLowerCase(),
                         password: this.password !== "" ? this.password : null,
                         admin: this.admin
-                    })).success) {
+                    });
+
+                    if (results && results.success) {
+                        this.current = undefined;
+
                         if (this.id === this.user.id) {
                             window.location.href = "/login";
                         } else {
                             this.users = await this.client.get("/users");
+
                             this.showUser(current);
                         }
+                    } else if (results && results.error) {
+                        this.identityErrors.push(results.error);
+                    } else {
+                        this.identityErrors.push("Unable to create user");
                     }
                 }
             }
