@@ -2,7 +2,7 @@
     <div id="control">
         <svg version="1.1" width="190" height="190" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" @click="toggle">
             <path style="fill: var(--background-accent); stroke: var(--text-light);" stroke-width="0.5" d="M50,16.5L9.1,38v49.3h81.8V38L50,16.5z" />
-            <polygon fill="#e75a0e" points="5,35.2 50,12.7 95,35.2 95,41.3 95,43.4 50,20.9 5,43.4 5,41.3" />
+            <polygon :fill="$theme.accessories.garage" points="5,35.2 50,12.7 95,35.2 95,41.3 95,43.4 50,20.9 5,43.4 5,41.3" />
             <g v-if="value.values.target_door_state === 1">
                 <rect fill="#787878" x="19.3" y="50.5" width="61.4" height="36.8" style="cursor: pointer;" />
                 <polygon fill="#686868" points="76.6,50.5 23.4,50.5 19.3,50.5 19.3,54.6 19.3,87.3 23.4,87.3 23.4,54.6 76.6,54.6 76.6,87.3  80.7,87.3 80.7,54.6 80.7,50.5" style="cursor: pointer;" />

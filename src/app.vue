@@ -133,7 +133,7 @@
         },
 
         async mounted() {
-            this.loader = Loader(this.$theme.logo.loader, this.$brand, this.$theme.loader.background);
+            this.loader = Loader(this.$theme.logo.loader, this.$brand, this.$theme.loader.foreground, this.$theme.loader.background);
 
             Chart.defaults.global.defaultFontColor = this.$theme.charts.foreground;
 

@@ -1,0 +1,11 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.github": true,
+        "**/.DS_Store": true,
+        "**/yarn.lock": true,
+        "**/.vscode": true,
+        "**/.gitignore": true,
+        "**/.npmignore": true
+    }
+}

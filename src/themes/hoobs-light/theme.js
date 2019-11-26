@@ -43,6 +43,7 @@ export default {
         `
     },
     loader: {
+        foreground: "#ffffff",
         background: "#feb400"
     },
     charts: {
@@ -63,6 +64,14 @@ export default {
     },
     accessories: {
         off: "#ccc",
-        thermostat: "#fafafa"
+        thermostat: "#fafafa",
+        garage: "#e75a0e",
+        lock: "#e75a0e",
+        light: "#ffd500",
+        disposal: "#f9bd2b",
+        fireplace: "#f27c05",
+        switch: "#e75a0e",
+        fan: "#f9bd2b",
+        outlet: "#00d42d"
     }
 };

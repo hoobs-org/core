@@ -1,7 +1,9 @@
 class Loader {
-    constructor(logo, title, background) {
+    constructor(logo, title, foreground, background) {
         this.logo = logo;
         this.title = title;
+
+        this.foreground = foreground;
         this.background = background;
 
         this.loading = false;
@@ -43,12 +45,12 @@ class Loader {
                         }
                 
                         .logo-fill {
-                            fill: #fff
+                            fill: ${this.foreground}
                         }
                 
                         .logo-stroke {
                             fill: none;
-                            stroke: #fff;
+                            stroke: ${this.foreground};
                             stroke-width: 4;
                             stroke-miterlimit: 10;
                         }
@@ -60,7 +62,7 @@ class Loader {
                             max-width: 90vw;
                             height: 3px;
                             margin: 20px 0 50px 0;
-                            background: #ffffff42;
+                            background: ${this.foreground}42;
                         }
                     
                         .marquee div {
@@ -68,7 +70,7 @@ class Loader {
                             width: 40%;
                             margin: 0;
                             height: 3px;
-                            background: #fff;
+                            background: ${this.foreground};
                             -moz-animation: loading-marquee 2s linear infinite alternate;
                             -webkit-animation: loading-marquee 2s linear infinite alternate;
                             animation: loading-marquee 2s linear infinite alternate;
@@ -125,6 +127,6 @@ class Loader {
     }
 }
 
-export default function (logo, title, background) {
-    return new Loader(logo, title, background);
+export default function (logo, title, foreground, background) {
+    return new Loader(logo, title, foreground, background);
 }
