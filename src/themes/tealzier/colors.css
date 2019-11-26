@@ -1,0 +1,51 @@
+.tealzier {
+    --primary: #10695c;
+    --primary-dark: #053830;
+    --background: #fff;
+    --background-light: #fff;
+    --background-dark: #fff;
+    --background-dark-text: #515151;
+    --background-dark-border: #e5e5e5;
+    --background-dark-text-dark: #000;
+    --background-accent: #fcfcfc;
+    --background-highlight: #f1f1f1;
+    --nav-background: #474746;
+    --nav-light: #585857;
+    --warning: #e30505;
+    --button: #fff;
+    --button-text: #777;
+    --button-border: #e5e5e5;
+    --button-primary: #10695c;
+    --button-primary-text: #fff;
+    --input-background: #fff;
+    --input-text: #000;
+    --input-json-text: #10695c;
+    --input-json-number: #aa0c0c;
+    --text: #515151;
+    --text-light: #ccc;
+    --text-dark: #000;
+    --text-dim: #999;
+    --text-highlight: #ab4a43;
+    --title-text: #10695c;
+    --title-text-dim: #80cec2;
+    --error-text: #a11;
+    --primary-text: #fff;
+    --link-text: #10695c;
+    --warning-text: #fff;
+    --nav-text: #bababa;
+    --nav-text-light: #fff;
+    --log-text: #515151;
+    --border: #e5e5e5;
+    --border-dark: #acacac;
+    --modal: #ffffff94;
+    --elevation-small: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+                       0 2px 1px -1px rgba(0, 0, 0, 0.12),
+                       0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    --elevation-large: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
+                       0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                       0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --elevation-bottom: 0 2px 4px 7px rgba(0, 0, 0, 0.2),
+                        0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                        0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --snapshot: url("./snapshot.jpg");
+}
