@@ -23,9 +23,10 @@
 </template>
 
 <script>
-    import _ from "lodash";
     import Decamelize from "decamelize";
     import Inflection from "inflection";
+
+    import { debounce } from "lodash-es";
 
     import PluginList from "@/components/plugin-list.vue";
     import PluginCard from "@/components/plugin-card.vue";
@@ -76,7 +77,7 @@
         },
 
         created: function () {
-            this.debouncedSearch = _.debounce(this.search, 500)
+            this.debouncedSearch = debounce(this.search, 500)
         },
 
         watch: {

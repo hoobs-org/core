@@ -26,8 +26,6 @@
 </template>
 
 <script>
-    import _ from "lodash";
-
     import TextField from "@/components/text-field.vue";
     import PasswordField from "@/components/password-field.vue";
 

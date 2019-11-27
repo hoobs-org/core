@@ -7,61 +7,61 @@ const getRoutes = (defaultRoute) => {
     const routes = [{
         path: defaultRoute === "status" ? "/" : "/status",
         name: "status",
-        component: () => import("./views/status.vue")
+        component: () => import(/* webpackChunkName: "stats" */ "./views/status.vue")
     },{
         path: "/login",
         name: "login",
-        component: () => import("./views/login.vue")
+        component: () => import(/* webpackChunkName: "login" */ "./views/login.vue")
     },{
         path: "/help",
         name: "help",
-        component: () => import("./views/help.vue")
+        component: () => import(/* webpackChunkName: "help" */ "./views/help.vue")
     },{
         path: "/system/terminal",
         name: "terminal",
-        component: () => import("./views/terminal.vue")
+        component: () => import(/* webpackChunkName: "terminal" */ "./views/terminal.vue")
     },{
         path: "/system/:section",
         name: "system",
-        component: () => import("./views/system.vue"),
+        component: () => import(/* webpackChunkName: "system" */ "./views/system.vue"),
         props: true
     },{
         path: "/profile",
         name: "profile",
-        component: () => import("./views/profile.vue")
+        component: () => import(/* webpackChunkName: "profile" */ "./views/profile.vue")
     },{
         path: defaultRoute === "log" ? "/" : "/log",
         name: "log",
-        component: () => import("./views/log.vue")
+        component: () => import(/* webpackChunkName: "log" */ "./views/log.vue")
     },{
         path: "/users",
         name: "users",
-        component: () => import("./views/users.vue")
+        component: () => import(/* webpackChunkName: "users" */ "./views/users.vue")
     },{
         path: "/plugins",
         name: "plugins",
-        component: () => import("./views/plugins.vue")
+        component: () => import(/* webpackChunkName: "plugins" */ "./views/plugins.vue")
     },{
         path: "/plugins/:category",
         name: "search",
-        component: () => import("./views/search.vue"),
+        component: () => import(/* webpackChunkName: "search" */ "./views/search.vue"),
         props: true
     },{
         path: "/plugin/:name",
         name: "plugin",
-        component: () => import("./views/plugin.vue")
+        component: () => import(/* webpackChunkName: "plugin" */ "./views/plugin.vue")
     },{
         path: defaultRoute === "accessories" ? "/" : "/accessories",
         name: "accessories",
-        component: () => import("./views/accessories.vue")
+        component: () => import(/* webpackChunkName: "accessories" */ "./views/accessories.vue")
     },{
         path: "/accessories/layout",
         name: "layout",
-        component: () => import("./views/layout.vue")
+        component: () => import(/* webpackChunkName: "layout" */ "./views/layout.vue")
     },{
         path: "/config/:section",
         name: "config",
-        component: () => import("./views/config.vue"),
+        component: () => import(/* webpackChunkName: "config" */ "./views/config.vue"),
         props: true
     }];
 
