@@ -75,6 +75,7 @@
         "drizzle": "Dugga",
         "drizzle_rain": "Duggregna",
         "dust": "Damm",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "redigera Rum",
         "end_port": "Slutport",
         "end_port_invalid": "End port är ogiltigt. Det måste vara ett tal mellan 1 och 65535.",

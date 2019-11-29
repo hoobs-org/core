@@ -75,6 +75,7 @@
         "drizzle": "Nieselregen",
         "drizzle_rain": "Nieselregen",
         "dust": "Nebel",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Räume bearbeiten",
         "end_port": "End Port",
         "end_port_invalid": "End Port ist nicht gültig. Wähle eine Portnummer zwischen 1 und 65535.",

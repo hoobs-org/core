@@ -75,6 +75,7 @@
         "drizzle": "Mżawka",
         "drizzle_rain": "Mżawka",
         "dust": "Kurz",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Edytuj Pokój",
         "end_port": "Port Wyjścia",
         "end_port_invalid": "Port wyjściowy jest niepoprawny. Musi być to numer z zakresu od 1 do 65535.",

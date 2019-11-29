@@ -8,6 +8,8 @@
             </div>
         </div>
         <router-link to="/profile" class="item">{{ $t("profile") }}</router-link>
+        <div v-if="$router.currentRoute.name === 'status'" v-on:click="widgets" class="item mobile-hide">{{ $t("edit_dashboard") }}</div>
+        <router-link v-if="$router.currentRoute.name === 'accessories'" to="/accessories/layout" class="item mobile-hide">{{ $t("edit_rooms") }}</router-link>
         <div class="item-seperator"></div>
         <div v-if="!locked && !running" v-on:click.stop="control('start')" class="item">{{ $t("start_service") }}</div>
         <div v-else class="item-disabled">{{ $t("start_service") }}</div>
@@ -38,6 +40,8 @@
             </div>
         </div>
         <router-link to="/profile" class="item">{{ $t("profile") }}</router-link>
+        <div v-if="$router.currentRoute.name === 'status'" v-on:click="widgets" class="item mobile-hide">{{ $t("edit_dashboard") }}</div>
+        <router-link v-if="$router.currentRoute.name === 'accessories'" to="/accessories/layout" class="item mobile-hide">{{ $t("edit_rooms") }}</router-link>
         <div class="item-seperator"></div>
         <div v-if="!locked && !running" v-on:click.stop="control('start')" class="item">{{ $t("start_service") }}</div>
         <div v-else class="item-disabled">{{ $t("start_service") }}</div>
@@ -64,7 +68,8 @@
         name: "service-menu",
 
         props: {
-            about: Function
+            about: Function,
+            widgets: Function
         },
 
         computed: {

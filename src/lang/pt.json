@@ -75,6 +75,7 @@
         "drizzle": "Chuvisco",
         "drizzle_rain": "Chuvisco",
         "dust": "Poeira",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Editar divisões",
         "end_port": "End Porto",
         "end_port_invalid": "porta final é inválido. Deve ser um número entre 1 e 65535.",

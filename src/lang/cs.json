@@ -75,6 +75,7 @@
         "drizzle": "Mrholení",
         "drizzle_rain": "Mrholení",
         "dust": "Prach",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Upravit místnosti",
         "end_port": "Koncový port",
         "end_port_invalid": "Cílový port je neplatný. Musí být číslo mezi 1 a 65535.",

@@ -190,9 +190,9 @@
         height: 100%;
         padding: 60px 20px 20px 20px;
         display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        align-content: center;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        align-content: flex-start;
         box-sizing: border-box;
         position: relative;
     }

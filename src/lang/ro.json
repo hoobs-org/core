@@ -75,6 +75,7 @@
         "drizzle": "Drizzle",
         "drizzle_rain": "Drizzle",
         "dust": "Dust",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Editare Camere",
         "end_port": "Port final",
         "end_port_invalid": "Portul nu este valid. Trebuie sa fie o cifra intre 1 si 65535.",

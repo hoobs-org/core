@@ -75,6 +75,7 @@
         "drizzle": "霧雨",
         "drizzle_rain": "霧雨",
         "dust": "ほこり",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "編集室",
         "end_port": "エンドポート",
         "end_port_invalid": "エンド・ポートが無効です。これは、1〜65535の数字でなければなりません。",

@@ -75,6 +75,7 @@
         "drizzle": "ръми",
         "drizzle_rain": "ръми",
         "dust": "прах",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Редактирай Стаите",
         "end_port": "Краен порт",
         "end_port_invalid": "Крайния порт е невалиден.Трябва да е число между 1 и 65535.",

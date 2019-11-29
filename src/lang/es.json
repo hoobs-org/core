@@ -75,6 +75,7 @@
         "drizzle": "Llovizna",
         "drizzle_rain": "Llovizna",
         "dust": "Polvo",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Editar Habitaciones",
         "end_port": "Puerto final",
         "end_port_invalid": "Puerto final invalido. Debería ser un numero entre 1 y 65535.",

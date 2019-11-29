@@ -75,6 +75,7 @@
         "drizzle": "رذاذ",
         "drizzle_rain": "رذاذ",
         "dust": "غبار",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "تحرير غرفة",
         "end_port": "نهاية المنفذ",
         "end_port_invalid": "منفذ النهاية غير صالح. يجب أن يكون الرقم بين 1 و 65535.",

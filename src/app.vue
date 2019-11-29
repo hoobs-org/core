@@ -57,7 +57,7 @@
             </div>
             <div class="content">
                 <router-view />
-                <service-menu v-if="visible['service']" :about="showAbout" />
+                <service-menu v-if="visible['service']" :about="showAbout" :widgets="showWidgets" />
                 <instance-menu v-if="visible['instance']" />
             </div>
         </div>
@@ -76,10 +76,16 @@
             <br>
             Copyright &copy; {{ new Date().getFullYear() }} {{ $brand }}. All rights reserved.
         </modal-dialog>
+        <modal-dialog v-if="widgets" width="350px" :cancel="closeWidgets" :ok="saveWidgets">
+            <div v-for="(item, aidx) in available" :key="aidx" class="available-widget">
+                <checkbox :id="`widget-${item}`" :value="item" v-model="selected"> <label :for="`widget-${item}`">{{ widgetTitle(item) }}</label></checkbox>
+            </div>
+        </modal-dialog>
     </div>
 </template>
 
 <script>
+    import Checkbox from "vue-material-checkbox";
     import Loader from "./loader";
 
     import ModalDialog from "@/components/modal-dialog.vue";
@@ -89,6 +95,7 @@
 
     export default {
         components: {
+            "checkbox": Checkbox,
             "modal-dialog": ModalDialog,
             "service-menu": ServiceMenu,
             "instance-menu": InstanceMenu,
@@ -100,9 +107,18 @@
                 status: null,
                 loaded: false,
                 about: false,
+                widgets: false,
                 instances: [],
                 socket: null,
-                loader: null
+                loader: null,
+                available: [
+                    "setup-pin",
+                    "system-load",
+                    "weather",
+                    "favorite-accessories",
+                    "system-info"
+                ],
+                selected: []
             }
         },
 
@@ -217,7 +233,7 @@
                 this.socket.onclose = () => {
                     setTimeout(() => {
                         this.connect();
-                    }, 1000);
+                    }, 3000);
                 };
 
                 this.socket.onerror = () => {
@@ -239,6 +255,126 @@
 
             closeAbout() {
                 this.about = false;
+            },
+
+            widgetTitle(item) {
+                switch (item) {
+                    case "setup-pin":
+                        return this.$t("home_setup_pin");
+
+                    case "system-load":
+                        return this.$t("status");
+
+                    case "weather":
+                        return this.$t("forecast");
+
+                    case "favorite-accessories":
+                        return this.$t("favorite_accessories");
+
+                    case "system-info":
+                        return this.$t("system_info");
+                }
+
+                return item;
+            },
+
+            widgetData(item) {
+                switch (item) {
+                    case "setup-pin":
+                        return {
+                            "x": 0,
+                            "y": 0,
+                            "w": 2,
+                            "h": 7,
+                            "i": "0",
+                            "component": "setup-pin"
+                        };
+
+                    case "system-load":
+                        return {
+                            "x": 2,
+                            "y": 0,
+                            "w": 10,
+                            "h": 7,
+                            "i": "1",
+                            "component": "system-load"
+                        };
+
+                    case "weather":
+                        return {
+                            "x": 0,
+                            "y": 7,
+                            "w": 7,
+                            "h": 7,
+                            "i": "2",
+                            "component": "weather",
+                            "units": "imperial"
+                        };
+
+                    case "favorite-accessories":
+                        return {
+                            "x": 0,
+                            "y": 14,
+                            "w": 7,
+                            "h": 8,
+                            "i": "3",
+                            "component": "favorite-accessories"
+                        };
+
+                    case "system-info":
+                        return {
+                            "x": 7,
+                            "y": 7,
+                            "w": 5,
+                            "h": 15,
+                            "i": "4",
+                            "component": "system-info"
+                        };
+                }
+
+                return item;
+            },
+
+            async showWidgets() {
+                const data = await this.api.get("/layout/dashboard");
+
+                this.selected = [];
+
+                for (let i = 0; i < data.length; i++) {
+                    this.selected.push(data[i].component);
+                }
+
+                this.widgets = true;
+            },
+
+            async saveWidgets() {
+                const data = await this.api.get("/layout/dashboard");
+                const items = [];
+
+                this.widgets = false;
+
+                for (let i = 0; i < this.available.length; i++) {
+                    const item = this.available[i];
+
+                    if (this.selected.indexOf(item) >= 0) {
+                        const index = data.findIndex(c => c.component === item);
+
+                        if (index >= 0) {
+                            items.push(data[index]);
+                        } else {
+                            items.push(this.widgetData(item));
+                        }
+                    }
+                }
+
+                await this.api.post("/layout/dashboard", items);
+
+                window.location.reload();
+            },
+
+            closeWidgets() {
+                this.widgets = false;
+                this.selected = [];
             },
 
             donate() {
@@ -634,6 +770,23 @@
 
     #app .about-version {
         flex: 1;
+    }
+
+    #app .available-widget {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        margin: 7px 0;
+        font-size: 14px;
+    }
+
+    #app .available-widget input {
+        margin: 0 7px 0 0;
+    }
+
+    #app .available-widget .m-chckbox--container .m-chckbox--group {
+        background-color: #fff;
+        border: 1px #e5e5e5 solid;
     }
 
     #app .layout {

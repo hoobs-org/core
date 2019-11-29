@@ -75,6 +75,7 @@
         "drizzle": "Çiseleme",
         "drizzle_rain": "Çiseleme",
         "dust": "Kum Fırtınası",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Odaları Düzenle",
         "end_port": "Bitiş Portu",
         "end_port_invalid": "Bitiş portu geçersiz. 1 ve 65535 arasında bir rakam olmalı.",

@@ -75,6 +75,7 @@
         "drizzle": "Drizzle",
         "drizzle_rain": "Drizzle",
         "dust": "Dust",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Edit Accessories",
         "end_port": "End Port",
         "end_port_invalid": "End port is invalid. It must be a number between 1 and 65535.",

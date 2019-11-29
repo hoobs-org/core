@@ -75,6 +75,7 @@
         "drizzle": "Bruine",
         "drizzle_rain": "Bruine",
         "dust": "Poussière",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Éditer les pièces",
         "end_port": "Port de fin",
         "end_port_invalid": "Port invalide. Le port sélectionné doit être compris entre 1 et 65535.",

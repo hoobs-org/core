@@ -75,6 +75,7 @@
         "drizzle": "毛毛雨",
         "drizzle_rain": "毛毛雨",
         "dust": "灰尘",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "編輯房間",
         "end_port": "結束端口",
         "end_port_invalid": "結束端口是無效，它必須在1~65535之間",

@@ -75,6 +75,7 @@
         "drizzle": "Duskregn",
         "drizzle_rain": "Duskregn",
         "dust": "Støv",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Rediger rom",
         "end_port": "Sluttport",
         "end_port_invalid": "Sluttporten er ugyldig. Den må være mellom 1 og 65535.",

@@ -75,6 +75,7 @@
         "drizzle": "pioggerella",
         "drizzle_rain": "pioggerella",
         "dust": "Polvere",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Modifica stanze",
         "end_port": "Porta finale",
         "end_port_invalid": "Porta finale non valida. Deve essere un numero compreso tra 1 e 65535",

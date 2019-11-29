@@ -75,6 +75,7 @@
         "drizzle": "이슬비",
         "drizzle_rain": "이슬비",
         "dust": "먼지",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "편집 방",
         "end_port": "끝 포트",
         "end_port_invalid": "최종 포트가 잘못되었습니다. 그것은 1에서 65535 사이의 숫자 여야합니다.",

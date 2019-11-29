@@ -75,6 +75,7 @@
         "drizzle": "Mưa phùn",
         "drizzle_rain": "Mưa phùn",
         "dust": "Bụi bặm",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Chỉnh sửa phòng",
         "end_port": "End Port",
         "end_port_invalid": "End port không hợp lệ. Phải từ số 1 và 65535.",

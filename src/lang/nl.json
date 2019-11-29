@@ -75,6 +75,7 @@
         "drizzle": "Motregen",
         "drizzle_rain": "Motregen",
         "dust": "Stof",
+        "edit_dashboard": "Edit Dashboard",
         "edit_rooms": "Bewerk Kamers",
         "end_port": "Eind poort",
         "end_port_invalid": "Eindpoort is onjuist. Het moet een nummer zijn tussen 1 en 65535",
