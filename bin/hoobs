@@ -3,10 +3,10 @@
 process.title = "hoobs-core";
 
 const OS = require("os");
-const Ora = require("../node_modules/ora");
-const File = require("../node_modules/fs-extra/lib");
-const Copy = require("../node_modules/recursive-copy");
-const Remove = require("../node_modules/rimraf");
+const Ora = require("ora");
+const File = require("fs-extra");
+const Copy = require("recursive-copy");
+const Remove = require("rimraf");
 
 const { dirname, join, basename } = require("path");
 
