@@ -260,6 +260,24 @@
                             if (this.fix) {
                                 this.fix(this.$t("accessory_invalid_json"));
                             }
+
+                            if (this.value.accessories[index] && Array.isArray(this.value.accessories[index])) {
+                                if (this.value.accessories[index].length === 1) {
+                                    this.value.accessories[index] = this.value.accessories[index][0];
+                                } else {
+                                    throw new Error(this.$t("accessory_invalid_json"));
+                                }
+                            }
+
+                            if (this.value.accessories[index].accessories && Array.isArray(this.value.accessories[index].accessories)) {
+                                if (this.value.accessories[index].accessories.length === 1) {
+                                    this.value.accessories[index] = this.value.accessories[index].accessories[0];
+                                } else {
+                                    throw new Error(this.$t("accessory_invalid_json"));
+                                }
+                            } else if (this.value.accessories[index].accessories) {
+                                this.value.accessories[index] = this.value.accessories[index].accessories;
+                            }
                         } catch {
                             if (this.error) {
                                 this.error(this.$t("accessory_invalid_json"));
@@ -278,6 +296,24 @@
 
                             if (this.fix) {
                                 this.fix(this.$t("platform_invalid_json"));
+                            }
+
+                            if (this.value.platforms[index] && Array.isArray(this.value.platforms[index])) {
+                                if (this.value.platforms[index].length === 1) {
+                                    this.value.platforms[index] = this.value.platforms[index][0];
+                                } else {
+                                    throw new Error(this.$t("platform_invalid_json"));
+                                }
+                            }
+
+                            if (this.value.platforms[index].platforms && Array.isArray(this.value.platforms[index].platforms)) {
+                                if (this.value.platforms[index].platforms.length === 1) {
+                                    this.value.platforms[index] = this.value.platforms[index].platforms[0];
+                                } else {
+                                    throw new Error(this.$t("platform_invalid_json"));
+                                }
+                            } else if (this.value.platforms[index].platforms) {
+                                this.value.platforms[index] = this.value.platforms[index].platforms;
                             }
                         } catch {
                             if (this.error) {
