@@ -21,7 +21,7 @@
                     <p>
                         {{ $t("room_settings_message") }}
                     </p>
-                    <text-field name="Room Name" description="Define the name of your room.." v-model="layout.rooms[current].name" @change="saveName()" />
+                    <text-field :name="$t('room_name')" :description="$t('room_name_message')" v-model="layout.rooms[current].name" @change="saveName()" />
                     <div class="action">
                         <div v-if="!confirm" class="button" @click="confirmDelete()">{{ $t("delete_room") }}</div>
                         <div v-if="confirm" class="button" @click="cancelDelete()">   {{ $t("cancel") }}   </div>

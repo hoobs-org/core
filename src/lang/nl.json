@@ -237,6 +237,8 @@
         "rocket_dark": "Rocket Donker",
         "rocket_light": "Rocket Helder",
         "rocket_version": "Rocket-versie",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "Kamer Instellingen",
         "room_settings_message": "Deze sectie definieert je kamer.",
         "running": "Werkend\n\nLopend\n\nActief\n\nDraait",

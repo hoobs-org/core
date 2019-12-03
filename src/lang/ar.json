@@ -237,6 +237,8 @@
         "rocket_dark": "مظلم Rocket",
         "rocket_light": "ضوء Rocket",
         "rocket_version": "نسخة Rocket",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "إعدادات الغرفة",
         "room_settings_message": "يحدد هذا القسم غرفتك.",
         "running": "قيد تشغيل",

@@ -237,6 +237,8 @@
         "rocket_dark": "Rocket Karanlık",
         "rocket_light": "Rocket Aydınlık",
         "rocket_version": "Rocket sürümü",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "Oda Ayarları",
         "room_settings_message": "Bu bölüm odanızı tanımlar.",
         "running": "Çalışıyor",

@@ -237,6 +237,8 @@
         "rocket_dark": "Ciemność Rocket",
         "rocket_light": "Światło Rocket",
         "rocket_version": "Wersja Rocket",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "Ustawienia Pokoju",
         "room_settings_message": "Ta sekcja definiuje twój pokój.",
         "running": "Działa",
