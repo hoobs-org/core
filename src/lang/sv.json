@@ -237,6 +237,8 @@
         "rocket_dark": "Rocket Mörk",
         "rocket_light": "Rocket Ljus",
         "rocket_version": "Version av Rocket",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "Rumsinställningar",
         "room_settings_message": "I detta avsnitt definieras rummet.",
         "running": "Löpning",

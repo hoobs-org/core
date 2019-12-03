@@ -237,6 +237,8 @@
         "rocket_dark": "Rocket chế độ tối",
         "rocket_light": "Rocket chế độ sáng",
         "rocket_version": "Phiên bản Rocket",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "Cấu hình phòng",
         "room_settings_message": "Phần này định dạng phòng bạn.",
         "running": "Đang chạy",

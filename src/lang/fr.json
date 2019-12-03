@@ -237,6 +237,8 @@
         "rocket_dark": "Rocket Foncé",
         "rocket_light": "Rocket Éclairé",
         "rocket_version": "Version d'Rocket",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "Configuration des pièces",
         "room_settings_message": "Cette partie permet de configurer vos pièces.",
         "running": "En cours",

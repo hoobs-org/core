@@ -237,6 +237,8 @@
         "rocket_dark": "Rocket Dunkler Modus",
         "rocket_light": "Rocket Heller Modus",
         "rocket_version": "Rocket Version",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "Raumeinstellungen",
         "room_settings_message": "Dieser Bereich definiert deinen Raum.",
         "running": "Läuft",

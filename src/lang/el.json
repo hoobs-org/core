@@ -237,6 +237,8 @@
         "rocket_dark": "Σκουρόχρωμο Rocket",
         "rocket_light": "Ανοιχτόχρωμο Rocket",
         "rocket_version": "Έκδοση Rocket",
+        "room_name": "Room Name",
+        "room_name_message": "Define the name of your room.",
         "room_settings": "Ρυθμίσεις δωματίου",
         "room_settings_message": "Αυτή η ενότητα ορίζει το δωμάτιό σας.",
         "running": "Σε λειτουργία",
