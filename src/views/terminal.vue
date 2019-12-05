@@ -283,6 +283,7 @@
         width: 230px;
         padding: 20px;
         background: var(--background-dark);
+        overflow: auto;
     }
 
     #terminal .info a,

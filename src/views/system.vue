@@ -195,6 +195,7 @@
     #system .info {
         width: 230px;
         padding: 20px 0 20px 20px;
+        overflow: auto;
     }
 
     #system .info a,
