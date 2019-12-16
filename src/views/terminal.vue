@@ -19,6 +19,8 @@
     import Decamelize from "decamelize";
     import Inflection from "inflection";
 
+    import Cookies from "../cookies";
+
     import { Terminal } from "xterm";
     import { AttachAddon } from "xterm-addon-attach";
     import { FitAddon } from "xterm-addon-fit";
@@ -82,7 +84,7 @@
                 url = url.replace("http://", "ws://");
                 url = url.replace("https://", "wss://");
 
-                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "shell" : "/shell"}?t=${new Date().getTime()}`);
+                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "shell" : "/shell"}?a=${Cookies.get("token") || ""}&t=${new Date().getTime()}`);
 
                 this.socket.onopen = () => {
                     this.term.loadAddon(new AttachAddon(this.socket));

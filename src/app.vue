@@ -86,7 +86,9 @@
 
 <script>
     import Checkbox from "vue-material-checkbox";
+
     import Loader from "./loader";
+    import Cookies from "./cookies";
 
     import ModalDialog from "@/components/modal-dialog.vue";
     import ServiceMenu from "@/components/service-menu.vue";
@@ -202,7 +204,7 @@
                 url = url.replace("http://", "ws://");
                 url = url.replace("https://", "wss://");
 
-                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "monitor" : "/monitor"}?t=${new Date().getTime()}`);
+                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "monitor" : "/monitor"}?a=${Cookies.get("token") || ""}&t=${new Date().getTime()}`);
 
                 this.socket.onmessage = (message) => {
                     message = JSON.parse(message.data);
