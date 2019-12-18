@@ -75,7 +75,7 @@
                     await this.api.post("/service/reload");
 
                     if (results.success && this.oninstall) {
-                        this.oninstall(results.details.type, results.details.name, results.details.alias, results.plugin);
+                        this.oninstall(results.plugin.name, results.plugin, results.details);
                     }
                 }
             },
