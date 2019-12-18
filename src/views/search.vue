@@ -165,8 +165,8 @@
                 this.working = false;
             },
 
-            oninstall(type, name, alias, plugin) {
-                window.location.href = `/config/${plugin.name}`;
+            oninstall(name, plugin, details) {
+                window.location.href = `/config/${name}`;
             },
 
             onuninstall() {

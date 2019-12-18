@@ -559,7 +559,9 @@
                     return "Google Home";
                 }
 
-                const index = this.configuration.platforms.findIndex(p => p.platform === plugin.details.alias || (p.plugin_map || {}).plugin_name === plugin.name);
+                const alias = plugin.details.map(p => p.alias);
+
+                const index = this.configuration.platforms.findIndex(p => alias.indexOf(p.platform) >= 0 || (p.plugin_map || {}).plugin_name === plugin.name);
                 const platform = (plugin.schema || {}).platform || {};
                 const accessory = (plugin.schema || {}).accessories || {};
 

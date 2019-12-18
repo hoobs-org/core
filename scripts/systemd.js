@@ -41,7 +41,11 @@ module.exports = () => {
                     File.mkdirSync("/etc/systemd/system");
                 }
 
-                File.writeFileSync("/etc/systemd/system/hoobs.service", File.readFileSync(Path.join(root, "config", `hoobs.${pms}.service`)));
+                if (File.existsSync("/usr/bin/hoobs")) {
+                    File.writeFileSync("/etc/systemd/system/hoobs.service", File.readFileSync(Path.join(root, "config", `hoobs.service`)));
+                } else {
+                    File.writeFileSync("/etc/systemd/system/hoobs.service", File.readFileSync(Path.join(root, "config", `hoobs.local.service`)));
+                }
 
                 Process.execSync("chmod 755 /etc/systemd/system/hoobs.service");
                 Process.execSync("systemctl daemon-reload");

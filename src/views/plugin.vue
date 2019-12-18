@@ -235,7 +235,7 @@
                     }
 
                     if (results.success) {
-                        this.oninstall(results.details.type, results.details.name, results.details.alias, results.plugin);
+                        this.oninstall(results.plugin.name, results.plugin, results.details);
                     } else {
                         this.onuninstall();
                     }
@@ -300,8 +300,8 @@
                 }
             },
 
-            oninstall(type, name, alias, plugin) {
-                window.location.href = `/config/${plugin.name}`;
+            oninstall(name, plugin, details) {
+                window.location.href = `/config/${name}`;
             },
 
             onuninstall() {
