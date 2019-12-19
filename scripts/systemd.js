@@ -34,18 +34,31 @@ module.exports = () => {
                 throbber.stopAndPersist();
             }
 
-            if (!File.existsSync("/etc/systemd/system/hoobs.service") && !File.existsSync("/etc/systemd/system/homebridge.service")) {
+            if (!File.existsSync("/etc/systemd/system/hoobs.service")) {
                 throbber = Ora("Installing HOOBS Service").start();
 
                 if (!File.existsSync("/etc/systemd/system")){
                     File.mkdirSync("/etc/systemd/system");
                 }
 
-                if (File.existsSync("/usr/bin/hoobs")) {
-                    File.writeFileSync("/etc/systemd/system/hoobs.service", File.readFileSync(Path.join(root, "config", `hoobs.service`)));
-                } else {
-                    File.writeFileSync("/etc/systemd/system/hoobs.service", File.readFileSync(Path.join(root, "config", `hoobs.local.service`)));
-                }
+                let service = "";
+
+                service += "[Unit]\n";
+                service += "Description=HOOBS\n";
+                service += "After=network-online.target\n";
+                service += "\n";
+                service += "[Service]\n";
+                service += "Type=simple\n";
+                service += "User=hoobs\n";
+                service += `ExecStart=${Path.join(findNode(), "hoobs")}\n`;
+                service += "Restart=on-failure\n";
+                service += "RestartSec=3\n";
+                service += "KillMode=process\n";
+                service += "\n";
+                service += "[Install]\n";
+                service += "WantedBy=multi-user.target\n";
+
+                File.appendFileSync("/etc/systemd/system/hoobs.service", service);
 
                 Process.execSync("chmod 755 /etc/systemd/system/hoobs.service");
                 Process.execSync("systemctl daemon-reload");
@@ -100,6 +113,18 @@ const getPms = function() {
     }
 
     return null;
+}
+
+const findNode = function() {
+    const paths = (process.env.PATH || "").split(":");
+
+    for (let i = 0; i < paths.length; i++) {
+        if (File.existsSync(Path.join(paths[i], "hoobs"))) {
+            return paths[i];
+        }
+    }
+
+    return "/usr/local/bin";
 }
 
 const getDefaultZone = function () {

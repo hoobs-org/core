@@ -19,6 +19,11 @@ module.exports = () => {
 
             throbber = Ora("Rebooting").start();
 
+            if (File.existsSync("/etc/systemd/system/homebridge.service")) {
+                Process.execSync("systemctl disable homebridge.service");
+                File.unlinkSync("/etc/systemd/system/homebridge.service");
+            }
+
             Process.exec("shutdown -r now", () => {
                 throbber.stopAndPersist();
             });
