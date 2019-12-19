@@ -41,6 +41,12 @@ module.exports = () => {
                     File.mkdirSync("/etc/systemd/system");
                 }
 
+                let args = process.env.HOMEBRIDGE_OPTS || "";
+
+                if (args !== "") {
+                    args = ` ${args}`;
+                }
+
                 let service = "";
 
                 service += "[Unit]\n";
@@ -50,7 +56,7 @@ module.exports = () => {
                 service += "[Service]\n";
                 service += "Type=simple\n";
                 service += "User=hoobs\n";
-                service += `ExecStart=${Path.join(findNode(), "hoobs")}\n`;
+                service += `ExecStart=${Path.join(findNode(), "hoobs")}${args}\n`;
                 service += "Restart=on-failure\n";
                 service += "RestartSec=3\n";
                 service += "KillMode=process\n";
