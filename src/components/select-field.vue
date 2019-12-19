@@ -18,6 +18,7 @@
             name: String,
             description: String,
             value: [String, Number, Boolean, Object, Date],
+            type: String,
             options: Array,
             required: {
                 type: Boolean,
@@ -27,11 +28,81 @@
 
         methods: {
             update() {
-                this.$emit("input", this.$refs.field.value);
+                let value = null;
+
+                switch (this.type.toLowerCase()) {
+                    case "bool":
+                    case "boolean":
+                        this.$emit("input", (this.$refs.field.value || "").toLowerCase() === "true");
+                        break;
+
+                    case "float":
+                    case "double":
+                    case "decimal":
+                    case "number":
+                        value = parseFloat(this.$refs.field.value);
+
+                        if (Number.isNaN(value)) {
+                            value = null;
+                        }
+
+                        this.$emit("input", value);
+                        break;
+
+                    case "int":
+                    case "integer":
+                        value = parseInt(this.$refs.field.value, 10);
+
+                        if (Number.isNaN(value)) {
+                            value = null;
+                        }
+
+                        this.$emit("input", value);
+                        break;
+
+                    default:
+                        this.$emit("input", this.$refs.field.value);
+                        break;
+                }
             },
 
             change() {
-                this.$emit("change", this.$refs.field.value);
+                let value = null;
+
+                switch (this.type.toLowerCase()) {
+                    case "bool":
+                    case "boolean":
+                        this.$emit("change", (this.$refs.field.value || "").toLowerCase() === "true");
+                        break;
+
+                    case "float":
+                    case "double":
+                    case "decimal":
+                    case "number":
+                        value = parseFloat(this.$refs.field.value);
+
+                        if (Number.isNaN(value)) {
+                            value = null;
+                        }
+
+                        this.$emit("change", value);
+                        break;
+
+                    case "int":
+                    case "integer":
+                        value = parseInt(this.$refs.field.value, 10);
+
+                        if (Number.isNaN(value)) {
+                            value = null;
+                        }
+
+                        this.$emit("change", value);
+                        break;
+
+                    default:
+                        this.$emit("change", this.$refs.field.value);
+                        break;
+                }
             }
         }
     };

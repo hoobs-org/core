@@ -2,7 +2,7 @@
     <div id="schema-form">
         <div v-for="(field, index) in fields" :key="index">
             <div v-if="fieldType(field) === 'input'">
-                <component :is="getComponent(field)" :name="field.title || humanize(field.name)" :options="getOptions(field)" :required="field.required" :description="field.description || ''" v-model="value[field.name]" />
+                <component :is="getComponent(field)" :name="field.title || humanize(field.name)" :options="getOptions(field)" :type="getType(field)" :required="field.required" :description="field.description || ''" v-model="value[field.name]" />
             </div>
             <div v-else-if="fieldType(field) === 'form'">
                 <schema-form :schema="field.properties" v-model="value[field.name]" />
@@ -275,6 +275,18 @@
                 }
 
                 return null;
+            },
+
+            getType(field) {
+                let type = "string";
+
+                if (Array.isArray(field.type)) {
+                    type = field.type[field.type.length - 1].toLowerCase();
+                } else {
+                    type = (field.type || "").toLowerCase();
+                }
+
+                return type;
             },
 
             getOptions(field) {
