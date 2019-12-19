@@ -7,7 +7,7 @@ const Path = require("path");
 
 (async () => {
     await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/prerequisites")))();
-    await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/systemd")))();
     await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/nginx")))(true);
+    await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/systemd")))();
     await (require(Path.join(Path.dirname(File.realpathSync(__filename)), "../scripts/reboot")))();
 })();
