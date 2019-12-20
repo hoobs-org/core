@@ -30,7 +30,7 @@
             update() {
                 let value = null;
 
-                switch (this.type.toLowerCase()) {
+                switch ((this.type || "string").toLowerCase()) {
                     case "bool":
                     case "boolean":
                         this.$emit("input", (this.$refs.field.value || "").toLowerCase() === "true");
@@ -69,7 +69,7 @@
             change() {
                 let value = null;
 
-                switch (this.type.toLowerCase()) {
+                switch ((this.type || "string").toLowerCase()) {
                     case "bool":
                     case "boolean":
                         this.$emit("change", (this.$refs.field.value || "").toLowerCase() === "true");
