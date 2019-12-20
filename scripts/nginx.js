@@ -130,10 +130,16 @@ module.exports = (install) => {
             conf += "\n";
             conf += "    location / {\n";
             conf += "        proxy_pass            \"http://127.0.0.1:8080\";\n";
-            conf += "        proxy_http_version    1.1;\n";
+            conf += "\n";
             conf += "        proxy_set_header      X-Real-IP $remote_addr;\n";
             conf += "        proxy_set_header      Upgrade $http_upgrade;\n";
             conf += "        proxy_set_header      Connection \"upgrade\";\n";
+            conf += "\n";
+            conf += "        add_header            Cache-Control \"no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0\";\n";
+            conf += "\n";
+            conf += "        if_modified_since     off;\n";
+            conf += "        expires               off;\n";
+            conf += "        etag                  off;\n";
             conf += "    }\n";
             conf += "\n";
             conf += "    location = /loader.html {\n";
