@@ -1,3 +1,10 @@
+## 3.1.6
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Bug Fixes
+* Show Upgrade Available on Dashboard
+* Added What's New to the System Screen
+
 ## 3.1.5
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
