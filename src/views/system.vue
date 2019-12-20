@@ -209,8 +209,11 @@
                 this.$store.commit("lock");
 
                 await this.api.post("/service/stop");
+                await this.api.put("/update");
 
-                this.api.put("/update");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
             },
 
             getTemp(value) {
