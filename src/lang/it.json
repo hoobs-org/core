@@ -230,6 +230,7 @@
         "reset": "Ripristina",
         "reset_connection": "Ripristina connessione",
         "restart_service": "Riavvia servizio",
+        "restarting_service": "Restarting Service",
         "restore": "Ripristina",
         "restore_message": "Selezione un backup del sistema per ripristinare il sistema ad uno stato precedente.",
         "restore_warning": "Ripristinare il sistema cancellerà la tua configurazione attuale.",
@@ -341,7 +342,7 @@
         "welcome": "Benvenuto",
         "welcome_message_hoobs": "Benvenuto su HOOBS 3.",
         "welcome_message_rocket": "Benvenuto su Rocket",
-        "whats_new": "What's New",
+        "whats_new": "Cosa c’è di nuovo",
         "windy": "Ventoso",
         "yes": "Si"
     }

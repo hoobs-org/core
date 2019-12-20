@@ -230,6 +230,7 @@
         "reset": "重启",
         "reset_connection": "重置连接",
         "restart_service": "重新開啟服務",
+        "restarting_service": "Restarting Service",
         "restore": "Restore",
         "restore_message": "Select a system backup to restore the system to a previous state.",
         "restore_warning": "Restoring the system will delete your current configuration.",

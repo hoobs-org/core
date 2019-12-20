@@ -230,6 +230,7 @@
         "reset": "Zurücksetzen",
         "reset_connection": "Verbindung Zurücksetzen",
         "restart_service": "Service neu starten",
+        "restarting_service": "Restarting Service",
         "restore": "Wiederherstellen",
         "restore_message": "Wähle ein System Backup aus das System auf einen früheren Zeitpunkt wiederherzustellen.",
         "restore_warning": "Das Wiederherstellen überschreibt die aktuelle Systemkonfiguration.",

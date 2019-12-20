@@ -550,7 +550,7 @@
         width: 100%;
         height: 2px;
         position: absolute;
-        top: 0;
+        top: 55px;
         left: 0;
     }
 

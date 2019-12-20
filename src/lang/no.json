@@ -230,6 +230,7 @@
         "reset": "tilbakestille",
         "reset_connection": "Tilbakestill tilkoblingen",
         "restart_service": "Start tjenesten på nytt.",
+        "restarting_service": "Restarting Service",
         "restore": "Restore",
         "restore_message": "Select a system backup to restore the system to a previous state.",
         "restore_warning": "Restoring the system will delete your current configuration.",

@@ -1,3 +1,11 @@
+## 3.1.7
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Bug Fixes
+* Fixed an Issue Where Some Fields Were not Showing for Plugin Configs
+* Passing the Enviornment into the Terminal
+* Fixed NGINX Caching Issue
+
 ## 3.1.6
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
