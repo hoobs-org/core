@@ -237,8 +237,8 @@
         "rocket_dark": "Rocket כהה",
         "rocket_light": "Rocket אור",
         "rocket_version": "גרסת Rocket",
-        "room_name": "Room Name",
-        "room_name_message": "Define the name of your room.",
+        "room_name": "שם חדר",
+        "room_name_message": "הגדר את השם של החדר שלך.",
         "room_settings": "הגדרות חדר",
         "room_settings_message": "אזור זה מגדיר את החדר שלך",
         "running": "רץ",
@@ -341,6 +341,7 @@
         "welcome": "ברוכים הבאים",
         "welcome_message_hoobs": "ברוך הבא HOOBS 3",
         "welcome_message_rocket": "ברוכים הבאים Rocket",
+        "whats_new": "What's New",
         "windy": "סוער",
         "yes": "כן"
     }

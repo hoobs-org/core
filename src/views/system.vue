@@ -21,6 +21,7 @@
                     <div v-else-if="updates.length > 0" class="update-actions">
                         <b>{{ updates[0].version }} {{ $t("update_available") }}</b><br>
                         <div class="button button-primary" v-on:click="update()">{{ $t("update") }}</div>
+                        <div class="button" v-on:click="changelog()">{{ $t("whats_new") }}</div>
                     </div>
                     <div v-else class="update-actions">
                         <b>{{ $t("up_to_date") }}</b>
@@ -162,6 +163,10 @@
                 }
 
                 return Inflection.titleize(Decamelize(results.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+            },
+
+            changelog() {
+                // GET IT FROM GITHUB
             },
 
             async update() {
