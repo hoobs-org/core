@@ -181,7 +181,7 @@
 
                 if (type === "button" && field.url && field.url !== "") {
                     return "button";
-                } else if (field && !field.readOnly && type !== "object") {
+                } else if (field && !field.readOnly && type !== "object" && type !== "array") {
                     return "input";
                 } else if (field && !field.readOnly && type === "object" && field.properties) {
                     if (field.name && !this.value[field.name]) {
@@ -190,6 +190,12 @@
 
                     return "form";
                 } else if (field && !field.readOnly && (type === "object" || type === "array")) {
+                    if (!this.value[field.name] && type === "array") {
+                        this.value[field.name] = [];
+                    } else if (!this.value[field.name]) {
+                        this.value[field.name] = {};
+                    }
+
                     return "json";
                 }
 

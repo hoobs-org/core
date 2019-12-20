@@ -230,6 +230,7 @@
         "reset": "Cài lại",
         "reset_connection": "Đặt lại kết nối",
         "restart_service": "Khởi động lại dịch vụ",
+        "restarting_service": "Restarting Service",
         "restore": "Restore",
         "restore_message": "Select a system backup to restore the system to a previous state.",
         "restore_warning": "Restoring the system will delete your current configuration.",

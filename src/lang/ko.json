@@ -230,6 +230,7 @@
         "reset": "초기화",
         "reset_connection": "리셋 연결",
         "restart_service": "다시 시작 서비스",
+        "restarting_service": "Restarting Service",
         "restore": "Restore",
         "restore_message": "Select a system backup to restore the system to a previous state.",
         "restore_warning": "Restoring the system will delete your current configuration.",

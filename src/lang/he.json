@@ -230,6 +230,7 @@
         "reset": "איפוס",
         "reset_connection": "אפס חיבור",
         "restart_service": "אתחול שירות",
+        "restarting_service": "Restarting Service",
         "restore": "שחזר",
         "restore_message": "בחר גיבוי מערכת לשחזר ממנו את המערכת למצב קודם.",
         "restore_warning": "שחזור המערכת ימחוק את ההגדרות הקיימות.",
