@@ -35,15 +35,15 @@
                     <p>
                         {{ $t("interface_settings_message") }}
                     </p>
-                    <select-field :name="$t('language')" :description="$t('language_message')" :options="locales" v-model="configuration.client.locale" @change="markReload()" />
-                    <select-field :name="$t('theme')" :description="$t('theme_message')" :options="themes" v-model="configuration.client.theme" @change="markReload()" />
-                    <select-field :name="$t('default_screen')" :description="$t('default_screen_message')" :options="screens" v-model="configuration.client.default_route" @change="markReload()" />
-                    <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" @change="markReload()" :required="true" />
-                    <select-field :name="$t('temp_units')" :description="$t('temp_units_message')" :options="units" v-model="configuration.client.temp_units" @change="markReload()" />
-                    <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" @change="markReload()" />
-                    <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model="configuration.client.postal_code" @change="markReload()" :required="true" />
-                    <text-field :name="$t('latitude')" :description="$t('latitude_message')" v-model="configuration.client.latitude" @change="markReload()" :required="true" />
-                    <text-field :name="$t('longitude')" :description="$t('longitude_message')" v-model="configuration.client.longitude" @change="markReload()" :required="true" />
+                    <select-field :name="$t('language')" :description="$t('language_message')" :options="locales" v-model="configuration.client.locale" />
+                    <select-field :name="$t('theme')" :description="$t('theme_message')" :options="themes" v-model="configuration.client.theme" />
+                    <select-field :name="$t('default_screen')" :description="$t('default_screen_message')" :options="screens" v-model="configuration.client.default_route" />
+                    <integer-field :name="$t('log_out_after')" :description="$t('log_out_after_message')" v-model.number="configuration.client.inactive_logoff" :required="true" />
+                    <select-field :name="$t('temp_units')" :description="$t('temp_units_message')" :options="units" v-model="configuration.client.temp_units" />
+                    <select-field :name="$t('country_code')" :description="$t('country_code_message')" :options="countries" v-model="configuration.client.country_code" />
+                    <text-field :name="$t('postal_code')" :description="$t('postal_code_message')" v-model="configuration.client.postal_code" :required="true" />
+                    <text-field :name="$t('latitude')" :description="$t('latitude_message')" v-model="configuration.client.latitude" :required="true" />
+                    <text-field :name="$t('longitude')" :description="$t('longitude_message')" v-model="configuration.client.longitude" :required="true" />
                 </div>
                 <div class="section" v-if="section === 'server' || screen.width <= 815">
                     <h2>{{ $t("server_settings") }}</h2>
@@ -203,7 +203,6 @@
                 loaded: false,
                 working: false,
                 ready: false,
-                reload: false,
                 reboot: false,
                 error: false,
                 message: "Unhandled error",
@@ -391,10 +390,6 @@
                 this.reboot = true;
             },
 
-            markReload() {
-                this.reload = true;
-            },
-
             async rebootDevice() {
                 this.confirmReboot = false;
 
@@ -402,12 +397,17 @@
                 this.$store.commit("hide", "service");
 
                 await this.api.post("/service/stop");
+                await this.api.put("/reboot");
 
-                this.api.put("/reboot");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
             },
             
             cancelReboot() {
                 this.confirmReboot = false;
+
+                window.location.reload();
             },
 
             addError(message) {
@@ -694,13 +694,11 @@
 
                     this.$store.commit("unlock");
 
-                    if (this.reload && !this.reboot) {
-                        window.location.reload();
-                    } else if (this.reboot) {
+                    if (this.reboot) {
                         this.confirmReboot = true;
+                    } else {
+                        window.location.reload();
                     }
-
-                    this.load();
                 } else {
                     this.working = false;
                 }

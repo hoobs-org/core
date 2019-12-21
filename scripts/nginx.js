@@ -118,18 +118,19 @@ module.exports = (install) => {
                 File.mkdirSync("/etc/nginx/conf.d");
             }
 
+            const values = await getProxyConfig("/etc/nginx/conf.d/hoobs.conf");
+
             let conf = "";
 
             conf += "server {\n";
-            conf += "    listen 80;\n";
-            conf += "    listen [::]:80;\n";
+            conf += `    ${values.ports}\n`;
             conf += "    server_name hoobs;\n";
             conf += "    client_max_body_size 2048M;\n";
             conf += "\n";
             conf += "    error_page 502 /loader.html;\n";
             conf += "\n";
             conf += "    location / {\n";
-            conf += "        proxy_pass            \"http://127.0.0.1:8080\";\n";
+            conf += `        proxy_pass            ${values.proxy};\n`;
             conf += "\n";
             conf += "        proxy_set_header      X-Real-IP $remote_addr;\n";
             conf += "        proxy_set_header      Upgrade $http_upgrade;\n";
@@ -358,3 +359,87 @@ const getDefaultZone = function () {
         });
     });
 }
+
+const getProxyConfig = function (filename) {
+    return new Promise((resolve) => {
+        const results = [];
+        let proxy = "\"http://127.0.0.1:8080\"";
+
+        if (File.existsSync(filename)) {
+            const stream = File.createReadStream(filename);
+
+            let remaining = "";
+
+            stream.on("data", (data) => {
+                remaining += data;
+
+                let index = remaining.indexOf("\n");
+
+                while (index > -1) {
+                    let value = (remaining.substring(0, index) || "").trim();
+
+                    if (value.toLowerCase().startsWith("listen")) {
+                        value = value.replace(/listen/gi, "").trim();
+
+                        if (value.endsWith(";")) {
+                            value = value.slice(0, -1);
+                        }
+
+                        if (results.indexOf(value) === -1) {
+                            results.push(value);
+                        }
+                    }
+
+                    if (value.toLowerCase().startsWith("proxy_pass")) {
+                        value = value.replace(/proxy_pass/gi, "").trim();
+
+                        if (value.endsWith(";")) {
+                            value = value.slice(0, -1);
+                        }
+
+                        proxy = value;
+                    }
+
+                    remaining = remaining.substring(index + 1);
+                    index = remaining.indexOf('\n');
+                }
+            });
+
+            stream.on("end", () => {
+                if (remaining.length > 0) {
+                    if (remaining.toLowerCase().startsWith("listen")) {
+                        remaining = remaining.replace(/listen/gi, "").trim();
+
+                        if (remaining.endsWith(";")) {
+                            remaining = remaining.slice(0, -1);
+                        }
+
+                        if (results.indexOf(remaining) === -1) {
+                            results.push(remaining);
+                        }
+                    }
+
+                    if (remaining.toLowerCase().startsWith("proxy_pass")) {
+                        remaining = remaining.replace(/proxy_pass/gi, "").trim();
+
+                        if (remaining.endsWith(";")) {
+                            remaining = remaining.slice(0, -1);
+                        }
+
+                        proxy = remaining;
+                    }
+                }
+
+                if (results.length === 0) {
+                    results.push("80");
+                    results.push("[::]:80");
+                }
+        
+                resolve({
+                    ports: `listen ${results.join(";\n    listen ")};`,
+                    proxy
+                });
+            });
+        }
+    });
+};
