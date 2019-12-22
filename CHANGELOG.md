@@ -1,3 +1,11 @@
+## 3.1.10
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Bug Fixes
+* Fixed an Issue With Ports Saving
+* Fixed an Issue Where the Config Didn't Reload After Saving
+* We Can Now Fix NGINX Config Errors on Upgrade
+
 ## 3.1.9
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
