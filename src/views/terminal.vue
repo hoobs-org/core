@@ -39,11 +39,16 @@
             return {
                 info: null,
                 term: null,
-                socket: null
+                socket: null,
+                closing: false,
+                opening: true
             }
         },
 
         async mounted() {
+            this.closing = false;
+            this.opening = true;
+
             this.temp = await this.api.get("/system/temp");
             this.info = await this.api.get("/system");
 
@@ -68,7 +73,12 @@
 
         destroyed() {
             this.term = null;
-            this.socket = null;
+            this.closing = true;
+
+            if (this.socket) {
+                this.socket.close();
+                this.socket = null;
+            }
         },
 
         methods: {
@@ -89,12 +99,20 @@
                 this.socket.onopen = () => {
                     this.term.loadAddon(new AttachAddon(this.socket));
 
-                    this.term.clear();
-                    this.term.focus();
+                    if (this.opening) {
+                        this.term.clear();
+                        this.term.focus();
+
+                        this.socket.send("clear\n");
+
+                        this.opening = false;
+                    }
                 };
 
                 this.socket.onclose = () => {
-                    this.connect();
+                    if (!this.closing) {
+                        this.connect();
+                    }
                 };
 
                 this.socket.onerror = () => {
