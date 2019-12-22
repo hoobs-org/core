@@ -440,6 +440,16 @@ const getProxyConfig = function (filename) {
                     proxy
                 });
             });
+        } else {
+            if (results.length === 0) {
+                results.push("80");
+                results.push("[::]:80");
+            }
+    
+            resolve({
+                ports: `listen ${results.join(";\n    listen ")};`,
+                proxy
+            });
         }
     });
 };
