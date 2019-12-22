@@ -188,6 +188,7 @@
         "no_plugins": "Nu există pluginuri instalate",
         "no_readme": "Acest pachet nu are un fisier README.",
         "no_results": "Nu au fost gasite rezultate",
+        "node_version": "Node Version",
         "occupancy": "Ocupare",
         "off": "de pe",
         "ok": "bine",

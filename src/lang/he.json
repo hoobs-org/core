@@ -188,6 +188,7 @@
         "no_plugins": "אין הרחבות מותקנות",
         "no_readme": "לחבילה זו אין קובץ README.",
         "no_results": "אין תוצאות",
+        "node_version": "Node Version",
         "occupancy": "תפוסה",
         "off": "כבוי",
         "ok": "אישור",
@@ -230,7 +231,7 @@
         "reset": "איפוס",
         "reset_connection": "אפס חיבור",
         "restart_service": "אתחול שירות",
-        "restarting_service": "Restarting Service",
+        "restarting_service": "מאתחל שירות",
         "restore": "שחזר",
         "restore_message": "בחר גיבוי מערכת לשחזר ממנו את המערכת למצב קודם.",
         "restore_warning": "שחזור המערכת ימחוק את ההגדרות הקיימות.",
@@ -342,7 +343,7 @@
         "welcome": "ברוכים הבאים",
         "welcome_message_hoobs": "ברוך הבא HOOBS 3",
         "welcome_message_rocket": "ברוכים הבאים Rocket",
-        "whats_new": "What's New",
+        "whats_new": "מה חדש",
         "windy": "סוער",
         "yes": "כן"
     }

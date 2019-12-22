@@ -188,6 +188,7 @@
         "no_plugins": "لا الإضافات المثبتة",
         "no_readme": "هذه الحزمة لا يوجد بها README.",
         "no_results": "لا توجد نتائج",
+        "node_version": "Node Version",
         "occupancy": "الإشغال",
         "off": "إيقاف",
         "ok": "حسنا",

@@ -188,6 +188,7 @@
         "no_plugins": "Eklenti Yüklenmedi",
         "no_readme": "Bu pakette \"beni oku\" dosyası yok.",
         "no_results": "Sonuç bulunamadı",
+        "node_version": "Node Version",
         "occupancy": "işgal",
         "off": "kapalı",
         "ok": "OK",

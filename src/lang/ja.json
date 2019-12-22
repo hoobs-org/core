@@ -188,6 +188,7 @@
         "no_plugins": "いいえプラグインがインストールされていません",
         "no_readme": "このパッケージにはREADMEを持っていません。",
         "no_results": "結果がありません",
+        "node_version": "Node Version",
         "occupancy": "占有率",
         "off": "オフ",
         "ok": "OK",

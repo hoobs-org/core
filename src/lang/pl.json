@@ -188,6 +188,7 @@
         "no_plugins": "Brak wtyczki zainstalowana",
         "no_readme": "Ten pakiet nie ma pliku README.",
         "no_results": "Brak wyników",
+        "node_version": "Node Version",
         "occupancy": "Okupacja",
         "off": "Poza",
         "ok": "dobrze",

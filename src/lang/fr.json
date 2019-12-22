@@ -188,6 +188,7 @@
         "no_plugins": "Pas de plugins installés",
         "no_readme": "Cette librairie ne contient pas de fichier README.",
         "no_results": "Aucun résultat",
+        "node_version": "Node Version",
         "occupancy": "Occupation",
         "off": "De",
         "ok": "OK",

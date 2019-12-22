@@ -188,6 +188,7 @@
         "no_plugins": "No Plugins Installed",
         "no_readme": "This package has no README.",
         "no_results": "No Results",
+        "node_version": "Node Version",
         "occupancy": "Occupancy",
         "off": "Off",
         "ok": "OK",
