@@ -188,6 +188,7 @@
         "no_plugins": "Inga Plugins Installerad",
         "no_readme": "Detta paket har ingen README.",
         "no_results": "Inga resultat",
+        "node_version": "Node Version",
         "occupancy": "beläggning",
         "off": "Av",
         "ok": "Okej",

@@ -188,6 +188,7 @@
         "no_plugins": "어떤 플러그인이 설치되지",
         "no_readme": "이 패키지에는 README이 없습니다.",
         "no_results": "결과 없음",
+        "node_version": "Node Version",
         "occupancy": "점유율",
         "off": "떨어져서",
         "ok": "승인",

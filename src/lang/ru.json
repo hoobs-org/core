@@ -188,6 +188,7 @@
         "no_plugins": "Нет плагинов не установлен",
         "no_readme": "Этот пакет не имеет README.",
         "no_results": "Не найдено",
+        "node_version": "Node Version",
         "occupancy": "Заполняемость",
         "off": "от",
         "ok": "Хорошо",
