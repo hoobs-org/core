@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.1.11",
+    "version": "3.1.12",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -31,7 +31,9 @@
         "postinstall": "bin/hoobs-upgrade",
         "pack": "npm pack && rm -f ./builds/hoobs-core.tgz && mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz",
         "serve": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs",
-        "debug": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs -D"
+        "serve:no-build": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && ./bin/hoobs",
+        "serve:debug": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs -D",
+        "serve:debug:no-build": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && ./bin/hoobs -D"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.0.9",
