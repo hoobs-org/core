@@ -587,24 +587,6 @@
                 return string;
             },
 
-            filterConfig(value) {
-                const keys = Object.keys(value);
-                
-                for (let i = 0; i < keys.length; i++) {
-                    if (value[keys[i]] === null || value[keys[i]] === "") {
-                        delete value[keys[i]];
-                    } else if (Object.prototype.toString.call(value[keys[i]]) === "[object Object]" && Object.entries(value[keys[i]]).length === 0) {
-                        delete value[keys[i]];
-                    } else if (Object.prototype.toString.call(value[keys[i]]) === "[object Object]") {
-                        this.filterConfig(value[keys[i]]);
-                    } else if (Array.isArray(value[keys[i]]) && value[keys[i]].length === 0) {
-                        delete value[keys[i]];
-                    } else if (Array.isArray(value[keys[i]])) {
-                        this.filterConfig(value[keys[i]]);
-                    }
-                }
-            },
-
             async save() {
                 this.working = true;
 
@@ -663,8 +645,6 @@
                 }
 
                 if (this.errors.length === 0) {
-                    this.filterConfig(data);
-
                     await this.client.post("/config", {
                         client: data.client
                     });
@@ -674,8 +654,8 @@
                         bridge: data.bridge,
                         description: data.description,
                         ports: data.ports,
-                        accessories: data.accessories,
-                        platforms: data.platforms
+                        accessories: data.accessories || [],
+                        platforms: data.platforms || []
                     });
 
                     this.errors = [];

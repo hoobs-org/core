@@ -9,8 +9,10 @@ const Copy = require("recursive-copy");
 const Remove = require("rimraf");
 
 const { dirname, join, basename } = require("path");
+const { spawn } = require("child_process");
 
 let password = null;
+let debug = false;
 
 process.argv.forEach((value, index) => {
     if (value === "-p") {
@@ -19,6 +21,8 @@ process.argv.forEach((value, index) => {
         password = value;
 
         return;
+    } else if (value === "-D" || value === "--debug") {
+        debug = true;
     }
 });
 
@@ -42,9 +46,55 @@ if (File.existsSync(join(root, "package.json"))) {
     }
 }
 
-const preparePackage = function() {
-    throbber = Ora("Plugins").start();
-    throbber.color = "yellow";
+const sleep = function(time) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, time);
+    })
+};
+
+const throb = async function(message) {
+    if (!debug) {
+        message = message || "";
+
+        throbber = Ora(message).start();
+        throbber.color = "yellow";           
+
+        await sleep(100);
+    }
+};
+
+const update = async function(message, time) {
+    if (message && message !== "") {
+        if (debug) {
+            console.log(message);
+        } else {
+            const data = message.split(":");
+
+            message = data[0];
+            data.shift();
+
+            if (data.length > 0) {
+                message += `: ${data.map(v => v.trim().slice(-80)).join(": ")}`;
+            }
+
+            throbber.text = message;
+            throbber.color = "yellow";
+
+            await sleep(time);
+        }
+    }
+};
+
+const stop = async function(message) {
+    if (!debug) {
+        await update(message, 10);
+
+        throbber.stop();
+    }
+};
+
+const preparePackage = async function() {
+    await throb("Plugins");
 
     if (executing && executing.dependencies) {
         const dependencies = Object.keys(executing.dependencies);
@@ -54,8 +104,7 @@ const preparePackage = function() {
             const dependency = executing.dependencies[dependencies[i]];
 
             if ((name.startsWith("homebridge-") || (name.startsWith("@hoobs/") && name !== "@hoobs/homebridge")) && !installed.dependencies.hasOwnProperty(name)) {
-                throbber.text = `Plugins: ${name}`;
-                throbber.color = "yellow";
+                await update(`Plugins: ${name}`, 500);
 
                 installed.dependencies[name] = dependency;
             }
@@ -80,14 +129,12 @@ const preparePackage = function() {
 
     File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
 
-    throbber.text = "Plugins";
-    throbber.stop();
+    await stop("Plugins");
 }
 
 const setupUserMode = function() {
-    return new Promise((resolve) => {
-        throbber = Ora("Dependencies").start();
-        throbber.color = "yellow";
+    return new Promise(async (resolve) => {
+        await throb("Modules");
 
         if (File.existsSync(join(root, "dist"))) {
             Remove.sync(join(root, "dist"));
@@ -101,10 +148,9 @@ const setupUserMode = function() {
             overwrite: true,
             dot: true,
             junk: false
-        }).on(Copy.events.COPY_FILE_START, (data) => {
-            throbber.text = `Dependencies: ${basename(data.src)}`;
-            throbber.color = "yellow";
-        }).finally(() => {
+        }).on(Copy.events.COPY_FILE_START, async (data) => {
+            await update(`Modules: ${basename(data.src)}`, 0);
+        }).finally(async () => {
             if (File.existsSync(join(root, "package-lock.json"))) {
                 File.unlinkSync(join(root, "package-lock.json"));
             }
@@ -113,49 +159,209 @@ const setupUserMode = function() {
                 File.unlinkSync(join(root, "default.json"));
             }
 
-            throbber.text = "Dependencies: default.json";
-            throbber.color = "yellow";
+            await update("Modules: default.json", 100);
 
             File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
         
-            throbber.text = "Dependencies";
-            throbber.stop();
+            await stop("Modules");
 
             resolve();
         });
     });
 }
 
-if (!executing || installed.version !== executing.version || !File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
-    preparePackage();
+const checkEnviornment = function () {
+    return new Promise(async (resolve) => {
+        await throb("Enviornment");
 
-    setupUserMode().then(() => {
-        throbber = Ora("Application").start();
-        throbber.color = "yellow";
+        const queue = [];
 
-        Copy(join(applicaiton, "dist"), join(root, "dist"), {
-            overwrite: true,
-            dot: true,
-            junk: false
-        }).on(Copy.events.COPY_FILE_START, (data) => {
-            throbber.text = `Application: ${basename(data.src)}`;
-            throbber.color = "yellow";
-        }).finally(() => {
-            Copy(join(applicaiton, "lib"), join(root, "lib"), {
+        try {
+            File.accessSync(join(home, ".npm"), File.constants.W_OK);
+
+            await update(`Enviornment: NPM Cache OK`, 100);
+        } catch (err) {
+            await update(`Enviornment: NPM Cache is Root Locked`, 100);
+
+            queue.push(true);
+
+            let prompts = 0;
+
+            const proc = spawn("sudo", [
+                "-S",
+                "-k",
+                "-p",
+                "#sudo-hoobs#",
+                "rm",
+                "-fR",
+                join(home, ".npm")
+            ]);
+
+            proc.stderr.on("data", (data) => {
+                const lines = `${data}`.split(/\r?\n/);
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    if (line === "#sudo-hoobs#") {
+                        if (++prompts > 1) {
+                            proc.stdin.write("\n\n\n\n");
+                        } else {
+                            proc.stdin.write(`${password || ""}\n`);
+                        }
+                    }
+                }
+            });
+
+            proc.on("close", async () => {
+                await update(`Enviornment: NPM Cache Reset`, 100);
+
+                queue.pop();
+
+                if (queue.length === 0) {
+                    await stop("Enviornment");
+
+                    resolve();
+                }
+            });
+        }
+
+        try {
+            File.accessSync(join(home, ".config"), File.constants.W_OK);
+
+            await update(`Enviornment: NPM Configuration OK`, 100);
+        } catch (err) {
+            await update(`Enviornment: NPM Configuration is Root Locked`, 100);
+
+            queue.push(true);
+
+            let prompts = 0;
+
+            const proc = spawn("sudo", [
+                "-S",
+                "-k",
+                "-p",
+                "#sudo-hoobs#",
+                "rm",
+                "-fR",
+                join(home, ".config")
+            ]);
+
+            proc.stderr.on("data", (data) => {
+                const lines = `${data}`.split(/\r?\n/);
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    if (line === "#sudo-hoobs#") {
+                        if (++prompts > 1) {
+                            proc.stdin.write("\n\n\n\n");
+                        } else {
+                            proc.stdin.write(`${password || ""}\n`);
+                        }
+                    }
+                }
+            });
+
+            proc.on("close", async () => {
+                await update(`Enviornment: NPM Configuration Reset`, 100);
+
+                queue.pop();
+
+                if (queue.length === 0) {
+                    await stop("Enviornment");
+
+                    resolve();
+                }
+            });
+        }
+
+        try {
+            File.accessSync(join(home, ".node-gyp"), File.constants.W_OK);
+
+            await update(`Enviornment: GYP Build Cache OK`, 100);
+        } catch (err) {
+            await update(`Enviornment: GYP Build Cache is Root Locked`, 100);
+
+            queue.push(true);
+
+            let prompts = 0;
+
+            const proc = spawn("sudo", [
+                "-S",
+                "-k",
+                "-p",
+                "#sudo-hoobs#",
+                "rm",
+                "-fR",
+                join(home, ".node-gyp")
+            ]);
+
+            proc.stderr.on("data", (data) => {
+                const lines = `${data}`.split(/\r?\n/);
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    if (line === "#sudo-hoobs#") {
+                        if (++prompts > 1) {
+                            proc.stdin.write("\n\n\n\n");
+                        } else {
+                            proc.stdin.write(`${password || ""}\n`);
+                        }
+                    }
+                }
+            });
+
+            proc.on("close", async () => {
+                await update(`Enviornment: NPM Configuration Reset`, 100);
+
+                queue.pop();
+
+                if (queue.length === 0) {
+                    await stop("Enviornment");
+
+                    resolve();
+                }
+            });
+        }
+
+        if (queue.length === 0) {
+            await stop("Enviornment");
+
+            resolve();
+        }
+    });
+}
+
+checkEnviornment().then(async () => {
+    if (!executing || installed.version !== executing.version || !File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
+        await preparePackage();
+
+        setupUserMode().then(async () => {
+            await throb("Application");
+
+            Copy(join(applicaiton, "dist"), join(root, "dist"), {
                 overwrite: true,
                 dot: true,
                 junk: false
-            }).on(Copy.events.COPY_FILE_START, (data) => {
-                throbber.text = `Application: ${basename(data.src)}`;
-                throbber.color = "yellow";
+            }).on(Copy.events.COPY_FILE_START, async (data) => {
+                await update(`Application: ${basename(data.src)}`, 100);
             }).finally(() => {
-                throbber.text = "Application";
-                throbber.stop();
+                Copy(join(applicaiton, "lib"), join(root, "lib"), {
+                    overwrite: true,
+                    dot: true,
+                    junk: false
+                }).on(Copy.events.COPY_FILE_START, async (data) => {
+                    await update(`Application: ${basename(data.src)}`, 100);
+                }).finally(async () => {
+                    await stop("Application", 10);
 
-                require(join(root, "lib/cli"))();
+                    require(join(root, "lib/cli"))();
+                });
             });
         });
-    });
-} else {
-    require(join(root, "lib/cli"))();
-}
+    } else {
+        require(join(root, "lib/cli"))();
+    }
+});

@@ -1,3 +1,15 @@
+## 3.1.14
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Bug Fixes
+
+## 3.1.12
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Bug Fixes
+* Added Node version to System screen
+* Fixed plugin type detection
+
 ## 3.1.10
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
