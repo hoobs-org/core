@@ -50,8 +50,8 @@ switch ((command || "").toLowerCase()) {
                     await (require(join(root, "../scripts/migrate")))(enviornment);
                     await (require(join(root, "../scripts/prerequisites")))();
                     await (require(join(root, "../scripts/nginx")))(true);
-                    await (require(join(root, "../scripts/systemd")))();
-                    await (require(join(root, "../scripts/reboot")))();
+                    await (require(join(root, "../scripts/systemd")))(true);
+                    await (require(join(root, "../scripts/reboot")))(true);
                 })();
 
                 break;
@@ -114,8 +114,12 @@ switch ((command || "").toLowerCase()) {
 
     case "upgrade":
         (async () => {
-            await (require(join(dirname(File.realpathSync(__filename)), "../scripts/nginx")))(false);
-            await (require(join(dirname(File.realpathSync(__filename)), "../scripts/config")))();
+            const root = dirname(File.realpathSync(__filename));
+
+            await (require(join(root, "../scripts/nginx")))(false);
+            await (require(join(root, "../scripts/systemd")))(false);
+            await (require(join(root, "../scripts/config")))();
+            await (require(join(root, "../scripts/reboot")))(false);
         })();
 
         break;

@@ -8,7 +8,6 @@ module.exports = (install) => {
         let throbber = null;
 
         const pms = getPms();
-        const root = Path.dirname(File.realpathSync(Path.join(__filename, "../")));
 
         if (File.existsSync("/etc/nginx/nginx.conf")) {
             install = false;

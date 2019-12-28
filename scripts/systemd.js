@@ -3,15 +3,14 @@ const Path = require("path");
 const Process = require("child_process");
 const Ora = require("ora");
 
-module.exports = () => {
+module.exports = (install) => {
     return new Promise(async (resolve) => {
         let throbber = null;
 
         const pms = getPms();
-        const root = Path.dirname(File.realpathSync(Path.join(__filename, "../")));
 
         if (pms) {
-            if (!(await checkUser("hoobs"))) {
+            if (!File.existsSync("/etc/systemd/system/hoobs.service") && !(await checkUser("hoobs"))) {
                 throbber = Ora("Creating HOOBS User").start();
 
                 Process.execSync("useradd -s /bin/bash -m -d /home/hoobs -p $(perl -e 'print crypt($ARGV[0], \"password\")' \"hoobsadmin\") hoobs");
@@ -66,7 +65,7 @@ module.exports = () => {
                 throbber.stopAndPersist();
             }
 
-            if (File.existsSync("/usr/bin/firewall-cmd")) {
+            if (install && File.existsSync("/usr/bin/firewall-cmd")) {
                 throbber = Ora("Fetching Default Firewall Zone").start();
 
                 const zone = await getDefaultZone();
@@ -85,7 +84,7 @@ module.exports = () => {
                 }
             }
 
-            if (pms === "yum" || pms === "dnf") {
+            if (install && (pms === "yum" || pms === "dnf")) {
                 throbber = Ora("Configuring SELinux").start();
 
                 Process.execSync("setsebool -P httpd_can_network_connect 1");
