@@ -1,11 +1,8 @@
 const File = require("fs");
 const Process = require("child_process");
-const Ora = require("ora");
 
 module.exports = () => {
     return new Promise(async (resolve) => {
-        let throbber = null;
-
         const pms = getPms();
 
         if (pms) {
@@ -17,15 +14,14 @@ module.exports = () => {
             console.log("depending on how many plugins you have installed.");
             console.log("---------------------------------------------------------");
 
-            throbber = Ora("Rebooting").start();
-
             if (File.existsSync("/etc/systemd/system/homebridge.service")) {
+                Process.execSync("systemctl stop homebridge.service");
                 Process.execSync("systemctl disable homebridge.service");
             }
 
-            Process.exec("shutdown -r now", () => {
-                throbber.stopAndPersist();
-            });
+            Process.execSync("systemctl restart nginx.service");
+            Process.execSync("systemctl enable hoobs.service");
+            Process.execSync("systemctl restart hoobs.service");
         }
 
         resolve();
