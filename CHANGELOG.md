@@ -8,6 +8,7 @@ At HOOBS we are always working to make the software better. Here are the notiabl
 * Added a Homebridge removal script
 * Combined Binaries into One File
 * Added Service Control Commands
+* Initilize Without Rebooting
 
 ## 3.1.14
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
