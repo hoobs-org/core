@@ -27,10 +27,11 @@
         "prepare": "npm run build",
         "postinstall": "bin/hoobs upgrade",
         "pack": "npm pack && rm -f ./builds/hoobs-core.tgz && mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz",
+        "pack:publish": "npm publish --access public",
         "serve": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs",
         "serve:no-build": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && ./bin/hoobs",
-        "serve:debug": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs -D",
-        "serve:debug:no-build": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && ./bin/hoobs -D"
+        "debug": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs -D",
+        "debug:no-build": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && ./bin/hoobs -D"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.0.9",
