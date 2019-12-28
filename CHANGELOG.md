@@ -8,6 +8,8 @@ At HOOBS we are always working to make the software better. Here are the notiabl
 * Added a Homebridge removal script
 * Combined Binaries into One File
 * Added Service Control Commands
+* Faster Installed Plugin List
+* Faster Plugin Type Detection
 * Initilize Without Rebooting
 
 ## 3.1.14

@@ -148,6 +148,7 @@ const getPluginDetails = function (storage, directory, name) {
         }
 
         const alias = schema.plugin_alias || schema.pluginAlias || name;
+
         let type = "platform";
 
         if (schema.pluginType === "accessory") {
