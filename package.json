@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.1.14",
+    "version": "3.1.15",
     "description": "Certified HOOBS stack",
     "license": "Apache-2.0",
     "keywords": [
@@ -16,10 +16,7 @@
     },
     "main": "lib/cli.js",
     "bin": {
-        "homebridge": "bin/hoobs",
-        "hoobs": "bin/hoobs",
-        "hoobs-init": "bin/hoobs-init",
-        "hoobs-cockpit": "bin/hoobs-cockpit"
+        "hoobs": "bin/hoobs"
     },
     "author": "Michael J Kellsy",
     "engines": {
@@ -28,7 +25,7 @@
     "scripts": {
         "build": "vue-cli-service build --modern",
         "prepare": "npm run build",
-        "postinstall": "bin/hoobs-upgrade",
+        "postinstall": "bin/hoobs upgrade",
         "pack": "npm pack && rm -f ./builds/hoobs-core.tgz && mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz",
         "serve": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs",
         "serve:no-build": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && ./bin/hoobs",
