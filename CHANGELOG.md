@@ -1,3 +1,17 @@
+## 3.1.15
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Bug Fixes
+* Made the migration process more fault tolerant
+* Change the plugin log logic, it's more fault tolerant
+* Added HOOBS to Homebridge switch script
+* Added a Homebridge removal script
+* Combined Binaries into One File
+* Added Service Control Commands
+* Faster Installed Plugin List
+* Faster Plugin Type Detection
+* Initilize Without Rebooting
+
 ## 3.1.14
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
