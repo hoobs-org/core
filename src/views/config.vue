@@ -520,6 +520,10 @@
                             }
                         });
 
+                        setTimeout(() => {
+                            window.location.href = "/";
+                        }, 5000);
+
                         break;
 
                     case "cfg":
@@ -531,6 +535,10 @@
                                 "Content-Type": "multipart/form-data"
                             }
                         });
+
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
 
                         break;
                 }
