@@ -215,6 +215,10 @@
                         "Content-Type": "multipart/form-data"
                     }
                 });
+
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 5000);
             },
 
             confirmError() {
@@ -228,6 +232,10 @@
                     this.$store.commit("hide", "service");
 
                     this.api.put("/reset");
+
+                    setTimeout(() => {
+                        window.location.href = "/";
+                    }, 1000);
                 }
             },
 
