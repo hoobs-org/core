@@ -11,6 +11,7 @@ At HOOBS we are always working to make the software better. Here are the notiabl
 * Faster Installed Plugin List
 * Faster Plugin Type Detection
 * Initilize Without Rebooting
+* Upgrade Without Rebooting
 
 ## 3.1.14
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.

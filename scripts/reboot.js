@@ -21,7 +21,10 @@ module.exports = (install) => {
                 Process.execSync("systemctl disable homebridge.service");
             }
 
-            Process.execSync("systemctl restart nginx.service");
+            if (File.existsSync("/lib/systemd/system/nginx.service")) {
+                Process.execSync("systemctl restart nginx.service");
+            }
+
             Process.execSync("systemctl enable hoobs.service");
             Process.execSync("systemctl restart hoobs.service");
         }

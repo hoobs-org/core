@@ -6,74 +6,61 @@ module.exports = (enviornment) => {
     return new Promise(async (resolve) => {
         const throbber = Ora("Checking Existing Configuration").start();
 
-        const known = [
-            "auth.json",
-            "config.json",
-            "layout.json"
-        ];
-
-        if (!File.existsSync("/var/hoobs")) {
-            File.mkdirSync("/var/hoobs");
-            File.chmodSync("/var/hoobs", 0755);
+        if (enviornment.plugins && Array.isArray(enviornment.plugins) && enviornment.plugins.length > 0) {
+            writeJson("plugins.json", enviornment.plugins);
         }
-
-        if (!File.existsSync("/var/hoobs/.migration")) {
-            File.mkdirSync("/var/hoobs/.migration");
-            File.chmodSync("/var/hoobs/.migration", 0755);
-        }
-
-        writeJson("plugins.json", enviornment.plugins);
-
-        let config = {
-            bridge: {
-                name: "HOOBS",
-                port: 51826,
-                pin: "031-45-154"
-            },
-            description: "",
-            ports: {},
-            plugins: [],
-            interfaces: [],
-            accessories: [],
-            platforms: []
-        };
 
         if (File.existsSync(Path.join(enviornment.storage, "config.json"))) {
+            let config = {
+                bridge: {
+                    name: "HOOBS",
+                    port: 51826,
+                    pin: "031-45-154"
+                },
+                description: "",
+                ports: {},
+                plugins: [],
+                interfaces: [],
+                accessories: [],
+                platforms: []
+            };
+
             config = JSON.parse(File.readFileSync(Path.join(enviornment.storage, "config.json")));
+
+            let index = (config.platforms || []).findIndex((p) => p.platform === "config");
+
+            if (index >= 0) {
+                (config.platforms || []).splice(index, 1);
+            }
+
+            index = (config.platforms || []).findIndex((p) => p.platform === "to-hoobs");
+
+            if (index >= 0) {
+                (config.platforms || []).splice(index, 1);
+            }
+
+            writeJson("config.json", config);
         }
 
-        let index = (config.platforms || []).findIndex((p) => p.platform === "config");
+        if (enviornment.plugins && Array.isArray(enviornment.plugins) && enviornment.plugins.length > 0) {
+            const dependencies = {};
+            const installed = (JSON.parse(File.readFileSync(Path.join(enviornment.application, "package.json")))).dependencies;
 
-        if (index >= 0) {
-            (config.platforms || []).splice(index, 1);
+            for (let i = 0; i < enviornment.plugins.length; i++) {
+                installed[enviornment.plugins[i].name] = `^${enviornment.plugins[i].version}`;
+            }
+
+            const names = Object.keys(installed).sort();
+
+            for (let i = 0; i < names.length; i++) {
+                dependencies[names[i]] = installed[names[i]];
+            }
+
+            writeJson("dependencies.json", dependencies);
         }
-
-        index = (config.platforms || []).findIndex((p) => p.platform === "to-hoobs");
-
-        if (index >= 0) {
-            (config.platforms || []).splice(index, 1);
-        }
-
-        writeJson("config.json", config);
-
-        const dependencies = {};
-        const installed = (JSON.parse(File.readFileSync(Path.join(enviornment.application, "package.json")))).dependencies;
-
-        for (let i = 0; i < enviornment.plugins.length; i++) {
-            installed[enviornment.plugins[i].name] = `^${enviornment.plugins[i].version}`;
-        }
-
-        const names = Object.keys(installed).sort();
-
-        for (let i = 0; i < names.length; i++) {
-            dependencies[names[i]] = installed[names[i]];
-        }
-
-        writeJson("dependencies.json", dependencies);
-
-        const users = [];
 
         if (File.existsSync(Path.join(enviornment.storage, "auth.json"))) {
+            const users = [];
             const current = JSON.parse(File.readFileSync(Path.join(enviornment.storage, "auth.json")));
 
             for (let i = 0; i < current.length; i++) {
@@ -88,85 +75,97 @@ module.exports = (enviornment) => {
                     salt: user.salt
                 });
             }
+
+            writeJson("access.json", users);
         }
 
-        writeJson("access.json", users);
+        if (File.existsSync(Path.join(enviornment.storage, "accessories/uiAccessoriesLayout.json"))) {
+            let layout = {};
+            let source = {};
 
-        let layout = {};
-        let source = {};
+            try {
+                source = JSON.parse(File.readFileSync(Path.join(enviornment.storage, "accessories/uiAccessoriesLayout.json")));
+            } catch {
+                source = {};
+            }
 
-        try {
-            source = JSON.parse(File.readFileSync(Path.join(enviornment.storage, "accessories/uiAccessoriesLayout.json")));
-        } catch {
-            source = {};
-        }
+            const sections = Object.keys(source);
+            const placed = [];
 
-        const sections = Object.keys(source);
-        const placed = [];
+            for (let i = 0; i < sections.length; i++) {
+                const user = source[sections[i]];
 
-        for (let i = 0; i < sections.length; i++) {
-            const user = source[sections[i]];
+                layout[sections[i]] = {
+                    rooms: [],
+                    hidden: [],
+                    names: {}
+                };
 
-            layout[sections[i]] = {
-                rooms: [],
-                hidden: [],
-                names: {}
-            };
+                for (let j = 0; j < user.length; j++) {
+                    const item = user[j];
 
-            for (let j = 0; j < user.length; j++) {
-                const item = user[j];
+                    if (item.name !== "Default Room" && item.name !== "Unassigned") {
+                        const room = {
+                            name: item.name,
+                            accessories: []
+                        };
 
-                if (item.name !== "Default Room" && item.name !== "Unassigned") {
-                    const room = {
-                        name: item.name,
-                        accessories: []
-                    };
+                        for (let k = 0; k < item.services.length; k++) {
+                            const service = item.services[k];
 
-                    for (let k = 0; k < item.services.length; k++) {
-                        const service = item.services[k];
-
-                        let aid = parseFloat(service.aid);
-
-                        if (!Number.isNaN(aid)) {
-                            let count = 0;
-                            let safety = 0;
-
-                            while (placed.indexOf(aid) >= 0) {
-                                count += 1;
-                                safety += 1;
-
-                                aid = parseFloat(`${service.aid}.${count}`);
-
-                                if (Number.isNaN(aid) || safety >= 10) {
-                                    aid = NaN;
-
-                                    break;
-                                }
-                            }
+                            let aid = parseFloat(service.aid);
 
                             if (!Number.isNaN(aid)) {
-                                if (service.hidden) {
-                                    layout[sections[i]].hidden.push(aid);
-                                } else {
-                                    room.accessories.push(aid);
-                                    placed.push(aid);
+                                let count = 0;
+                                let safety = 0;
+
+                                while (placed.indexOf(aid) >= 0) {
+                                    count += 1;
+                                    safety += 1;
+
+                                    aid = parseFloat(`${service.aid}.${count}`);
+
+                                    if (Number.isNaN(aid) || safety >= 10) {
+                                        aid = NaN;
+
+                                        break;
+                                    }
                                 }
 
-                                if (service.customName && service.customName !== "") {
-                                    layout[sections[i]].names[aid] = service.customName;
+                                if (!Number.isNaN(aid)) {
+                                    if (service.hidden) {
+                                        layout[sections[i]].hidden.push(aid);
+                                    } else {
+                                        room.accessories.push(aid);
+                                        placed.push(aid);
+                                    }
+
+                                    if (service.customName && service.customName !== "") {
+                                        layout[sections[i]].names[aid] = service.customName;
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    layout[sections[i]].rooms.push(room);
+                        layout[sections[i]].rooms.push(room);
+                    }
                 }
             }
+
+            writeJson("layout.json", layout);
         }
 
-        writeJson("layout.json", layout);
-
         if (File.existsSync(Path.join(enviornment.storage, "accessories"))) {
+            if (!File.existsSync("/var/hoobs")) {
+                File.mkdirSync("/var/hoobs");
+                File.chmodSync("/var/hoobs", 0755);
+            }
+    
+            if (!File.existsSync("/var/hoobs/.migration")) {
+                File.mkdirSync("/var/hoobs/.migration");
+                File.chmodSync("/var/hoobs/.migration", 0755);
+            }
+
             File.copySync(Path.join(enviornment.storage, "accessories"), "/var/hoobs/.migration/accessories");
             File.chmodSync("/var/hoobs/.migration/accessories", 0755);
 
@@ -176,21 +175,39 @@ module.exports = (enviornment) => {
         }
 
         if (File.existsSync(Path.join(enviornment.storage, "persist"))) {
+            if (!File.existsSync("/var/hoobs")) {
+                File.mkdirSync("/var/hoobs");
+                File.chmodSync("/var/hoobs", 0755);
+            }
+    
+            if (!File.existsSync("/var/hoobs/.migration")) {
+                File.mkdirSync("/var/hoobs/.migration");
+                File.chmodSync("/var/hoobs/.migration", 0755);
+            }
+
             File.copySync(Path.join(enviornment.storage, "persist"), "/var/hoobs/.migration/persist");
             File.chmodSync("/var/hoobs/.migration/persist", 0755);
         }
 
-        const files = File.readdirSync(enviornment.storage).filter(f => File.lstatSync(Path.join(enviornment.storage, f)).isFile() && known.indexOf(f) === -1);
-        const unmanaged = [];
+        if (File.existsSync(enviornment.storage)) {
+            const known = [
+                "auth.json",
+                "config.json",
+                "layout.json"
+            ];
 
-        for (let i = 0; i < files.length; i++) {
-            File.copySync(Path.join(enviornment.storage, files[i]), Path.join("/var/hoobs/.migration", files[i]));
-            File.chmodSync(Path.join("/var/hoobs/.migration", files[i]), 0755);
+            const files = File.readdirSync(enviornment.storage).filter(f => File.lstatSync(Path.join(enviornment.storage, f)).isFile() && known.indexOf(f) === -1);
+            const unmanaged = [];
 
-            unmanaged.push(files[i]);
+            for (let i = 0; i < files.length; i++) {
+                File.copySync(Path.join(enviornment.storage, files[i]), Path.join("/var/hoobs/.migration", files[i]));
+                File.chmodSync(Path.join("/var/hoobs/.migration", files[i]), 0755);
+
+                unmanaged.push(files[i]);
+            }
+
+            writeJson("unmanaged.json", unmanaged);
         }
-
-        writeJson("unmanaged.json", unmanaged);
 
         throbber.stopAndPersist();
 
@@ -199,6 +216,16 @@ module.exports = (enviornment) => {
 };
 
 const writeJson = function (filename, data) {
+    if (!File.existsSync("/var/hoobs")) {
+        File.mkdirSync("/var/hoobs");
+        File.chmodSync("/var/hoobs", 0755);
+    }
+
+    if (!File.existsSync("/var/hoobs/.migration")) {
+        File.mkdirSync("/var/hoobs/.migration");
+        File.chmodSync("/var/hoobs/.migration", 0755);
+    }
+
     if (File.existsSync(Path.join("/var/hoobs/.migration/", filename))) {
         File.unlinkSync(Path.join("/var/hoobs/.migration/", filename));
     }
