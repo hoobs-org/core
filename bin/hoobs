@@ -50,8 +50,8 @@ switch ((command || "").toLowerCase()) {
                     await (require(join(root, "../scripts/migrate")))(enviornment);
                     await (require(join(root, "../scripts/prerequisites")))();
                     await (require(join(root, "../scripts/nginx")))(true);
-                    await (require(join(root, "../scripts/systemd")))();
-                    await (require(join(root, "../scripts/reboot")))();
+                    await (require(join(root, "../scripts/systemd")))(true);
+                    await (require(join(root, "../scripts/reboot")))(true);
                 })();
 
                 break;
@@ -114,8 +114,30 @@ switch ((command || "").toLowerCase()) {
 
     case "upgrade":
         (async () => {
-            await (require(join(dirname(File.realpathSync(__filename)), "../scripts/nginx")))(false);
-            await (require(join(dirname(File.realpathSync(__filename)), "../scripts/config")))();
+            const root = dirname(File.realpathSync(__filename));
+
+            let configured = false;
+
+            if (File.existsSync("/home")) {
+                const folders = File.readdirSync("/home").filter(file => File.lstatSync(join("/home", file)).isDirectory());
+    
+                for (let i = 0; i < folders.length; i++) {    
+                    if (File.existsSync(join("/home", folders[i], ".hoobs/etc/config.json"))) {
+                        configured = true;
+                    }
+                }
+            }
+    
+            if (File.existsSync("/root/.hoobs/etc/config.json")) {    
+                configured = true;
+            }
+
+            if (configured) {
+                await (require(join(root, "../scripts/nginx")))(false);
+                await (require(join(root, "../scripts/systemd")))(false);
+                await (require(join(root, "../scripts/config")))();
+                await (require(join(root, "../scripts/reboot")))(false);
+            }
         })();
 
         break;
@@ -496,55 +518,47 @@ switch ((command || "").toLowerCase()) {
 
                 const queue = [];
 
-                try {
-                    File.accessSync(join(home, ".npm"), File.constants.W_OK);
+                await update(`Enviornment: Clearing NPM Cache`, 100);
 
-                    await update(`Enviornment: NPM Cache OK`, 100);
-                } catch (err) {
-                    await update(`Enviornment: NPM Cache is Root Locked`, 100);
+                queue.push(true);
 
-                    queue.push(true);
+                let prompts = 0;
 
-                    let prompts = 0;
+                const proc = spawn("sudo", [
+                    "-S",
+                    "-k",
+                    "-p",
+                    "#sudo-hoobs#",
+                    "rm",
+                    "-fR",
+                    join(home, ".npm")
+                ]);
 
-                    const proc = spawn("sudo", [
-                        "-S",
-                        "-k",
-                        "-p",
-                        "#sudo-hoobs#",
-                        "rm",
-                        "-fR",
-                        join(home, ".npm")
-                    ]);
+                proc.stderr.on("data", (data) => {
+                    const lines = `${data}`.split(/\r?\n/);
 
-                    proc.stderr.on("data", (data) => {
-                        const lines = `${data}`.split(/\r?\n/);
+                    for (let i = 0; i < lines.length; i++) {
+                        const line = lines[i].trim();
 
-                        for (let i = 0; i < lines.length; i++) {
-                            const line = lines[i].trim();
-
-                            if (line === "#sudo-hoobs#") {
-                                if (++prompts > 1) {
-                                    proc.stdin.write("\n\n\n\n");
-                                } else {
-                                    proc.stdin.write(`${password || ""}\n`);
-                                }
+                        if (line === "#sudo-hoobs#") {
+                            if (++prompts > 1) {
+                                proc.stdin.write("\n\n\n\n");
+                            } else {
+                                proc.stdin.write(`${password || ""}\n`);
                             }
                         }
-                    });
+                    }
+                });
 
-                    proc.on("close", async () => {
-                        await update(`Enviornment: NPM Cache Reset`, 100);
+                proc.on("close", async () => {
+                    queue.pop();
 
-                        queue.pop();
+                    if (queue.length === 0) {
+                        await stop("Enviornment");
 
-                        if (queue.length === 0) {
-                            await stop("Enviornment");
-
-                            resolve();
-                        }
-                    });
-                }
+                        resolve();
+                    }
+                });
 
                 try {
                     File.accessSync(join(home, ".config"), File.constants.W_OK);

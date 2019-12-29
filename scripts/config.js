@@ -39,7 +39,7 @@ module.exports = () => {
         }
 
         if (File.existsSync("/var/root/.hoobs/etc/config.json")) {
-            throbber.start("/var/roo");
+            throbber.start("/var/root");
 
             reConfigure("/var/root/.hoobs/etc/config.json");
         }

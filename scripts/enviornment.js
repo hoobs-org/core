@@ -42,23 +42,26 @@ module.exports = () => {
         }
 
         const plgns = [];
-        const entries = File.readdirSync(modules).filter(f => File.lstatSync(Path.join(modules, f)).isDirectory());
 
-        for (let i = 0; i < entries.length; i++) {
-            const directory = Path.join(modules, entries[i]);
-            const filename = Path.join(directory, "/package.json");
+        if (File.existsSync(storage)) {
+            const entries = File.readdirSync(modules).filter(f => File.lstatSync(Path.join(modules, f)).isDirectory());
 
-            if (File.existsSync(filename)) {
-                const item = JSON.parse(File.readFileSync(filename));
+            for (let i = 0; i < entries.length; i++) {
+                const directory = Path.join(modules, entries[i]);
+                const filename = Path.join(directory, "/package.json");
 
-                if (Array.isArray(item.keywords) && item.keywords.indexOf("homebridge-plugin") >= 0 && incompatable.indexOf(item.name) === -1) {
-                    const details = getPluginDetails(storage, directory, item.name);
+                if (File.existsSync(filename)) {
+                    const item = JSON.parse(File.readFileSync(filename));
 
-                    plgns.push({
-                        name: item.name,
-                        version: item.version,
-                        details
-                    });
+                    if (Array.isArray(item.keywords) && item.keywords.indexOf("homebridge-plugin") >= 0 && incompatable.indexOf(item.name) === -1) {
+                        const details = getPluginDetails(storage, directory, item.name);
+
+                        plgns.push({
+                            name: item.name,
+                            version: item.version,
+                            details
+                        });
+                    }
                 }
             }
         }
