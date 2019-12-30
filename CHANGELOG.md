@@ -11,7 +11,7 @@ At HOOBS we are always working to make the software better. Here are the notiabl
 * Fix NPM Issues Automatically
 * Faster Installed Plugin List
 * Faster Plugin Type Detection
-* Initilize Without Rebooting
+* Initialize Without Rebooting
 * Upgrade Without Rebooting
 
 ## 3.1.14
