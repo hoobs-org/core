@@ -24,14 +24,6 @@ module.exports = (install) => {
                 throbber.stopAndPersist();
             }
 
-            if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
-                throbber = Ora("Removing UI-X Service").start();
-
-                Process.execSync("systemctl disable homebridge-config-ui-x.service");
-
-                throbber.stopAndPersist();
-            }
-
             if (!File.existsSync("/etc/systemd/system/hoobs.service")) {
                 throbber = Ora("Installing HOOBS Service").start();
 
@@ -60,7 +52,6 @@ module.exports = (install) => {
 
                 Process.execSync("chmod 755 /etc/systemd/system/hoobs.service");
                 Process.execSync("systemctl daemon-reload");
-                Process.execSync("systemctl enable hoobs.service");
 
                 throbber.stopAndPersist();
             }
