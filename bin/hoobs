@@ -12,6 +12,7 @@ const Remove = require("rimraf");
 
 const { dirname, join, basename } = require("path");
 const { spawn, execSync } = require("child_process");
+const { hashElement } = require("folder-hash");
 
 let password = null;
 let debug = false;
@@ -755,53 +756,47 @@ switch ((command || "").toLowerCase()) {
             });
         };
 
-        const needsFiles = function() {
-            if (!executing) {
-                return true;
+        const checksum = async function() {
+            if (!File.existsSync(join(root, "dist"))) {
+                return false;
             }
 
-            if (installed.version !== executing.version) {
-                return true;
+            if (!File.existsSync(join(root, "lib"))) {
+                return false;
             }
 
-            const files = [
-                "dist",
-                "lib",
-                "lib/api.js",
-                "lib/cache.js",
-                "lib/cli.js",
-                "lib/client.js",
-                "lib/cockpit.js",
-                "lib/hap-client.js",
-                "lib/instance.js",
-                "lib/logger-client.js",
-                "lib/logger.js",
-                "lib/monitor.js",
-                "lib/plugins.js",
-                "lib/server.js",
-                "lib/types.js",
-                "lib/user.js",
-                "lib/controllers/accessories.js",
-                "lib/controllers/auth.js",
-                "lib/controllers/cockpit.js",
-                "lib/controllers/config.js",
-                "lib/controllers/layout.js",
-                "lib/controllers/plugins.js",
-                "lib/controllers/service.js",
-                "lib/controllers/status.js",
-                "lib/controllers/system.js",
-                "lib/controllers/users.js"
-            ];
+            const options = {
+                files: {
+                    exclude: [
+                        ".DS_Store"
+                    ]
+                }
+            };
 
-            for (let i = 0; i < files.length; i++) {
-                if (!File.existsSync(join(root, files[i]))) {
-                    return true;
+            const checksums = {
+                dist: {
+                    local: await hashElement(join(root, "dist"), options),
+                    source: await hashElement(join(applicaiton, "dist"), options)
+                },
+                lib: {
+                    local: await hashElement(join(root, "lib"), options),
+                    source: await hashElement(join(applicaiton, "lib"), options)
                 }
             }
+
+            if (checksums.dist.local.hash.toString() !== checksums.dist.source.hash.toString()) {
+                return false;
+            }
+
+            if (checksums.lib.local.hash.toString() !== checksums.lib.source.hash.toString()) {
+                return false;
+            }
+
+            return true;
         }
 
         checkEnviornment().then(async () => {
-            if (needsFiles()) {
+            if (!executing || installed.version !== executing.version || !(await checksum())) {
                 let success = true;
 
                 if (File.existsSync("/var/hoobs/.migration")) {
@@ -839,6 +834,14 @@ switch ((command || "").toLowerCase()) {
                 if (success) {
                     await throb("Application");
 
+                    if (File.existsSync(join(root, "dist"))) {
+                        Remove.sync(join(root, "dist"));
+                    }
+    
+                    if (File.existsSync(join(root, "lib"))) {
+                        Remove.sync(join(root, "lib"));
+                    }
+
                     Copy(join(applicaiton, "dist"), join(root, "dist"), {
                         overwrite: true,
                         dot: true,
@@ -854,6 +857,10 @@ switch ((command || "").toLowerCase()) {
                             await update(`Application: ${basename(data.src)}`, 100);
                         }).finally(async () => {
                             await stop("Application", 10);
+
+                            if (!(await checksum())) {
+                                throw new Error("Unable to start user mode");
+                            }
 
                             require(join(root, "lib/cli"))();
                         });
