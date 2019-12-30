@@ -470,54 +470,8 @@ switch ((command || "").toLowerCase()) {
 
                 const queue = [];
 
-                await update(`Enviornment: Clearing NPM Cache`, 100);
-
-                queue.push(true);
-
-                let prompts = 0;
-
-                const proc = spawn("sudo", [
-                    "-S",
-                    "-k",
-                    "-p",
-                    "#sudo-hoobs#",
-                    "rm",
-                    "-fR",
-                    join(home, ".npm")
-                ]);
-
-                proc.stderr.on("data", (data) => {
-                    const lines = `${data}`.split(/\r?\n/);
-
-                    for (let i = 0; i < lines.length; i++) {
-                        const line = lines[i].trim();
-
-                        if (line === "#sudo-hoobs#") {
-                            if (++prompts > 1) {
-                                proc.stdin.write("\n\n\n\n");
-                            } else {
-                                proc.stdin.write(`${password || ""}\n`);
-                            }
-                        }
-                    }
-                });
-
-                proc.on("close", async () => {
-                    queue.pop();
-
-                    if (queue.length === 0) {
-                        await stop("Enviornment");
-
-                        resolve();
-                    }
-                });
-
-                try {
-                    File.accessSync(join(home, ".config"), File.constants.W_OK);
-
-                    await update(`Enviornment: NPM Configuration OK`, 100);
-                } catch (err) {
-                    await update(`Enviornment: NPM Configuration is Root Locked`, 100);
+                if (File.existsSync(join(home, ".npm"))) {
+                    await update(`Enviornment: Clearing NPM Cache`, 100);
 
                     queue.push(true);
 
@@ -530,7 +484,7 @@ switch ((command || "").toLowerCase()) {
                         "#sudo-hoobs#",
                         "rm",
                         "-fR",
-                        join(home, ".config")
+                        join(home, ".npm")
                     ]);
 
                     proc.stderr.on("data", (data) => {
@@ -550,8 +504,6 @@ switch ((command || "").toLowerCase()) {
                     });
 
                     proc.on("close", async () => {
-                        await update(`Enviornment: NPM Configuration Reset`, 100);
-
                         queue.pop();
 
                         if (queue.length === 0) {
@@ -562,54 +514,108 @@ switch ((command || "").toLowerCase()) {
                     });
                 }
 
-                try {
-                    File.accessSync(join(home, ".node-gyp"), File.constants.W_OK);
+                if (File.existsSync(join(home, ".config"))) {
+                    try {
+                        File.accessSync(join(home, ".config"), File.constants.W_OK);
 
-                    await update(`Enviornment: GYP Build Cache OK`, 100);
-                } catch (err) {
-                    await update(`Enviornment: GYP Build Cache is Root Locked`, 100);
+                        await update(`Enviornment: NPM Configuration OK`, 100);
+                    } catch (err) {
+                        await update(`Enviornment: NPM Configuration is Root Locked`, 100);
 
-                    queue.push(true);
+                        queue.push(true);
 
-                    let prompts = 0;
+                        let prompts = 0;
 
-                    const proc = spawn("sudo", [
-                        "-S",
-                        "-k",
-                        "-p",
-                        "#sudo-hoobs#",
-                        "rm",
-                        "-fR",
-                        join(home, ".node-gyp")
-                    ]);
+                        const proc = spawn("sudo", [
+                            "-S",
+                            "-k",
+                            "-p",
+                            "#sudo-hoobs#",
+                            "rm",
+                            "-fR",
+                            join(home, ".config")
+                        ]);
 
-                    proc.stderr.on("data", (data) => {
-                        const lines = `${data}`.split(/\r?\n/);
+                        proc.stderr.on("data", (data) => {
+                            const lines = `${data}`.split(/\r?\n/);
 
-                        for (let i = 0; i < lines.length; i++) {
-                            const line = lines[i].trim();
+                            for (let i = 0; i < lines.length; i++) {
+                                const line = lines[i].trim();
 
-                            if (line === "#sudo-hoobs#") {
-                                if (++prompts > 1) {
-                                    proc.stdin.write("\n\n\n\n");
-                                } else {
-                                    proc.stdin.write(`${password || ""}\n`);
+                                if (line === "#sudo-hoobs#") {
+                                    if (++prompts > 1) {
+                                        proc.stdin.write("\n\n\n\n");
+                                    } else {
+                                        proc.stdin.write(`${password || ""}\n`);
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
 
-                    proc.on("close", async () => {
-                        await update(`Enviornment: NPM Configuration Reset`, 100);
+                        proc.on("close", async () => {
+                            await update(`Enviornment: NPM Configuration Reset`, 100);
 
-                        queue.pop();
+                            queue.pop();
 
-                        if (queue.length === 0) {
-                            await stop("Enviornment");
+                            if (queue.length === 0) {
+                                await stop("Enviornment");
 
-                            resolve();
-                        }
-                    });
+                                resolve();
+                            }
+                        });
+                    }
+                }
+
+                if (File.existsSync(join(home, ".node-gyp"))) {
+                    try {
+                        File.accessSync(join(home, ".node-gyp"), File.constants.W_OK);
+
+                        await update(`Enviornment: GYP Build Cache OK`, 100);
+                    } catch (err) {
+                        await update(`Enviornment: GYP Build Cache is Root Locked`, 100);
+
+                        queue.push(true);
+
+                        let prompts = 0;
+
+                        const proc = spawn("sudo", [
+                            "-S",
+                            "-k",
+                            "-p",
+                            "#sudo-hoobs#",
+                            "rm",
+                            "-fR",
+                            join(home, ".node-gyp")
+                        ]);
+
+                        proc.stderr.on("data", (data) => {
+                            const lines = `${data}`.split(/\r?\n/);
+
+                            for (let i = 0; i < lines.length; i++) {
+                                const line = lines[i].trim();
+
+                                if (line === "#sudo-hoobs#") {
+                                    if (++prompts > 1) {
+                                        proc.stdin.write("\n\n\n\n");
+                                    } else {
+                                        proc.stdin.write(`${password || ""}\n`);
+                                    }
+                                }
+                            }
+                        });
+
+                        proc.on("close", async () => {
+                            await update(`Enviornment: NPM Configuration Reset`, 100);
+
+                            queue.pop();
+
+                            if (queue.length === 0) {
+                                await stop("Enviornment");
+
+                                resolve();
+                            }
+                        });
+                    }
                 }
 
                 if (queue.length === 0) {
@@ -749,8 +755,53 @@ switch ((command || "").toLowerCase()) {
             });
         };
 
+        const needsFiles = function() {
+            if (!executing) {
+                return true;
+            }
+
+            if (installed.version !== executing.version) {
+                return true;
+            }
+
+            const files = [
+                "dist",
+                "lib",
+                "lib/api.js",
+                "lib/cache.js",
+                "lib/cli.js",
+                "lib/client.js",
+                "lib/cockpit.js",
+                "lib/hap-client.js",
+                "lib/instance.js",
+                "lib/logger-client.js",
+                "lib/logger.js",
+                "lib/monitor.js",
+                "lib/plugins.js",
+                "lib/server.js",
+                "lib/types.js",
+                "lib/user.js",
+                "lib/controllers/accessories.js",
+                "lib/controllers/auth.js",
+                "lib/controllers/cockpit.js",
+                "lib/controllers/config.js",
+                "lib/controllers/layout.js",
+                "lib/controllers/plugins.js",
+                "lib/controllers/service.js",
+                "lib/controllers/status.js",
+                "lib/controllers/system.js",
+                "lib/controllers/users.js"
+            ];
+
+            for (let i = 0; i < files.length; i++) {
+                if (!File.existsSync(join(root, files[i]))) {
+                    return true;
+                }
+            }
+        }
+
         checkEnviornment().then(async () => {
-            if (!executing || installed.version !== executing.version || !File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
+            if (needsFiles()) {
                 let success = true;
 
                 if (File.existsSync("/var/hoobs/.migration")) {
