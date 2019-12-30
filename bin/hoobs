@@ -58,53 +58,35 @@ switch ((command || "").toLowerCase()) {
 
             case "start":
                 if (File.existsSync("/etc/systemd/system/hoobs.service")) {
-                    execSync("systemctl start hoobs.service", {
-                        stdio: "inherit"
-                    });
+                    execSync("systemctl start hoobs.service");
                 }
 
                 break;
 
             case "stop":
                 if (File.existsSync("/etc/systemd/system/hoobs.service")) {
-                    execSync("systemctl stop hoobs.service", {
-                        stdio: "inherit"
-                    });
+                    execSync("systemctl stop hoobs.service");
                 }
 
                 break;
 
             case "restart":
                 if (File.existsSync("/etc/systemd/system/hoobs.service")) {
-                    execSync("systemctl restart hoobs.service", {
-                        stdio: "inherit"
-                    });
+                    execSync("systemctl restart hoobs.service");
                 }
 
                 break;
 
             case "enable":
                 if (File.existsSync("/etc/systemd/system/hoobs.service")) {
-                    execSync("systemctl stop hoobs.service", {
-                        stdio: "inherit"
-                    });
-
-                    execSync("systemctl disable hoobs.service", {
-                        stdio: "inherit"
-                    });
+                    execSync("systemctl enable hoobs.service");
                 }
 
                 break;
-
+    
             case "disable":
                 if (File.existsSync("/etc/systemd/system/hoobs.service")) {
-                    execSync("systemctl enable hoobs.service", {
-                        stdio: "inherit"
-                    });
-
-                    execSync("systemctl restart homebridge.service", {
-                        stdio: "inherit"
-                    });
+                    execSync("systemctl disable hoobs.service");
                 }
 
                 break;
@@ -161,66 +143,36 @@ switch ((command || "").toLowerCase()) {
             switch ((service || "").toLowerCase()) {
                 case "hoobs":
                     if (File.existsSync("/etc/systemd/system/hoobs.service") && File.existsSync("/etc/systemd/system/homebridge.service")) {
-                        execSync("systemctl stop homebridge.service", {
-                            stdio: "inherit"
-                        });
-
-                        execSync("systemctl disable homebridge.service", {
-                            stdio: "inherit"
-                        });
+                        execSync("systemctl stop homebridge.service");
+                        execSync("systemctl disable homebridge.service");
                     }
 
                     if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
-                        execSync("systemctl stop homebridge-config-ui-x.service", {
-                            stdio: "inherit"
-                        });
-
-                        execSync("systemctl disable homebridge-config-ui-x.service", {
-                            stdio: "inherit"
-                        });
+                        execSync("systemctl stop homebridge-config-ui-x.service");
+                        execSync("systemctl disable homebridge-config-ui-x.service");
                     }
 
                     if (File.existsSync("/etc/systemd/system/hoobs.service") && File.existsSync("/etc/systemd/system/homebridge.service")) {
-                        execSync("systemctl enable hoobs.service", {
-                            stdio: "inherit"
-                        });
-
-                        execSync("systemctl restart hoobs.service", {
-                            stdio: "inherit"
-                        });
+                        execSync("systemctl enable hoobs.service");
+                        execSync("systemctl restart hoobs.service");
                     }
 
                     break;
                 
                 case "homebridge":
                     if (File.existsSync("/etc/systemd/system/hoobs.service") && File.existsSync("/etc/systemd/system/homebridge.service")) {
-                        execSync("systemctl stop hoobs.service", {
-                            stdio: "inherit"
-                        });
-
-                        execSync("systemctl disable hoobs.service", {
-                            stdio: "inherit"
-                        });
+                        execSync("systemctl stop hoobs.service");
+                        execSync("systemctl disable hoobs.service");
                     }
 
                     if (File.existsSync("/etc/systemd/system/hoobs.service") && File.existsSync("/etc/systemd/system/homebridge.service")) {
-                        execSync("systemctl enable homebridge.service", {
-                            stdio: "inherit"
-                        });
-
-                        execSync("systemctl restart homebridge.service", {
-                            stdio: "inherit"
-                        });
+                        execSync("systemctl enable homebridge.service");
+                        execSync("systemctl restart homebridge.service");
                     }
 
                     if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
-                        execSync("systemctl enable homebridge-config-ui-x.service", {
-                            stdio: "inherit"
-                        });
-
-                        execSync("systemctl restart homebridge-config-ui-x.service", {
-                            stdio: "inherit"
-                        });
+                        execSync("systemctl enable homebridge-config-ui-x.service");
+                        execSync("systemctl restart homebridge-config-ui-x.service");
                     }
 
                     break;
