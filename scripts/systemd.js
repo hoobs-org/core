@@ -35,7 +35,7 @@ module.exports = (install) => {
 
                 service += "[Unit]\n";
                 service += "Description=HOOBS\n";
-                service += "After=network-online.target nginx.service\n"
+                service += "After=network-online.target\n";
                 service += "\n";
                 service += "[Service]\n";
                 service += "Type=simple\n";
