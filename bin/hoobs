@@ -30,15 +30,7 @@ switch ((command || "").toLowerCase()) {
 
         switch ((process.argv[3] || "").toLowerCase()) {
             case "client":
-                (async () => {
-                    const root = dirname(File.realpathSync(__filename));
-
-                    await (require(join(root, "../scripts/prerequisites")))();
-                    await (require(join(root, "../scripts/nginx")))(true);
-                    await (require(join(root, "../scripts/systemd")))(true, "client");
-                    await (require(join(root, "../scripts/reboot")))(false, "hoobs.service");
-                })();
-
+                (require(join(root, "../scripts/client")))();
                 break;
 
             case "create":

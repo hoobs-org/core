@@ -27,7 +27,7 @@ module.exports = (install, service) => {
             }
 
             if (services.hoobs) {
-                Process.execSync(`systemctl restart ${service} &`);
+                Process.execSync(`systemctl start ${service} &`);
             }
         
             if (install) {

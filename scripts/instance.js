@@ -82,10 +82,10 @@ const writeJson = function (filename, data) {
         File.chmodSync("/var/hoobs/.instance", 0755);
     }
 
-    if (File.existsSync(Path.join("/var/hoobs/.instance/", filename))) {
-        File.unlinkSync(Path.join("/var/hoobs/.instance/", filename));
+    if (File.existsSync(join("/var/hoobs/.instance/", filename))) {
+        File.unlinkSync(join("/var/hoobs/.instance/", filename));
     }
 
-    File.appendFileSync(Path.join("/var/hoobs/.instance/", filename), JSON.stringify(data, null, 4));
-    File.chmodSync(Path.join("/var/hoobs/.instance/", filename), 0755);
+    File.appendFileSync(join("/var/hoobs/.instance/", filename), JSON.stringify(data, null, 4));
+    File.chmodSync(join("/var/hoobs/.instance/", filename), 0755);
 };
