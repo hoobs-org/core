@@ -30,9 +30,7 @@ module.exports = (install, service) => {
                 console.log("---------------------------------------------------------");
             }
 
-            Process.exec("shutdown -r now", () => {
-                throbber.stopAndPersist();
-            });
+            Process.exec("shutdown -r now");
         }
 
         resolve();
