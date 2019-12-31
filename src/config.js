@@ -54,7 +54,7 @@ export default class Config {
 
     list() {
         return new Promise(async (resolve) => {
-            this._instances = (await Request.get("/api/config")).data.client.instances;
+            this._instances = (await Request.get("/api/config")).data.client.instances || [];
 
             if (!this._instances) {
                 this._instances = [""];

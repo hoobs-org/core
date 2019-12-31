@@ -1,16 +1,16 @@
 const File = require("fs");
 const Process = require("child_process");
 
-module.exports = (install) => {
+module.exports = (install, service) => {
     return new Promise(async (resolve) => {
-        const pms = getPms();
+        service = service || "hoobs.service";
+
+        const pms = getPms(service);
 
         if (pms) {
             const services = getServices();
 
-            if (services.hoobs) {
-                Process.execSync("systemctl enable hoobs.service");
-            }
+            Process.execSync(`systemctl enable ${service}`);
 
             if (services.homebridge) {
                 Process.execSync("systemctl disable homebridge.service");
@@ -18,14 +18,6 @@ module.exports = (install) => {
 
             if (services.config) {
                 Process.execSync("systemctl disable homebridge-config-ui-x.service");
-            }
-
-            if (services.homebridge) {
-                Process.execSync("systemctl stop homebridge.service &");
-            }
-
-            if (services.hoobs) {
-                Process.execSync("systemctl restart hoobs.service &");
             }
         
             if (install) {
@@ -38,13 +30,7 @@ module.exports = (install) => {
                 console.log("---------------------------------------------------------");
             }
 
-            if (services.config) {
-                Process.execSync("systemctl stop homebridge-config-ui-x.service &");
-            }
-
-            if (services.nginx) {
-                Process.execSync("systemctl restart nginx.service &");
-            }
+            Process.exec("shutdown -r now");
         }
 
         resolve();
@@ -55,16 +41,11 @@ const getServices = function() {
     const results = {
         homebridge: false,
         config: false,
-        hoobs: false,
         nginx: false
     };
 
     if (File.existsSync("/lib/systemd/system/nginx.service")) {
         results.nginx = true;
-    }
-
-    if (File.existsSync("/etc/systemd/system/hoobs.service")) {
-        results.hoobs = true;
     }
 
     if (File.existsSync("/etc/systemd/system/homebridge.service")) {
