@@ -10,9 +10,7 @@ module.exports = (install, service) => {
         if (pms) {
             const services = getServices();
 
-            if (services.hoobs) {
-                Process.execSync(`systemctl enable ${service}`);
-            }
+            Process.execSync(`systemctl enable ${service}`);
 
             if (services.homebridge) {
                 Process.execSync("systemctl disable homebridge.service");
@@ -20,14 +18,6 @@ module.exports = (install, service) => {
 
             if (services.config) {
                 Process.execSync("systemctl disable homebridge-config-ui-x.service");
-            }
-
-            if (services.homebridge) {
-                Process.execSync("systemctl stop homebridge.service &");
-            }
-
-            if (services.hoobs) {
-                Process.execSync(`systemctl start ${service} &`);
             }
         
             if (install) {
@@ -40,33 +30,24 @@ module.exports = (install, service) => {
                 console.log("---------------------------------------------------------");
             }
 
-            if (services.config) {
-                Process.execSync("systemctl stop homebridge-config-ui-x.service &");
-            }
-
-            if (services.nginx) {
-                Process.execSync("systemctl restart nginx.service &");
-            }
+            Process.exec("shutdown -r now", () => {
+                throbber.stopAndPersist();
+            });
         }
 
         resolve();
     });
 }
 
-const getServices = function(service) {
+const getServices = function() {
     const results = {
         homebridge: false,
         config: false,
-        hoobs: false,
         nginx: false
     };
 
     if (File.existsSync("/lib/systemd/system/nginx.service")) {
         results.nginx = true;
-    }
-
-    if (File.existsSync(`/etc/systemd/system/${service}`)) {
-        results.hoobs = true;
     }
 
     if (File.existsSync("/etc/systemd/system/homebridge.service")) {
