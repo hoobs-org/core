@@ -84,10 +84,18 @@ module.exports = (install, type, name, service, port, bridge) => {
                         if (!File.existsSync("/etc/systemd/system")){
                             File.mkdirSync("/etc/systemd/system");
                         }
+
+                        const targets = [];
+
+                        targets.push("network-online.target");
+
+                        if (File.existsSync("/etc/systemd/system/hoobs.service")) {
+                            targets.push("hoobs.service");
+                        }
         
                         content += "[Unit]\n";
                         content += "Description=HOOBS\n";
-                        content += "After=network-online.target\n";
+                        content += `After=${targets.join(" ")}\n`;
                         content += "\n";
                         content += "[Service]\n";
                         content += "Type=simple\n";
