@@ -50,9 +50,11 @@
         "node-cache": "^5.0.0",
         "node-pty": "^0.9.0",
         "ora": "^4.0.2",
+        "prompt": "^1.0.0",
         "recursive-copy": "^2.0.10",
         "request": "^2.88.0",
         "rimraf": "^3.0.0",
+        "sanitize-filename": "^1.6.3",
         "unzipper": "^0.10.5",
         "ws": "^7.2.0"
     },

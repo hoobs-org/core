@@ -1,15 +1,17 @@
 const File = require("fs");
 const Process = require("child_process");
 
-module.exports = (install) => {
+module.exports = (install, service) => {
     return new Promise(async (resolve) => {
-        const pms = getPms();
+        service = service || "hoobs.service";
+
+        const pms = getPms(service);
 
         if (pms) {
             const services = getServices();
 
             if (services.hoobs) {
-                Process.execSync("systemctl enable hoobs.service");
+                Process.execSync(`systemctl enable ${service}`);
             }
 
             if (services.homebridge) {
@@ -25,7 +27,7 @@ module.exports = (install) => {
             }
 
             if (services.hoobs) {
-                Process.execSync("systemctl restart hoobs.service &");
+                Process.execSync(`systemctl restart ${service} &`);
             }
         
             if (install) {
@@ -51,7 +53,7 @@ module.exports = (install) => {
     });
 }
 
-const getServices = function() {
+const getServices = function(service) {
     const results = {
         homebridge: false,
         config: false,
@@ -63,7 +65,7 @@ const getServices = function() {
         results.nginx = true;
     }
 
-    if (File.existsSync("/etc/systemd/system/hoobs.service")) {
+    if (File.existsSync(`/etc/systemd/system/${service}`)) {
         results.hoobs = true;
     }
 

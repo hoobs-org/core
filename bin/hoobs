@@ -25,10 +25,31 @@ process.argv.forEach((value, index) => {
 });
 
 switch ((command || "").toLowerCase()) {
-    case "service":
-        const sub = process.argv[3];
+    case "instance":
+        const root = dirname(File.realpathSync(__filename));
 
-        switch ((sub || "").toLowerCase()) {
+        switch ((process.argv[3] || "").toLowerCase()) {
+            case "client":
+                (async () => {
+                    const root = dirname(File.realpathSync(__filename));
+
+                    await (require(join(root, "../scripts/prerequisites")))();
+                    await (require(join(root, "../scripts/nginx")))(true);
+                    await (require(join(root, "../scripts/systemd")))(true, "client");
+                    await (require(join(root, "../scripts/reboot")))(false, "hoobs.service");
+                })();
+
+                break;
+
+            case "create":
+                (require(join(root, "../scripts/instance")))();
+                break;
+        }
+
+        break;
+
+    case "service":
+        switch ((process.argv[3] || "").toLowerCase()) {
             case "log":
                 execSync("journalctl -o cat -n 500 -f -u hoobs", {
                     stdio: "inherit"
@@ -45,7 +66,7 @@ switch ((command || "").toLowerCase()) {
                     await (require(join(root, "../scripts/prerequisites")))();
                     await (require(join(root, "../scripts/nginx")))(true);
                     await (require(join(root, "../scripts/systemd")))(true);
-                    await (require(join(root, "../scripts/reboot")))(true);
+                    await (require(join(root, "../scripts/reboot")))(true, "hoobs.service");
                 })();
 
                 break;
@@ -112,7 +133,7 @@ switch ((command || "").toLowerCase()) {
                 await (require(join(root, "../scripts/nginx")))(false);
                 await (require(join(root, "../scripts/systemd")))(false);
                 await (require(join(root, "../scripts/config")))();
-                await (require(join(root, "../scripts/reboot")))(false);
+                await (require(join(root, "../scripts/reboot")))(false, "hoobs.service");
             }
         })();
 
@@ -129,12 +150,10 @@ switch ((command || "").toLowerCase()) {
         break;
 
     case "switch":
-        const service = process.argv[3];
-
         (async () => {
             const root = dirname(File.realpathSync(__filename));
 
-            switch ((service || "").toLowerCase()) {
+            switch ((process.argv[3] || "").toLowerCase()) {
                 case "hoobs":
                     if (File.existsSync("/etc/systemd/system/hoobs.service") && File.existsSync("/etc/systemd/system/homebridge.service")) {
                         execSync("systemctl stop homebridge.service");
