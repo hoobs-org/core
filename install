@@ -409,6 +409,10 @@ if [[ "$HOOBS_INSTALLED" = "true" ]]; then
 
             hoobs switch hoobs
             hoobs service restart
+
+            if [[ "$REBOOT_AFTER" = "true" ]]; then
+                shutdown -r now
+            fi
         fi
     fi
 else
