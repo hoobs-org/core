@@ -41,6 +41,7 @@ module.exports = (reboot, service) => {
                     Process.execSync("systemctl stop homebridge-config-ui-x.service");
                 }
 
+                Process.execSync(`systemctl restart nginx.service`);
                 Process.execSync(`systemctl restart ${service}`);
             }
         }
