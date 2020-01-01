@@ -67,7 +67,7 @@ get_node()
 
         for PATH in "${ADDR[@]}"; do
             if [[ -f "$PATH/node" ]]; then
-                NODE_PREFIX $(cd $PATH/../;pwd)
+                NODE_PREFIX=$(cd $PATH/../;pwd)
 
                 break
             fi
