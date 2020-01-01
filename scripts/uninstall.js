@@ -2,17 +2,18 @@ const Path = require("path");
 const File = require("fs-extra");
 const Remove = require("rimraf");
 const Process = require("child_process");
-const Ora = require("ora");
 
 module.exports = (enviornment) => {
     return new Promise(async (resolve) => {
-        const throbber = Ora("Uninstalling Homebridge").start();
+        console.log("Removing the HOOBS/Homebridge Switch Capabilities");
 
         const known = [
             "auth.json",
             "config.json",
             "layout.json"
         ];
+
+        console.log("Removing Configuration Files");
 
         if (File.existsSync(Path.join(enviornment.storage, "config.json"))) {
             File.unlinkSync(Path.join(enviornment.storage, "config.json"));
@@ -26,6 +27,8 @@ module.exports = (enviornment) => {
             File.unlinkSync(Path.join(enviornment.storage, "accessories/uiAccessoriesLayout.json"));
         }
 
+        console.log("Removing Homebridge Accessory Cache");
+
         if (File.existsSync(Path.join(enviornment.storage, "accessories"))) {
             Remove.sync(Path.join(enviornment.storage, "accessories"));
         }
@@ -33,6 +36,8 @@ module.exports = (enviornment) => {
         if (File.existsSync(Path.join(enviornment.storage, "persist"))) {
             Remove.sync(Path.join(enviornment.storage, "persist"));
         }
+
+        console.log("Removing Unmanaged Files");
 
         if (File.existsSync(enviornment.storage)) {
             const files = File.readdirSync(enviornment.storage).filter(f => File.lstatSync(Path.join(enviornment.storage, f)).isFile() && known.indexOf(f) === -1);
@@ -42,20 +47,27 @@ module.exports = (enviornment) => {
             }
         }
 
-        if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
+        console.log("Removing Services - This May Take Some Time");
+
+        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge-config-ui-x.service")) {
             Process.execSync("systemctl disable homebridge-config-ui-x.service");
-            File.unlinkSync("/etc/systemd/system/homebridge-config-ui-x.service");
+            Process.execSync("systemctl stop homebridge-config-ui-x.service");
         }
 
         if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
-            Process.execSync("systemctl disable homebridge-config-ui-x.service");
             File.unlinkSync("/etc/systemd/system/homebridge-config-ui-x.service");
+        }
+
+        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge.service")) {
+            Process.execSync("systemctl disable homebridge.service");
+            Process.execSync("systemctl stop homebridge.service");
         }
 
         if (File.existsSync("/etc/systemd/system/homebridge.service")) {
-            Process.execSync("systemctl disable homebridge.service");
             File.unlinkSync("/etc/systemd/system/homebridge.service");
         }
+
+        console.log("Removing Enviornment File");
 
         if (File.existsSync(enviornment.defaults)) {
             File.unlinkSync(enviornment.defaults);
@@ -73,7 +85,13 @@ module.exports = (enviornment) => {
             await npmUnnstall(enviornment.plugins[i].name);
         }
 
-        throbber.stopAndPersist();
+        console.log("Starting HOOBS");
+
+        if (!File.existsSync("/etc/systemd/system/multi-user.target.wants/hoobs.service")) {
+            Process.execSync("systemctl enable hoobs.service");
+        }
+
+        Process.execSync("systemctl start hoobs.service");
 
         resolve();
     });
@@ -81,9 +99,11 @@ module.exports = (enviornment) => {
 
 const npmUnnstall = function (name) {
     return new Promise((resolve) => {
+        console.log(`Removing Plugin "${name}"`);
+
         const proc = Process.spawn("npm", [
             "uninstall",
-            "--g",
+            "-g",
             name
         ]);
 

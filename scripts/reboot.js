@@ -5,18 +5,14 @@ module.exports = (reboot, service) => {
     return new Promise(async (resolve) => {
         service = service || "hoobs.service";
 
-        const pms = getPms(service);
-
-        if (pms) {
-            const services = getServices();
-
+        if (getPms()) {
             Process.execSync(`systemctl enable ${service}`);
 
-            if (services.homebridge) {
-                Process.execSync("systemctl disable homebridge.service");
+            if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge.service")) {
+                Process.execSync("systemctl disable homebridge-config-ui-x.service");
             }
 
-            if (services.config) {
+            if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge-config-ui-x.service")) {
                 Process.execSync("systemctl disable homebridge-config-ui-x.service");
             }
         
@@ -31,15 +27,14 @@ module.exports = (reboot, service) => {
             }
 
             if (!reboot) {
-                if (services.homebridge) {
+                if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge.service")) {
                     Process.execSync("systemctl stop homebridge.service");
                 }
     
-                if (services.config) {
+                if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge-config-ui-x.service")) {
                     Process.execSync("systemctl stop homebridge-config-ui-x.service");
                 }
 
-                Process.execSync(`systemctl restart nginx.service`);
                 Process.execSync(`systemctl restart ${service}`);
             }
         }
@@ -47,28 +42,6 @@ module.exports = (reboot, service) => {
         resolve();
     });
 }
-
-const getServices = function() {
-    const results = {
-        homebridge: false,
-        config: false,
-        nginx: false
-    };
-
-    if (File.existsSync("/lib/systemd/system/nginx.service")) {
-        results.nginx = true;
-    }
-
-    if (File.existsSync("/etc/systemd/system/homebridge.service")) {
-        results.homebridge = true;
-    }
-
-    if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
-        results.config = true;
-    }
-
-    return results;
-};
 
 const getPms = function() {
     if (File.existsSync("/usr/bin/dnf")) {
