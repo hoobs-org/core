@@ -171,9 +171,13 @@ install_node_prequsits()
     esac
 }
 
-remove_existing_node()
+install_node()
 {
+    export npm_config_loglevel=error
+
+    get_os
     get_node
+    get_npm
 
     if [ "$NODE_INSTALLED" = "true" ]; then
         rm -f "$NODE_PREFIX/bin/node" > /dev/null 2>&1
@@ -182,17 +186,6 @@ remove_existing_node()
         unlink "$NODE_PREFIX/bin/npm" > /dev/null 2>&1
         unlink "$NODE_PREFIX/bin/npx" > /dev/null 2>&1
     fi
-}
-
-install_node()
-{
-    remove_existing_node
-
-    export npm_config_loglevel=error
-
-    get_os
-    get_node
-    get_npm
 
     case $OS in
         "Linux")
