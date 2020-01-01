@@ -9,18 +9,21 @@ const { execSync } = require("child_process");
 
 let password = null;
 let debug = false;
+let reboot = false;
 
 const command = process.argv[2];
 
 process.argv.forEach((value, index) => {
-    if (value === "-p") {
+    if (value === "-p" || value === "--sudo-pwd") {
         password = "#sudo-password#"
     } else if (password === "#sudo-password#") {
         password = value;
 
         return;
-    } else if (value === "-D" || value === "--debug") {
+    } else if (value === "-d" || value === "-D" || value === "--debug") {
         debug = true;
+    } else if (value === "-r" || value === "--reboot") {
+        reboot = true;
     }
 });
 
@@ -58,7 +61,7 @@ switch ((command || "").toLowerCase()) {
                     await (require(join(root, "../scripts/prerequisites")))();
                     await (require(join(root, "../scripts/nginx")))(true);
                     await (require(join(root, "../scripts/systemd")))(true);
-                    await (require(join(root, "../scripts/reboot")))(true, "hoobs.service");
+                    await (require(join(root, "../scripts/reboot")))(reboot, "hoobs.service");
                 })();
 
                 break;
@@ -125,7 +128,7 @@ switch ((command || "").toLowerCase()) {
                 await (require(join(root, "../scripts/nginx")))(false);
                 await (require(join(root, "../scripts/systemd")))(false);
                 await (require(join(root, "../scripts/config")))();
-                await (require(join(root, "../scripts/reboot")))(false, "hoobs.service");
+                await (require(join(root, "../scripts/reboot")))(reboot, "hoobs.service");
             }
         })();
 

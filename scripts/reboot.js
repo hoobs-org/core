@@ -1,7 +1,7 @@
 const File = require("fs");
 const Process = require("child_process");
 
-module.exports = (install, service) => {
+module.exports = (reboot, service) => {
     return new Promise(async (resolve) => {
         service = service || "hoobs.service";
 
@@ -20,7 +20,7 @@ module.exports = (install, service) => {
                 Process.execSync("systemctl disable homebridge-config-ui-x.service");
             }
         
-            if (install) {
+            if (reboot) {
                 console.log("---------------------------------------------------------");
                 console.log("HOOBS is Installed");
                 console.log("Please redirect your browser to http://hoobs.local");
@@ -30,7 +30,19 @@ module.exports = (install, service) => {
                 console.log("---------------------------------------------------------");
             }
 
-            Process.exec("shutdown -r now");
+            if (reboot) {
+                Process.exec("shutdown -r now");
+            } else {
+                if (services.homebridge) {
+                    Process.execSync("systemctl stop homebridge.service");
+                }
+    
+                if (services.config) {
+                    Process.execSync("systemctl stop homebridge-config-ui-x.service");
+                }
+
+                Process.execSync(`systemctl restart ${service}`);
+            }
         }
 
         resolve();
