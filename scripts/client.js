@@ -10,19 +10,19 @@ module.exports = () => {
     const questions = {
         properties: {
             name: {
-                description: "Choose your HOOBS account name",
+                description: "Choose your HOOBS cluster account name",
                 default: "Administrator",
                 message: "Name is required",
                 required: true
             },
             username: {
-                description: "Choose your HOOBS username",
+                description: "Choose your HOOBS cluster username",
                 default: "admin",
                 message: "Username is required",
                 required: true
             },
             password: {
-                description: "Choose your HOOBS password",
+                description: "Choose your HOOBS cluster password",
                 message: "Password is required",
                 required: true,
                 hidden: true
@@ -40,7 +40,9 @@ module.exports = () => {
 
     Prompt.get(questions, async (error, result) => {
         if (result.password !== result.confirm) {
+            console.log("");
             console.log("Passwords do not match");
+            console.log("");
 
             process.exit();
         }

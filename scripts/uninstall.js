@@ -5,6 +5,7 @@ const Process = require("child_process");
 
 module.exports = (enviornment) => {
     return new Promise(async (resolve) => {
+        console.log("");
         console.log("Removing the HOOBS/Homebridge Switch Capabilities");
 
         const known = [
@@ -92,6 +93,8 @@ module.exports = (enviornment) => {
         }
 
         Process.execSync("systemctl start hoobs.service");
+
+        console.log("");
 
         resolve();
     });
