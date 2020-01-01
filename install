@@ -401,7 +401,7 @@ else
 
     sleep 3
 
-    if [[ "$INSTANCE_SUPPORT" == "true" && "$OS" != "Darwin" ]]; then
+    if [[ "$INSTANCE_SUPPORT" == "false" && "$OS" != "Darwin" ]]; then
         if command -v hoobs > /dev/null; then
             echo ""
             echo "Initializing HOOBS"
