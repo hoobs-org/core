@@ -91,7 +91,17 @@ module.exports = (debug, password) => {
 
                 if (await preparePackage(root, executing, installed, throbber)) {
                     await setupUserMode(root, applicaiton, throbber);
-                    await clearMigration(password, throbber);
+
+                    await throbber.throb("Clear Migration");
+
+                    await execSudo(password, [
+                        "rm",
+                        "-fR",
+                        "/var/hoobs/.migration"
+                    ]);
+
+                    await throbber.update(`Clear Migration: Migration cleared`, 100);
+                    await throbber.stop("Clear Migration");
                 } else {
                     success = false;
 
@@ -143,6 +153,16 @@ module.exports = (debug, password) => {
                     }).on(Copy.events.COPY_FILE_START, async (data) => {
                         await throbber.update(`Application: ${basename(data.src)}`, 0);
                     }).finally(async () => {
+                        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
+                            await throbber.update("Application: Restarting NGINX", 0);
+
+                            await execSudo(password, [
+                                "systemctl",
+                                "restart",
+                                "nginx.service"
+                            ]);
+                        }
+
                         await throbber.stop("Application");
 
                         if (!(await checksum(root, applicaiton))) {
@@ -383,45 +403,11 @@ const checkEnviornment = function (home, password, throbber) {
         if (File.existsSync(join(home, ".npm"))) {
             await throbber.update(`Enviornment: Clearing NPM Cache`, 100);
 
-            queue.push(true);
-
-            let prompts = 0;
-
-            const proc = spawn("sudo", [
-                "-S",
-                "-k",
-                "-p",
-                "#sudo-hoobs#",
+            await execSudo(password, [
                 "rm",
                 "-fR",
                 join(home, ".npm")
             ]);
-
-            proc.stderr.on("data", (data) => {
-                const lines = `${data}`.split(/\r?\n/);
-
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i].trim();
-
-                    if (line === "#sudo-hoobs#") {
-                        if (++prompts > 1) {
-                            proc.stdin.write("\n\n\n\n");
-                        } else {
-                            proc.stdin.write(`${password || ""}\n`);
-                        }
-                    }
-                }
-            });
-
-            proc.on("close", async () => {
-                queue.pop();
-
-                if (queue.length === 0) {
-                    await throbber.stop("Enviornment");
-
-                    resolve();
-                }
-            });
         }
 
         if (File.existsSync(join(home, ".config"))) {
@@ -432,47 +418,11 @@ const checkEnviornment = function (home, password, throbber) {
             } catch (err) {
                 await throbber.update(`Enviornment: NPM Configuration is Root Locked`, 100);
 
-                queue.push(true);
-
-                let prompts = 0;
-
-                const proc = spawn("sudo", [
-                    "-S",
-                    "-k",
-                    "-p",
-                    "#sudo-hoobs#",
+                await execSudo(password, [
                     "rm",
                     "-fR",
                     join(home, ".config")
                 ]);
-
-                proc.stderr.on("data", (data) => {
-                    const lines = `${data}`.split(/\r?\n/);
-
-                    for (let i = 0; i < lines.length; i++) {
-                        const line = lines[i].trim();
-
-                        if (line === "#sudo-hoobs#") {
-                            if (++prompts > 1) {
-                                proc.stdin.write("\n\n\n\n");
-                            } else {
-                                proc.stdin.write(`${password || ""}\n`);
-                            }
-                        }
-                    }
-                });
-
-                proc.on("close", async () => {
-                    await throbber.update(`Enviornment: NPM Configuration Reset`, 100);
-
-                    queue.pop();
-
-                    if (queue.length === 0) {
-                        await throbber.stop("Enviornment");
-
-                        resolve();
-                    }
-                });
             }
         }
 
@@ -484,47 +434,11 @@ const checkEnviornment = function (home, password, throbber) {
             } catch (err) {
                 await throbber.update(`Enviornment: GYP Build Cache is Root Locked`, 100);
 
-                queue.push(true);
-
-                let prompts = 0;
-
-                const proc = spawn("sudo", [
-                    "-S",
-                    "-k",
-                    "-p",
-                    "#sudo-hoobs#",
+                await execSudo(password, [
                     "rm",
                     "-fR",
                     join(home, ".node-gyp")
                 ]);
-
-                proc.stderr.on("data", (data) => {
-                    const lines = `${data}`.split(/\r?\n/);
-
-                    for (let i = 0; i < lines.length; i++) {
-                        const line = lines[i].trim();
-
-                        if (line === "#sudo-hoobs#") {
-                            if (++prompts > 1) {
-                                proc.stdin.write("\n\n\n\n");
-                            } else {
-                                proc.stdin.write(`${password || ""}\n`);
-                            }
-                        }
-                    }
-                });
-
-                proc.on("close", async () => {
-                    await throbber.update(`Enviornment: NPM Configuration Reset`, 100);
-
-                    queue.pop();
-
-                    if (queue.length === 0) {
-                        await throbber.stop("Enviornment");
-
-                        resolve();
-                    }
-                });
             }
         }
 
@@ -624,21 +538,20 @@ const npmInstall = function (root, name, version) {
     });
 };
 
-const clearMigration = function(password, throbber) {
+const execSudo = function(password, options) {
     return new Promise(async (resolve) => {
-        await throbber.throb("Clear Migration");
-
         let prompts = 0;
 
-        const proc = spawn("sudo", [
+        let args = [
             "-S",
             "-k",
             "-p",
-            "#sudo-hoobs#",
-            "rm",
-            "-fR",
-            "/var/hoobs/.migration"
-        ]);
+            "#sudo-hoobs#"
+        ];
+
+        args = args.concat(options);
+
+        const proc = spawn("sudo", args);
 
         proc.stderr.on("data", (data) => {
             const lines = `${data}`.split(/\r?\n/);
@@ -657,9 +570,6 @@ const clearMigration = function(password, throbber) {
         });
 
         proc.on("close", async () => {
-            await throbber.update(`Clear Migration: Migration cleared`, 100);
-            await throbber.stop("Clear Migration");
-
             resolve();
         });
     });
