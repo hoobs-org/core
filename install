@@ -126,11 +126,11 @@ install_prequsits()
 
     case $PACKAGE_MNGR in
         "yum")
-            yum install -y curl tar git
+            yum install -y curl tar git policycoreutils
             ;;
 
         "dnf")
-            dnf install -y curl tar git
+            dnf install -y curl tar git policycoreutils
             ;;
 
         "apt")
