@@ -186,6 +186,8 @@ remove_existing_node()
 
 install_node()
 {
+    remove_existing_node
+
     export npm_config_loglevel=error
 
     get_os
@@ -347,7 +349,6 @@ if [[ "$NODE_INSTALLED" = "false" || ( "$NODE_TARGET" != "" && "$NODE_VERSION" !
 
     echo "Installing Node"
 
-    remove_existing_node
     install_node_prequsits
     install_node
     get_node
