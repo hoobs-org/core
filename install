@@ -19,6 +19,7 @@ NPM_PREFIX=""
 
 HOOBS_INSTALLED="false"
 UI_X_INSTALLED="false"
+SELINUX_INSTALLED="false"
 PACKAGE_MNGR=""
 
 usage()
@@ -118,6 +119,12 @@ check_existing_install()
     else
         UI_X_INSTALLED="false"
     fi
+
+    if command -v setsebool > /dev/null; then
+        SELINUX_INSTALLED="true"
+    else
+        SELINUX_INSTALLED="false"
+    fi
 }
 
 install_prequsits()
@@ -127,12 +134,10 @@ install_prequsits()
     case $PACKAGE_MNGR in
         "yum")
             yum install -y curl tar git policycoreutils
-            setsebool -P httpd_can_network_connect 1
             ;;
 
         "dnf")
             dnf install -y curl tar git policycoreutils
-            setsebool -P httpd_can_network_connect 1
             ;;
 
         "apt")
@@ -140,6 +145,10 @@ install_prequsits()
             apt-get install -y curl tar git
             ;;
     esac
+
+    if [ "$SELINUX_INSTALLED" = "true" ]; then
+        setsebool -P httpd_can_network_connect 1
+    fi
 }
 
 install_node_prequsits()
