@@ -31,7 +31,7 @@ module.exports = (reboot, service) => {
             }
 
             if (reboot) {
-                Process.exec("shutdown -r now");
+                Process.execSync("shutdown -r now");
             } else {
                 if (services.homebridge) {
                     Process.execSync("systemctl stop homebridge.service");
