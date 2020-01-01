@@ -66,7 +66,8 @@ get_node()
 
         read -ra ADDR <<< "$PATH"
 
-        for PATH in "${ADDR[@]}"; do
+        for PATH in "${ADDR[@]}";
+        do
             if [[ -f "$PATH/node" ]]; then
                 NODE_PREFIX=$(cd $PATH/../;pwd)
 
@@ -262,7 +263,7 @@ clear_npm_cache()
     get_npm
 
     if [[ "$NPM_INSTALLED" = "true" ]]; then
-        npm cache clean --force > /dev/null 2>&1
+        $NPM_PREFIX/bin/npm cache clean --force > /dev/null 2>&1
         sleep 1
     fi
 }
@@ -374,17 +375,17 @@ fi
 clear_npm_cache
 
 if [[ "$UI_X_INSTALLED" = "true" ]]; then
-    npm uninstall -g homebridge-config-ui-x
-    npm install -g --unsafe-perm homebridge-config-ui-x
+    $NPM_PREFIX/bin/npm uninstall -g homebridge-config-ui-x
+    $NPM_PREFIX/bin/npm install -g --unsafe-perm homebridge-config-ui-x
 fi
 
 if [[ "$HOOBS_INSTALLED" = "true" ]]; then
-    npm uninstall -g @hoobs/hoobs
+    $NPM_PREFIX/bin/npm uninstall -g @hoobs/hoobs
 
     if [[ "$CORE_FILE" != "" ]]; then
-        npm install -g --unsafe-perm "$CORE_FILE"
+        $NPM_PREFIX/bin/npm install -g --unsafe-perm "$CORE_FILE"
     else
-        npm install -g --unsafe-perm @hoobs/hoobs
+        $NPM_PREFIX/bin/npm install -g --unsafe-perm @hoobs/hoobs
     fi
 
     for f in /home/*;
@@ -402,42 +403,42 @@ if [[ "$HOOBS_INSTALLED" = "true" ]]; then
     sleep 3
 
     if [[ "$OS" != "Darwin" ]]; then
-        if command -v hoobs > /dev/null; then
+        if command -v $NPM_PREFIX/bin/hoobs > /dev/null; then
             echo ""
             echo "Restart HOOBS"
             echo "---------------------------------------------------------"
 
-            hoobs switch hoobs
-            hoobs service restart
+            $NPM_PREFIX/bin/hoobs switch hoobs
+            $NPM_PREFIX/bin/hoobs service restart
 
             if [[ "$REBOOT_AFTER" = "true" ]]; then
-                shutdown -r now
+                /usr/sbin/shutdown -r now
             fi
         fi
     fi
 else
     if [[ "$CORE_FILE" != "" ]]; then
-        npm install -g --unsafe-perm "$CORE_FILE"
+        $NPM_PREFIX/bin/npm install -g --unsafe-perm "$CORE_FILE"
     else
-        npm install -g --unsafe-perm @hoobs/hoobs
+        $NPM_PREFIX/bin/npm install -g --unsafe-perm @hoobs/hoobs
     fi
 
     sleep 3
 
     if [[ "$INSTANCE_SUPPORT" == "false" && "$OS" != "Darwin" ]]; then
-        if command -v hoobs > /dev/null; then
+        if command -v $NPM_PREFIX/bin/hoobs > /dev/null; then
             echo ""
             echo "Initializing HOOBS"
             echo "---------------------------------------------------------"
 
             if [[ "$REBOOT_AFTER" = "true" ]]; then
-                hoobs service install --reboot
+                $NPM_PREFIX/bin/hoobs service install --reboot
             else
-                hoobs service install
+                $NPM_PREFIX/bin/hoobs service install
             fi
 
             if [[ "$REBOOT_AFTER" = "true" ]]; then
-                shutdown -r now
+                /usr/sbin/shutdown -r now
             fi
         fi
     fi
