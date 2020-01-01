@@ -155,12 +155,6 @@
 
             Chart.defaults.global.defaultFontColor = this.$theme.charts.foreground;
 
-            document.body.addEventListener("error", (event) => {
-                if (event.target.tagName === "IMG") {
-                    event.target.parentNode.removeChild(event.target);
-                }
-            }, true);
-
             this.status = await this.api.get("/status");
             this.instances = await this.$instances();
             this.loaded = true;
@@ -168,6 +162,12 @@
 
         created() {
             window.addEventListener("resize", this.resize);
+
+            document.body.addEventListener("error", (event) => {
+                if (event.target.tagName === "IMG") {
+                    event.target.parentNode.removeChild(event.target);
+                }
+            }, true);
 
             this.connect();
             this.resize();
