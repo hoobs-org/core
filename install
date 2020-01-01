@@ -435,6 +435,10 @@ else
             else
                 hoobs service install
             fi
+
+            if [[ "$REBOOT_AFTER" = "true" ]]; then
+                shutdown -r now
+            fi
         fi
     fi
 fi
