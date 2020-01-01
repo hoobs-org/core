@@ -30,9 +30,7 @@ module.exports = (reboot, service) => {
                 console.log("---------------------------------------------------------");
             }
 
-            if (reboot) {
-                Process.execSync("shutdown -r now");
-            } else {
+            if (!reboot) {
                 if (services.homebridge) {
                     Process.execSync("systemctl stop homebridge.service");
                 }
