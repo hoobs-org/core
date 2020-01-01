@@ -187,14 +187,6 @@ module.exports = (install, type, name, service, port, bridge) => {
 
                     break;
             }
-
-            if (install && (pms === "yum" || pms === "dnf")) {
-                throbber = Ora("Configuring SELinux").start();
-
-                Process.execSync("setsebool -P httpd_can_network_connect 1");
-
-                throbber.stopAndPersist();
-            }
         }
 
         resolve();
