@@ -3,22 +3,22 @@
 OS=""
 ARCH=""
 
-REBOOT_AFTER=0
-INSTANCE_SUPPORT=0
+REBOOT_AFTER="false"
+INSTANCE_SUPPORT="false"
 CORE_FILE=""
 
-NODE_INSTALLED=0
+NODE_INSTALLED="false"
 NODE_VERSION=""
 NODE_TARGET=""
 NODE_PREFIX=""
 
-NPM_INSTALLED=0
+NPM_INSTALLED="false"
 NPM_VERSION=""
 NPM_TARGET=""
 NPM_PREFIX=""
 
-HOOBS_INSTALLED=0
-UI_X_INSTALLED=0
+HOOBS_INSTALLED="false"
+UI_X_INSTALLED="false"
 PACKAGE_MNGR=""
 
 usage()
@@ -57,7 +57,7 @@ get_os()
 get_node()
 {
     if command -v node > /dev/null; then
-        NODE_INSTALLED=1
+        NODE_INSTALLED="true"
         NODE_VERSION=$(node -v)
         NODE_VERSION=${NODE_VERSION#"v"}
 
@@ -75,7 +75,7 @@ get_node()
 
         IFS=' '
     else
-        NODE_INSTALLED=0
+        NODE_INSTALLED="false"
         NODE_VERSION=""
         NODE_PREFIX=""
     fi
@@ -84,11 +84,11 @@ get_node()
 get_npm()
 {
     if command -v npm > /dev/null; then
-        NPM_INSTALLED=1
+        NPM_INSTALLED="true"
         NPM_VERSION=$(npm -v)
         NPM_PREFIX=$(npm get prefix)
     else
-        NPM_INSTALLED=0
+        NPM_INSTALLED="false"
         NPM_VERSION=""
         NPM_PREFIX=""
     fi
@@ -108,15 +108,15 @@ get_package_manager()
 check_existing_install()
 {
     if command -v hoobs > /dev/null; then
-        HOOBS_INSTALLED=0
+        HOOBS_INSTALLED="true"
     else
-        HOOBS_INSTALLED=1
+        HOOBS_INSTALLED="false"
     fi
 
     if command -v homebridge-config-ui-x > /dev/null; then
-        UI_X_INSTALLED=0
+        UI_X_INSTALLED="true"
     else
-        UI_X_INSTALLED=1
+        UI_X_INSTALLED="false"
     fi
 }
 
@@ -164,7 +164,7 @@ remove_existing_node()
 {
     get_node
 
-    if [ "$NODE_INSTALLED" = "1" ]; then
+    if [ "$NODE_INSTALLED" = "true" ]; then
         rm -f "$NODE_PREFIX/bin/node" > /dev/null 2>&1
 
         unlink "$NODE_PREFIX/bin/nodejs" > /dev/null 2>&1
@@ -242,7 +242,7 @@ install_npm()
 {
     get_npm
 
-    if [[ "$NPM_INSTALLED" = "0" ]]; then
+    if [[ "$NPM_INSTALLED" = "false" ]]; then
         if [[ "$NPM_TARGET" == "" ]]; then
             NPM_TARGET="latest"
         fi
@@ -255,7 +255,7 @@ clear_npm_cache()
 {
     get_npm
 
-    if [[ "$NPM_INSTALLED" = "1" ]]; then
+    if [[ "$NPM_INSTALLED" = "true" ]]; then
         npm cache clean --force > /dev/null 2>&1
         sleep 1
     fi
@@ -268,10 +268,10 @@ fi
 
 while [ "$1" != "" ]; do
     case $1 in
-        -r | --reboot )   REBOOT_AFTER=1
+        -r | --reboot )   REBOOT_AFTER="true"
                           ;;
 
-        -i | --instance ) INSTANCE_SUPPORT=1
+        -i | --instance ) INSTANCE_SUPPORT="true"
                           ;;
 
         -n | --node )     shift
@@ -307,7 +307,7 @@ echo ""
 echo "Thank You for choosing HOOBS"
 echo "---------------------------------------------------------"
 
-if [[ "$NODE_INSTALLED" = "1" ]]; then
+if [[ "$NODE_INSTALLED" = "true" ]]; then
     echo "Node Version $NODE_VERSION"
 elif [[ "$OS" == "Darwin" ]]; then
     echo "Can Not Install Node"
@@ -326,7 +326,7 @@ echo "Updating Repositories"
 
 install_prequsits
 
-if [[ "$NODE_INSTALLED" = "0" || ( "$NODE_TARGET" != "" && "$NODE_VERSION" != "$NODE_TARGET" ) ]]; then
+if [[ "$NODE_INSTALLED" = "false" || ( "$NODE_TARGET" != "" && "$NODE_VERSION" != "$NODE_TARGET" ) ]]; then
     if [[ "$ARCH" == "armv6l" && "$NODE_TARGET" > "10.17.0" ]]; then
         echo "Can Not Install Node"
         echo "------------------------------------------------------------"
@@ -354,12 +354,12 @@ fi
 
 clear_npm_cache
 
-if [[ "$UI_X_INSTALLED" = "1" ]]; then
+if [[ "$UI_X_INSTALLED" = "true" ]]; then
     npm uninstall -g homebridge-config-ui-x
     npm install -g --unsafe-perm homebridge-config-ui-x
 fi
 
-if [[ "$HOOBS_INSTALLED" = "1" ]]; then
+if [[ "$HOOBS_INSTALLED" = "true" ]]; then
     npm uninstall -g @hoobs/hoobs
 
     if [[ "$CORE_FILE" != "" ]]; then
@@ -401,13 +401,13 @@ else
 
     sleep 3
 
-    if [[ "$INSTANCE_SUPPORT" == "0" && "$OS" != "Darwin" ]]; then
+    if [[ "$INSTANCE_SUPPORT" == "true" && "$OS" != "Darwin" ]]; then
         if command -v hoobs > /dev/null; then
             echo ""
             echo "Initializing HOOBS"
             echo "---------------------------------------------------------"
 
-            if [[ "$REBOOT_AFTER" = "1" ]]; then
+            if [[ "$REBOOT_AFTER" = "true" ]]; then
                 hoobs service install --reboot
             else
                 hoobs service install
