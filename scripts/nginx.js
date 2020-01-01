@@ -302,14 +302,6 @@ module.exports = (install) => {
             }
         }
 
-        if (install && (pms === "yum" || pms === "dnf")) {
-            throbber = Ora("Configuring SELinux").start();
-
-            Process.execSync("setsebool -P httpd_can_network_connect 1");
-
-            throbber.stopAndPersist();
-        }
-
         if (install && pms) {
             throbber = Ora("Installing NGINX Service").start();
 
