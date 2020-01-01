@@ -127,10 +127,12 @@ install_prequsits()
     case $PACKAGE_MNGR in
         "yum")
             yum install -y curl tar git policycoreutils
+            setsebool -P httpd_can_network_connect 1
             ;;
 
         "dnf")
             dnf install -y curl tar git policycoreutils
+            setsebool -P httpd_can_network_connect 1
             ;;
 
         "apt")
