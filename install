@@ -282,10 +282,24 @@ while [ "$1" != "" ]; do
 
         -n | --node )     shift
                           NODE_TARGET=$1
+
+                          if [[ "$NODE_TARGET" == "stable" ]]; then
+                              NODE_TARGET="10.17.0"
+                          elif [[ "$NODE_TARGET" == "lts" ]]; then
+                              NODE_TARGET="12.14.0"
+                          elif [[ "$NODE_TARGET" == "latest" ]]; then
+                              NODE_TARGET="13.5.0"
+                          fi
+
                           ;;
 
         -m | --npm )      shift
                           NPM_TARGET=$1
+
+                          if [[ "$NODE_TARGET" == "stable" || "$NODE_TARGET" == "lts" ]]; then
+                              NODE_TARGET="latest"
+                          fi
+
                           ;;
 
         -c | --core )     shift
@@ -323,7 +337,7 @@ elif [[ "$OS" == "Darwin" ]]; then
     echo "------------------------------------------------------------"
 
     exit
-elif [[ "$NODE_TARGET" != "" ]]; then
+elif [[ "$NODE_TARGET" == "" ]]; then
     NODE_TARGET="10.17.0"
     NPM_TARGET="6.11.3"
 fi
