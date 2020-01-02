@@ -202,14 +202,16 @@
                 this.$refs.file.click();
             },
 
-            restore() {
+            async restore() {
                 this.writing = true;
+
+                this.$store.commit("lock");
 
                 const data = new FormData();
 
                 data.append("file", this.$refs.file.files[0]);
 
-                Request.post("/api/restore", data, {
+                await Request.post("/api/restore", data, {
                     headers: {
                         "Authorization": this.$cookie("token"),
                         "Content-Type": "multipart/form-data"
@@ -217,8 +219,8 @@
                 });
 
                 setTimeout(() => {
-                    window.location.href = "/";
-                }, 5000);
+                    this.$store.commit("reboot");
+                }, 500);
             },
 
             confirmError() {
@@ -226,16 +228,16 @@
                 this.message = "Unhandled error";
             },
 
-            reset() {
+            async reset() {
                 if (!this.locked) {
                     this.$store.commit("lock");
                     this.$store.commit("hide", "service");
 
-                    this.api.put("/reset");
+                    await this.api.put("/reset");
 
                     setTimeout(() => {
-                        window.location.href = "/";
-                    }, 1000);
+                        this.$store.commit("reboot");
+                    }, 500);
                 }
             },
 

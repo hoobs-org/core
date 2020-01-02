@@ -18,6 +18,7 @@ export default new Vuex.Store({
         version: null,
         running: false,
         locked: false,
+        rebooting: false,
         screen: {
             width: null,
             height: null
@@ -77,6 +78,14 @@ export default new Vuex.Store({
 
         unlock(state) {
             state.locked = false;
+        },
+
+        reboot(state) {
+            state.rebooting = true;
+        },
+
+        rebooted(state) {
+            state.rebooting = false;
         },
 
         show(state, menu) {

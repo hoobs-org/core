@@ -133,6 +133,10 @@
                 return this.$store.state.locked;
             },
 
+            rebooting() {
+                return this.$store.state.rebooting;
+            },
+
             defaultRoute() {
                 return this.$client.default_route || "status";
             },
@@ -214,6 +218,10 @@
 
                 this.socket.onmessage = (message) => {
                     message = JSON.parse(message.data);
+
+                    if (this.rebooting) {
+                        window.location.reload();
+                    }
 
                     switch (message.event) {
                         case "log":

@@ -106,8 +106,11 @@
                 this.$store.commit("hide", "service");
 
                 await this.api.post("/service/stop");
+                await this.api.put("/reboot");
 
-                this.api.put("/reboot");
+                setTimeout(() => {
+                    this.$store.commit("reboot");
+                }, 500);
             },
 
             async control(action) {

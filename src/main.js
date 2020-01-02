@@ -98,7 +98,7 @@ import App from "./app.vue";
 
                 window.location.reload();
             },
-        
+
             async $configure() {
                 await config.configure();
             },
