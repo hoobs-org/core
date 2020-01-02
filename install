@@ -25,7 +25,7 @@ PACKAGE_MNGR=""
 usage()
 {
     echo ""
-    echo "help: install [-r | --reboot] [-i | --instance] [-n | --node version] [-m | --npm version] [-c | --core file]"
+    echo "help: install [-r | --reboot] [-i | --instance] [-n | --node version]"
     echo "    Display information about builtin commands."
     echo ""
     echo "    Installs HOOBS with prequsits, including Node, NPM and Avachi."
@@ -40,6 +40,7 @@ usage()
     echo "    Options:"
     echo "    -r          reboots after install"
     echo "    -i          install for instances"
+    echo "    --reset     resets to factory settings"
     echo "    -n VERSION  the desired Node version"
     echo "    -m VERSION  the desired NPM version"
     echo "    -c FILE     file path to NPM pack file"
@@ -47,6 +48,16 @@ usage()
     echo "    Returns:"
     echo "    Returns success unless the install fails."
     echo ""
+}
+
+reset()
+{
+    echo ""
+    echo "Reseting device"
+    echo ""
+
+    rm -fR /home/hoobs/.hoobs/
+    /usr/sbin/shutdown -r now
 }
 
 get_os()
@@ -279,6 +290,10 @@ while [ "$1" != "" ]; do
                           ;;
 
         -i | --instance ) INSTANCE_SUPPORT="true"
+                          ;;
+
+        reset )           reset
+                          exit
                           ;;
 
         -n | --node )     shift
