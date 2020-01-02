@@ -1,5 +1,4 @@
 const File = require("fs");
-const Path = require("path");
 const Process = require("child_process");
 const Ora = require("ora");
 

@@ -206,14 +206,15 @@
 
             async update() {
                 this.checking = true;
+
                 this.$store.commit("lock");
 
                 await this.api.post("/service/stop");
                 await this.api.put("/update");
 
                 setTimeout(() => {
-                    window.location.reload();
-                }, 500);
+                    this.$store.commit("reboot");
+                }, 1000 * 60 * 2);
             },
 
             getTemp(value) {

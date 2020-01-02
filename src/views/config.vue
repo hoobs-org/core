@@ -400,7 +400,7 @@
                 await this.api.put("/reboot");
 
                 setTimeout(() => {
-                    window.location.reload();
+                    this.$store.commit("reboot");
                 }, 500);
             },
             
@@ -504,16 +504,18 @@
                 this.$refs[field].click();
             },
 
-            restore(field) {
+            async restore(field) {
                 this.working = true;
 
                 const data = new FormData();
 
                 switch (field) {
                     case "hbf":
+                        this.$store.commit("lock");
+
                         data.append("file", this.$refs.hbf.files[0]);
 
-                        Request.post("/api/restore", data, {
+                        await Request.post("/api/restore", data, {
                             headers: {
                                 "Authorization": this.$cookie("token"),
                                 "Content-Type": "multipart/form-data"
@@ -521,15 +523,15 @@
                         });
 
                         setTimeout(() => {
-                            window.location.href = "/";
-                        }, 5000);
+                            this.$store.commit("reboot");
+                        }, 500);
 
                         break;
 
                     case "cfg":
                         data.append("file", this.$refs.cfg.files[0]);
 
-                        Request.post("/api/config/restore", data, {
+                        await Request.post("/api/config/restore", data, {
                             headers: {
                                 "Authorization": this.$cookie("token"),
                                 "Content-Type": "multipart/form-data"
@@ -538,8 +540,12 @@
 
                         setTimeout(() => {
                             window.location.reload();
-                        }, 1000);
+                        }, 500);
 
+                        break;
+
+                    default:
+                        this.working = false;
                         break;
                 }
             },

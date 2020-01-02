@@ -42,7 +42,13 @@
         },
 
         async mounted() {
-            this.grid = await this.api.get("/layout/dashboard");
+            if (this.$cluster) {
+                this.$router.push({
+                    path: "/users"
+                });
+            } else {
+                this.grid = await this.api.get("/layout/dashboard");
+            }
         },
 
         methods: {
@@ -93,6 +99,12 @@
     #status .content {
         flex: 1;
         overflow: auto;
+    }
+
+    #status .empty {
+        width: 90%;
+        padding: 20px;
+        text-align: center;
     }
 
     #status .mobile-content {

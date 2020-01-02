@@ -28,6 +28,10 @@ import App from "./app.vue";
             $client() {
                 return config.client;
             },
+
+            $cluster() {
+                return config.cluster;
+            },
         
             $bridge() {
                 return config.bridge;
@@ -94,7 +98,7 @@ import App from "./app.vue";
 
                 window.location.reload();
             },
-        
+
             async $configure() {
                 await config.configure();
             },

@@ -28,7 +28,7 @@ process.argv.forEach((value, index) => {
 });
 
 switch ((command || "").toLowerCase()) {
-    case "instance":
+    case "cluster":
         const root = dirname(File.realpathSync(__filename));
 
         switch ((process.argv[3] || "").toLowerCase()) {
@@ -37,7 +37,16 @@ switch ((command || "").toLowerCase()) {
                 break;
 
             case "create":
-                (require(join(root, "../scripts/instance")))();
+                (require(join(root, "../scripts/instance")))("install");
+                break;
+
+            default:
+                if ((process.argv[3] || "") !== "") {
+                    (require(join(root, "../scripts/instance")))("control", process.argv[3] || "", process.argv[4] || "");
+                } else {
+                    (require(join(root, "../scripts/instance")))();
+                }
+
                 break;
         }
 
@@ -46,9 +55,15 @@ switch ((command || "").toLowerCase()) {
     case "service":
         switch ((process.argv[3] || "").toLowerCase()) {
             case "log":
-                execSync("journalctl -o cat -n 500 -f -u hoobs", {
-                    stdio: "inherit"
-                });
+                if (File.existsSync("/etc/systemd/system/multi-user.target.wants/hoobs.service")) {
+                    execSync("journalctl -o cat -n 500 -f -u hoobs.service", {
+                        stdio: "inherit"
+                    });
+                } else {
+                    console.log("");
+                    console.log("You must first enable the HOOBS service");
+                    console.log("");
+                }
 
                 break;
 
@@ -70,7 +85,9 @@ switch ((command || "").toLowerCase()) {
                 if (File.existsSync("/etc/systemd/system/multi-user.target.wants/hoobs.service")) {
                     execSync("systemctl start hoobs.service");
                 } else {
+                    console.log("");
                     console.log("You must first enable the HOOBS service");
+                    console.log("");
                 }
 
                 break;
@@ -79,7 +96,9 @@ switch ((command || "").toLowerCase()) {
                 if (File.existsSync("/etc/systemd/system/multi-user.target.wants/hoobs.service")) {
                     execSync("systemctl stop hoobs.service");
                 } else {
+                    console.log("");
                     console.log("You must first enable the HOOBS service");
+                    console.log("");
                 }
 
                 break;
@@ -88,7 +107,9 @@ switch ((command || "").toLowerCase()) {
                 if (File.existsSync("/etc/systemd/system/multi-user.target.wants/hoobs.service")) {
                     execSync("systemctl restart hoobs.service");
                 } else {
+                    console.log("");
                     console.log("You must first enable the HOOBS service");
+                    console.log("");
                 }
 
                 break;
@@ -96,6 +117,10 @@ switch ((command || "").toLowerCase()) {
             case "enable":
                 if (File.existsSync("/etc/systemd/system/hoobs.service")) {
                     execSync("systemctl enable hoobs.service");
+                } else {
+                    console.log("");
+                    console.log("You must first install the HOOBS service");
+                    console.log("");
                 }
 
                 break;
@@ -103,6 +128,10 @@ switch ((command || "").toLowerCase()) {
             case "disable":
                 if (File.existsSync("/etc/systemd/system/hoobs.service")) {
                     execSync("systemctl disable hoobs.service");
+                } else {
+                    console.log("");
+                    console.log("You must first install the HOOBS service");
+                    console.log("");
                 }
 
                 break;
@@ -142,10 +171,14 @@ switch ((command || "").toLowerCase()) {
 
     case "cockpit":
         new (require(join(dirname(File.realpathSync(__filename)), "../lib/cockpit")))().start(true).then((registration) => {
+            console.log("");
             console.log("registration code");
             console.log(registration);
+            console.log("");
         }).catch((error) => {
+            console.log("");
             console.log(error);
+            console.log("");
         });
 
         break;
