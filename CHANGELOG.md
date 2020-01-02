@@ -1,3 +1,12 @@
+## 3.1.17
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Bug Fixes
+* New cluster instance commands
+* Multi device clustering
+* Smarter reboot and update actions
+* Install script can handle different Node versions
+
 ## 3.1.15
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
