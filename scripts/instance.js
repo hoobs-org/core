@@ -191,6 +191,7 @@ module.exports = (mode, name, command) => {
 
                         if (File.existsSync(`/etc/systemd/system/${instance}`)) {
                             if (count === 0) {
+                                console.log("");
                                 console.log("Instances");
                                 console.log("---------------------------------------------------------");
                             }
