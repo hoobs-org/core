@@ -618,4 +618,4 @@ const checksum = async function(root, applicaiton) {
     }
 
     return true;
-}
+};

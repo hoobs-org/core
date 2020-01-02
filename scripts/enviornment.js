@@ -77,7 +77,7 @@ module.exports = () => {
             incompatable
         });
     });
-}
+};
 
 const readLines = function (filename) {
     return new Promise((resolve) => {
@@ -258,4 +258,4 @@ const getPluginDetails = function (storage, directory, name) {
 
         return registered;
     }
-}
+};

@@ -98,7 +98,7 @@ const generateSalt = function() {
             }
         });
     });
-}
+};
 
 const hashValue = function(value, salt) {
     return new Promise((resolve, reject) => {
@@ -110,4 +110,4 @@ const hashValue = function(value, salt) {
             }
         });
     });
-}
+};

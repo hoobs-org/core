@@ -235,7 +235,7 @@ const findNode = function() {
     }
 
     return "/usr/local/bin";
-}
+};
 
 const searchFile = function (filename, search) {
     return new Promise((resolve) => {

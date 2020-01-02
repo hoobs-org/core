@@ -18,6 +18,7 @@ export default new Vuex.Store({
         version: null,
         running: false,
         locked: false,
+        refresh: null,
         rebooting: false,
         screen: {
             width: null,
@@ -78,6 +79,10 @@ export default new Vuex.Store({
 
         unlock(state) {
             state.locked = false;
+        },
+
+        update(state) {
+            state.refresh = new Date();
         },
 
         reboot(state) {

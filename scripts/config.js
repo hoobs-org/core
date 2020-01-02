@@ -49,7 +49,7 @@ module.exports = () => {
 
         resolve();
     });
-}
+};
 
 const reConfigure = function(filename) {
     const config = JSON.parse(File.readFileSync(filename));
@@ -87,4 +87,4 @@ const reConfigure = function(filename) {
     delete config.server.socket;
 
     File.writeFileSync(filename, JSON.stringify(config, null, 4));
-}
+};
