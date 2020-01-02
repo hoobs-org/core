@@ -24,6 +24,10 @@ export default class Config {
         return this._ui || {};
     }
 
+    get cluster() {
+        return this._cluster;
+    }
+
     get bridge() {
         return this._configuration.bridge || {};
     }
@@ -116,6 +120,7 @@ export default class Config {
 
         this._ui = config.client;
         this._system = config.system;
+        this._cluster = config.mode === "cluster";
         this._configuration = (await Request.get(`${this.instance}/api/config`)).data;
     }
 }

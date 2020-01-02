@@ -3,6 +3,7 @@ const Prompt = require("prompt");
 const Sanitize = require("sanitize-filename");
 
 const { dirname, join } = require("path");
+const { execSync } = require("child_process");
 
 module.exports = (mode, name, command) => {
     const root = dirname(File.realpathSync(__filename));
@@ -181,7 +182,7 @@ module.exports = (mode, name, command) => {
                 }
 
                 if (File.existsSync("/home/hoobs/.hoobs/etc")) {
-                    const entries = File.readdirSync("/home/.hoobs/etc").filter(f => File.lstatSync(join("/home/hoobs/.hoobs/etc", f)).isDirectory());
+                    const entries = File.readdirSync("/home/hoobs/.hoobs/etc").filter(f => File.lstatSync(join("/home/hoobs/.hoobs/etc", f)).isDirectory());
 
                     let count = 0;
 

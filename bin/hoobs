@@ -41,8 +41,8 @@ switch ((command || "").toLowerCase()) {
                 break;
 
             default:
-                if ((process.argv[4] || "") !== "") {
-                    (require(join(root, "../scripts/instance")))("control", process.argv[4] || "", process.argv[5] || "");
+                if ((process.argv[3] || "") !== "") {
+                    (require(join(root, "../scripts/instance")))("control", process.argv[3] || "", process.argv[4] || "");
                 } else {
                     (require(join(root, "../scripts/instance")))();
                 }

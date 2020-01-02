@@ -28,6 +28,10 @@ import App from "./app.vue";
             $client() {
                 return config.client;
             },
+
+            $cluster() {
+                return config.cluster;
+            },
         
             $bridge() {
                 return config.bridge;

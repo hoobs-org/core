@@ -1,5 +1,5 @@
 <template>
-    <div v-if="(user || {}).admin" id="service-menu">
+    <div v-if="!$cluster && (user || {}).admin" id="service-menu">
         <div v-if="user" class="profile">
             <span class="icon">account_circle</span>
             <div class="profile-details">
@@ -31,7 +31,7 @@
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
         <div class="button mobile-show menu-cancel">{{ $t("cancel") }}</div>
     </div>
-    <div v-else id="service-menu">
+    <div v-else-if="!$cluster" id="service-menu">
         <div class="profile">
             <span class="icon">account_circle</span>
             <div v-if="user" class="profile-details">
@@ -57,6 +57,20 @@
         <router-link to="/config/interface" class="item">{{ $t("config") }}</router-link>
         <router-link to="/system/software" class="item">{{ $t("system") }}</router-link>
         <router-link to="/help" class="item">{{ $t("help") }}</router-link>
+        <div class="item-seperator"></div>
+        <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
+        <div class="button mobile-show menu-cancel">{{ $t("cancel") }}</div>
+    </div>
+    <div v-else id="service-menu">
+        <div v-if="user" class="profile">
+            <span class="icon">account_circle</span>
+            <div class="profile-details">
+                <span class="sub-title">{{ $t("loged_in_as") }}</span>
+                <span class="identity">{{ user.name || user.username }}</span>
+            </div>
+        </div>
+        <div v-if="!locked" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
+        <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
         <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
         <div class="button mobile-show menu-cancel">{{ $t("cancel") }}</div>

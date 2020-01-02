@@ -345,6 +345,7 @@
         "welcome_message_rocket": "Welcome to Rocket",
         "whats_new": "What's New",
         "windy": "Windy",
-        "yes": "Yes"
+        "yes": "Yes",
+        "client_cluster": "Running in cluster mode, please install cluster instances."
     }
 }

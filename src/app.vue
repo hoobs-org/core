@@ -16,7 +16,7 @@
             </div>
         </div>
         <div v-if="loaded" class="layout">
-            <div v-if="user" class="nav">
+            <div v-if="!$cluster && user" class="nav">
                 <div class="routes">
                     <div class="action-link mobile-hide" v-on:click.stop="toggle('nav')">
                         <span v-if="visible['nav']" class="icon">chevron_left</span>
@@ -155,7 +155,10 @@
 
             Chart.defaults.global.defaultFontColor = this.$theme.charts.foreground;
 
-            this.status = await this.api.get("/status");
+            if (!this.$cluster) {
+                this.status = await this.api.get("/status");
+            }
+
             this.instances = await this.$instances();
             this.loaded = true;
         },
@@ -169,7 +172,10 @@
                 }
             }, true);
 
-            this.connect();
+            if (!this.$cluster) {
+                this.connect();
+            }
+
             this.resize();
         },
 
