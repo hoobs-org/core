@@ -100,7 +100,7 @@ module.exports = (install, type, name, service, port, bridge) => {
                         content += "[Service]\n";
                         content += "Type=simple\n";
                         content += "User=hoobs\n";
-                        content += `ExecStart=${Path.join(findNode(), "hoobs")} server -N '${name}'\n`;
+                        content += `ExecStart=${Path.join(findNode(), "hoobs")} server -instance '${name}'\n`;
                         content += "Restart=on-failure\n";
                         content += "RestartSec=3\n";
                         content += "KillMode=process\n";

@@ -64,7 +64,7 @@ class Throbber {
     };
 }
 
-module.exports = (debug, password) => {
+module.exports = (debug, password, cpmod) => {
     const throbber = new Throbber(debug);
 
     const home = OS.userInfo().homedir;
@@ -90,7 +90,7 @@ module.exports = (debug, password) => {
                 await migrate(root, throbber);
 
                 if (await preparePackage(root, executing, installed, throbber)) {
-                    await setupUserMode(root, applicaiton, throbber);
+                    await setupUserMode(root, applicaiton, cpmod, throbber);
 
                     await throbber.throb("Clear Migration");
 
@@ -114,7 +114,7 @@ module.exports = (debug, password) => {
                 }
             } else {
                 if (await preparePackage(root, executing, installed, throbber)) {
-                    await setupUserMode(root, applicaiton, throbber);
+                    await setupUserMode(root, applicaiton, cpmod, throbber);
                 } else {
                     success = false;
 
@@ -265,7 +265,7 @@ const preparePackage = async function (root, executing, installed, throbber) {
     return success;
 };
 
-const setupUserMode = function (root, applicaiton, throbber) {
+const setupUserMode = function (root, applicaiton, cpmod, throbber) {
     return new Promise(async (resolve) => {
         if (File.existsSync("/var/hoobs/.migration/config.json")) {
             await throbber.throb("Configuring");
@@ -368,29 +368,35 @@ const setupUserMode = function (root, applicaiton, throbber) {
             Remove.sync(join(root, "lib"));
         }
 
-        Copy(join(applicaiton, "node_modules"), join(root, "node_modules"), {
-            overwrite: true,
-            dot: true,
-            junk: false
-        }).on(Copy.events.COPY_FILE_START, async (data) => {
-            await throbber.update(`Modules: ${basename(data.src)}`, 0);
-        }).finally(async () => {
-            if (File.existsSync(join(root, "package-lock.json"))) {
-                File.unlinkSync(join(root, "package-lock.json"));
-            }
+        if (cpmod) {
+            Copy(join(applicaiton, "node_modules"), join(root, "node_modules"), {
+                overwrite: true,
+                dot: true,
+                junk: false
+            }).on(Copy.events.COPY_FILE_START, async (data) => {
+                await throbber.update(`Modules: ${basename(data.src)}`, 0);
+            }).finally(async () => {
+                if (File.existsSync(join(root, "package-lock.json"))) {
+                    File.unlinkSync(join(root, "package-lock.json"));
+                }
 
-            if (File.existsSync(join(root, "default.json"))) {
-                File.unlinkSync(join(root, "default.json"));
-            }
+                if (File.existsSync(join(root, "default.json"))) {
+                    File.unlinkSync(join(root, "default.json"));
+                }
 
-            await throbber.update("Modules: default.json", 100);
+                await throbber.update("Modules: default.json", 100);
 
-            File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
+                File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
 
+                await throbber.stop("Modules");
+
+                resolve();
+            });
+        } else {
             await throbber.stop("Modules");
 
             resolve();
-        });
+        }
     });
 };
 
