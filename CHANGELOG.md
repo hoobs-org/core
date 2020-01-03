@@ -1,4 +1,4 @@
-## 3.1.18
+## 3.1.19
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
 * Bug Fixes
