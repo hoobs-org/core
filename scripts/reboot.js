@@ -9,7 +9,7 @@ module.exports = (reboot, service) => {
             Process.execSync(`systemctl enable ${service}`);
 
             if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge.service")) {
-                Process.execSync("systemctl disable homebridge-config-ui-x.service");
+                Process.execSync("systemctl disable homebridge.service");
             }
 
             if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge-config-ui-x.service")) {
