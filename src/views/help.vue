@@ -220,7 +220,7 @@
 
                 setTimeout(() => {
                     this.$store.commit("reboot");
-                }, 500);
+                }, 1000 * 60 * 2);
             },
 
             confirmError() {

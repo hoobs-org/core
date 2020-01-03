@@ -158,7 +158,7 @@
 
                 setTimeout(() => {
                     this.checking = false;
-                }, 1000);
+                }, 100);
             },
 
             translate(value) {
