@@ -229,10 +229,14 @@ const preparePackage = async function (root, executing, installed, throbber) {
             if (dep && executing.dependencies[dep]) {
                 installed.dependencies[dep] = executing.dependencies[dep];
             } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
-                await throbber.update(`Plugins: ${name} is orphaned`, 0);
-
                 orphaned.push(name);
             } else {
+                await throbber.stop("Plugins");
+
+                console.log(`Plugin "${name}" is missing`);
+
+                await throbber.throb("Plugins");
+
                 success = false;
             }
         }
