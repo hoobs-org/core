@@ -209,38 +209,43 @@ const preparePackage = async function (root, executing, installed, throbber) {
         await throbber.update("Plugins: Reading existing plugins", 250);
 
         const current = tryParseFile(join(root, "etc", "config.json"), null);
-        const deps = (current || {}).plugins || [];
-        const depKeys = Object.keys(executing.dependencies);
 
-        let updated = false;
+        const deps = (current || {}).plugins || [];
+        const keys = Object.keys(executing.dependencies);
+        const orphaned = [];
 
         for (let i = 0; i < deps.length; i++) {
             await throbber.update(`Plugins: ${deps[i]}`, 500);
 
             let dep = null;
+            let name = deps[i];
 
-            if (executing.dependencies[deps[i]]) {
-                dep = deps[i];
+            if (executing.dependencies[name]) {
+                dep = name;
             } else {
-                dep = (depKeys.filter(d => d.startsWith("@") && d.endsWith(`/${deps[i]}`)) || [null])[0];
+                dep = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
             }
 
             if (dep && executing.dependencies[dep]) {
                 installed.dependencies[dep] = executing.dependencies[dep];
-            } else if (current) {
-                const index = (current.plugins || []).indexOf(dep);
+            } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
+                await throbber.update(`Plugins: ${name} is orphaned`, 0);
 
-                if (index > -1) {
-                    updated = true;
-
-                    current.plugins.splice(index, 1);
-                }
+                orphaned.push(name);
             } else {
                 success = false;
             }
         }
 
-        if (updated) {
+        if (success && orphaned.length > 0) {
+            for (let i = 0; i < orphaned.length; i++) {
+                const index = (current.plugins || []).indexOf(orphaned[i]);
+
+                if (index > -1) {
+                    current.plugins.splice(index, 1);
+                }
+            }
+
             File.unlinkSync(join(root, "etc", "config.json"));
             File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
         }
