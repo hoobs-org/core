@@ -166,22 +166,38 @@ install_prequsits()
 
 install_node_prequsits()
 {
+    get_node
     get_package_manager
 
     case $PACKAGE_MNGR in
         "yum")
-            yum install -y python make gcc gcc-c++ nodejs
+            yum install -y python make gcc gcc-c++
             ;;
 
         "dnf")
-            dnf install -y python make gcc gcc-c++ nodejs
+            dnf install -y python make gcc gcc-c++
             ;;
 
         "apt")
-            apt-get update
-            apt-get install -y python make gcc g++ nodejs npm
+            apt-get install -y python make gcc g++
             ;;
     esac
+
+    if [[ "$NODE_INSTALLED" = "false" ]]; then
+        case $PACKAGE_MNGR in
+            "yum")
+                yum install -y nodejs
+                ;;
+
+            "dnf")
+                dnf install -y nodejs
+                ;;
+
+            "apt")
+                apt-get install -y nodejs npm
+                ;;
+        esac
+    fi
 }
 
 install_node()
@@ -373,10 +389,7 @@ if [[ "$NODE_INSTALLED" = "false" || ( "$NODE_TARGET" != "" && "$NODE_VERSION" !
 
     echo "Installing Node"
 
-    if [[ "$NODE_INSTALLED" = "false" ]]; then
-        install_node_prequsits
-    fi
-
+    install_node_prequsits
     install_node
     get_node
     get_npm
