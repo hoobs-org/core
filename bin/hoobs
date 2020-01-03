@@ -10,20 +10,71 @@ const { execSync } = require("child_process");
 let password = null;
 let debug = false;
 let reboot = false;
+let cpmod = true;
 
 const command = process.argv[2];
 
 process.argv.forEach((value, index) => {
-    if (value === "-p" || value === "--sudo-pwd") {
+    if (value === "-p" || value === "--pass") {
         password = "#sudo-password#"
     } else if (password === "#sudo-password#") {
         password = value;
 
         return;
-    } else if (value === "-d" || value === "-D" || value === "--debug") {
+    } else if (value === "-d" || value === "--debug") {
         debug = true;
     } else if (value === "-r" || value === "--reboot") {
         reboot = true;
+    } else if (value === "--ignore-modules") {
+        cpmod = false;
+    } else if (value === "-v" || value === "--version") {
+        console.log(JSON.parse(File.readFileSync(join(dirname(File.realpathSync(join(__filename, "../"))), "package.json"))).version);
+
+        process.exit(0);
+    } else if (value === "-h" || value === "--help") {
+        console.log("");
+        console.log("help: hoobs [-v | --version] [command] [-d | --debug] [-i | --instance name] [-p | -pass password]");
+        console.log("    Display information about builtin commands.");
+        console.log("");
+        console.log("    Starts the HOOBS service and controls the HOOBS service.");
+        console.log("    and cluster clients and instances. This also can install");
+        console.log("    the HOOBS service and cluster clients and instances.");
+        console.log("");
+        console.log("    Commands:");
+        console.log("        *                         run in default mode");
+        console.log("        client                    run a cluster client");
+        console.log("        server                    run a cluster instance");
+        console.log("        service log               show the output of the current service or cluster client");
+        console.log("        service start             start the current service or cluster client");
+        console.log("        service stop              stop the current service or cluster client");
+        console.log("        service restart           restart the current service or cluster client");
+        console.log("        service enable            enable the current service or cluster client");
+        console.log("        service disable           disable the current service or cluster client");
+        console.log("        service install           install a default service");
+        console.log("        cluster                   list all cluster instances");
+        console.log("        cluster client            configure and install a cluster client service");
+        console.log("        cluster create            configure and install a named cluster instance service");
+        console.log("        cluster [name] log        show the output of a named cluster instance");
+        console.log("        cluster [name] start      start a named cluster instance");
+        console.log("        cluster [name] stop       stop a named cluster instance");
+        console.log("        cluster [name] restart    restart a named cluster instance");
+        console.log("        cluster [name] enable     enable a named cluster instance");
+        console.log("        cluster [name] disable    disable a named cluster instance");
+        console.log("        switch homebridge         switches to the homebridge services if installed");
+        console.log("        switch hoobs              switches to the hoobs service");
+        console.log("        switch uninstall          remove homebridge and the switch function");
+        console.log("        upgrade                   used by npm postinstall when upgrading");
+        console.log("        cockpit                   starts an unattached remote terminal session");
+        console.log("");
+        console.log("    Options:");
+        console.log("        -v, --version             output the version number");
+        console.log("        -d, --debug               turn on debug level logging");
+        console.log("        -i, --instance [name]     start homebridge as a named instance");
+        console.log("        -p, --pass [password]     password to use for elevated commands");
+        console.log("        --ignore-modules          don't coppy modules on start (development)");
+        console.log("");
+
+        process.exit(0);
     }
 });
 
@@ -235,7 +286,7 @@ switch ((command || "").toLowerCase()) {
         break;
 
     default:
-        (require(join(dirname(File.realpathSync(__filename)), "../scripts/loader")))(debug, password);
+        (require(join(dirname(File.realpathSync(__filename)), "../scripts/loader")))(debug, password, cpmod);
 
         break;
 }

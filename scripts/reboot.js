@@ -41,7 +41,7 @@ module.exports = (reboot, service) => {
 
         resolve();
     });
-}
+};
 
 const getPms = function() {
     if (File.existsSync("/usr/bin/dnf")) {
@@ -57,4 +57,4 @@ const getPms = function() {
     }
 
     return null;
-}
+};

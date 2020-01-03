@@ -100,7 +100,7 @@ module.exports = (install, type, name, service, port, bridge) => {
                         content += "[Service]\n";
                         content += "Type=simple\n";
                         content += "User=hoobs\n";
-                        content += `ExecStart=${Path.join(findNode(), "hoobs")} server -N '${name}'\n`;
+                        content += `ExecStart=${Path.join(findNode(), "hoobs")} server -instance '${name}'\n`;
                         content += "Restart=on-failure\n";
                         content += "RestartSec=3\n";
                         content += "KillMode=process\n";
@@ -191,7 +191,7 @@ module.exports = (install, type, name, service, port, bridge) => {
 
         resolve();
     });
-}
+};
 
 const getPms = function() {
     if (File.existsSync("/usr/bin/dnf")) {
@@ -207,7 +207,7 @@ const getPms = function() {
     }
 
     return null;
-}
+};
 
 const findNode = function() {
     const paths = (process.env.PATH || "").split(":");
@@ -219,7 +219,7 @@ const findNode = function() {
     }
 
     return "/usr/local/bin";
-}
+};
 
 const getDefaultZone = function () {
     return new Promise((resolve) => {
@@ -231,7 +231,7 @@ const getDefaultZone = function () {
             }
         });
     });
-}
+};
 
 const checkUser = function(username) {
     return new Promise((resolve) => {
@@ -243,4 +243,4 @@ const checkUser = function(username) {
             }
         });
     });
-}
+};

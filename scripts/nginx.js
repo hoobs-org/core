@@ -312,7 +312,7 @@ module.exports = (install) => {
 
         resolve();
     });
-}
+};
 
 const getPms = function() {
     if (File.existsSync("/usr/bin/dnf")) {
@@ -328,7 +328,7 @@ const getPms = function() {
     }
 
     return null;
-}
+};
 
 const writeFile = function (path, body) {
     if (File.existsSync(path)) {
@@ -336,7 +336,7 @@ const writeFile = function (path, body) {
     }
 
     File.appendFileSync(path, body);
-}
+};
 
 const getDefaultZone = function () {
     return new Promise((resolve) => {

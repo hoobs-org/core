@@ -235,6 +235,10 @@
                         case "monitor":
                             this.$store.commit("monitor", message.data);
                             break;
+
+                        case "update":
+                            this.$store.commit("update");
+                            break;
                     }
                 };
 

@@ -63,7 +63,6 @@
         data() {
             return {
                 skip: false,
-                interval: null,
                 pollingSeconds: 15,
                 accessories: []
             }
@@ -86,35 +85,25 @@
         async mounted() {
             this.pollingSeconds = this.$server.polling_seconds || 15 < 15 ? 15 : this.$server.polling_seconds || 15;
             this.accessories = await this.api.get("/accessories/favorites");
-
-            if (this.pollingSeconds > 0) {
-                this.interval = setInterval(() => {
-                    this.heartbeat();
-                }, this.pollingSeconds * 1000);
-            }
-
-            this.heartbeat();
         },
 
-        destroyed() {
-            if (this.interval) {
-                clearInterval(this.interval);   
-            } 
+        async created() {
+            this.$store.subscribe(async (mutation, state) => {
+                if (mutation.type === "update") {
+                    if (!this.skip && this.running && !this.locked) {
+                        try {
+                            this.accessories = await this.api.get("/accessories/favorites");
+                        } catch {
+                            this.skip = true;
+                        }
+                    } else {
+                        this.skip = false;
+                    }
+                }
+            });
         },
 
         methods: {
-            async heartbeat() {
-                if (!this.skip && this.running && !this.locked) {
-                    try {
-                        this.accessories = await this.api.get("/accessories/favorites");
-                    } catch {
-                        this.skip = true;
-                    }
-                } else {
-                    this.skip = false;
-                }
-            },
-
             getComponent(accessory) {
                 switch (accessory.type) {
                     case "fan":

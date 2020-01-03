@@ -6,6 +6,7 @@ At HOOBS we are always working to make the software better. Here are the notiabl
 * Multi device clustering
 * Smarter reboot and update actions
 * Install script can handle different Node versions
+* Accessory updates are now pushed to the client
 
 ## 3.1.15
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
