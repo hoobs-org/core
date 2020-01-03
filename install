@@ -78,10 +78,10 @@ get_node()
 
         read -ra ADDR <<< "$PATH"
 
-        for PATH in "${ADDR[@]}";
+        for DIR in "${ADDR[@]}";
         do
-            if [[ -f "$PATH/node" ]]; then
-                NODE_PREFIX=$(cd $PATH/../;pwd)
+            if [[ -f "$DIR/node" ]]; then
+                NODE_PREFIX=$(cd $DIR/../;pwd)
 
                 break
             fi
