@@ -82,9 +82,12 @@ module.exports = (debug, password, cpmod) => {
 
     const executing = tryParseFile(join(root, "package.json"));
 
+    console.log("");
+
     checkEnviornment(home, password, throbber).then(async () => {
         if (!executing || installed.version !== executing.version || !(await checksum(root, applicaiton))) {
             let success = true;
+            let stop = false;
 
             if (File.existsSync("/var/hoobs/.migration")) {
                 await migrate(root, throbber);
@@ -106,10 +109,18 @@ module.exports = (debug, password, cpmod) => {
                     success = false;
 
                     if (!File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
-                        throw new Error("Plugins failed to migrate");
+                        stop = true;
+
+                        console.log("---------------------------------------------------------");
+                        console.log("Unable to install plugins from the previous version.");
+                        console.log("---------------------------------------------------------");
+                        console.log("");
                     } else {
-                        console.log("Plugins failed to migrate");
+                        console.log("---------------------------------------------------------");
+                        console.log("Unable to install plugins from the previous version.");
+                        console.log("---------------------------------------------------------");
                         console.log("Loading previous version");
+                        console.log("---------------------------------------------------------");
                     }
                 }
             } else {
@@ -119,11 +130,24 @@ module.exports = (debug, password, cpmod) => {
                     success = false;
 
                     if (!File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
-                        throw new Error("There are installed plugins that are not logged");
+                        stop = true;
+
+                        console.log("---------------------------------------------------------");
+                        console.log("There are configured plugins that are not installed.");
+                        console.log("Please edit your config.json file and remove the missing");
+                        console.log("plugin configurations, and remove the plugin from the");
+                        console.log("plugins array.");
+                        console.log("---------------------------------------------------------");
+                        console.log("");
                     } else {
-                        console.log("There are installed plugins that are not logged");
-                        console.log("You must edit the package.json file and enter the proper dependencies");
+                        console.log("---------------------------------------------------------");
+                        console.log("There are configured plugins that are not installed.");
+                        console.log("Please edit your config.json file and remove the missing");
+                        console.log("plugin configurations, and remove the plugin from the");
+                        console.log("plugins array.");
+                        console.log("---------------------------------------------------------");
                         console.log("Loading previous version");
+                        console.log("---------------------------------------------------------");
                     }
                 }
             }
@@ -172,7 +196,7 @@ module.exports = (debug, password, cpmod) => {
                         require(join(root, "lib/cli"))();
                     });
                 });
-            } else {
+            } else if (!stop) {
                 require(join(root, "lib/cli"))();
             }
         } else {
