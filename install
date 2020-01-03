@@ -58,7 +58,7 @@ reset()
     echo ""
 
     rm -fR /home/hoobs/.hoobs/
-    /usr/sbin/shutdown -r now
+    shutdown -r now
 }
 
 get_os()
@@ -432,16 +432,16 @@ if [[ "$HOOBS_INSTALLED" = "true" ]]; then
     [ -d "/var/root/.hoobs/lib" ] && rm -fR /var/root/.hoobs/lib
 
     if [[ "$OS" != "Darwin" ]]; then
-        if command -v $NPM_PREFIX/bin/hoobs > /dev/null; then
+        if command -v hoobs > /dev/null; then
             echo ""
             echo "Restart HOOBS"
             echo "---------------------------------------------------------"
 
-            $NPM_PREFIX/bin/hoobs switch hoobs
-            $NPM_PREFIX/bin/hoobs service restart
+            hoobs switch hoobs
+            hoobs service restart
 
             if [[ "$REBOOT_AFTER" = "true" ]]; then
-                /usr/sbin/shutdown -r now
+                shutdown -r now
             fi
         fi
     fi
@@ -453,19 +453,19 @@ else
     fi
 
     if [[ "$INSTANCE_SUPPORT" == "false" && "$OS" != "Darwin" ]]; then
-        if command -v $NPM_PREFIX/bin/hoobs > /dev/null; then
+        if command -v hoobs > /dev/null; then
             echo ""
             echo "Initializing HOOBS"
             echo "---------------------------------------------------------"
 
             if [[ "$REBOOT_AFTER" = "true" ]]; then
-                $NPM_PREFIX/bin/hoobs service install --reboot
+                hoobs service install --reboot
             else
-                $NPM_PREFIX/bin/hoobs service install
+                hoobs service install
             fi
 
             if [[ "$REBOOT_AFTER" = "true" ]]; then
-                /usr/sbin/shutdown -r now
+                shutdown -r now
             fi
         fi
     fi
