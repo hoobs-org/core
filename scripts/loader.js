@@ -208,8 +208,11 @@ const preparePackage = async function (root, executing, installed, throbber) {
     } else if (executing && executing.dependencies) {
         await throbber.update("Plugins: Reading existing plugins", 250);
 
-        const deps = (tryParseFile(join(root, "etc", "config.json"), {})).plugins || [];
+        const current = tryParseFile(join(root, "etc", "config.json"), null);
+        const deps = (current || {}).plugins || [];
         const depKeys = Object.keys(executing.dependencies);
+
+        let updated = false;
 
         for (let i = 0; i < deps.length; i++) {
             await throbber.update(`Plugins: ${deps[i]}`, 500);
@@ -224,9 +227,22 @@ const preparePackage = async function (root, executing, installed, throbber) {
 
             if (dep && executing.dependencies[dep]) {
                 installed.dependencies[dep] = executing.dependencies[dep];
+            } else if (current) {
+                const index = (current.plugins || []).indexOf(dep);
+
+                if (index > -1) {
+                    updated = true;
+
+                    current.plugins.splice(index, 1);
+                }
             } else {
                 success = false;
             }
+        }
+
+        if (updated) {
+            File.unlinkSync(join(root, "etc", "config.json"));
+            File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
         }
     }
 
