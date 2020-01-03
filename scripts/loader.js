@@ -516,7 +516,7 @@ const migrate = async function (root, throbber) {
     await throbber.stop("Migrating");
 };
 
-const npmInstall = function (root, name, version) {
+const npmInstall = function (root, name, version, throbber) {
     return new Promise((resolve) => {
         const proc = spawn("npm", [
             "install",
