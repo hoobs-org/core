@@ -1,3 +1,8 @@
+## 3.1.18
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Bug Fixes
+
 ## 3.1.17
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
