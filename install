@@ -373,7 +373,10 @@ if [[ "$NODE_INSTALLED" = "false" || ( "$NODE_TARGET" != "" && "$NODE_VERSION" !
 
     echo "Installing Node"
 
-    install_node_prequsits
+    if [[ "$NODE_INSTALLED" = "false" ]]; then
+        install_node_prequsits
+    fi
+
     install_node
     get_node
     get_npm
