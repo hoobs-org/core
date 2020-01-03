@@ -292,7 +292,6 @@ clear_npm_cache()
 
     if [[ "$NPM_INSTALLED" = "true" ]]; then
         npm cache clean --force > /dev/null 2>&1
-        sleep 1
     fi
 }
 
@@ -432,8 +431,6 @@ if [[ "$HOOBS_INSTALLED" = "true" ]]; then
     [ -d "/var/root/.hoobs/dist" ] && rm -fR /var/root/.hoobs/dist
     [ -d "/var/root/.hoobs/lib" ] && rm -fR /var/root/.hoobs/lib
 
-    sleep 3
-
     if [[ "$OS" != "Darwin" ]]; then
         if command -v $NPM_PREFIX/bin/hoobs > /dev/null; then
             echo ""
@@ -454,8 +451,6 @@ else
     else
         npm install -g --unsafe-perm @hoobs/hoobs
     fi
-
-    sleep 3
 
     if [[ "$INSTANCE_SUPPORT" == "false" && "$OS" != "Darwin" ]]; then
         if command -v $NPM_PREFIX/bin/hoobs > /dev/null; then
