@@ -85,7 +85,6 @@
                 skip: false,
                 current: undefined,
                 empty: false,
-                pollingSeconds: 15,
                 accessories: {
                     rooms: []
                 }
@@ -111,7 +110,6 @@
         },
 
         async mounted() {
-            this.pollingSeconds = this.$server.polling_seconds || 15 < 15 ? 15 : this.$server.polling_seconds || 15;
             this.accessories = await this.api.get("/accessories");
             this.empty = JSON.stringify(this.accessories.rooms) === "[{\"name\":\"Unassigned\",\"accessories\":[]}]";
 
