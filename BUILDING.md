@@ -16,7 +16,7 @@ First navigate to the homebridte-to-hoobs project root.
 Now build and pack.
 
 ```bash
-~]% npm pack && rm -f ../hoobs-core/builds/homebridge-to-hoobs.tgz && mv ./homebridge-to-hoobs-*.tgz ../hoobs-core/builds/homebridge-to-hoobs.tgz
+~]% npm run pack
 ```
 
 ## Config UI-X for Testing
