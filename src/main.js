@@ -58,7 +58,7 @@ import App from "./app.vue";
             },
 
             $theme() {
-                return Themes[this.$client.theme || "hoobs-light"];
+                return Themes[config.client.theme || "hoobs-light"];
             },
 
             $themes() {

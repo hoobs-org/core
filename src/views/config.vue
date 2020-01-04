@@ -406,8 +406,7 @@
             
             cancelReboot() {
                 this.confirmReboot = false;
-
-                window.location.reload();
+                this.$router.go(0);
             },
 
             addError(message) {
@@ -538,8 +537,13 @@
                             }
                         });
 
-                        setTimeout(() => {
-                            window.location.reload();
+                        setTimeout(async () => {
+                            this.working = false;
+
+                            await this.$configure();
+                            await this.load();
+
+                            this.$store.commit("redraw");
                         }, 500);
 
                         break;
@@ -686,12 +690,19 @@
                     this.$cookie("longitude", null, 0);
                     this.$cookie("weather_query", null, 0);
 
+                    this.$store.commit("push", {
+                        type: "info",
+                        title: "Configuration",
+                        message: "New configuration saved"
+                    });
+
                     this.$store.commit("unlock");
 
                     if (this.reboot) {
+                        this.working = false;
                         this.confirmReboot = true;
                     } else {
-                        window.location.reload();
+                        this.$router.go(0);
                     }
                 } else {
                     this.working = false;

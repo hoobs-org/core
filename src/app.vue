@@ -108,7 +108,6 @@
     import Checkbox from "vue-material-checkbox";
 
     import Loader from "./loader";
-    import Cookies from "./cookies";
 
     import ModalDialog from "@/components/modal-dialog.vue";
     import ServiceMenu from "@/components/service-menu.vue";
@@ -177,6 +176,12 @@
         async mounted() {
             this.loader = Loader(this.$theme.logo.loader, this.$theme.loader.foreground, this.$theme.loader.background);
 
+            try {
+                this.$store.commit("load", JSON.parse(atob(this.$cookie("notifications"))));
+            } catch {
+                this.$store.commit("load", []);
+            }
+
             Chart.defaults.global.defaultFontColor = this.$theme.charts.foreground;
 
             if (!this.$cluster) {
@@ -200,6 +205,11 @@
                 switch (mutation.type) {
                     case "reboot":
                         window.location.reload();
+                        break;
+
+                    case "push":
+                    case "dismiss":
+                        this.$cookie("notifications", btoa(JSON.stringify(state.notifications)), this.$client.inactive_logoff || 30);
                         break;
                 }
             });
@@ -242,7 +252,7 @@
                 url = url.replace("http://", "ws://");
                 url = url.replace("https://", "wss://");
 
-                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "monitor" : "/monitor"}?a=${Cookies.get("token") || ""}&t=${new Date().getTime()}`);
+                this.socket = new WebSocket(`${url}${url.endsWith("/") ? "monitor" : "/monitor"}?a=${this.$cookie("token") || ""}&t=${new Date().getTime()}`);
 
                 this.socket.onmessage = (message) => {
                     message = JSON.parse(message.data);
@@ -945,65 +955,66 @@
     #app .notifications .notification {
         width: 100%;
         position: relative;
-        margin: 20px 0 0 0;
-        background: #fff;
+        margin: 7px 0 0 0;
         color: #515151;
         display: flex;
         flex-direction: row;
         border-radius: 3px;
         box-sizing: border-box;
-        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
-                    0 4px 5px 0 rgba(0, 0, 0, 0.14),
-                    0 1px 10px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: var(--elevation-large);
     }
 
-    #app .notifications .notification-content {
-        padding: 20px 32px 20px 20px;
+    #app .notifications .notification .notification-content {
+        padding: 14px 32px 14px 20px;
+        border-radius: 0 3px 3px 0;
+        background: #fff;
         font-size: 14px;
+        opacity: 0.9;
         flex: 1
     }
 
-    #app .notifications .notification-error,
-    #app .notifications .notification-warning,
-    #app .notifications .notification-info {
+    #app .notifications .notification .notification-error,
+    #app .notifications .notification .notification-warning,
+    #app .notifications .notification .notification-info {
         display: flex;
         align-content: center;
         align-items: center;
         padding: 0 20px;
         border-radius: 3px 0 0 3px;
+        opacity: 0.9;
     }
 
-    #app .notifications .notification-error .icon,
-    #app .notifications .notification-warning .icon,
-    #app .notifications .notification-info .icon {
-        font-size: 40px;
+    #app .notifications .notification .notification-error .icon,
+    #app .notifications .notification .notification-warning .icon,
+    #app .notifications .notification .notification-info .icon {
+        font-size: 32px;
         opacity: 0.5;
     }
 
-    #app .notifications .notification-error {
+    #app .notifications .notification .notification-error {
         color: #fff;
         background: #e30505;
     }
 
-    #app .notifications .notification-warning {
+    #app .notifications .notification .notification-warning {
         color: #fff;
         background: #feb400;
     }
 
-    #app .notifications .notification-info {
+    #app .notifications .notification .notification-info {
         color: #fff;
-        background: #bebebe
+        background: #019420
     }
 
-    #app .notifications .notification-title {
+    #app .notifications .notification .notification-title {
         font-weight: bold;
     }
 
-    #app .notifications .notification-message {
+    #app .notifications .notification .notification-message {
         margin: 0;
     }
 
-    #app .notifications .notification-close {
+    #app .notifications .notification .notification-close {
         position: absolute;
         top: 7px;
         right: 7px;
