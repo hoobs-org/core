@@ -26,7 +26,7 @@
             </div>
             <div v-else>
                 <router-link :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`" class="button">{{ $t("details") }}</router-link>
-                <div v-on:click.stop="check()" class="button button-primary">{{ $t("install") }}</div>
+                <div v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
             </div>
         </div>
         <div v-if="plugin.local && !working" class="actions"></div>
@@ -75,9 +75,7 @@
         data() {
             return {
                 working: false,
-                formatted: "",
-                server: ((this.plugin || {}).keywords || []).indexOf("hoobs-plugin") >= 0 || ((this.plugin || {}).keywords || []).indexOf("homebridge-plugin") >= 0,
-                interface: ((this.plugin || {}).keywords || []).indexOf("hoobs-interface") >= 0
+                formatted: ""
             }
         },
 
@@ -113,47 +111,21 @@
                 return string;
             },
 
-            async check() {
-                if (!this.locked) {
-                    const lookup = await this.api.get(`/plugins/certified/lookup/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
-
-                    if (lookup.certified && lookup.package === this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name) {
-                        await this.uninstall(undefined, lookup.base, true);
-                        await this.install(this.plugin.scope, this.plugin.name);
-                    } else if (lookup.base === this.plugin.name) {
-                        const scope = lookup.package.split("/").replace(/@/gi, "");
-                        const name = lookup.package.replace(`@${scope}/`, "");
-
-                        await this.install(scope, name);
-                    } else {
-                        await this.install(this.plugin.scope, this.plugin.name);
-                    }
-                }
-            },
-
-            async install(scope, name) {
+            async install() {
                 if (!this.locked) {
                     this.working = true;
 
-                    if (scope === undefined) {
-                        scope = this.plugin.scope;
-                    }
-
-                    if (name === undefined) {
-                        name = this.plugin.name;
-                    }
-
                     const restart = this.running;
 
-                    if (this.server && restart) {
+                    if (restart) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
                     }
 
-                    const results = await this.api.put(`/plugins/${encodeURIComponent(scope ? `@${scope}/${name}` : name)}`);
+                    const results = await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
 
-                    if (this.server && restart) {
+                    if (restart) {
                         await this.api.post("/service/start");
 
                         this.$store.commit("unlock");
@@ -169,29 +141,21 @@
                 }
             },
 
-            async uninstall(scope, name, skipEvents) {
+            async uninstall() {
                 if (!this.locked) {
                     this.working = true;
 
-                    if (scope === undefined) {
-                        scope = this.plugin.scope;
-                    }
-
-                    if (name === undefined) {
-                        name = this.plugin.name;
-                    }
-
                     const restart = this.running;
 
-                    if (this.server && restart) {
+                    if (restart) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
                     }
 
-                    await this.api.delete(`/plugins/${encodeURIComponent(scope ? `@${scope}/${name}` : name)}`);
+                    await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}`);
 
-                    if (this.server && restart) {
+                    if (restart) {
                         await this.api.post("/service/start");
 
                         this.$store.commit("unlock");
@@ -199,7 +163,7 @@
 
                     this.working = false;
 
-                    if (!skipEvents && this.onuninstall) {
+                    if (this.onuninstall) {
                         this.onuninstall();
                     }
                 }
@@ -211,15 +175,15 @@
 
                     const restart = this.running;
 
-                    if (this.server && restart) {
+                    if (restart) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
                     }
 
-                    await this.api.post(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
+                    await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
 
-                    if (this.server && restart) {
+                    if (restart) {
                         await this.api.post("/service/start");
 
                         this.$store.commit("unlock");

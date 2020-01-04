@@ -18,10 +18,7 @@
         name: "plugin-card",
 
         props: {
-            plugin: Object,
-            oninstall: Function,
-            onuninstall: Function,
-            onupdate: Function
+            plugin: Object
         },
 
         computed: {
@@ -50,96 +47,6 @@
 
             humanize(string) {
                 return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace("homebridge-", "").trim()));
-            },
-
-            async install() {
-                if (!this.locked) {
-                    this.working = true;
-
-                    const restart = this.running;
-
-                    if (this.server && restart) {
-                        this.$store.commit("lock");
-
-                        await this.api.post("/service/stop");
-                    }
-
-                    const results = await this.api.put(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
-
-                    if (this.server && restart) {
-                        await this.api.post("/service/start");
-
-                        this.$store.commit("unlock");
-                    }
-
-                    await this.api.post("/service/reload");
-
-                    this.working = false;
-
-                    if (results.success && this.oninstall) {
-                        this.oninstall(results.plugin.name, results.plugin, results.details);
-                    }
-                }
-            },
-
-            async uninstall() {
-                if (!this.locked) {
-                    this.working = true;
-
-                    const restart = this.running;
-
-                    if (this.server && restart) {
-                        this.$store.commit("lock");
-
-                        await this.api.post("/service/stop");
-                    }
-
-                    await this.api.delete(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
-
-                    if (this.server && restart) {
-                        await this.api.post("/service/start");
-
-                        this.$store.commit("unlock");
-                    }
-
-                    await this.api.post("/service/reload");
-
-                    this.working = false;
-
-                    if (this.onuninstall) {
-                        this.onuninstall();
-                    }
-                }
-            },
-
-            async update() {
-                if (!this.locked) {
-                    this.working = true;
-
-                    const restart = this.running;
-
-                    if (this.server && restart) {
-                        this.$store.commit("lock");
-
-                        await this.api.post("/service/stop");
-                    }
-
-                    await this.api.post(`/plugins/${encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)}`);
-
-                    if (this.server && restart) {
-                        await this.api.post("/service/start");
-
-                        this.$store.commit("unlock");
-                    }
-
-                    await this.api.post("/service/reload");
-
-                    this.working = false;
-
-                    if (this.onupdate) {
-                        this.onupdate();
-                    }
-                }
             }
         }
     };
