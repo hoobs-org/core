@@ -31,15 +31,12 @@
 
         data() {
             return {
-                loaded: false
+                loaded: false,
+                installed: []
             }
         },
 
         computed: {
-            installed() {
-                return this.$store.state.installed;
-            },
-
             user() {
                 return this.$store.state.user;
             },
@@ -54,7 +51,7 @@
                 this.$store.commit("category", await this.api.get(`/plugins/certified/categories`));
             }
 
-            this.$store.commit("cache", await this.api.get("/plugins"));
+            this.installed = await this.api.get("/plugins");
             this.loaded = true;
         },
 
@@ -86,15 +83,17 @@
             },
 
             oninstall(name, plugin, details) {
-                window.location.href = `/config/${name}`;
+                this.$router.push({
+                    path: `/config/${name}`
+                });
             },
 
-            onuninstall() {
-                window.location.href = "/plugins";
+            async onuninstall() {
+                this.installed = await this.api.get("/plugins");
             },
 
-            onupdate() {
-                window.location.href = "/plugins";
+            async onupdate() {
+                this.installed = await this.api.get("/plugins");
             }
         }
     }

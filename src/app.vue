@@ -3,7 +3,7 @@
         <div class="header">
             <div class="title">
                 <div class="logo" v-html="$theme.logo.title"></div>
-                <h1 v-if="$theme.logo.text" class="title-logo-text">{{ $brand }}</h1>
+                <h1 v-if="$theme.logo.text" class="title-logo-text">HOOBS</h1>
                 <h1 class="mobile-hide" v-html="routeName()"></h1>
             </div>
             <div v-if="user && instances.length > 1" class="instance" v-on:click.stop="toggle('instance')">
@@ -66,21 +66,41 @@
             <div class="about-seperator"></div>
             <div class="about-title">
                 <div class="about-version">
-                    <b>{{ $brand }} Core</b><br>
-                    Version {{ status[`${system}_version`] }}
+                    <b>HOOBS Core</b><br>
+                    Version {{ status["hoobs_version"] }}
                 </div>
                 <div class="button" v-on:click="checkUpdates()">{{ $t("check_for_updates") }}</div>
             </div>
             <br>
             <a v-if="$theme.homepage" :href="$theme.homepage.url" target="_blank">{{ $theme.homepage.name }}</a><br>
             <br>
-            Copyright &copy; {{ new Date().getFullYear() }} {{ $brand }}. All rights reserved.
+            Copyright &copy; {{ new Date().getFullYear() }} HOOBS. All rights reserved.
         </modal-dialog>
         <modal-dialog v-if="widgets" width="350px" :cancel="closeWidgets" :ok="saveWidgets">
             <div v-for="(item, aidx) in available" :key="aidx" class="available-widget">
                 <checkbox :id="`widget-${item}`" :value="item" v-model="selected"> <label :for="`widget-${item}`">{{ widgetTitle(item) }}</label></checkbox>
             </div>
         </modal-dialog>
+        <div class="notifications">
+            <div v-for="(notification, nidx) in notifications" :key="nidx" class="notification">
+                <div v-if="notification.type === 'error'" class="notification-error">
+                    <span class="icon">error</span>
+                </div>
+                <div v-else-if="notification.type === 'warning'" class="notification-warning">
+                    <span class="icon">warning</span>
+                </div>
+                <div v-else class="notification-info">
+                    <span class="icon">notifications</span>
+                </div>
+                <div class="notification-content">
+                    <span class="notification-title">{{ notification.title }}</span>
+                    <p class="notification-message">
+                        {{ notification.message }}
+                    </p>
+                </div>
+                <div class="icon notification-close" v-on:click="closeNotification(nidx)">close</div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -125,6 +145,10 @@
         },
 
         computed: {
+            notifications() {
+                return this.$store.state.notifications;
+            },
+
             visible() {
                 return this.$store.state.menus;
             },
@@ -133,20 +157,12 @@
                 return this.$store.state.locked;
             },
 
-            rebooting() {
-                return this.$store.state.rebooting;
-            },
-
             defaultRoute() {
                 return this.$client.default_route || "status";
             },
 
             user() {
                 return this.$store.state.user;
-            },
-
-            system() {
-                return this.$system;
             },
 
             screen() {
@@ -159,7 +175,7 @@
         },
 
         async mounted() {
-            this.loader = Loader(this.$theme.logo.loader, this.$brand, this.$theme.loader.foreground, this.$theme.loader.background);
+            this.loader = Loader(this.$theme.logo.loader, this.$theme.loader.foreground, this.$theme.loader.background);
 
             Chart.defaults.global.defaultFontColor = this.$theme.charts.foreground;
 
@@ -179,6 +195,14 @@
                     event.target.parentNode.removeChild(event.target);
                 }
             }, true);
+
+            this.$store.subscribe(async (mutation, state) => {
+                switch (mutation.type) {
+                    case "reboot":
+                        window.location.reload();
+                        break;
+                }
+            });
 
             if (!this.$cluster) {
                 this.connect();
@@ -223,10 +247,6 @@
                 this.socket.onmessage = (message) => {
                     message = JSON.parse(message.data);
 
-                    if (this.rebooting) {
-                        window.location.reload();
-                    }
-
                     switch (message.event) {
                         case "log":
                             this.$store.commit("log", message.data);
@@ -268,10 +288,10 @@
                 this.socket.onerror = () => {
                     fetch("/").then((response) => {
                         if (!response.ok) {
-                            this.loader.write(this.$system);
+                            this.loader.write();
                         }
                     }).catch(() => {
-                        this.loader.write(this.$system);
+                        this.loader.write();
                     });
 
                     this.socket.close();
@@ -284,6 +304,10 @@
 
             closeAbout() {
                 this.about = false;
+            },
+
+            closeNotification(index) {
+                this.$store.commit("dismiss", index);
             },
 
             widgetTitle(item) {
@@ -910,6 +934,83 @@
         font-size: 12pt;
     }
 
+    #app .notifications {
+        width: 350px;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 200;
+    }
+
+    #app .notifications .notification {
+        width: 100%;
+        position: relative;
+        margin: 20px 0 0 0;
+        background: #fff;
+        color: #515151;
+        display: flex;
+        flex-direction: row;
+        border-radius: 3px;
+        box-sizing: border-box;
+        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
+                    0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                    0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    #app .notifications .notification-content {
+        padding: 20px 32px 20px 20px;
+        font-size: 14px;
+        flex: 1
+    }
+
+    #app .notifications .notification-error,
+    #app .notifications .notification-warning,
+    #app .notifications .notification-info {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        padding: 0 20px;
+        border-radius: 3px 0 0 3px;
+    }
+
+    #app .notifications .notification-error .icon,
+    #app .notifications .notification-warning .icon,
+    #app .notifications .notification-info .icon {
+        font-size: 40px;
+        opacity: 0.5;
+    }
+
+    #app .notifications .notification-error {
+        color: #fff;
+        background: #e30505;
+    }
+
+    #app .notifications .notification-warning {
+        color: #fff;
+        background: #feb400;
+    }
+
+    #app .notifications .notification-info {
+        color: #fff;
+        background: #bebebe
+    }
+
+    #app .notifications .notification-title {
+        font-weight: bold;
+    }
+
+    #app .notifications .notification-message {
+        margin: 0;
+    }
+
+    #app .notifications .notification-close {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
     .mobile-show {
         display: none;
     }
@@ -961,6 +1062,10 @@
         #app .nav .action-link {
             display: flex;
             justify-content: space-around;
+        }
+
+        #app .notifications {
+            display: none !important;
         }
     }
 </style>

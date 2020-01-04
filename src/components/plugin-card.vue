@@ -74,6 +74,8 @@
 
                     await this.api.post("/service/reload");
 
+                    this.working = false;
+
                     if (results.success && this.oninstall) {
                         this.oninstall(results.plugin.name, results.plugin, results.details);
                     }
@@ -102,6 +104,8 @@
 
                     await this.api.post("/service/reload");
 
+                    this.working = false;
+
                     if (this.onuninstall) {
                         this.onuninstall();
                     }
@@ -129,6 +133,8 @@
                     }
 
                     await this.api.post("/service/reload");
+
+                    this.working = false;
 
                     if (this.onupdate) {
                         this.onupdate();

@@ -7,7 +7,7 @@
             </span>
             <div v-if="plugin.scope === 'hoobs'" class="certified">
                 <div class="logo" v-html="$theme.logo.certified"></div>
-                <span><b>{{ $brand }}</b> Certified</span>
+                <span><b>HOOBS</b> Certified</span>
             </div>
             <h3>{{ humanize(plugin.name) }}</h3>
             <span class="version">
@@ -159,6 +159,8 @@
                         this.$store.commit("unlock");
                     }
 
+                    this.working = false;
+
                     if (results.success && this.oninstall) {
                         this.oninstall(results.plugin.name, results.plugin, results.details);
                     } else if (this.onuninstall) {
@@ -195,6 +197,8 @@
                         this.$store.commit("unlock");
                     }
 
+                    this.working = false;
+
                     if (!skipEvents && this.onuninstall) {
                         this.onuninstall();
                     }
@@ -220,6 +224,8 @@
 
                         this.$store.commit("unlock");
                     }
+
+                    this.working = false;
 
                     if (this.onupdate) {
                         this.onupdate();

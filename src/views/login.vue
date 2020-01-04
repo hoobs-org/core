@@ -2,19 +2,12 @@
     <div id="login">
         <div v-if="init" class="content create">
             <div class="form">
-                <h2 v-if="system === 'hoobs'">
+                <h2>
                     <div class="logo" v-html="$theme.logo.login"></div>
                     {{ $t("welcome_message_hoobs") }}
                 </h2>
-                <h2 v-if="system === 'rocket'">
-                    <div class="logo" v-html="$theme.logo.login"></div>
-                    {{ $t("welcome_message_rocket") }}
-                </h2>
-                <p v-if="system === 'hoobs'">
+                <p>
                     {{ $t("setup_admin_account")}}
-                </p>
-                <p v-if="system === 'rocket'">
-                    {{ $t("setup_user_account")}}
                 </p>
                 <div v-if="errors.length > 0" class="errors">
                     <span v-for="(error, index) in errors" :key="index">{{ error }}</span>
@@ -77,12 +70,6 @@
             "checkbox": Checkbox,
             "text-field": TextField,
             "password-field": PasswordField
-        },
-
-        computed: {
-            system() {
-                return this.$system;
-            }
         },
 
         data () {

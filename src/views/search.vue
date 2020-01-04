@@ -166,15 +166,21 @@
             },
 
             oninstall(name, plugin, details) {
-                window.location.href = `/config/${name}`;
+                this.$router.push({
+                    path: `/config/${name}`
+                });
             },
 
             onuninstall() {
-                window.location.href = "/plugins";
+                this.$router.push({
+                    path: "/plugins"
+                });
             },
 
             onupdate() {
-                window.location.href = "/plugins";
+                this.$router.push({
+                    path: "/plugins"
+                });
             }
         }
     }

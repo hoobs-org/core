@@ -58,31 +58,11 @@ import App from "./app.vue";
             },
 
             $theme() {
-                return Themes[this.$client.theme || `${this.$system}-light`];
+                return Themes[this.$client.theme || "hoobs-light"];
             },
 
             $themes() {
                 return Themes;
-            },
-
-            $system() {
-                switch (config.system) {
-                    case "rocket":
-                        return "rocket";
-                    
-                    default:
-                        return "hoobs";
-                }
-            },
-
-            $brand() {
-                switch (config.system) {
-                    case "rocket":
-                        return "Rocket";
-                    
-                    default:
-                        return "HOOBS";
-                }
             }
         },
 

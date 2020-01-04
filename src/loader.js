@@ -1,7 +1,6 @@
 class Loader {
-    constructor(logo, title, foreground, background) {
+    constructor(logo, foreground, background) {
         this.logo = logo;
-        this.title = title;
 
         this.foreground = foreground;
         this.background = background;
@@ -15,7 +14,7 @@ class Loader {
         window.location.reload();
     }
 
-    write(system) {
+    write() {
         if (!this.loading) {
             this.loading = true;
 
@@ -25,7 +24,7 @@ class Loader {
                 
                 <head>
                     <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <title>${this.title}</title>
+                    <title>HOOBS</title>
                     <style>
                         body {
                             margin: 0;
@@ -127,6 +126,6 @@ class Loader {
     }
 }
 
-export default function (logo, title, foreground, background) {
-    return new Loader(logo, title, foreground, background);
+export default function (logo, foreground, background) {
+    return new Loader(logo, foreground, background);
 }

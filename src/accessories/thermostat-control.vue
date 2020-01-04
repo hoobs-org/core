@@ -147,10 +147,6 @@
                     default:
                         return "#cccccc";
                 }
-            },
-
-            system() {
-                return this.$system;
             }
         },
 

@@ -83,10 +83,6 @@
                 }
 
                 return this.$theme.accessories.light;
-            },
-
-            system() {
-                return this.$system;
             }
         },
 

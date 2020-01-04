@@ -223,6 +223,7 @@
         align-items: center;
         justify-content: space-between;
         position: relative;
+        cursor: default;
     }
 
     #weather .current-weather {

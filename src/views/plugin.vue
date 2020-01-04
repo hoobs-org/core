@@ -13,7 +13,7 @@
                         <span v-else class="status">{{ $t("updated") }}</span>
                     </span>
                     <div v-if="plugin.scope === 'hoobs'" class="certified">
-                        {{ $brand }} Certified
+                        HOOBS Certified
                     </div>
                     <div class="version">
                         {{ plugin.installed || plugin.version }}
@@ -33,7 +33,7 @@
                 </div>
                 <div v-else class="control">
                     <div v-if="plugin.scope === 'hoobs'" class="certified">
-                        {{ $brand }} Certified
+                        HOOBS Certified
                     </div>
                     <div class="version">
                         {{ plugin.installed || plugin.version }}
@@ -234,6 +234,8 @@
                         this.$store.commit("unlock");
                     }
 
+                    this.working = false;
+
                     if (results.success) {
                         this.oninstall(results.plugin.name, results.plugin, results.details);
                     } else {
@@ -270,6 +272,8 @@
                         this.$store.commit("unlock");
                     }
 
+                    this.working = false;
+
                     if (!skipEvents) {
                         this.onuninstall();
                     }
@@ -296,20 +300,28 @@
                         this.$store.commit("unlock");
                     }
 
+                    this.working = false;
+
                     this.onupdate();
                 }
             },
 
             oninstall(name, plugin, details) {
-                window.location.href = `/config/${name}`;
+                this.$router.push({
+                    path: `/config/${name}`
+                });
             },
 
             onuninstall() {
-                window.location.href = "/plugins";
+                this.$router.push({
+                    path: "/plugins"
+                });
             },
 
             onupdate() {
-                window.location.href = "/plugins";
+                this.$router.push({
+                    path: "/plugins"
+                });
             }
         }
     }

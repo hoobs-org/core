@@ -6,12 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         user: null,
-        config: {
-            client: {},
-            server: {}
-        },
         messages: [],
-        installed: [],
         categories: [],
         weather: null,
         forecast: null,
@@ -19,7 +14,6 @@ export default new Vuex.Store({
         running: false,
         locked: false,
         refresh: null,
-        rebooting: false,
         screen: {
             width: null,
             height: null
@@ -62,13 +56,9 @@ export default new Vuex.Store({
         query: "",
         results: [],
         streamed: {},
-        notifications: {}
+        notifications: []
     },
     mutations: {
-        configure(state, data) {
-            state.config[data.type] = data.config;
-        },
-
         session(state, user) {
             state.user = user;
         },
@@ -86,11 +76,7 @@ export default new Vuex.Store({
         },
 
         reboot(state) {
-            state.rebooting = true;
-        },
-
-        rebooted(state) {
-            state.rebooting = false;
+            state.refresh = new Date();
         },
 
         show(state, menu) {
@@ -122,11 +108,15 @@ export default new Vuex.Store({
         },
 
         push(state, payload) {
-            if (!state.notifications[payload.name]) {
-                state.notifications[payload.name] = [];
-            }
+            state.notifications.push(payload);
 
-            state.notifications[payload.name].push(payload.data);
+            while (state.notifications.length > 5) {
+                state.notifications.shift();
+            }
+        },
+
+        dismiss(state, index) {
+            state.notifications.splice(index, 1);
         },
 
         monitor(state, payload) {
@@ -206,10 +196,6 @@ export default new Vuex.Store({
 
         last(state, results) {
             state.results = results;
-        },
-
-        cache(state, data) {
-            state.installed = data;
         },
 
         category(state, data) {

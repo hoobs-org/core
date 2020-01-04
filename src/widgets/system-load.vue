@@ -23,7 +23,7 @@
         computed: {
             graph() {
                 return [{
-                    name: `${this.$t(this.$system)} (${this.running ? this.$t("running") : this.$t("stopped")})`,
+                    name: `${this.$t("hoobs")} (${this.running ? this.$t("running") : this.$t("stopped")})`,
                     data: []
                 }, {
                     name: `${this.$t("cpu")} ${(this.cpu || {}).used || 0}%${this.temp >= 0 ? `, ${this.$client.temp_units && this.$client.temp_units === "celsius" ? Math.round(this.temp) : Math.round((this.temp * (9/5)) + 32)}°` : ""}`,
@@ -77,5 +77,6 @@
         box-shadow: var(--elevation-small);
         border-radius: 3px;
         box-sizing: border-box;
+        cursor: default;
     }
 </style>

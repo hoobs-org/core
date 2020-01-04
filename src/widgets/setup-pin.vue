@@ -55,6 +55,7 @@
         align-content: center;
         align-items: center;
         border-radius: 3px;
+        cursor: default;
     }
 
     #pin canvas {

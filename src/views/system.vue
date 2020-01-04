@@ -12,9 +12,9 @@
         <div v-if="info" ref="content" class="content">
             <div v-if="section === 'software' || screen.width <= 815" class="system-content">
                 <h2>{{ $t("software") }}</h2>
-                <div v-if="system === 'hoobs'" class="update-card">
+                <div class="update-card">
                     <b>HOOBS Core</b>
-                    <span v-if="status">Current Version: {{ status[`${system}_version`] }}</span>
+                    <span v-if="status">Current Version: {{ status["hoobs_version"] }}</span>
                     <div v-if="checking" class="update-actions">
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
                     </div>
@@ -26,10 +26,6 @@
                     <div v-else class="update-actions">
                         <b>{{ $t("up_to_date") }}</b>
                     </div>
-                </div>
-                <div v-if="system === 'rocket'" class="update-card">
-                    <b>Rocket Core</b>
-                    <span v-if="status">Current Version: {{ status[`${system}_version`] }}</span>
                 </div>
                 <table>
                     <tbody>
@@ -112,10 +108,6 @@
         computed: {
             user() {
                 return this.$store.state.user;
-            },
-
-            system() {
-                return this.$system;
             },
 
             screen() {

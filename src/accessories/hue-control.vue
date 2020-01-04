@@ -111,10 +111,6 @@
 
             sweep() {
                 return this.position.radians > this.zero.radians ? 0 : 1;
-            },
-
-            system() {
-                return this.$system;
             }
         },
 
