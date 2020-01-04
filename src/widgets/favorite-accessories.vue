@@ -87,16 +87,19 @@
 
         async created() {
             this.$store.subscribe(async (mutation, state) => {
-                if (mutation.type === "update") {
-                    if (!this.skip && this.running && !this.locked) {
-                        try {
-                            this.accessories = await this.api.get("/accessories/favorites");
-                        } catch {
-                            this.skip = true;
+                switch (mutation.type) {
+                    case "update":
+                        if (!this.skip && this.running && !this.locked) {
+                            try {
+                                this.accessories = await this.api.get("/accessories/favorites");
+                            } catch {
+                                this.skip = true;
+                            }
+                        } else {
+                            this.skip = false;
                         }
-                    } else {
-                        this.skip = false;
-                    }
+
+                        break;
                 }
             });
         },
