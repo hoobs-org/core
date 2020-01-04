@@ -151,6 +151,10 @@
 
             screen() {
                 return this.$store.state.screen;
+            },
+
+            refresh() {
+                return this.$store.state.refresh;
             }
         },
 
@@ -237,7 +241,12 @@
                             break;
 
                         case "update":
-                            this.$store.commit("update");
+                            const now = new Date();
+
+                            if (!this.refresh || now.getTime() - this.refresh.getTime() > 1000) {
+                                this.$store.commit("update");
+                            }
+
                             break;
                     }
                 };
