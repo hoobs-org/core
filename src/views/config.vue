@@ -692,6 +692,7 @@
 
                     this.$store.commit("push", {
                         type: "info",
+                        time: new Date().getTime(),
                         title: "Configuration",
                         message: "New configuration saved"
                     });

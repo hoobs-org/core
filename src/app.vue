@@ -93,6 +93,7 @@
                     <span class="icon">notifications</span>
                 </div>
                 <div class="notification-content">
+                    <span class="notification-time">{{ getAge(notification.time) }}</span>
                     <span class="notification-title">{{ notification.title }}</span>
                     <p class="notification-message">
                         {{ notification.message }}
@@ -108,6 +109,7 @@
     import Checkbox from "vue-material-checkbox";
 
     import Loader from "./loader";
+    import Dates from "./dates";
 
     import ModalDialog from "@/components/modal-dialog.vue";
     import ServiceMenu from "@/components/service-menu.vue";
@@ -557,6 +559,10 @@
                     default:
                         return "";
                 }
+            },
+
+            getAge(time) {
+                return Dates.getAgeDisplay(time);
             }
         }
     };
@@ -967,6 +973,8 @@
     #app .notifications .notification .notification-content {
         padding: 14px 32px 14px 20px;
         border-radius: 0 3px 3px 0;
+        display: flex;
+        flex-direction: column;
         background: #fff;
         font-size: 14px;
         opacity: 0.9;
@@ -1006,12 +1014,19 @@
         background: #019420
     }
 
+    #app .notifications .notification .notification-time {
+        color: #949494;
+        font-size: 9px;
+    }
+
     #app .notifications .notification .notification-title {
         font-weight: bold;
+        font-size: 12px;
     }
 
     #app .notifications .notification .notification-message {
         margin: 0;
+        font-size: 12px;
     }
 
     #app .notifications .notification .notification-close {

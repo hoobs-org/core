@@ -110,7 +110,7 @@ export default new Vuex.Store({
         push(state, payload) {
             state.notifications.push(payload);
 
-            while (state.notifications.length > 2) {
+            while (state.notifications.length > 5) {
                 state.notifications.shift();
             }
         },
