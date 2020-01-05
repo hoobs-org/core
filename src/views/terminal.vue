@@ -76,6 +76,7 @@
             this.closing = true;
 
             if (this.socket) {
+                this.socket.send("{EXIT}");
                 this.socket.close();
                 this.socket = null;
             }
@@ -103,7 +104,7 @@
                         this.term.clear();
                         this.term.focus();
 
-                        this.socket.send("clear\n");
+                        this.socket.send("{CLEAR}");
 
                         this.opening = false;
                     }
