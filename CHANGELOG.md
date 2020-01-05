@@ -2,6 +2,8 @@
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
 * Bug Fixes
+* Added push notifications
+* API supports installing specific plugin versions
 
 ## 3.1.17
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
