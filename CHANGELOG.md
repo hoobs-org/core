@@ -1,3 +1,8 @@
+## 3.1.20
+At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
+
+* Auto close notifications
+
 ## 3.1.19
 At HOOBS we are always working to make the software better. Here are the notiable changes in this version.
 
