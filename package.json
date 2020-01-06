@@ -28,10 +28,14 @@
         "postinstall": "bin/hoobs upgrade",
         "pack": "npm pack && rm -f ./builds/hoobs-core.tgz && mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz && chmod 755 ./builds/hoobs-core.tgz",
         "pack:publish": "npm publish --access public",
-        "serve": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs",
-        "serve:no-build": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && ./bin/hoobs",
-        "debug": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && npm run build && ./bin/hoobs -D",
-        "debug:no-build": "clear && rm -fR ~/.hoobs/dist && rm -fR ~/.hoobs/lib && ./bin/hoobs -D"
+        "serve": "clear && npm run build && ./bin/hoobs",
+        "serve:no-build": "clear && ./bin/hoobs",
+        "serve:ignore-modules": "clear && npm run build && ./bin/hoobs --ignore-modules",
+        "serve:no-build:ignore-modules": "clear && ./bin/hoobs --ignore-modules",
+        "debug": "clear && npm run build && ./bin/hoobs --debug",
+        "debug:no-build": "clear && ./bin/hoobs --debug",
+        "debug:ignore-modules": "clear && npm run build && ./bin/hoobs --debug --ignore-modules",
+        "debug:no-build:ignore-modules": "clear && ./bin/hoobs --debug --ignore-modules"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.1.18",
