@@ -12,7 +12,7 @@
             </div>
             <router-link v-if="user.admin" to="/config/advanced" :class="section === 'advanced' ? 'active mobile-hide': 'mobile-hide'">{{ $t("advanced") }}</router-link>
             <router-link to="/config/backup" :class="section === 'backup' ? 'active': ''">{{ $t("backup") }}</router-link>
-            <router-link v-if="user.admin" to="/config/restore" :class="section === 'restore' ? 'active': ''">{{ $t("restore") }}</router-link>
+            <router-link v-if="!$server.docker && user.admin" to="/config/restore" :class="section === 'restore' ? 'active': ''">{{ $t("restore") }}</router-link>
             <div class="actions">
                 <div v-if="!working && loaded" v-on:click.stop="save()" class="button button-primary">{{ $t("save_changes") }}</div>
                 <div v-if="working" class="loading">
@@ -89,17 +89,17 @@
                         {{ $t("backup_message") }}
                     </p>
                     <div v-if="working" class="action">
-                        <div class="button disabled">{{ $t("system") }}</div>
+                        <div v-if="!$server.docker" class="button disabled">{{ $t("system") }}</div>
                         <div class="button disabled">{{ $t("config") }}</div>
                         <div class="button disabled">{{ $t("log") }}</div>
                     </div>
                     <div v-else class="action">
-                        <div v-on:click.stop="backup('system')" class="button">{{ $t("system") }}</div>
+                        <div v-if="!$server.docker" v-on:click.stop="backup('system')" class="button">{{ $t("system") }}</div>
                         <div v-on:click.stop="backup('config')" class="button">{{ $t("config") }}</div>
                         <div v-on:click.stop="backup('logs')" class="button">{{ $t("log") }}</div>
                     </div>
                 </div>
-                <div class="section" v-if="(section === 'restore' || screen.width <= 815) && user.admin">
+                <div class="section" v-if="!$server.docker && (section === 'restore' || screen.width <= 815) && user.admin">
                     <h2>{{ $t("restore") }}</h2>
                     <p>
                         {{ $t("restore_message") }}<br>
@@ -691,6 +691,7 @@
                     this.$cookie("weather_query", null, 0);
 
                     this.$store.commit("push", {
+                        id: `ui_${new Date().getTime()}_${Math.random().toString(36).substr(4, 5)}`,
                         type: "info",
                         time: new Date().getTime(),
                         title: "Configuration",

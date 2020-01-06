@@ -5,14 +5,14 @@
             <div v-for="(item, title) in info" :key="title">
                 <router-link :to="`/system/${title}`" :class="section === title ? 'active' : ''">{{ translate(title) }}</router-link>
             </div>
-            <router-link to="/system/filesystem" :class="section === 'filesystem' ? 'active' : ''">{{ translate("file_system") }}</router-link>
+            <router-link v-if="!$server.docker" to="/system/filesystem" :class="section === 'filesystem' ? 'active' : ''">{{ translate("file_system") }}</router-link>
             <router-link v-if="temp && (temp || {}).main >= 0" to="/system/temp" :class="section === 'temp' ? 'active' : ''">{{ translate("temperature") }}</router-link>
             <router-link v-if="user.admin" to="/system/terminal" class="mobile-hide">{{ $t("terminal") }}</router-link>
         </div>
         <div v-if="info" ref="content" class="content">
             <div v-if="section === 'software' || screen.width <= 815" class="system-content">
                 <h2>{{ $t("software") }}</h2>
-                <div class="update-card">
+                <div v-if="!$server.docker" class="update-card">
                     <b>HOOBS Core</b>
                     <span v-if="status">Current Version: {{ status["hoobs_version"] }}</span>
                     <div v-if="checking" class="update-actions">
@@ -49,7 +49,7 @@
                     </table>
                 </div>
             </div>
-            <div v-if="section === 'filesystem' || screen.width <= 815" class="system-content">
+            <div v-if="!$server.docker && (section === 'filesystem' || screen.width <= 815)" class="system-content">
                 <h2>{{ translate("file_system") }}</h2>
                 <table>
                     <tbody>

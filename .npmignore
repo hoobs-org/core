@@ -11,3 +11,7 @@ postcss.config.js
 TESTING.md
 vue.config.js
 install
+dockerfile
+.dockerignore
+default-docker.json
+bin/hoobs-docker

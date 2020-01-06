@@ -1,0 +1,29 @@
+{
+    "server": {
+        "port": 8080,
+        "origin": "*",
+        "autostart": 0,
+        "home_setup_id": "X-HM://",
+        "polling_seconds": 5,
+        "docker": true
+    },
+    "client": {
+        "default_route": "status",
+        "inactive_logoff": 30,
+        "theme": "hoobs-dark",
+        "locale": "en",
+        "temp_units": "fahrenheit",
+        "country_code": "US",
+        "postal_code": "94040"
+    },
+    "bridge": {
+        "name": "HOOBS",
+        "port": 51826,
+        "pin": "031-45-154"
+    },
+    "description": "",
+    "ports": {},
+    "plugins": [],
+    "accessories": [],
+    "platforms": []
+}

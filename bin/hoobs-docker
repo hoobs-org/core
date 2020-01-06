@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+process.title = "hoobs";
+
+const { realpathSync } = require("fs");
+const { join, dirname } = require("path");
+
+require(join(dirname(realpathSync(__filename)), "../lib/cli"))();

@@ -4,7 +4,7 @@
             <tbody v-if="running">
                 <tr v-for="(value, name) in info" :key="name">
                     <td>{{ $t(name) }}</td>
-                    <td v-if="name === 'hoobs_version' && updates.length > 0">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ updates[0].version }} {{ $t("update_available") }}</router-link></td>
+                    <td v-if="!$server.docker && name === 'hoobs_version' && updates.length > 0">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ updates[0].version }} {{ $t("update_available") }}</router-link></td>
                     <td v-else>{{ value }}</td>
                 </tr>
             </tbody>

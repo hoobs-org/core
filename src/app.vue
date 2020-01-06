@@ -65,11 +65,15 @@
             <div v-html="$theme.logo.about"></div>
             <div class="about-seperator"></div>
             <div class="about-title">
-                <div class="about-version">
+                <div v-if="$server.docker" class="about-version">
+                    <b>HOOBS Core</b><br>
+                    Version {{ status["hoobs_version"] }} (Docker)
+                </div>
+                <div v-else class="about-version">
                     <b>HOOBS Core</b><br>
                     Version {{ status["hoobs_version"] }}
                 </div>
-                <div class="button" v-on:click="checkUpdates()">{{ $t("check_for_updates") }}</div>
+                <div v-if="!$server.docker" class="button" v-on:click="checkUpdates()">{{ $t("check_for_updates") }}</div>
             </div>
             <br>
             <a v-if="$theme.homepage" :href="$theme.homepage.url" target="_blank">{{ $theme.homepage.name }}</a><br>

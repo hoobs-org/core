@@ -48,6 +48,8 @@
 
                 if (index > -1) {
                     this.$store.commit("dismiss", index);
+                } else {
+                    this.$store.commit("load", []);
                 }
             },
 
