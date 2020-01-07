@@ -74,5 +74,3 @@ Removing the local HOOBS container
 ```bash
 ~]% npm run hoobs docker remove
 ```
-
-> Note. You can rebuild the docker container without re-creating it. Simply stop it, build it and then start the container.
