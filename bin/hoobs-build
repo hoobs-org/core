@@ -8,7 +8,7 @@ NO_CACHE="false"
 INTERFACE_ONLY="false"
 DOCKER="false"
 UTILITY="false"
-TAG="dev"
+TAG="latest"
 ARCH="linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6"
 
 usage()
@@ -128,13 +128,13 @@ case $MODE in
                         chmod 755 ./builds/hoobs-core.tgz
                     fi
 
-                    START_ARGUMENTS="--platform $ARCH -t hoobs/hoobs:$TAG"
+                    START_ARGUMENTS="-t hoobs/hoobs:dev"
 
-                    if [[ "$NO_CACHE" = "false" ]]; then
+                    if [[ "$NO_CACHE" = "true" ]]; then
                         START_ARGUMENTS="$START_ARGUMENTS --no-cache"
                     fi
 
-                    docker buildx build $START_ARGUMENTS .
+                    docker image build $START_ARGUMENTS .
                 elif [[ "$DOCKER" = "false" && "$UTILITY" = "true" ]]; then
                     if [[ -f "../hoobs-upgrade/package.json" ]]; then
                         cd ../hoobs-upgrade/
@@ -210,7 +210,7 @@ case $MODE in
                 ;;
 
     "create")   if [[ "$DOCKER" = "true" ]]; then
-                    docker container run --publish 8080:8080 --detach --name hoobs hoobs/hoobs:$TAG
+                    docker container run --publish 8080:8080 --detach --name hoobs docker.io/hoobs/hoobs:dev
                 else
                     usage
                 fi
