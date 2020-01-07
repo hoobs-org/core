@@ -5,6 +5,7 @@ DEBUG="false"
 BUILD="true"
 MODULES="true"
 NO_CACHE="false"
+INTERFACE_ONLY="false"
 DOCKER="false"
 TAG="dev"
 ARCH="linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6"
@@ -12,7 +13,7 @@ ARCH="linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6"
 usage()
 {
     echo ""
-    echo "help: hoobs-build [command] [-d | --debug] [--no-build] [--ignore-modules] [-t | --tag name]"
+    echo "help: hoobs-build [command] [-d | --debug] [--no-build] [--ignore-modules] [--interface-only] [-t | --tag name]"
     echo "    Display information about builtin commands."
     echo ""
     echo "    Installs HOOBS with prerequisites, including Node, NPM and Avachi."
@@ -22,8 +23,7 @@ usage()
     echo ""
     echo "    Commands:"
     echo "        start                            starts either a node instance"
-    echo "        interface                        builds the vue interface"
-    echo "        image                            builds the npm package"
+    echo "        build                            builds the npm package"
     echo "        publish                          publishes either the npm package or docker image"
     echo "        docker image                     builds the docker image"
     echo "        docker start                     starts the docker container"
@@ -37,6 +37,7 @@ usage()
     echo "        -n, --node [version]             the desired Node version"
     echo "        --no-build                       start HOOBS without building"
     echo "        --ignore-modules                 start HOOBS without copying node_modules"
+    echo "        --interface-only                 build only the Vue interface"
     echo "        --no-cache                       build docker image without the cache"
     echo "        -p, --platform [architecture]    build docker image without the cache"
     echo "        -h, --help                       displays this help menu"
@@ -48,56 +49,56 @@ usage()
 
 while [ "$1" != "" ]; do
     case $1 in
-        interface )         MODE="build"
-                            ;;
+        build )                     MODE="build"
+                                    ;;
 
-        image )             MODE="pack"
-                            ;;
+        publish )                   MODE="publish"
+                                    ;;
 
-        publish )           MODE="publish"
-                            ;;
+        start )                     MODE="start"
+                                    ;;
 
-        start )             MODE="start"
-                            ;;
+        stop )                      MODE="stop"
+                                    ;;
 
-        stop )              MODE="stop"
-                            ;;
+        create )                    MODE="create"
+                                    ;;
 
-        create )            MODE="create"
-                            ;;
+        remove )                    MODE="remove"
+                                    ;;
 
-        remove )            MODE="remove"
-                            ;;
+        docker )                    DOCKER="true"
+                                    ;;
 
-        docker )            DOCKER="true"
-                            ;;
+        -t | --tag)                 shift
+                                    TAG=$1
+                                    ;;
 
-        -t | --tag)         shift
-                            TAG=$1
-                            ;;
+        -p | --platform)            shift
+                                    ARCH=$1
+                                    ;;
 
-        -p | --platform)    shift
-                            ARCH=$1
-                            ;;
+        -d | --debug )              DEBUG="true"
+                                    ;;
 
-        -d | --debug )      DEBUG="true"
-                            ;;
+        -n | --no-build )           BUILD="false"
+                                    ;;
 
-        --no-build )        BUILD="false"
-                            ;;
+        -c | --no-cache )           NO_CACHE="true"
+                                    ;;
 
-        --no-cache )        NO_CACHE="true"
-                            ;;
+        -i | --interface-only )     INTERFACE_ONLY="true"
+                                    ;;
 
-        --ignore-modules )  MODULES="false"
-                            ;;
+        -m | --ignore-modules )     MODULES="false"
+                                    ;;
 
-        -h | --help )       usage
-                            exit
-                            ;;
+        -h | --help )               usage
+                                    exit
+                                    ;;
 
-        * )                 usage
-                            exit
+        * )                         usage
+                                    exit
     esac
 
     shift
@@ -108,15 +109,6 @@ cd ../
 
 case $MODE in
     "build")    if [[ "$DOCKER" = "true" ]]; then
-                    usage
-                    exit
-                else
-                    vue-cli-service build --modern
-                fi
-
-                ;;
-
-    "pack")     if [[ "$DOCKER" = "true" ]]; then
                     if [[ "$BUILD" = "true" ]]; then
                         npm pack
                         rm -f ./builds/hoobs-core.tgz
@@ -132,10 +124,14 @@ case $MODE in
 
                     docker buildx build $START_ARGUMENTS .
                 else
-                    npm pack
-                    rm -f ./builds/hoobs-core.tgz
-                    mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz
-                    chmod 755 ./builds/hoobs-core.tgz
+                    if [[ "$INTERFACE_ONLY" = "true" ]]; then
+                        vue-cli-service build --modern
+                    else
+                        npm pack
+                        rm -f ./builds/hoobs-core.tgz
+                        mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz
+                        chmod 755 ./builds/hoobs-core.tgz
+                    fi
                 fi
 
                 ;;
