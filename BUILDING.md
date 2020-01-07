@@ -1,6 +1,12 @@
 # Building HOOBS
 This is the process used to build HOOBS from source.
 
+HOOBS uses a build script for the many parts of the build process. To view the the options, run this command.
+
+```bash
+~]% npm run hoobs --help
+```
+
 ## HOOBS Core
 First you need to build and pack the build
 
@@ -11,7 +17,7 @@ First you need to build and pack the build
 ## HOOBS Upgrade Utility
 This is the utility used to upgrade older versions of HOOBS or any install using UI-X
 
-First navigate to the homebridte-to-hoobs project root.
+First navigate to the homebridge-to-hoobs project root.
 
 Now build and pack.
 

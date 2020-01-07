@@ -7,6 +7,7 @@ MODULES="true"
 NO_CACHE="false"
 INTERFACE_ONLY="false"
 DOCKER="false"
+UTILITY="false"
 TAG="dev"
 ARCH="linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6"
 
@@ -16,27 +17,28 @@ usage()
     echo "help: hoobs-build [command] [-d | --debug] [--no-build] [--ignore-modules] [--interface-only] [-t | --tag name]"
     echo "    Display information about builtin commands."
     echo ""
-    echo "    Installs HOOBS with prerequisites, including Node, NPM and Avachi."
-    echo "    This script allows you to adjust the version of Node, using the"
-    echo "    -n (or --node) flag. It also allows you to adjust the version of"
-    echo "    NPM using -m (or --npm) flag."
+    echo "    This is used to build the different parts of HOOBS including the core,"
+    echo "    Docker image and the upgrade utility."
     echo ""
     echo "    Commands:"
-    echo "        start                            starts either a node instance"
-    echo "        build                            builds the npm package"
-    echo "        publish                          publishes either the npm package or docker image"
-    echo "        docker image                     builds the docker image"
+    echo "        start                            starts the core locally"
+    echo "        build                            builds the core npm package"
+    echo "        publish                          publishes the core to npm"
+    echo "        docker build                     builds the docker image"
     echo "        docker start                     starts the docker container"
     echo "        docker stop                      stops the docker container"
     echo "        docker create                    creates the docker container"
     echo "        docker remove                    removes the docker container"
+    echo "        docker publish                   publishes the docker image to docker hub"
+    echo "        utility build                    builds the upgrade utility"
+    echo "        utility publish                  publishes the upgrade utility to npm"
     echo ""
     echo "    Options:"
-    echo "        -d, --debug                      start HOOBS in debug mode"
+    echo "        -d, --debug                      start in debug mode"
     echo "        -t, --tag [name]                 set tag name for docker"
     echo "        -n, --node [version]             the desired Node version"
-    echo "        --no-build                       start HOOBS without building"
-    echo "        --ignore-modules                 start HOOBS without copying node_modules"
+    echo "        --no-build                       start without building"
+    echo "        --ignore-modules                 start without copying node_modules"
     echo "        --interface-only                 build only the Vue interface"
     echo "        --no-cache                       build docker image without the cache"
     echo "        -p, --platform [architecture]    build docker image without the cache"
@@ -45,6 +47,14 @@ usage()
     echo "    Returns:"
     echo "        Returns success unless the install fails."
     echo ""
+}
+
+utility()
+{
+    echo "You need to clone the \"hoobs-upgrade\" repository at the same level as \"hoobs-core\"."
+    echo "Run these commands."
+    echo "    cd ../"
+    echo "    git clone https://github.com/hoobs-org/hoobs-upgrade.git"
 }
 
 while [ "$1" != "" ]; do
@@ -68,6 +78,9 @@ while [ "$1" != "" ]; do
                                     ;;
 
         docker )                    DOCKER="true"
+                                    ;;
+
+        utility )                   UTILITY="true"
                                     ;;
 
         -t | --tag)                 shift
@@ -108,7 +121,7 @@ cd "$(dirname "$0")"
 cd ../
 
 case $MODE in
-    "build")    if [[ "$DOCKER" = "true" ]]; then
+    "build")    if [[ "$DOCKER" = "true" && "$UTILITY" = "false" ]]; then
                     if [[ "$BUILD" = "true" ]]; then
                         npm pack
                         rm -f ./builds/hoobs-core.tgz
@@ -123,7 +136,18 @@ case $MODE in
                     fi
 
                     docker buildx build $START_ARGUMENTS .
-                else
+                elif [[ "$DOCKER" = "false" && "$UTILITY" = "true" ]]; then
+                    if [[ -f "../hoobs-upgrade/package.json" ]]; then
+                        cd ../hoobs-upgrade/
+
+                        npm pack
+                        rm -f ./builds/homebridge-to-hoobs.tgz
+                        mv ./homebridge-to-hoobs-*.tgz ./builds/homebridge-to-hoobs.tgz
+                        chmod 755 ./builds/homebridge-to-hoobs.tgz
+                    else
+                        utility
+                    fi
+                elif [[ "$DOCKER" = "false" && "$UTILITY" = "false" ]]; then
                     if [[ "$INTERFACE_ONLY" = "true" ]]; then
                         vue-cli-service build --modern
                     else
@@ -132,11 +156,13 @@ case $MODE in
                         mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz
                         chmod 755 ./builds/hoobs-core.tgz
                     fi
+                else
+                    usage
                 fi
 
                 ;;
 
-    "publish")  if [[ "$DOCKER" = "true" ]]; then
+    "publish")  if [[ "$DOCKER" = "true" && "$UTILITY" = "false" ]]; then
                     docker login
 
                     if [[ "$BUILD" = "true" ]]; then
@@ -154,7 +180,22 @@ case $MODE in
                     if [[ "$CONFIRM" = "yes" ]]; then
                         docker buildx build --no-cache --platform $ARCH -t hoobs/hoobs:$TAG --push .
                     fi
-                else
+                elif [[ "$DOCKER" = "false" && "$UTILITY" = "true" ]]; then
+                    if [[ -f "../hoobs-upgrade/package.json" ]]; then
+                        cd ../hoobs-upgrade/
+
+                        CONFIRM=""
+
+                        echo "This will publish to NPM."
+                        read -p "Type \"yes\" to continue: " CONFIRM
+
+                        if [[ "$CONFIRM" = "yes" ]]; then
+                            npm publish
+                        fi
+                    else
+                        utility
+                    fi
+                elif [[ "$DOCKER" = "false" && "$UTILITY" = "false" ]]; then
                     CONFIRM=""
 
                     echo "This will publish to NPM."
@@ -163,6 +204,7 @@ case $MODE in
                     if [[ "$CONFIRM" = "yes" ]]; then
                         npm publish --access public
                     fi
+                else
                 fi
 
                 ;;
@@ -171,7 +213,6 @@ case $MODE in
                     docker container run --publish 8080:8080 --detach --name hoobs hoobs/hoobs:$TAG
                 else
                     usage
-                    exit
                 fi
 
                 ;;
@@ -180,7 +221,6 @@ case $MODE in
                     docker container rm --force hoobs
                 else
                     usage
-                    exit
                 fi
 
                 ;;
@@ -222,11 +262,10 @@ case $MODE in
                     docker container stop hoobs
                 else
                     usage
-                    exit
                 fi
 
                 ;;
 
     * )         usage
-                exit
+                ;;
 esac
