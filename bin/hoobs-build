@@ -14,7 +14,7 @@ ARCH="linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6"
 usage()
 {
     echo ""
-    echo "help: hoobs-build [command] [-d | --debug] [--no-build] [--ignore-modules] [--interface-only] [-t | --tag name]"
+    echo "help: npm run hoobs [command] [-d | --debug] [--no-build] [--ignore-modules] [--interface-only] [-t | --tag name]"
     echo "    Display information about builtin commands."
     echo ""
     echo "    This is used to build the different parts of HOOBS including the core,"
