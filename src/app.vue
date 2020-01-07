@@ -126,7 +126,8 @@
                     "system-load",
                     "weather",
                     "favorite-accessories",
-                    "system-info"
+                    "system-info",
+                    "log"
                 ],
                 selected: []
             }
@@ -321,6 +322,9 @@
 
                     case "system-info":
                         return this.$t("system_info");
+
+                    case "log":
+                        return this.$t("log");
                 }
 
                 return item;
@@ -332,7 +336,7 @@
                         return {
                             "x": 0,
                             "y": 0,
-                            "w": 2,
+                            "w": 3,
                             "h": 7,
                             "i": "0",
                             "component": "setup-pin"
@@ -340,9 +344,9 @@
 
                     case "system-load":
                         return {
-                            "x": 2,
+                            "x": 3,
                             "y": 0,
-                            "w": 10,
+                            "w": 9,
                             "h": 7,
                             "i": "1",
                             "component": "system-load"
@@ -377,6 +381,16 @@
                             "h": 15,
                             "i": "4",
                             "component": "system-info"
+                        };
+
+                    case "log":
+                        return {
+                            "x": 0,
+                            "y": 0,
+                            "w": 7,
+                            "h": 15,
+                            "i": "5",
+                            "component": "log"
                         };
                 }
 

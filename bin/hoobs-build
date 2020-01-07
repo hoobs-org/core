@@ -14,7 +14,7 @@ ARCH="linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6"
 usage()
 {
     echo ""
-    echo "help: npm run hoobs [command] [-d | --debug] [--no-build] [--ignore-modules] [--interface-only] [-t | --tag name]"
+    echo "help: npm run hoobs [command] -- [-d | --debug] [-n | --no-build] [-m | --ignore-modules] [-t | --tag name]"
     echo "    Display information about builtin commands."
     echo ""
     echo "    This is used to build the different parts of HOOBS including the core,"
@@ -36,11 +36,10 @@ usage()
     echo "    Options:"
     echo "        -d, --debug                      start in debug mode"
     echo "        -t, --tag [name]                 set tag name for docker"
-    echo "        -n, --node [version]             the desired Node version"
-    echo "        --no-build                       start without building"
-    echo "        --ignore-modules                 start without copying node_modules"
-    echo "        --interface-only                 build only the Vue interface"
-    echo "        --no-cache                       build docker image without the cache"
+    echo "        -n, -no-build                       start without building"
+    echo "        -m, --ignore-modules                 start without copying node_modules"
+    echo "        -i, --interface-only                 build only the Vue interface"
+    echo "        -c, --no-cache                       build docker image without the cache"
     echo "        -p, --platform [architecture]    build docker image without the cache"
     echo "        -h, --help                       displays this help menu"
     echo ""
@@ -205,6 +204,7 @@ case $MODE in
                         npm publish --access public
                     fi
                 else
+                    usage
                 fi
 
                 ;;
@@ -229,10 +229,7 @@ case $MODE in
                     docker container start hoobs
                 else
                     if [[ "$BUILD" = "true" ]]; then
-                        npm pack
-                        rm -f ./builds/hoobs-core.tgz
-                        mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz
-                        chmod 755 ./builds/hoobs-core.tgz
+                        vue-cli-service build --modern
                     fi
 
                     START_ARGUMENTS=""

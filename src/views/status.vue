@@ -21,6 +21,7 @@
     import SystemLoad from "@/widgets/system-load.vue";
     import SystemInfo from "@/widgets/system-info.vue";
     import Weather from "@/widgets/weather.vue";
+    import Log from "@/widgets/log.vue";
 
     export default {
         name: "status",
@@ -32,7 +33,8 @@
             "setup-pin": SetupPIN,
             "system-load": SystemLoad,
             "system-info": SystemInfo,
-            "weather": Weather
+            "weather": Weather,
+            "log": Log
         },
 
         data() {
