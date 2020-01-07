@@ -220,7 +220,7 @@ install_node()
         "Linux")
             case $ARCH in
                 "x86_64")
-                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-x64.tar.gz
+                    curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-x64.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-x64.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-x64.tar.gz > /dev/null 2>&1
 
@@ -230,7 +230,7 @@ install_node()
                     ;;
 
                 "armv6l")
-                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv6l.tar.gz
+                    curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv6l.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-armv7l.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-armv7l.tar.gz > /dev/null 2>&1
 
@@ -240,7 +240,7 @@ install_node()
                     ;;
 
                 "armv7l")
-                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv7l.tar.gz
+                    curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv7l.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-armv7l.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-armv7l.tar.gz > /dev/null 2>&1
 
@@ -250,7 +250,7 @@ install_node()
                     ;;
 
                 "armv8l")
-                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-arm64.tar.gz
+                    curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-arm64.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-arm64.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-arm64.tar.gz > /dev/null 2>&1
 
@@ -262,7 +262,7 @@ install_node()
             ;;
 
         "Darwin")
-            curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-darwin-x64.tar.gz
+            curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-darwin-x64.tar.gz
             tar -xzf ./node-v$NODE_TARGET-linux-x64.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
             rm -f ./node-v$NODE_TARGET-linux-x64.tar.gz > /dev/null 2>&1
 
@@ -382,7 +382,7 @@ if [[ "$NODE_INSTALLED" = "false" || ( "$NODE_TARGET" != "" && "$NODE_VERSION" !
     if [[ "$ARCH" == "armv6l" && "$NODE_TARGET" > "10.17.0" ]]; then
         echo "Can Not Install Node"
         echo "------------------------------------------------------------"
-        echo "Node $NODE_VERSION is not supported on your system."
+        echo "Node $NODE_VERSION is not supported on your system.         "
         echo "------------------------------------------------------------"
     fi
 
@@ -434,7 +434,7 @@ if [[ "$HOOBS_INSTALLED" = "true" ]]; then
     if [[ "$OS" != "Darwin" ]]; then
         if command -v hoobs > /dev/null; then
             echo ""
-            echo "Restart HOOBS"
+            echo "Restarting HOOBS"
             echo "---------------------------------------------------------"
 
             hoobs switch hoobs
