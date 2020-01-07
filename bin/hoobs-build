@@ -7,6 +7,7 @@ MODULES="true"
 NO_CACHE="false"
 INTERFACE_ONLY="false"
 DOCKER="false"
+VOLUME="false"
 UTILITY="false"
 TAG="latest"
 ARCH="linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6"
@@ -24,22 +25,24 @@ usage()
     echo "        start                            starts the core locally"
     echo "        build                            builds the core npm package"
     echo "        publish                          publishes the core to npm"
-    echo "        docker build                     builds the docker image"
-    echo "        docker start                     starts the docker container"
-    echo "        docker stop                      stops the docker container"
-    echo "        docker create                    creates the docker container"
-    echo "        docker remove                    removes the docker container"
-    echo "        docker publish                   publishes the docker image to docker hub"
+    echo "        container build                  builds the docker image"
+    echo "        container start                  starts the docker container"
+    echo "        container stop                   stops the docker container"
+    echo "        container create                 creates the docker container"
+    echo "        container remove                 removes the docker container"
+    echo "        container publish                publishes the docker image to docker hub"
+    echo "        volume create                    creates the volume used by containers"
+    echo "        volume remove                    removes the container volume"
     echo "        utility build                    builds the upgrade utility"
     echo "        utility publish                  publishes the upgrade utility to npm"
     echo ""
     echo "    Options:"
     echo "        -d, --debug                      start in debug mode"
     echo "        -t, --tag [name]                 set tag name for docker"
-    echo "        -n, -no-build                       start without building"
-    echo "        -m, --ignore-modules                 start without copying node_modules"
-    echo "        -i, --interface-only                 build only the Vue interface"
-    echo "        -c, --no-cache                       build docker image without the cache"
+    echo "        -n, -no-build                    start without building"
+    echo "        -m, --ignore-modules             start without copying node_modules"
+    echo "        -i, --interface-only             build only the Vue interface"
+    echo "        -c, --no-cache                   build docker image without the cache"
     echo "        -p, --platform [architecture]    build docker image without the cache"
     echo "        -h, --help                       displays this help menu"
     echo ""
@@ -76,7 +79,10 @@ while [ "$1" != "" ]; do
         remove )                    MODE="remove"
                                     ;;
 
-        docker )                    DOCKER="true"
+        container )                 DOCKER="true"
+                                    ;;
+
+        volume )                    VOLUME="true"
                                     ;;
 
         utility )                   UTILITY="true"
@@ -209,16 +215,20 @@ case $MODE in
 
                 ;;
 
-    "create")   if [[ "$DOCKER" = "true" ]]; then
-                    docker container run --publish 8080:8080 --detach --name hoobs docker.io/hoobs/hoobs:dev
+    "create")   if [[ "$DOCKER" = "true" && "$VOLUME" = "false" ]]; then
+                    docker container run --publish 8080:8080 --detach --mount source=hoobs,target=/hoobs --name hoobs docker.io/hoobs/hoobs:dev
+                elif [[ "$DOCKER" = "false" && "$VOLUME" = "true" ]]; then
+                    docker volume create hoobs
                 else
                     usage
                 fi
 
                 ;;
 
-    "remove")   if [[ "$DOCKER" = "true" ]]; then
+    "remove")   if [[ "$DOCKER" = "true" && "$VOLUME" = "false" ]]; then
                     docker container rm --force hoobs
+                elif [[ "$DOCKER" = "false" && "$VOLUME" = "true" ]]; then
+                    docker volume rm hoobs
                 else
                     usage
                 fi
