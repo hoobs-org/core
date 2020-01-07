@@ -41,7 +41,7 @@
                         <span v-bind:class="activeIcon('users')">people</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('users')">{{ routeName('users') }}</span>
                     </router-link>
-                    <router-link :to="defaultRoute === 'plugins' ? '/' : '/plugins'" @click.native="hide('nav')" class="mobile-hide">
+                    <router-link :to="defaultRoute === 'plugins' ? '/' : '/plugins'" @click.native="hide('nav')">
                         <span v-bind:class="activeIcon('plugins', 'plugin', 'search')">extension</span>
                         <span v-if="visible['nav']" v-bind:class="activeLink('plugins', 'plugin', 'search')">{{ routeName('plugins') }}</span>
                     </router-link>

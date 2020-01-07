@@ -1,6 +1,6 @@
 <template>
     <div id="config">
-        <div v-if="loaded" class="info mobile-hide">
+        <div v-if="loaded" class="info">
             <router-link to="/config/interface" :class="section === 'interface' ? 'active': ''">{{ $t("interface_settings") }}</router-link>
             <router-link to="/config/server" :class="section === 'server' ? 'active': ''">{{ $t("server_settings") }}</router-link>
             <router-link to="/config/ports" :class="section === 'ports' ? 'active': ''">{{ $t("port_ranges") }}</router-link>
@@ -83,7 +83,7 @@
                 <div v-if="ready && user.admin && section === 'advanced'" class="mobile-hide">
                     <json-editor name="config" :height="jsonHeight" :change="updateJson" :code="configCode()" />
                 </div>
-                <div class="section" v-if="section === 'backup' || screen.width <= 815">
+                <div class="section mobile-hide" v-if="section === 'backup' || screen.width <= 815">
                     <h2>{{ $t("backup") }}</h2>
                     <p>
                         {{ $t("backup_message") }}
@@ -99,7 +99,7 @@
                         <div v-on:click.stop="backup('logs')" class="button">{{ $t("log") }}</div>
                     </div>
                 </div>
-                <div class="section" v-if="!$server.docker && (section === 'restore' || screen.width <= 815) && user.admin">
+                <div class="section mobile-hide" v-if="!$server.docker && (section === 'restore' || screen.width <= 815) && user.admin">
                     <h2>{{ $t("restore") }}</h2>
                     <p>
                         {{ $t("restore_message") }}<br>
@@ -900,6 +900,10 @@
     }
 
     @media (min-width: 300px) and (max-width: 815px) {
+        #config .info {
+            display: none;
+        }
+
         #config .content .section {
             max-width: unset;
         }

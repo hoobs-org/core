@@ -379,6 +379,12 @@
         font-size: 12px;
         color: var(--title-text);
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #plugin .info {
+            display: none;
+        }
+    }
 </style>
 
 <style>

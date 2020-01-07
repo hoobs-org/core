@@ -227,11 +227,13 @@
         display: flex;
         overflow: hidden;
     }
+
     #system .info {
         width: 230px;
         padding: 20px 0 20px 20px;
         overflow: auto;
     }
+
     #system .info a,
     #system .info a:link,
     #system .info a:active,
@@ -242,13 +244,16 @@
         text-decoration: none;
         display: block;
     }
+
     #system .info a:hover {
         color: var(--text-dark);
     }
+
     #system .info .active {
         font-weight: bold;
         color: var(--title-text) !important;
     }
+
     #system .content {
         flex: 1;
         padding: 20px;
@@ -256,11 +261,13 @@
         flex-direction: column;
         overflow: auto;
     }
+
     #system .system-content {
         width: 100%;
         max-width: 780px;
         margin: 0;
     }
+
     #system .update-card {
         padding: 20px;
         display: flex;
@@ -271,12 +278,15 @@
         color: var(--text) !important;
         margin: 10px 0;
     }
+
     #system .update-card .update-actions {
         margin: 20px 0 0 0;
     }
+
     #system .update-card .update-actions .button {
         margin: 10px 10px 0 0;
     }
+
     #system h2 {
         margin: 20px 0 5px 0;
         padding: 0;
@@ -284,28 +294,34 @@
         font-size: 22px;
         color: var(--title-text);
     }
+
     #system  h2:first-child {
         margin: 0 0 5px 0;
     }
+
     #system .system-content table {
         width: 100%;
         border-spacing: 0;
         margin: 0 0 30px 0;
     }
+
     #system .system-content table tr th {
         padding: 10px;
         text-align: left;
         border-bottom: 2px var(--border-dark) solid;
         color: var(--pin-color);
     }
+
     #system .system-content table tr td {
         padding: 10px;
         text-align: left;
         border-bottom: 1px var(--border) solid;
     }
+
     #system .system-content table tr:last-child td {
         border-bottom: 0 none;
     }
+
     #system .system-content table .empty {
         padding: 30px;
         text-align: center;
@@ -314,18 +330,22 @@
         #system .info {
             display: none;
         }
+
         #system .system-content table {
             margin: 0 20px 30px 0;
         }
+
         #system .system-content table tr {
             display: flex;
             flex-direction: column;
         }
+
         #system .system-content table tr td {
             padding: 0 10px 10px 10px;
             min-width: unset !important;
             width: unset !important;
         }
+
         #system .system-content table tr td:first-child {
             border: 0 none;
             padding: 10px 10px 0 10px;

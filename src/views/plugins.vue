@@ -149,4 +149,10 @@
         padding: 20px;
         text-align: center;
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #plugins .info {
+            display: none;
+        }
+    }
 </style>
