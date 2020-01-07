@@ -308,7 +308,7 @@ while [ "$1" != "" ]; do
         -i | --instance ) INSTANCE_SUPPORT="true"
                           ;;
 
-        reset )           reset
+        --reset )         reset
                           exit
                           ;;
 

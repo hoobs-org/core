@@ -26,22 +26,7 @@
         "build": "vue-cli-service build --modern",
         "prepare": "npm run build",
         "postinstall": "bin/hoobs upgrade",
-        "pack": "npm pack && rm -f ./builds/hoobs-core.tgz && mv ./hoobs-hoobs-*.tgz ./builds/hoobs-core.tgz && chmod 755 ./builds/hoobs-core.tgz",
-        "pack:publish": "npm publish --access public",
-        "serve": "clear && npm run build && ./bin/hoobs",
-        "serve:no-build": "clear && ./bin/hoobs",
-        "serve:ignore-modules": "clear && npm run build && ./bin/hoobs --ignore-modules",
-        "serve:no-build:ignore-modules": "clear && ./bin/hoobs --ignore-modules",
-        "docker:build": "npm run build && docker buildx build --no-cache --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 -t hoobs/hoobs:dev .",
-        "docker:publish": "docker buildx build --no-cache --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 -t hoobs/hoobs:$npm_package_version --push .",
-        "docker:create": "docker container run --publish 8080:8080 --detach --name hoobs hoobs/hoobs:dev",
-        "docker:start": "docker container start hoobs",
-        "docker:stop": "docker container stop hoobs",
-        "docker:remove": "docker container rm --force hoobs",
-        "debug": "clear && npm run build && ./bin/hoobs --debug",
-        "debug:no-build": "clear && ./bin/hoobs --debug",
-        "debug:ignore-modules": "clear && npm run build && ./bin/hoobs --debug --ignore-modules",
-        "debug:no-build:ignore-modules": "clear && ./bin/hoobs --debug --ignore-modules"
+        "hoobs": "bin/hoobs-build"
     },
     "dependencies": {
         "@hoobs/homebridge": "^3.1.18",

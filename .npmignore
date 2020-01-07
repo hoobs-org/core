@@ -12,7 +12,8 @@ TESTING.md
 vue.config.js
 install
 docker
-dockerfile
+Dockerfile
 .dockerignore
 default-docker.json
 bin/hoobs-docker
+bin/hoobs-build
