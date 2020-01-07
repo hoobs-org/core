@@ -11,6 +11,7 @@ postcss.config.js
 TESTING.md
 vue.config.js
 install
+docker
 dockerfile
 .dockerignore
 default-docker.json
