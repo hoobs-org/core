@@ -34,9 +34,6 @@ if [[ "$OS" != "Linux" || "$ARCH" != "armv7l" || "$PACKAGE_MNGR" != "apt" ]]; th
     exit
 fi
 
-apt-get update
-apt-get install -y libx264-dev
-
 echo "Installing FFMPEG"
 
 curl -ssl -O https://github.com/hoobs-org/hoobs-gen/raw/master/stage4/00-ffmeg/files/ffmpeg.tar.gz
