@@ -11,9 +11,11 @@ postcss.config.js
 TESTING.md
 vue.config.js
 install
+install-ffmpeg
 docker
 Dockerfile
 .dockerignore
 default-docker.json
 bin/hoobs-docker
 bin/hoobs-build
+notes
