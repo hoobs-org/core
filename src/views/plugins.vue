@@ -6,11 +6,17 @@
             <router-link v-if="user.admin" v-on:click="clearSearch()" to="/plugins/search">{{ $t("search") }}</router-link>
         </div>
         <div v-if="loaded && installed.length === 0" class="content">
-            <div class="empty">{{ $t("no_plugins") }}</div>
+            <div class="empty mobile-hide">{{ $t("no_plugins") }}</div>
+            <div class="mobile-show">
+                <router-link v-if="user.admin" v-on:click="clearSearch()" to="/plugins/search" class="button button-primary">{{ $t("add") }}</router-link>
+            </div>
         </div>
         <div v-else class="content">
             <div v-for="(plugin, index) in installed" :key="`plugin-${index}`">
                 <plugin-list v-if="user.admin || plugin.scope === 'hoobs'" :plugin="plugin" :oninstall="oninstall" :onuninstall="onuninstall" :onupdate="onupdate" />
+            </div>
+            <div class="mobile-show">
+                <router-link v-if="user.admin" v-on:click="clearSearch()" to="/plugins/search" class="button button-primary">{{ $t("add") }}</router-link>
             </div>
         </div>
     </div>

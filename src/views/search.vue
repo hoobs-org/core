@@ -278,4 +278,10 @@
         padding: 20px;
         text-align: center;
     }
+
+    @media (min-width: 300px) and (max-width: 815px) {
+        #search .info {
+            display: none;
+        }
+    }
 </style>
