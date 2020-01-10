@@ -231,8 +231,8 @@ install_node()
 
                 "armv6l")
                     curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv6l.tar.gz
-                    tar -xzf ./node-v$NODE_TARGET-linux-armv7l.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
-                    rm -f ./node-v$NODE_TARGET-linux-armv7l.tar.gz > /dev/null 2>&1
+                    tar -xzf ./node-v$NODE_TARGET-linux-armv6l.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
+                    rm -f ./node-v$NODE_TARGET-linux-armv6l.tar.gz > /dev/null 2>&1
 
                     npm config set -g prefix $NPM_PREFIX
                     npm install -g npm@$NPM_TARGET
@@ -263,8 +263,8 @@ install_node()
 
         "Darwin")
             curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-darwin-x64.tar.gz
-            tar -xzf ./node-v$NODE_TARGET-linux-x64.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
-            rm -f ./node-v$NODE_TARGET-linux-x64.tar.gz > /dev/null 2>&1
+            tar -xzf ./node-v$NODE_TARGET-darwin-x64.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
+            rm -f ./node-v$NODE_TARGET-darwin-x64.tar.gz > /dev/null 2>&1
 
             npm config set -g prefix $NPM_PREFIX
             npm install -g npm@$NPM_TARGET
