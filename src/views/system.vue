@@ -326,6 +326,7 @@
         padding: 30px;
         text-align: center;
     }
+
     @media (min-width: 300px) and (max-width: 815px) {
         #system .info {
             display: none;
