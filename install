@@ -316,11 +316,11 @@ while [ "$1" != "" ]; do
                           NODE_TARGET=$1
 
                           if [[ "$NODE_TARGET" == "stable" ]]; then
-                              NODE_TARGET="10.17.0"
+                              NODE_TARGET="10.18.0"
                           elif [[ "$NODE_TARGET" == "lts" ]]; then
-                              NODE_TARGET="12.14.0"
+                              NODE_TARGET="12.14.1"
                           elif [[ "$NODE_TARGET" == "latest" ]]; then
-                              NODE_TARGET="13.5.0"
+                              NODE_TARGET="13.6.0"
                           fi
 
                           ;;
@@ -370,7 +370,7 @@ elif [[ "$OS" == "Darwin" ]]; then
 
     exit
 elif [[ "$NODE_TARGET" == "" ]]; then
-    NODE_TARGET="10.17.0"
+    NODE_TARGET="10.18.0"
     NPM_TARGET="6.11.3"
 fi
 
@@ -379,7 +379,7 @@ echo "Updating Repositories"
 install_prequsits
 
 if [[ "$NODE_INSTALLED" = "false" || ( "$NODE_TARGET" != "" && "$NODE_VERSION" != "$NODE_TARGET" ) ]]; then
-    if [[ "$ARCH" == "armv6l" && "$NODE_TARGET" > "10.17.0" ]]; then
+    if [[ "$ARCH" == "armv6l" && "$NODE_TARGET" > "10.18.0" ]]; then
         echo "Can Not Install Node"
         echo "------------------------------------------------------------"
         echo "Node $NODE_VERSION is not supported on your system.         "
@@ -405,18 +405,20 @@ fi
 
 clear_npm_cache
 
-if [[ "$UI_X_INSTALLED" = "true" ]]; then
+if [[ "$UI_X_INSTALLED" = "true" && "$NODE_TARGET" != "" ]]; then
     npm uninstall -g homebridge-config-ui-x
     npm install -g --unsafe-perm homebridge-config-ui-x
 fi
 
 if [[ "$HOOBS_INSTALLED" = "true" ]]; then
-    npm uninstall -g @hoobs/hoobs
+    if [[ "$NODE_TARGET" != "" ]]; then
+        npm uninstall -g @hoobs/hoobs
 
-    if [[ "$CORE_FILE" != "" ]]; then
-        npm install -g --unsafe-perm "$CORE_FILE"
-    else
-        npm install -g --unsafe-perm @hoobs/hoobs
+        if [[ "$CORE_FILE" != "" ]]; then
+            npm install -g --unsafe-perm "$CORE_FILE"
+        else
+            npm install -g --unsafe-perm @hoobs/hoobs
+        fi
     fi
 
     for f in /home/*;
