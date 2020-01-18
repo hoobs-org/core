@@ -69,14 +69,19 @@ get_os()
 
 get_node()
 {
+    NODE_INSTALLED="false"
+    NODE_VERSION=""
+    NODE_PREFIX="/usr/local"
+
     if command -v node > /dev/null; then
         NODE_INSTALLED="true"
         NODE_VERSION=$(node -v)
         NODE_VERSION=${NODE_VERSION#"v"}
 
+        WORKING="$PATH"
         IFS=':'
 
-        read -ra ADDR <<< "$PATH"
+        read -ra ADDR <<< "$WORKING"
 
         for DIR in "${ADDR[@]}";
         do
@@ -88,23 +93,19 @@ get_node()
         done
 
         IFS=' '
-    else
-        NODE_INSTALLED="false"
-        NODE_VERSION=""
-        NODE_PREFIX=""
     fi
 }
 
 get_npm()
 {
+    NPM_INSTALLED="false"
+    NPM_VERSION=""
+    NPM_PREFIX="/usr/local"
+
     if command -v npm > /dev/null; then
         NPM_INSTALLED="true"
         NPM_VERSION=$(npm -v)
         NPM_PREFIX=$(npm get prefix)
-    else
-        NPM_INSTALLED="false"
-        NPM_VERSION=""
-        NPM_PREFIX=""
     fi
 }
 
@@ -159,7 +160,7 @@ install_prequsits()
             ;;
     esac
 
-    if [ "$SELINUX_INSTALLED" = "true" ]; then
+    if [[ "$SELINUX_INSTALLED" = "true" ]]; then
         setsebool -P httpd_can_network_connect 1
     fi
 }
@@ -208,19 +209,11 @@ install_node()
     get_node
     get_npm
 
-    if [ "$NODE_INSTALLED" = "true" ]; then
-        rm -f "$NODE_PREFIX/bin/node" > /dev/null 2>&1
-
-        unlink "$NODE_PREFIX/bin/nodejs" > /dev/null 2>&1
-        unlink "$NODE_PREFIX/bin/npm" > /dev/null 2>&1
-        unlink "$NODE_PREFIX/bin/npx" > /dev/null 2>&1
-    fi
-
     case $OS in
         "Linux")
             case $ARCH in
                 "x86_64")
-                    curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-x64.tar.gz
+                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-x64.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-x64.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-x64.tar.gz > /dev/null 2>&1
 
@@ -230,7 +223,7 @@ install_node()
                     ;;
 
                 "armv6l")
-                    curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv6l.tar.gz
+                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv6l.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-armv6l.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-armv6l.tar.gz > /dev/null 2>&1
 
@@ -240,7 +233,7 @@ install_node()
                     ;;
 
                 "armv7l")
-                    curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv7l.tar.gz
+                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv7l.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-armv7l.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-armv7l.tar.gz > /dev/null 2>&1
 
@@ -250,7 +243,7 @@ install_node()
                     ;;
 
                 "armv8l")
-                    curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-arm64.tar.gz
+                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-arm64.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-arm64.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-arm64.tar.gz > /dev/null 2>&1
 
@@ -262,7 +255,7 @@ install_node()
             ;;
 
         "Darwin")
-            curl -ssl -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-darwin-x64.tar.gz
+            curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-darwin-x64.tar.gz
             tar -xzf ./node-v$NODE_TARGET-darwin-x64.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
             rm -f ./node-v$NODE_TARGET-darwin-x64.tar.gz > /dev/null 2>&1
 
@@ -295,7 +288,7 @@ clear_npm_cache()
     fi
 }
 
-if [ "$(id -u)" != "0" ]; then
+if [[ "$(id -u)" != "0" ]]; then
 	usage
 	exit
 fi
@@ -315,9 +308,7 @@ while [ "$1" != "" ]; do
         -n | --node )     shift
                           NODE_TARGET=$1
 
-                          if [[ "$NODE_TARGET" == "stable" ]]; then
-                              NODE_TARGET="10.18.0"
-                          elif [[ "$NODE_TARGET" == "lts" ]]; then
+                          if [[ "$NODE_TARGET" == "lts" || "$NODE_TARGET" == "stable" ]]; then
                               NODE_TARGET="12.14.1"
                           elif [[ "$NODE_TARGET" == "latest" ]]; then
                               NODE_TARGET="13.6.0"
@@ -370,8 +361,8 @@ elif [[ "$OS" == "Darwin" ]]; then
 
     exit
 elif [[ "$NODE_TARGET" == "" ]]; then
-    NODE_TARGET="10.18.0"
-    NPM_TARGET="6.11.3"
+    NODE_TARGET="12.14.1"
+    NPM_TARGET="6.13.4"
 fi
 
 echo "Updating Repositories"
