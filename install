@@ -403,6 +403,12 @@ fi
 
 if [[ "$HOOBS_INSTALLED" = "true" ]]; then
     if [[ "$NODE_TARGET" != "" ]]; then
+        if [[ "$CORE_FILE" != "" ]]; then
+            npm install -g --unsafe-perm "$CORE_FILE"
+        else
+            npm install -g --unsafe-perm @hoobs/hoobs
+        fi
+
         npm uninstall -g @hoobs/hoobs
 
         if [[ "$CORE_FILE" != "" ]]; then
