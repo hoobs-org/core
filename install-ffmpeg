@@ -45,7 +45,7 @@ rm -f ./ffmpeg.tar.gz > /dev/null 2>&1
 
 echo "Configuring"
 
-libtool --finish /usr/local/lib
 ldconfig -n /usr/local/lib
+ldconfig
 
 echo "FFMPEG is installed"
