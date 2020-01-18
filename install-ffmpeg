@@ -35,7 +35,7 @@ if [[ "$OS" != "Linux" || "$ARCH" != "armv7l" || "$PACKAGE_MNGR" != "apt" ]]; th
 fi
 
 apt-get update	
-apt-get install -y libx264-dev
+apt-get install -y libtool libx264-dev
 
 echo "Installing FFMPEG"
 
@@ -45,6 +45,7 @@ rm -f ./ffmpeg.tar.gz > /dev/null 2>&1
 
 echo "Configuring"
 
-ldconfig
+libtool --finish /usr/local/lib
+ldconfig -n /usr/local/lib
 
 echo "FFMPEG is installed"
