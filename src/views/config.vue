@@ -381,13 +381,13 @@
                 this.configuration.platforms = this.$platforms;
 
                 if (this.configuration.accessories && Array.isArray(this.configuration.accessories)) {
-                    this.configuration.accessories = this.configuration.accessories.filter(p => p);
+                    this.configuration.accessories = this.configuration.accessories.filter(i => i);
                 } else {
                     this.configuration.accessories = [];
                 }
 
                 if (this.configuration.platforms && Array.isArray(this.configuration.platforms)) {
-                    this.configuration.platforms = this.configuration.platforms.filter(p => p);
+                    this.configuration.platforms = this.configuration.platforms.filter(i => i);
                 } else {
                     this.configuration.platforms = [];
                 }
@@ -626,8 +626,8 @@
                     bridge: this.configuration.bridge,
                     description: this.configuration.description,
                     ports: this.configuration.ports,
-                    accessories: this.configuration.accessories || [],
-                    platforms: this.configuration.platforms || []
+                    accessories: (this.configuration.accessories || []).filter(i => i),
+                    platforms: (this.configuration.platforms || []).filter(i => i)
                 }
 
                 if (!data.server.port || Number.isNaN(parseInt(data.server.port, 10)) || data.server.port < 1 || data.server.port > 65535) {
@@ -684,8 +684,8 @@
                         bridge: data.bridge,
                         description: data.description,
                         ports: data.ports,
-                        accessories: data.accessories || [],
-                        platforms: data.platforms || []
+                        accessories: (data.accessories || []).filter(i => i),
+                        platforms: (data.platforms || []).filter(i => i)
                     });
 
                     this.errors = [];
