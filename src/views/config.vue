@@ -380,6 +380,18 @@
                 this.configuration.accessories = this.$accessories;
                 this.configuration.platforms = this.$platforms;
 
+                if (this.configuration.accessories && Array.isArray(this.configuration.accessories)) {
+                    this.configuration.accessories = this.configuration.accessories.filter(p => p);
+                } else {
+                    this.configuration.accessories = [];
+                }
+
+                if (this.configuration.platforms && Array.isArray(this.configuration.platforms)) {
+                    this.configuration.platforms = this.configuration.platforms.filter(p => p);
+                } else {
+                    this.configuration.platforms = [];
+                }
+
                 this.plugins = await this.api.get("/plugins") || [];                 
 
                 this.loaded = true;
