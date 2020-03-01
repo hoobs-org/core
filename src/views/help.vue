@@ -63,7 +63,7 @@
                 <div class="button disabled">{{ $t("select_backup") }}</div>
             </div>
             <div v-else-if="!$server.docker && user.admin" class="help-actions">
-                <input type="file" ref="file" v-on:change="restore()" accept=".hbf" hidden />
+                <input type="file" ref="file" v-on:change="restore()" accept=".hbf,.hbfx" hidden />
                 <div v-on:click.stop="upload()" class="button">{{ $t("select_backup") }}</div>
             </div>
             <h2 v-if="!$server.docker && user.admin">{{ $t("factory_reset") }}</h2>

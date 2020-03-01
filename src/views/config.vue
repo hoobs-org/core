@@ -110,7 +110,7 @@
                         <div class="button disabled">{{ $t("config") }}</div>
                     </div>
                     <div v-else class="action">
-                        <input type="file" ref="hbf" v-on:change="restore('hbf')" accept=".hbf" hidden />
+                        <input type="file" ref="hbf" v-on:change="restore('hbf')" accept=".hbf,.hbfx" hidden />
                         <div v-on:click.stop="upload('hbf')" class="button">{{ $t("system") }}</div>
                         <input type="file" ref="cfg" v-on:change="restore('cfg')" accept=".json" hidden />
                         <div v-on:click.stop="upload('cfg')" class="button">{{ $t("config") }}</div>
