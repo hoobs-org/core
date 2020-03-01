@@ -65,7 +65,7 @@ module.exports = (mode, name, command) => {
                 if (!error) {
                     result.service = `hoobs.${result.name.replace(/[^a-zA-Z0-9]/gi, "").toLowerCase()}.service`;
         
-                    writeJson("config.json", result);
+                    writeJson(result.name.replace(/[^a-zA-Z0-9]/gi, "").toLowerCase(), "config.json", result);
         
                     await (require(join(root, "../scripts/prerequisites")))();
                     await (require(join(root, "../scripts/systemd")))(true, "instance", result.name, result.service, result.port, result.bridge);
@@ -283,7 +283,7 @@ const searchFile = function (filename, search) {
     });
 };
 
-const writeJson = function (filename, data) {
+const writeJson = function (name, filename, data) {
     if (!File.existsSync("/var/hoobs")) {
         File.mkdirSync("/var/hoobs");
         File.chmodSync("/var/hoobs", 0755);
@@ -294,10 +294,15 @@ const writeJson = function (filename, data) {
         File.chmodSync("/var/hoobs/.instance", 0755);
     }
 
-    if (File.existsSync(join("/var/hoobs/.instance/", filename))) {
-        File.unlinkSync(join("/var/hoobs/.instance/", filename));
+    if (!File.existsSync(`/var/hoobs/.instance/${name}`)) {
+        File.mkdirSync(`/var/hoobs/.instance/${name}`);
+        File.chmodSync(`/var/hoobs/.instance/${name}`, 0755);
     }
 
-    File.appendFileSync(join("/var/hoobs/.instance/", filename), JSON.stringify(data, null, 4));
-    File.chmodSync(join("/var/hoobs/.instance/", filename), 0755);
+    if (File.existsSync(join(`/var/hoobs/.instance/${name}/`, filename))) {
+        File.unlinkSync(join(`/var/hoobs/.instance/${name}/`, filename));
+    }
+
+    File.appendFileSync(join(`/var/hoobs/.instance/${name}/`, filename), JSON.stringify(data, null, 4));
+    File.chmodSync(join(`/var/hoobs/.instance/${name}/`, filename), 0755);
 };

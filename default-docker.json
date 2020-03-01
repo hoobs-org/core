@@ -4,8 +4,7 @@
         "origin": "*",
         "autostart": 0,
         "home_setup_id": "X-HM://",
-        "polling_seconds": 5,
-        "docker": true
+        "polling_seconds": 5
     },
     "client": {
         "default_route": "status",
