@@ -1,6 +1,6 @@
 FROM node:12.16.1-alpine3.10
 
-RUN apk add --no-cache --virtual .gyp-deps python make gcc g++ git avahi-compat-libdns_sd avahi-dev dbus iputils nano
+RUN apk add --no-cache --virtual .gyp-deps python make gcc g++ git avahi-compat-libdns_sd avahi-dev dbus iputils nano ffmpeg
 RUN chmod 4755 /bin/ping
 RUN mkdir /hoobs
 
