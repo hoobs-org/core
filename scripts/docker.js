@@ -143,14 +143,14 @@ module.exports = (debug) => {
                             throw new Error("Unable to start user mode");
                         }
 
-                        require("/hoobs/lib/cli")();
+                        require("/hoobs/lib/cli")(true);
                     });
                 });
             } else if (!stop) {
-                require("/hoobs/lib/cli")();
+                require("/hoobs/lib/cli")(true);
             }
         } else {
-            require("/hoobs/lib/cli")();
+            require("/hoobs/lib/cli")(true);
         }
     })();
 };

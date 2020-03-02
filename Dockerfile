@@ -22,4 +22,4 @@ RUN [ "${AVAHI:-1}" = "1" ] || (rm -rf /etc/services.d/avahi \
     /etc/services.d/dbus \
     /etc/cont-init.d/40-dbus-avahi)
 
-CMD [ "bin/hoobs -c" ]
+CMD [ "bin/hoobs" ]
