@@ -39,7 +39,7 @@ apt-get install -y libtool-bin libtool openssl libopus-dev libx264-dev libvpx-de
 
 echo "Installing FFMPEG"
 
-curl -k -O https://github.com/hoobs-org/hoobs-gen/raw/master/stage4/00-ffmeg/files/ffmpeg.tar.gz
+wget https://github.com/hoobs-org/hoobs-gen/raw/master/stage5/00-install-ffmpeg/files/ffmpeg.tar.gz
 tar -xzf ./ffmpeg.tar.gz -C /usr/local --strip-components=1 --no-same-owner > /dev/null 2>&1
 rm -f ./ffmpeg.tar.gz > /dev/null 2>&1
 
