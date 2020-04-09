@@ -64,4 +64,4 @@ accept the terms and conditions in full. Do not continue to use HOOBS™ website
 code (software) if you do not accept all of the terms and conditions stated in out terms and conditions 
 written in the Link below.
 
-Link to HOOBS™´s terms and contidions: [Link](https://support.hoobs.org/docs/5e858d770ab68b0344e872bc)
+Link to HOOBS™´s terms and conditions: [Link](https://support.hoobs.org/docs/5e858d770ab68b0344e872bc)
