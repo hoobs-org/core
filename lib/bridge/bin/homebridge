@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+// Copyright (C) 2020 Homebridge
+// Copyright (C) HOOBS
+
+process.title = "homebridge";
+
+const { realpathSync } = require("fs");
+const { join, dirname } = require("path");
+
+require(join(dirname(realpathSync(__filename)), "../cli"))();
