@@ -197,7 +197,7 @@ const getPluginDetails = function (storage, directory, name) {
                 Service,
                 Characteristic,
                 AccessoryLoader
-            } = require("@hoobs/hap");
+            } = require("hap-nodejs");
 
             const plugin = require(path);
 
@@ -252,7 +252,7 @@ const getPluginDetails = function (storage, directory, name) {
                 plugin.default(options);
             }
         } finally {
-            delete require.cache[require.resolve("@hoobs/hap")];
+            delete require.cache[require.resolve("hap-nodejs")];
             delete require.cache[require.resolve(path)];
         }
 
