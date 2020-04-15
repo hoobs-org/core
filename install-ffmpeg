@@ -1,5 +1,23 @@
 #!/bin/bash
 
+##################################################################################################
+# hoobs-core                                                                                     #
+# Copyright (C) 2020 HOOBS                                                                       #
+#                                                                                                #
+# This program is free software: you can redistribute it and/or modify                           #
+# it under the terms of the GNU General Public License as published by                           #
+# the Free Software Foundation, either version 3 of the License, or                              #
+# (at your option) any later version.                                                            #
+#                                                                                                #
+# This program is distributed in the hope that it will be useful,                                #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of                                 #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                  #
+# GNU General Public License for more details.                                                   #
+#                                                                                                #
+# You should have received a copy of the GNU General Public License                              #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.                          #
+##################################################################################################
+
 OS=""
 ARCH=""
 PACKAGE_MNGR=""
@@ -29,23 +47,26 @@ fi
 get_os
 get_package_manager
 
-if [[ "$OS" != "Linux" || "$ARCH" != "armv7l" || "$PACKAGE_MNGR" != "apt" ]]; then
-    echo "This version of FFMPEG can not be installed on this device"
-    exit
+if [[ "$OS" = "Linux" && "$PACKAGE_MNGR" = "apt" ]]; then
+    if [[ "$ARCH" = "armv7l" || "$ARCH" = "aarch64" ]]; then
+        apt-get update	
+        apt-get install -y libtool-bin libtool openssl libopus-dev libx264-dev libvpx-dev libvorbis-dev libtheora-dev libmp3lame-dev libfreetype6-dev libass-dev libspeex-dev libfontconfig-dev frei0r-plugins-dev libfribidi-dev librubberband-dev libsoxr-dev libvidstab-dev libwebp-dev libxml2-dev libxvidcore-dev
+
+        echo "Installing FFMPEG"
+
+        wget https://github.com/hoobs-org/hoobs-build/raw/master/stage7/00-ffmpeg/files/ffmpeg.tar.gz
+        tar -xzf ./ffmpeg.tar.gz -C /usr/local --strip-components=1 --no-same-owner > /dev/null 2>&1
+        rm -f ./ffmpeg.tar.gz > /dev/null 2>&1
+
+        echo "Configuring"
+
+        ldconfig -n /usr/local/lib
+        ldconfig
+
+        echo "FFMPEG is installed"
+        exit  
+    fi  
 fi
 
-apt-get update	
-apt-get install -y libtool-bin libtool openssl libopus-dev libx264-dev libvpx-dev libvorbis-dev libtheora-dev libmp3lame-dev libfreetype6-dev libass-dev libspeex-dev libfontconfig-dev frei0r-plugins-dev libfribidi-dev librubberband-dev libsoxr-dev libvidstab-dev libwebp-dev libxml2-dev libxvidcore-dev
-
-echo "Installing FFMPEG"
-
-wget https://github.com/hoobs-org/hoobs-build/raw/master/stage7/00-ffmpeg/files/ffmpeg.tar.gz
-tar -xzf ./ffmpeg.tar.gz -C /usr/local --strip-components=1 --no-same-owner > /dev/null 2>&1
-rm -f ./ffmpeg.tar.gz > /dev/null 2>&1
-
-echo "Configuring"
-
-ldconfig -n /usr/local/lib
-ldconfig
-
-echo "FFMPEG is installed"
+echo "This version of FFMPEG can not be installed on this device"
+exit
