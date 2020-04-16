@@ -20,10 +20,9 @@ const _ = require("lodash");
 
 const Ora = require("ora");
 const File = require("fs-extra");
-const Copy = require("recursive-copy");
-const Remove = require("rimraf");
 
-const { dirname, join, basename } = require("path");
+const { dirname, join } = require("path");
+const { execSync } = require("child_process");
 const { hashElement } = require("folder-hash");
 
 class Throbber {
@@ -134,36 +133,25 @@ module.exports = (debug) => {
                 await throbber.throb("Application");
 
                 if (File.existsSync("/hoobsdist")) {
-                    Remove.sync("/hoobs/dist");
+                    File.removeSync("/hoobs/dist");
                 }
 
                 if (File.existsSync("/hoobs/lib")) {
-                    Remove.sync("/hoobs/lib");
+                    File.removeSync("/hoobs/lib");
                 }
 
-                Copy(join(applicaiton, "dist"), "/hoobs/dist", {
-                    overwrite: true,
-                    dot: true,
-                    junk: false
-                }).on(Copy.events.COPY_FILE_START, async (data) => {
-                    await throbber.update(`Application: ${basename(data.src)}`, 0);
-                }).finally(() => {
-                    Copy(join(applicaiton, "lib"), "/hoobs/lib", {
-                        overwrite: true,
-                        dot: true,
-                        junk: false
-                    }).on(Copy.events.COPY_FILE_START, async (data) => {
-                        await throbber.update(`Application: ${basename(data.src)}`, 0);
-                    }).finally(async () => {
-                        await throbber.stop("Application");
+                await throbber.update("Application: Update", 0);
 
-                        if (!(await checksum(applicaiton))) {
-                            throw new Error("Unable to start user mode");
-                        }
+                File.copySync(join(applicaiton, "dist"), "/hoobs/dist");
+                File.copySync(join(applicaiton, "lib"), "/hoobs/lib");
 
-                        require("/hoobs/lib/cli")(true);
-                    });
-                });
+                await throbber.stop("Application");
+
+                if (!(await checksum(applicaiton))) {
+                    throw new Error("Unable to start user mode");
+                }
+
+                require("/hoobs/lib/cli")(true);
             } else if (!stop) {
                 require("/hoobs/lib/cli")(true);
             }
@@ -270,36 +258,37 @@ const setupUserMode = function (applicaiton, throbber) {
         await throbber.throb("Modules");
 
         if (File.existsSync("/hoobs/dist")) {
-            Remove.sync("/hoobs/dist");
+            File.removeSync("/hoobs/dist");
         }
 
         if (File.existsSync("/hoobs/lib")) {
-            Remove.sync("/hoobs/lib");
+            File.removeSync("/hoobs/lib");
         }
 
-        Copy(join(applicaiton, "node_modules"), "/hoobs/node_modules", {
-            overwrite: true,
-            dot: true,
-            junk: false
-        }).on(Copy.events.COPY_FILE_START, async (data) => {
-            await throbber.update(`Modules: ${basename(data.src)}`, 0);
-        }).finally(async () => {
-            if (File.existsSync("/hoobs/package-lock.json")) {
-                File.unlinkSync("/hoobs/package-lock.json");
-            }
+        await throbber.update(`Modules: Removing Package Lock`, 0);
 
-            if (File.existsSync("/hoobs/default.json")) {
-                File.unlinkSync("/hoobs/default.json");
-            }
+        if (File.existsSync("/hoobs/package-lock.json")) {
+            File.unlinkSync("/hoobs/package-lock.json");
+        }
 
-            await throbber.update("Modules: default.json", 100);
+        await throbber.update(`Modules: Updating`, 0);
 
-            File.copySync(join(applicaiton, "default.json"), "/hoobs/default.json");
-
-            await throbber.stop("Modules");
-
-            resolve();
+        execSync("npm install", {
+            cwd: "/hoobs",
+            stdio: ["ignore", "ignore", "ignore"]
         });
+
+        if (File.existsSync("/hoobs/default.json")) {
+            File.unlinkSync("/hoobs/default.json");
+        }
+
+        await throbber.update("Modules: default.json", 100);
+
+        File.copySync(join(applicaiton, "default.json"), "/hoobs/default.json");
+
+        await throbber.stop("Modules");
+
+        resolve();
     });
 };
 

@@ -18,7 +18,6 @@
 
 const Path = require("path");
 const File = require("fs-extra");
-const Remove = require("rimraf");
 const Process = require("child_process");
 
 module.exports = (enviornment) => {
@@ -49,11 +48,11 @@ module.exports = (enviornment) => {
         console.log("Removing Homebridge Accessory Cache");
 
         if (File.existsSync(Path.join(enviornment.storage, "accessories"))) {
-            Remove.sync(Path.join(enviornment.storage, "accessories"));
+            File.removeSync(Path.join(enviornment.storage, "accessories"));
         }
 
         if (File.existsSync(Path.join(enviornment.storage, "persist"))) {
-            Remove.sync(Path.join(enviornment.storage, "persist"));
+            File.removeSync(Path.join(enviornment.storage, "persist"));
         }
 
         console.log("Removing Unmanaged Files");

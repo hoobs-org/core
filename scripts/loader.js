@@ -21,10 +21,8 @@ const _ = require("lodash");
 const OS = require("os");
 const Ora = require("ora");
 const File = require("fs-extra");
-const Copy = require("recursive-copy");
-const Remove = require("rimraf");
 
-const { dirname, join, basename } = require("path");
+const { dirname, join } = require("path");
 const { spawn, execSync } = require("child_process");
 const { hashElement } = require("folder-hash");
 
@@ -174,46 +172,35 @@ module.exports = (debug, password, cpmod) => {
                 await throbber.throb("Application");
 
                 if (File.existsSync(join(root, "dist"))) {
-                    Remove.sync(join(root, "dist"));
+                    File.removeSync(join(root, "dist"));
                 }
 
                 if (File.existsSync(join(root, "lib"))) {
-                    Remove.sync(join(root, "lib"));
+                    File.removeSync(join(root, "lib"));
                 }
 
-                Copy(join(applicaiton, "dist"), join(root, "dist"), {
-                    overwrite: true,
-                    dot: true,
-                    junk: false
-                }).on(Copy.events.COPY_FILE_START, async (data) => {
-                    await throbber.update(`Application: ${basename(data.src)}`, 0);
-                }).finally(() => {
-                    Copy(join(applicaiton, "lib"), join(root, "lib"), {
-                        overwrite: true,
-                        dot: true,
-                        junk: false
-                    }).on(Copy.events.COPY_FILE_START, async (data) => {
-                        await throbber.update(`Application: ${basename(data.src)}`, 0);
-                    }).finally(async () => {
-                        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
-                            await throbber.update("Application: Restarting NGINX", 0);
+                await throbber.update("Application: Update", 0);
 
-                            await execSudo(password, [
-                                "systemctl",
-                                "restart",
-                                "nginx.service"
-                            ]);
-                        }
+                File.copySync(join(applicaiton, "dist"), join(root, "dist"));
+                File.copySync(join(applicaiton, "lib"), join(root, "lib"));
 
-                        await throbber.stop("Application");
+                if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
+                    await throbber.update("Application: Restarting NGINX", 0);
 
-                        if (!(await checksum(root, applicaiton))) {
-                            throw new Error("Unable to start user mode");
-                        }
+                    await execSudo(password, [
+                        "systemctl",
+                        "restart",
+                        "nginx.service"
+                    ]);
+                }
 
-                        require(join(root, "lib/cli"))();
-                    });
-                });
+                await throbber.stop("Application");
+
+                if (!(await checksum(root, applicaiton))) {
+                    throw new Error("Unable to start user mode");
+                }
+
+                require(join(root, "lib/cli"))();
             } else if (!stop) {
                 require(join(root, "lib/cli"))();
             }
@@ -428,11 +415,11 @@ const setupUserMode = function (root, applicaiton, cpmod, throbber) {
         await throbber.throb("Modules");
 
         if (File.existsSync(join(root, "dist"))) {
-            Remove.sync(join(root, "dist"));
+            File.removeSync(join(root, "dist"));
         }
 
         if (File.existsSync(join(root, "lib"))) {
-            Remove.sync(join(root, "lib"));
+            File.removeSync(join(root, "lib"));
         }
 
         if (cpmod) {
@@ -443,10 +430,6 @@ const setupUserMode = function (root, applicaiton, cpmod, throbber) {
             }
 
             await throbber.update(`Modules: Updating`, 0);
-
-            if (File.existsSync(join(root, "node_modules"))) {
-                Remove.sync(join(root, "node_modules"));
-            }
 
             execSync("npm install", {
                 cwd: root,
@@ -561,7 +544,7 @@ const migrate = async function (root, throbber) {
         await throbber.update("Migrating: accessories", 250);
 
         if (File.existsSync(join(root, "etc", "accessories"))) {
-            Remove.sync(join(root, "etc", "accessories"));
+            File.unlinkSync(join(root, "etc", "accessories"));
         }
 
         File.copySync("/var/hoobs/.migration/accessories", join(root, "etc", "accessories"));
@@ -571,7 +554,7 @@ const migrate = async function (root, throbber) {
         await throbber.update("Migrating: persist", 250);
 
         if (File.existsSync(join(root, "etc", "persist"))) {
-            Remove.sync(join(root, "etc", "persist"));
+            File.unlinkSync(join(root, "etc", "persist"));
         }
 
         File.copySync("/var/hoobs/.migration/persist", join(root, "etc", "persist"));
