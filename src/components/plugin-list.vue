@@ -134,16 +134,12 @@
                     this.working = true;
 
                     const restart = this.running;
+                    const results = await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
 
                     if (restart) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
-                    }
-
-                    const results = await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
-
-                    if (restart) {
                         await this.api.post("/service/start");
 
                         this.$store.commit("unlock");
@@ -165,15 +161,12 @@
 
                     const restart = this.running;
 
+                    await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}`);
+
                     if (restart) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
-                    }
-
-                    await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}`);
-
-                    if (restart) {
                         await this.api.post("/service/start");
 
                         this.$store.commit("unlock");
@@ -193,15 +186,12 @@
 
                     const restart = this.running;
 
+                    await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
+
                     if (restart) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
-                    }
-
-                    await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
-
-                    if (restart) {
                         await this.api.post("/service/start");
 
                         this.$store.commit("unlock");

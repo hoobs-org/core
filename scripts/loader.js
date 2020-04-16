@@ -124,7 +124,7 @@ module.exports = (debug, password, cpmod) => {
                 } else {
                     success = false;
 
-                    if (!File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
+                    if (!File.existsSync(join(root, "dist"))) {
                         stop = true;
 
                         console.log("---------------------------------------------------------");
@@ -145,7 +145,7 @@ module.exports = (debug, password, cpmod) => {
                 } else {
                     success = false;
 
-                    if (!File.existsSync(join(root, "lib")) || !File.existsSync(join(root, "dist"))) {
+                    if (!File.existsSync(join(root, "dist"))) {
                         stop = true;
 
                         console.log("---------------------------------------------------------");
@@ -175,17 +175,12 @@ module.exports = (debug, password, cpmod) => {
                     File.removeSync(join(root, "dist"));
                 }
 
-                if (File.existsSync(join(root, "lib"))) {
-                    File.removeSync(join(root, "lib"));
-                }
-
-                await throbber.update("Application: Update", 0);
+                await throbber.update("Application: Update", 100);
 
                 File.copySync(join(applicaiton, "dist"), join(root, "dist"));
-                File.copySync(join(applicaiton, "lib"), join(root, "lib"));
 
                 if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
-                    await throbber.update("Application: Restarting NGINX", 0);
+                    await throbber.update("Application: Restarting NGINX", 100);
 
                     await execSudo(password, [
                         "systemctl",
@@ -200,12 +195,12 @@ module.exports = (debug, password, cpmod) => {
                     throw new Error("Unable to start user mode");
                 }
 
-                require(join(root, "lib/cli"))();
+                require(join(applicaiton, "lib/cli"))();
             } else if (!stop) {
-                require(join(root, "lib/cli"))();
+                require(join(applicaiton, "lib/cli"))();
             }
         } else {
-            require(join(root, "lib/cli"))();
+            require(join(applicaiton, "lib/cli"))();
         }
     });
 };
@@ -225,11 +220,20 @@ const preparePackage = async function (root, executing, installed, throbber) {
 
     let plugins = [];
     let success = true;
+    let fix = false;
+
+    if (File.existsSync(join(root, "node_modules", "@hoobs", "hoobs"))) {
+        fix = true;
+    }
 
     if (File.existsSync("/var/hoobs/.migration/plugins.json")) {
         await throbber.update("Plugins: Migrating existing plugins", 250);
 
         plugins = tryParseFile("/var/hoobs/.migration/plugins.json", []);
+    }
+
+    if (installed.dependencies) {
+        installed.dependencies = {};
     }
 
     if (File.existsSync("/var/hoobs/.migration/dependencies.json")) {
@@ -267,6 +271,10 @@ const preparePackage = async function (root, executing, installed, throbber) {
                 await throbber.throb("Plugins");
 
                 success = false;
+            }
+
+            if (dep && !File.existsSync(join(root, "node_modules", dep))) {
+                fix = true;
             }
         }
 
@@ -311,6 +319,15 @@ const preparePackage = async function (root, executing, installed, throbber) {
             if (!(await npmInstall(root, plugins[i].name, plugins[i].version, throbber))) {
                 success = false;
             };
+        }
+
+        if (fix) {
+            await throbber.update("Plugins: Installing missing plugins", 100);
+
+            execSync("npm install --prefer-offline --no-audit --progress=true", {
+                cwd: root,
+                stdio: ["ignore", "ignore", "ignore"]
+            });
         }
     }
 
@@ -418,36 +435,11 @@ const setupUserMode = function (root, applicaiton, cpmod, throbber) {
             File.removeSync(join(root, "dist"));
         }
 
-        if (File.existsSync(join(root, "lib"))) {
-            File.removeSync(join(root, "lib"));
-        }
+        File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
 
-        if (cpmod) {
-            await throbber.update(`Modules: Removing Package Lock`, 100);
+        await throbber.stop("Modules");
 
-            if (File.existsSync(join(root, "package-lock.json"))) {
-                File.unlinkSync(join(root, "package-lock.json"));
-            }
-
-            await throbber.update(`Modules: Updating`, 100);
-            await throbber.stop("Modules");
-
-            execSync("npm install --prefer-offline --no-audit --progress=true", {
-                cwd: root,
-                stdio: ["inherit", "inherit", "inherit"]
-            });
-
-            if (File.existsSync(join(root, "default.json"))) {
-                File.unlinkSync(join(root, "default.json"));
-            }
-
-            File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
-            resolve();
-        } else {
-            await throbber.stop("Modules");
-
-            resolve();
-        }
+        resolve();
     });
 };
 
@@ -577,6 +569,9 @@ const npmInstall = function (root, name, version, throbber) {
     return new Promise((resolve) => {
         const proc = spawn("npm", [
             "install",
+            "--prefer-offline",
+            "--no-audit",
+            "--progress=true",
             "--unsafe-perm",
             `${name}${version && version !== "" ? `@${version}` : ""}`
         ], {
@@ -639,11 +634,11 @@ const execSudo = function(password, options) {
 };
 
 const checksum = async function(root, applicaiton) {
-    if (!File.existsSync(join(root, "dist"))) {
-        return false;
-    }
+    execSync(`rm -f ${join(root, "restore-*.zip")}`);
+    execSync(`rm -f ${join(root, "dist", "backup-*.hbf")}`);
+    execSync(`rm -f ${join(root, "dist", "backup-*.hbfx")}`);
 
-    if (!File.existsSync(join(root, "lib"))) {
+    if (!File.existsSync(join(root, "dist"))) {
         return false;
     }
 
@@ -655,26 +650,7 @@ const checksum = async function(root, applicaiton) {
         }
     };
 
-    const checksums = {
-        dist: {
-            local: await hashElement(join(root, "dist"), options),
-            source: await hashElement(join(applicaiton, "dist"), options)
-        },
-        lib: {
-            local: await hashElement(join(root, "lib"), options),
-            source: await hashElement(join(applicaiton, "lib"), options)
-        }
-    }
-
-    if (checksums.dist.local.hash.toString() !== checksums.dist.source.hash.toString()) {
-        return false;
-    }
-
-    if (checksums.lib.local.hash.toString() !== checksums.lib.source.hash.toString()) {
-        return false;
-    }
-
-    if (!File.existsSync(join(root, "node_modules", "zip-stream"))) {
+    if ((await hashElement(join(root, "dist"), options)).hash.toString() !== (await hashElement(join(applicaiton, "dist"), options)).hash.toString()) {
         return false;
     }
 
