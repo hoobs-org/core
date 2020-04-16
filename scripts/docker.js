@@ -107,7 +107,7 @@ module.exports = (debug) => {
             } else {
                 success = false;
 
-                if (!File.existsSync("/hoobs/lib") || !File.existsSync("/hoobs/dist")) {
+                if (!File.existsSync("/hoobs/dist")) {
                     stop = true;
 
                     console.log("---------------------------------------------------------");
@@ -136,14 +136,9 @@ module.exports = (debug) => {
                     File.removeSync("/hoobs/dist");
                 }
 
-                if (File.existsSync("/hoobs/lib")) {
-                    File.removeSync("/hoobs/lib");
-                }
-
                 await throbber.update("Application: Update", 0);
 
                 File.copySync(join(applicaiton, "dist"), "/hoobs/dist");
-                File.copySync(join(applicaiton, "lib"), "/hoobs/lib");
 
                 await throbber.stop("Application");
 
@@ -151,12 +146,12 @@ module.exports = (debug) => {
                     throw new Error("Unable to start user mode");
                 }
 
-                require("/hoobs/lib/cli")(true);
+                require(join(applicaiton, "lib/cli"))(true);
             } else if (!stop) {
-                require("/hoobs/lib/cli")(true);
+                require(join(applicaiton, "lib/cli"))(true);
             }
         } else {
-            require("/hoobs/lib/cli")(true);
+            require(join(applicaiton, "lib/cli"))(true);
         }
     })();
 };
@@ -175,6 +170,15 @@ const preparePackage = async function (executing, installed, throbber) {
     await throbber.throb("Plugins");
 
     let success = true;
+    let fix = false;
+
+    if (File.existsSync("/hoobs/node_modules/@hoobs/hoobs")) {
+        fix = true;
+    }
+
+    if (installed.dependencies) {
+        installed.dependencies = {};
+    }
 
     if (executing && executing.dependencies) {
         await throbber.update("Plugins: Reading existing plugins", 250);
@@ -209,6 +213,10 @@ const preparePackage = async function (executing, installed, throbber) {
                 await throbber.throb("Plugins");
 
                 success = false;
+            }
+
+            if (dep && !File.existsSync(join("/hoobs/node_modules/node_modules", dep))) {
+                fix = true;
             }
         }
 
@@ -246,6 +254,15 @@ const preparePackage = async function (executing, installed, throbber) {
         }
 
         File.appendFileSync("/hoobs/package.json", JSON.stringify(installed, null, 4));
+
+        if (fix) {
+            await throbber.update("Plugins: Installing missing plugins", 100);
+
+            execSync("npm install --prefer-offline --no-audit --progress=true", {
+                cwd: root,
+                stdio: ["ignore", "ignore", "ignore"]
+            });
+        }
     }
 
     await throbber.stop("Plugins");
@@ -261,40 +278,21 @@ const setupUserMode = function (applicaiton, throbber) {
             File.removeSync("/hoobs/dist");
         }
 
-        if (File.existsSync("/hoobs/lib")) {
-            File.removeSync("/hoobs/lib");
-        }
+        File.copySync(join(applicaiton, "default.json"), "/hoobs/default.json");
 
-        await throbber.update(`Modules: Removing Package Lock`, 100);
-
-        if (File.existsSync("/hoobs/package-lock.json")) {
-            File.unlinkSync("/hoobs/package-lock.json");
-        }
-
-        await throbber.update(`Modules: Updating`, 100);
         await throbber.stop("Modules");
 
-        execSync("npm install --prefer-offline --no-audit", {
-            cwd: "/hoobs",
-            stdio: ["inherit", "inherit", "inherit"]
-        });
-
-        if (File.existsSync("/hoobs/default.json")) {
-            File.unlinkSync("/hoobs/default.json");
-        }
-
-        File.copySync(join(applicaiton, "default.json"), "/hoobs/default.json");
 
         resolve();
     });
 };
 
 const checksum = async function(applicaiton) {
-    if (!File.existsSync("/hoobs/dist")) {
-        return false;
-    }
+    execSync(`rm -f ${join(root, "restore-*.zip")}`);
+    execSync(`rm -f ${join(root, "dist", "backup-*.hbf")}`);
+    execSync(`rm -f ${join(root, "dist", "backup-*.hbfx")}`);
 
-    if (!File.existsSync("/hoobs/lib")) {
+    if (!File.existsSync("/hoobs/dist")) {
         return false;
     }
 
@@ -306,22 +304,7 @@ const checksum = async function(applicaiton) {
         }
     };
 
-    const checksums = {
-        dist: {
-            local: await hashElement("/hoobs/dist", options),
-            source: await hashElement(join(applicaiton, "dist"), options)
-        },
-        lib: {
-            local: await hashElement("/hoobs/lib", options),
-            source: await hashElement(join(applicaiton, "lib"), options)
-        }
-    }
-
-    if (checksums.dist.local.hash.toString() !== checksums.dist.source.hash.toString()) {
-        return false;
-    }
-
-    if (checksums.lib.local.hash.toString() !== checksums.lib.source.hash.toString()) {
+    if ((await hashElement("/hoobs/dist", options)).hash.toString() !== (await hashElement(join(applicaiton, "dist"), options)).hash.toString()) {
         return false;
     }
 
