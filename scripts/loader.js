@@ -25,7 +25,7 @@ const Copy = require("recursive-copy");
 const Remove = require("rimraf");
 
 const { dirname, join, basename } = require("path");
-const { spawn } = require("child_process");
+const { spawn, execSync } = require("child_process");
 const { hashElement } = require("folder-hash");
 
 class Throbber {
@@ -436,29 +436,34 @@ const setupUserMode = function (root, applicaiton, cpmod, throbber) {
         }
 
         if (cpmod) {
-            Copy(join(applicaiton, "node_modules"), join(root, "node_modules"), {
-                overwrite: true,
-                dot: true,
-                junk: false
-            }).on(Copy.events.COPY_FILE_START, async (data) => {
-                await throbber.update(`Modules: ${basename(data.src)}`, 0);
-            }).finally(async () => {
-                if (File.existsSync(join(root, "package-lock.json"))) {
-                    File.unlinkSync(join(root, "package-lock.json"));
-                }
+            await throbber.update(`Modules: Removing Package Lock`, 0);
 
-                if (File.existsSync(join(root, "default.json"))) {
-                    File.unlinkSync(join(root, "default.json"));
-                }
+            if (File.existsSync(join(root, "package-lock.json"))) {
+                File.unlinkSync(join(root, "package-lock.json"));
+            }
 
-                await throbber.update("Modules: default.json", 100);
+            await throbber.update(`Modules: Updating`, 0);
 
-                File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
+            if (File.existsSync(join(root, "node_modules"))) {
+                Remove.sync(join(root, "node_modules"));
+            }
 
-                await throbber.stop("Modules");
-
-                resolve();
+            execSync("npm install", {
+                cwd: root,
+                stdio: ["ignore", "ignore", "ignore"]
             });
+
+            if (File.existsSync(join(root, "default.json"))) {
+                File.unlinkSync(join(root, "default.json"));
+            }
+
+            await throbber.update("Modules: default.json", 100);
+
+            File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
+
+            await throbber.stop("Modules");
+
+            resolve();
         } else {
             await throbber.stop("Modules");
 
@@ -474,13 +479,19 @@ const checkEnviornment = function (home, password, throbber) {
         const queue = [];
 
         if (File.existsSync(join(home, ".npm"))) {
-            await throbber.update(`Enviornment: Clearing NPM Cache`, 100);
+            try {
+                File.accessSync(join(home, ".npm"), File.constants.W_OK);
 
-            await execSudo(password, [
-                "rm",
-                "-fR",
-                join(home, ".npm")
-            ]);
+                await throbber.update(`Enviornment: NPM Cache OK`, 100);
+            } catch (err) {
+                await throbber.update(`Enviornment: NPM Cache is Root Locked`, 100);
+
+                await execSudo(password, [
+                    "rm",
+                    "-fR",
+                    join(home, ".npm")
+                ]);
+            }
         }
 
         if (File.existsSync(join(home, ".config"))) {
@@ -681,6 +692,10 @@ const checksum = async function(root, applicaiton) {
     }
 
     if (checksums.lib.local.hash.toString() !== checksums.lib.source.hash.toString()) {
+        return false;
+    }
+
+    if (!File.existsSync(join(root, "node_modules", "zip-stream"))) {
         return false;
     }
 
