@@ -423,29 +423,25 @@ const setupUserMode = function (root, applicaiton, cpmod, throbber) {
         }
 
         if (cpmod) {
-            await throbber.update(`Modules: Removing Package Lock`, 0);
+            await throbber.update(`Modules: Removing Package Lock`, 100);
 
             if (File.existsSync(join(root, "package-lock.json"))) {
                 File.unlinkSync(join(root, "package-lock.json"));
             }
 
-            await throbber.update(`Modules: Updating`, 0);
+            await throbber.update(`Modules: Updating`, 100);
+            await throbber.stop("Modules");
 
-            execSync("npm install", {
+            execSync("npm install --prefer-offline --no-audit --progress=true", {
                 cwd: root,
-                stdio: ["ignore", "ignore", "ignore"]
+                stdio: ["inherit", "inherit", "inherit"]
             });
 
             if (File.existsSync(join(root, "default.json"))) {
                 File.unlinkSync(join(root, "default.json"));
             }
 
-            await throbber.update("Modules: default.json", 100);
-
             File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
-
-            await throbber.stop("Modules");
-
             resolve();
         } else {
             await throbber.stop("Modules");
