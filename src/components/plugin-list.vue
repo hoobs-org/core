@@ -136,7 +136,7 @@
                     const restart = this.running;
                     const results = await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
 
-                    if (restart) {
+                    if (restart && results.active === 0) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
@@ -147,9 +147,9 @@
 
                     this.working = false;
 
-                    if (results.success && this.oninstall) {
+                    if (results.active === 0 && results.success && this.oninstall) {
                         this.oninstall(results.plugin.name, results.plugin, results.details);
-                    } else if (this.onuninstall) {
+                    } else if (results.active === 0 && this.onuninstall) {
                         this.onuninstall();
                     }
                 }
@@ -160,10 +160,9 @@
                     this.working = true;
 
                     const restart = this.running;
+                    const results = await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}`);
 
-                    await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}`);
-
-                    if (restart) {
+                    if (restart && results.active === 0) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
@@ -174,7 +173,7 @@
 
                     this.working = false;
 
-                    if (this.onuninstall) {
+                    if (results.active === 0 && this.onuninstall) {
                         this.onuninstall();
                     }
                 }
@@ -185,10 +184,9 @@
                     this.working = true;
 
                     const restart = this.running;
+                    const results = await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
 
-                    await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
-
-                    if (restart) {
+                    if (restart && results.active === 0) {
                         this.$store.commit("lock");
 
                         await this.api.post("/service/stop");
@@ -199,7 +197,7 @@
 
                     this.working = false;
 
-                    if (this.onupdate) {
+                    if (results.active === 0 && this.onupdate) {
                         this.onupdate();
                     }
                 }
