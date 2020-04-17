@@ -51,5 +51,9 @@ We’re a small team from around the world who are passionate about making the h
   * [**Warranty**](https://support.hoobs.org/docs/5e764a29e87d1e02b6c19d4a)
 * [**Credits**](https://support.hoobs.org/docs/5e763ca9e87d1e02b6c19d2f)
 
-HOOBS and the HOOBS logo are registered trademarks of HOOBS Inc.  
+## Legal
+HOOBS™ is Located at:
+HOOBS Inc. CP 3211 L’Assomption, QC J5W 4M9, Canada
+
+HOOBS and the HOOBS logo are registered trademarks of HOOBS Inc. 
 Copyright (C) 2020 HOOBS Inc. All rights reserved.
