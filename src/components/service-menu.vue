@@ -38,6 +38,8 @@
         <div v-if="!$server.docker" class="item-seperator"></div>
         <div v-if="!$server.docker && !locked" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
         <div v-else-if="!$server.docker" class="item-disabled">{{ $t("reboot_device") }}</div>
+        <div v-if="!$server.docker && !locked" v-on:click.stop="shutdown()" class="item">{{ $t("shutdown_device") }}</div>
+        <div v-else-if="!$server.docker" class="item-disabled">{{ $t("shutdown_device") }}</div>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
         <router-link to="/config/interface" class="item">{{ $t("config") }}</router-link>
@@ -70,6 +72,8 @@
         <div v-if="!$server.docker" class="item-seperator"></div>
         <div v-if="!$server.docker && !locked" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
         <div v-else-if="!$server.docker" class="item-disabled">{{ $t("reboot_device") }}</div>
+        <div v-if="!$server.docker && !locked" v-on:click.stop="shutdown()" class="item">{{ $t("shutdown_device") }}</div>
+        <div v-else-if="!$server.docker" class="item-disabled">{{ $t("shutdown_device") }}</div>
         <div class="item-seperator"></div>
         <div class="item" v-on:click="about">{{ $t("about") }}</div>
         <router-link to="/config/interface" class="item">{{ $t("config") }}</router-link>
@@ -87,8 +91,10 @@
                 <span class="identity">{{ user.name || user.username }}</span>
             </div>
         </div>
-        <div v-if="!locked" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
-        <div v-else class="item-disabled">{{ $t("reboot_device") }}</div>
+        <div v-if="!$server.docker && !locked" v-on:click.stop="reboot()" class="item">{{ $t("reboot_device") }}</div>
+        <div v-else-if="!$server.docker" class="item-disabled">{{ $t("reboot_device") }}</div>
+        <div v-if="!$server.docker && !locked" v-on:click.stop="shutdown()" class="item">{{ $t("shutdown_device") }}</div>
+        <div v-else-if="!$server.docker" class="item-disabled">{{ $t("shutdown_device") }}</div>
         <div class="item-seperator"></div>
         <router-link to="/login" class="item">{{ $t("log_out") }}</router-link>
         <div class="button mobile-show menu-cancel">{{ $t("cancel") }}</div>
@@ -125,6 +131,18 @@
 
                 await this.api.post("/service/stop");
                 await this.api.put("/reboot");
+
+                setTimeout(() => {
+                    this.$store.commit("reboot");
+                }, 500);
+            },
+
+            async shutdown() {
+                this.$store.commit("lock");
+                this.$store.commit("hide", "service");
+
+                await this.api.post("/service/stop");
+                await this.api.put("/shutdown");
 
                 setTimeout(() => {
                     this.$store.commit("reboot");
