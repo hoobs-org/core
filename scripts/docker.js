@@ -25,6 +25,8 @@ const { dirname, join } = require("path");
 const { execSync } = require("child_process");
 const { hashElement } = require("folder-hash");
 
+const home = "/home";
+
 class Throbber {
     constructor(debug) {
         this.debug = debug;
@@ -90,11 +92,11 @@ module.exports = (debug) => {
             throw new Error("HOOBS Installation is Corrupt. Please Re-Install HOOBS.");
         }
 
-        if (!File.existsSync("/hoobs")) {
-            File.mkdirSync("/hoobs");
+        if (!File.existsSync(home)) {
+            File.mkdirSync(home);
         }
 
-        const executing = tryParseFile("/hoobs/package.json");
+        const executing = tryParseFile(join(home, "package.json"));
 
         console.log("");
 
@@ -107,7 +109,7 @@ module.exports = (debug) => {
             } else {
                 success = false;
 
-                if (!File.existsSync("/hoobs/dist")) {
+                if (!File.existsSync(join(home, "dist"))) {
                     stop = true;
 
                     console.log("---------------------------------------------------------");
@@ -132,13 +134,13 @@ module.exports = (debug) => {
             if (success) {
                 await throbber.throb("Application");
 
-                if (File.existsSync("/hoobsdist")) {
-                    File.removeSync("/hoobs/dist");
+                if (File.existsSync(join(home, "dist"))) {
+                    File.removeSync(join(home, "dist"));
                 }
 
                 await throbber.update("Application: Update", 0);
 
-                File.copySync(join(applicaiton, "dist"), "/hoobs/dist");
+                File.copySync(join(applicaiton, "dist"), join(home, "dist"));
 
                 await throbber.stop("Application");
 
@@ -172,7 +174,7 @@ const preparePackage = async function (executing, installed, throbber) {
     let success = true;
     let fix = false;
 
-    if (File.existsSync("/hoobs/node_modules/@hoobs/hoobs")) {
+    if (File.existsSync(join(home, "node_modules/@hoobs/hoobs"))) {
         fix = true;
     }
 
@@ -183,7 +185,7 @@ const preparePackage = async function (executing, installed, throbber) {
     if (executing && executing.dependencies) {
         await throbber.update("Plugins: Reading existing plugins", 250);
 
-        const current = tryParseFile("/hoobs/etc/config.json", null);
+        const current = tryParseFile(join(home, "etc/config.json"), null);
 
         const deps = (current || {}).plugins || [];
         const keys = Object.keys(executing.dependencies);
@@ -215,7 +217,7 @@ const preparePackage = async function (executing, installed, throbber) {
                 success = false;
             }
 
-            if (dep && !File.existsSync(join("/hoobs/node_modules/node_modules", dep))) {
+            if (dep && !File.existsSync(join(home, "node_modules/node_modules", dep))) {
                 fix = true;
             }
         }
@@ -229,8 +231,8 @@ const preparePackage = async function (executing, installed, throbber) {
                 }
             }
 
-            File.unlinkSync("/hoobs/etc/config.json");
-            File.appendFileSync("/hoobs/etc/config.json", JSON.stringify(current, null, 4));
+            File.unlinkSync(join(home, "etc/config.json"));
+            File.appendFileSync(join(home, "etc/config.json"), JSON.stringify(current, null, 4));
         }
     }
 
@@ -249,17 +251,17 @@ const preparePackage = async function (executing, installed, throbber) {
 
         await throbber.update("Plugins: Writing package file", 250);
 
-        if (File.existsSync("/hoobs/package.json")) {
-            File.unlinkSync("/hoobs/package.json");
+        if (File.existsSync(join(home, "package.json"))) {
+            File.unlinkSync(join(home, "package.json"));
         }
 
-        File.appendFileSync("/hoobs/package.json", JSON.stringify(installed, null, 4));
+        File.appendFileSync(join(home, "package.json"), JSON.stringify(installed, null, 4));
 
         if (fix) {
             await throbber.update("Plugins: Installing missing plugins", 100);
 
             execSync("npm install --prefer-offline --no-audit --progress=true", {
-                cwd: root,
+                cwd: home,
                 stdio: ["ignore", "ignore", "ignore"]
             });
         }
@@ -274,11 +276,11 @@ const setupUserMode = function (applicaiton, throbber) {
     return new Promise(async (resolve) => {
         await throbber.throb("Modules");
 
-        if (File.existsSync("/hoobs/dist")) {
-            File.removeSync("/hoobs/dist");
+        if (File.existsSync(join(home, "dist"))) {
+            File.removeSync(join(home, "dist"));
         }
 
-        File.copySync(join(applicaiton, "default.json"), "/hoobs/default.json");
+        File.copySync(join(applicaiton, "default.json"), join(home, "default.json"));
 
         await throbber.stop("Modules");
 
@@ -288,11 +290,11 @@ const setupUserMode = function (applicaiton, throbber) {
 };
 
 const checksum = async function(applicaiton) {
-    execSync(`rm -f ${join(root, "restore-*.zip")}`);
-    execSync(`rm -f ${join(root, "dist", "backup-*.hbf")}`);
-    execSync(`rm -f ${join(root, "dist", "backup-*.hbfx")}`);
+    execSync(`rm -f ${join(home, "restore-*.zip")}`);
+    execSync(`rm -f ${join(home, "dist", "backup-*.hbf")}`);
+    execSync(`rm -f ${join(home, "dist", "backup-*.hbfx")}`);
 
-    if (!File.existsSync("/hoobs/dist")) {
+    if (!File.existsSync(join(home, "dist"))) {
         return false;
     }
 
@@ -304,7 +306,7 @@ const checksum = async function(applicaiton) {
         }
     };
 
-    if ((await hashElement("/hoobs/dist", options)).hash.toString() !== (await hashElement(join(applicaiton, "dist"), options)).hash.toString()) {
+    if ((await hashElement(join(home, "dist"), options)).hash.toString() !== (await hashElement(join(applicaiton, "dist"), options)).hash.toString()) {
         return false;
     }
 

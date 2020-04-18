@@ -52,9 +52,7 @@
         data() {
             return {
                 working: false,
-                formatted: "",
-                server: this.plugin.keywords.indexOf("homebridge-plugin") >= 0,
-                interface: this.plugin.keywords.indexOf("homebridge-x-plugin") >= 0
+                formatted: ""
             }
         },
 
