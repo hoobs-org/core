@@ -148,12 +148,12 @@ module.exports = (debug) => {
                     throw new Error("Unable to start user mode");
                 }
 
-                require(join(applicaiton, "lib/cli"))(true);
+                require(join(applicaiton, "lib", "cli"))(true);
             } else if (!stop) {
-                require(join(applicaiton, "lib/cli"))(true);
+                require(join(applicaiton, "lib", "cli"))(true);
             }
         } else {
-            require(join(applicaiton, "lib/cli"))(true);
+            require(join(applicaiton, "lib", "cli"))(true);
         }
     })();
 };
@@ -174,8 +174,16 @@ const preparePackage = async function (executing, installed, throbber) {
     let success = true;
     let fix = false;
 
-    if (File.existsSync(join(home, "node_modules/@hoobs/hoobs"))) {
+    if (File.existsSync(join(home, "node_modules", "@hoobs", "hoobs"))) {
         fix = true;
+    }
+
+    if (File.existsSync(join(home, "node_modules", "homebridge"))) {
+        File.unlinkSync(join(home, "node_modules", "homebridge"));
+    }
+
+    if (File.existsSync(join(home, "node_modules", "hap-nodejs"))) {
+        File.unlinkSync(join(home, "node_modules", "homebridge"));
     }
 
     if (installed.dependencies) {
@@ -185,7 +193,7 @@ const preparePackage = async function (executing, installed, throbber) {
     if (executing && executing.dependencies) {
         await throbber.update("Plugins: Reading existing plugins", 250);
 
-        const current = tryParseFile(join(home, "etc/config.json"), null);
+        const current = tryParseFile(join(home, "etc", "config.json"), null);
 
         const deps = (current || {}).plugins || [];
         const keys = Object.keys(executing.dependencies);
@@ -217,7 +225,7 @@ const preparePackage = async function (executing, installed, throbber) {
                 success = false;
             }
 
-            if (dep && !File.existsSync(join(home, "node_modules/node_modules", dep))) {
+            if (dep && !File.existsSync(join(home, "node_modules", "node_modules", dep))) {
                 fix = true;
             }
         }
@@ -231,8 +239,8 @@ const preparePackage = async function (executing, installed, throbber) {
                 }
             }
 
-            File.unlinkSync(join(home, "etc/config.json"));
-            File.appendFileSync(join(home, "etc/config.json"), JSON.stringify(current, null, 4));
+            File.unlinkSync(join(home, "etc", "config.json"));
+            File.appendFileSync(join(home, "etc", "config.json"), JSON.stringify(current, null, 4));
         }
     }
 

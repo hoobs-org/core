@@ -195,12 +195,12 @@ module.exports = (debug, password, cpmod) => {
                     throw new Error("Unable to start user mode");
                 }
 
-                require(join(applicaiton, "lib/cli"))();
+                require(join(applicaiton, "lib", "cli"))();
             } else if (!stop) {
-                require(join(applicaiton, "lib/cli"))();
+                require(join(applicaiton, "lib", "cli"))();
             }
         } else {
-            require(join(applicaiton, "lib/cli"))();
+            require(join(applicaiton, "lib", "cli"))();
         }
     });
 };
@@ -224,6 +224,14 @@ const preparePackage = async function (root, executing, installed, throbber) {
 
     if (File.existsSync(join(root, "node_modules", "@hoobs", "hoobs"))) {
         fix = true;
+    }
+
+    if (File.existsSync(join(root, "node_modules", "homebridge"))) {
+        File.unlinkSync(join(root, "node_modules", "homebridge"));
+    }
+
+    if (File.existsSync(join(root, "node_modules", "hap-nodejs"))) {
+        File.unlinkSync(join(root, "node_modules", "homebridge"));
     }
 
     if (File.existsSync("/var/hoobs/.migration/plugins.json")) {
