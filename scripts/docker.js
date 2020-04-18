@@ -23,9 +23,8 @@ const File = require("fs-extra");
 
 const { dirname, join } = require("path");
 const { execSync } = require("child_process");
-const { hashElement } = require("folder-hash");
 
-const home = "/home";
+const home = "/hoobs";
 
 class Throbber {
     constructor(debug) {
@@ -96,62 +95,23 @@ module.exports = (debug) => {
             File.mkdirSync(home);
         }
 
-        const executing = tryParseFile(join(home, "package.json"));
+        const executing = tryParseFile(join(home, "package.json"), {});
 
         console.log("");
 
-        if (!executing || installed.version !== executing.version || !(await checksum(applicaiton))) {
-            let success = true;
-            let stop = false;
-
-            if (await preparePackage(executing, installed, throbber)) {
-                await setupUserMode(applicaiton, throbber);
-            } else {
-                success = false;
-
-                if (!File.existsSync(join(home, "dist"))) {
-                    stop = true;
-
-                    console.log("---------------------------------------------------------");
-                    console.log("There are configured plugins that are not installed.");
-                    console.log("Please edit your config.json file and remove the missing");
-                    console.log("plugin configurations, and remove the plugin from the");
-                    console.log("plugins array.");
-                    console.log("---------------------------------------------------------");
-                    console.log("");
-                } else {
-                    console.log("---------------------------------------------------------");
-                    console.log("There are configured plugins that are not installed.");
-                    console.log("Please edit your config.json file and remove the missing");
-                    console.log("plugin configurations, and remove the plugin from the");
-                    console.log("plugins array.");
-                    console.log("---------------------------------------------------------");
-                    console.log("Loading previous version");
-                    console.log("---------------------------------------------------------");
-                }
+        if (!executing || !(await checksum(executing, installed))) {
+            if (!(await preparePackage(executing, installed, throbber))) {
+                console.log("---------------------------------------------------------");
+                console.log("There are configured plugins that are not installed.");
+                console.log("Please edit your config.json file and remove the missing");
+                console.log("plugin configurations, and remove the plugin from the");
+                console.log("plugins array.");
+                console.log("---------------------------------------------------------");
+                console.log("Loading previous version");
+                console.log("---------------------------------------------------------");
             }
 
-            if (success) {
-                await throbber.throb("Application");
-
-                if (File.existsSync(join(home, "dist"))) {
-                    File.removeSync(join(home, "dist"));
-                }
-
-                await throbber.update("Application: Update", 0);
-
-                File.copySync(join(applicaiton, "dist"), join(home, "dist"));
-
-                await throbber.stop("Application");
-
-                if (!(await checksum(applicaiton))) {
-                    throw new Error("Unable to start user mode");
-                }
-
-                require(join(applicaiton, "lib", "cli"))(true);
-            } else if (!stop) {
-                require(join(applicaiton, "lib", "cli"))(true);
-            }
+            require(join(applicaiton, "lib", "cli"))(true);
         } else {
             require(join(applicaiton, "lib", "cli"))(true);
         }
@@ -178,12 +138,24 @@ const preparePackage = async function (executing, installed, throbber) {
         fix = true;
     }
 
+    if (File.existsSync(join(home, "dist"))) {
+        File.removeSync(join(home, "dist"));
+    }
+
     if (File.existsSync(join(home, "node_modules", "homebridge"))) {
-        File.unlinkSync(join(home, "node_modules", "homebridge"));
+        try {
+            File.unlinkSync(join(home, "node_modules", "homebridge"));
+        } catch (_error) {
+            File.removeSync(join(home, "node_modules", "homebridge"));
+        }
     }
 
     if (File.existsSync(join(home, "node_modules", "hap-nodejs"))) {
-        File.unlinkSync(join(home, "node_modules", "homebridge"));
+        try {
+            File.unlinkSync(join(home, "node_modules", "hap-nodejs"));
+        } catch (_error) {
+            File.removeSync(join(home, "node_modules", "hap-nodejs"));
+        }
     }
 
     if (installed.dependencies) {
@@ -268,7 +240,7 @@ const preparePackage = async function (executing, installed, throbber) {
         if (fix) {
             await throbber.update("Plugins: Installing missing plugins", 100);
 
-            execSync("npm install --prefer-offline --no-audit --progress=true", {
+            execSync("npm install --unsafe-perm --prefer-offline --no-audit --progress=true", {
                 cwd: home,
                 stdio: ["ignore", "ignore", "ignore"]
             });
@@ -280,41 +252,22 @@ const preparePackage = async function (executing, installed, throbber) {
     return success;
 };
 
-const setupUserMode = function (applicaiton, throbber) {
-    return new Promise(async (resolve) => {
-        await throbber.throb("Modules");
+const checksum = async function(executing, installed) {
+    if (File.existsSync(join(home, "backups"))) {
+        File.removeSync(join(home, "backups"));
+    }
 
-        if (File.existsSync(join(home, "dist"))) {
-            File.removeSync(join(home, "dist"));
-        }
+    File.ensureDirSync(join(home, "backups"));
 
-        File.copySync(join(applicaiton, "default.json"), join(home, "default.json"));
-
-        await throbber.stop("Modules");
-
-
-        resolve();
-    });
-};
-
-const checksum = async function(applicaiton) {
-    execSync(`rm -f ${join(home, "restore-*.zip")}`);
-    execSync(`rm -f ${join(home, "dist", "backup-*.hbf")}`);
-    execSync(`rm -f ${join(home, "dist", "backup-*.hbfx")}`);
-
-    if (!File.existsSync(join(home, "dist"))) {
+    if (executing.version !== installed.version) {
         return false;
     }
 
-    const options = {
-        files: {
-            exclude: [
-                ".DS_Store"
-            ]
-        }
-    };
+    if (File.existsSync(join(home, "dist"))) {
+        return false;
+    }
 
-    if ((await hashElement(join(home, "dist"), options)).hash.toString() !== (await hashElement(join(applicaiton, "dist"), options)).hash.toString()) {
+    if (File.existsSync(join(home, "node_modules", "@hoobs", "hoobs"))) {
         return false;
     }
 

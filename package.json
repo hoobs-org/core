@@ -35,7 +35,6 @@
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "express-ws": "^4.0.0",
-        "folder-hash": "^3.3.0",
         "formidable": "^1.2.2",
         "fs-extra": "^8.1.0",
         "hap-nodejs": "^0.4.51",

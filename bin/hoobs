@@ -28,11 +28,10 @@ const { execSync } = require("child_process");
 let password = null;
 let debug = false;
 let reboot = false;
-let cpmod = true;
 
 const command = process.argv[2];
 
-process.argv.forEach((value, index) => {
+process.argv.forEach((value) => {
     if (value === "-p" || value === "--pass") {
         password = "#sudo-password#"
     } else if (password === "#sudo-password#") {
@@ -43,8 +42,6 @@ process.argv.forEach((value, index) => {
         debug = true;
     } else if (value === "-r" || value === "--reboot") {
         reboot = true;
-    } else if (value === "--ignore-modules") {
-        cpmod = false;
     } else if (value === "-v" || value === "--version") {
         console.log(JSON.parse(File.readFileSync(join(dirname(File.realpathSync(join(__filename, "../"))), "package.json"))).version);
 
@@ -304,7 +301,7 @@ switch ((command || "").toLowerCase()) {
         break;
 
     default:
-        (require(join(dirname(File.realpathSync(__filename)), "../scripts/loader")))(debug, password, cpmod);
+        (require(join(dirname(File.realpathSync(__filename)), "../scripts/loader")))(debug, password);
 
         break;
 }

@@ -24,7 +24,6 @@ const File = require("fs-extra");
 
 const { dirname, join } = require("path");
 const { spawn, execSync } = require("child_process");
-const { hashElement } = require("folder-hash");
 
 class Throbber {
     constructor(debug) {
@@ -80,7 +79,7 @@ class Throbber {
     };
 }
 
-module.exports = (debug, password, cpmod) => {
+module.exports = (debug, password) => {
     const throbber = new Throbber(debug);
 
     const home = OS.userInfo().homedir;
@@ -96,12 +95,12 @@ module.exports = (debug, password, cpmod) => {
         File.mkdirSync(root);
     }
 
-    const executing = tryParseFile(join(root, "package.json"));
+    const executing = tryParseFile(join(root, "package.json"), {});
 
     console.log("");
 
     checkEnviornment(home, password, throbber).then(async () => {
-        if (!executing || installed.version !== executing.version || !(await checksum(root, applicaiton))) {
+        if (!executing || installed.version !== executing.version || !(await checksum(root, executing, installed))) {
             let success = true;
             let stop = false;
 
@@ -109,7 +108,7 @@ module.exports = (debug, password, cpmod) => {
                 await migrate(root, throbber);
 
                 if (await preparePackage(root, executing, installed, throbber)) {
-                    await setupUserMode(root, applicaiton, cpmod, throbber);
+                    await setupUserMode(root, applicaiton, throbber);
 
                     await throbber.throb("Clear Migration");
 
@@ -121,63 +120,26 @@ module.exports = (debug, password, cpmod) => {
 
                     await throbber.update(`Clear Migration: Migration cleared`, 100);
                     await throbber.stop("Clear Migration");
-                } else {
-                    success = false;
-
-                    if (!File.existsSync(join(root, "dist"))) {
-                        stop = true;
-
-                        console.log("---------------------------------------------------------");
-                        console.log("Unable to install plugins from the previous version.");
-                        console.log("---------------------------------------------------------");
-                        console.log("");
-                    } else {
-                        console.log("---------------------------------------------------------");
-                        console.log("Unable to install plugins from the previous version.");
-                        console.log("---------------------------------------------------------");
-                        console.log("Loading previous version");
-                        console.log("---------------------------------------------------------");
-                    }
                 }
             } else {
                 if (await preparePackage(root, executing, installed, throbber)) {
-                    await setupUserMode(root, applicaiton, cpmod, throbber);
+                    await setupUserMode(root, applicaiton, throbber);
                 } else {
                     success = false;
 
-                    if (!File.existsSync(join(root, "dist"))) {
-                        stop = true;
-
-                        console.log("---------------------------------------------------------");
-                        console.log("There are configured plugins that are not installed.");
-                        console.log("Please edit your config.json file and remove the missing");
-                        console.log("plugin configurations, and remove the plugin from the");
-                        console.log("plugins array.");
-                        console.log("---------------------------------------------------------");
-                        console.log("");
-                    } else {
-                        console.log("---------------------------------------------------------");
-                        console.log("There are configured plugins that are not installed.");
-                        console.log("Please edit your config.json file and remove the missing");
-                        console.log("plugin configurations, and remove the plugin from the");
-                        console.log("plugins array.");
-                        console.log("---------------------------------------------------------");
-                        console.log("Loading previous version");
-                        console.log("---------------------------------------------------------");
-                    }
+                    console.log("---------------------------------------------------------");
+                    console.log("There are configured plugins that are not installed.");
+                    console.log("Please edit your config.json file and remove the missing");
+                    console.log("plugin configurations, and remove the plugin from the");
+                    console.log("plugins array.");
+                    console.log("---------------------------------------------------------");
+                    console.log("Loading previous version");
+                    console.log("---------------------------------------------------------");
                 }
             }
 
             if (success) {
                 await throbber.throb("Application");
-
-                if (File.existsSync(join(root, "dist"))) {
-                    File.removeSync(join(root, "dist"));
-                }
-
-                await throbber.update("Application: Update", 100);
-
-                File.copySync(join(applicaiton, "dist"), join(root, "dist"));
 
                 if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
                     await throbber.update("Application: Restarting NGINX", 100);
@@ -191,7 +153,7 @@ module.exports = (debug, password, cpmod) => {
 
                 await throbber.stop("Application");
 
-                if (!(await checksum(root, applicaiton))) {
+                if (!(await checksum(root, executing, installed))) {
                     throw new Error("Unable to start user mode");
                 }
 
@@ -226,12 +188,24 @@ const preparePackage = async function (root, executing, installed, throbber) {
         fix = true;
     }
 
+    if (File.existsSync(join(root, "dist"))) {
+        File.removeSync(join(root, "dist"));
+    }
+
     if (File.existsSync(join(root, "node_modules", "homebridge"))) {
-        File.unlinkSync(join(root, "node_modules", "homebridge"));
+        try {
+            File.unlinkSync(join(root, "node_modules", "homebridge"));
+        } catch (_error) {
+            File.removeSync(join(root, "node_modules", "homebridge"));
+        }
     }
 
     if (File.existsSync(join(root, "node_modules", "hap-nodejs"))) {
-        File.unlinkSync(join(root, "node_modules", "homebridge"));
+        try {
+            File.unlinkSync(join(root, "node_modules", "hap-nodejs"));
+        } catch (_error) {
+            File.removeSync(join(root, "node_modules", "hap-nodejs"));
+        }
     }
 
     if (File.existsSync("/var/hoobs/.migration/plugins.json")) {
@@ -332,7 +306,7 @@ const preparePackage = async function (root, executing, installed, throbber) {
         if (fix) {
             await throbber.update("Plugins: Installing missing plugins", 100);
 
-            execSync("npm install --prefer-offline --no-audit --progress=true", {
+            execSync("npm install --unsafe-perm --prefer-offline --no-audit --progress=true", {
                 cwd: root,
                 stdio: ["ignore", "ignore", "ignore"]
             });
@@ -344,7 +318,7 @@ const preparePackage = async function (root, executing, installed, throbber) {
     return success;
 };
 
-const setupUserMode = function (root, applicaiton, cpmod, throbber) {
+const setupUserMode = function (root, applicaiton, throbber) {
     return new Promise(async (resolve) => {
         if (File.existsSync("/var/hoobs/.migration/config.json")) {
             await throbber.throb("Configuring");
@@ -436,16 +410,6 @@ const setupUserMode = function (root, applicaiton, cpmod, throbber) {
 
             await throbber.stop("Configuring");
         }
-
-        await throbber.throb("Modules");
-
-        if (File.existsSync(join(root, "dist"))) {
-            File.removeSync(join(root, "dist"));
-        }
-
-        File.copySync(join(applicaiton, "default.json"), join(root, "default.json"));
-
-        await throbber.stop("Modules");
 
         resolve();
     });
@@ -641,24 +605,22 @@ const execSudo = function(password, options) {
     });
 };
 
-const checksum = async function(root, applicaiton) {
-    execSync(`rm -f ${join(root, "restore-*.zip")}`);
-    execSync(`rm -f ${join(root, "dist", "backup-*.hbf")}`);
-    execSync(`rm -f ${join(root, "dist", "backup-*.hbfx")}`);
+const checksum = async function(root, executing, installed) {
+    if (File.existsSync(join(root, "backups"))) {
+        File.removeSync(join(root, "backups"));
+    }
 
-    if (!File.existsSync(join(root, "dist"))) {
+    File.ensureDirSync(join(root, "backups"));
+
+    if (executing.version !== installed.version) {
         return false;
     }
 
-    const options = {
-        files: {
-            exclude: [
-                ".DS_Store"
-            ]
-        }
-    };
+    if (File.existsSync(join(root, "dist"))) {
+        return false;
+    }
 
-    if ((await hashElement(join(root, "dist"), options)).hash.toString() !== (await hashElement(join(applicaiton, "dist"), options)).hash.toString()) {
+    if (File.existsSync(join(root, "node_modules", "@hoobs", "hoobs"))) {
         return false;
     }
 
