@@ -301,7 +301,7 @@ switch ((command || "").toLowerCase()) {
         break;
 
     default:
-        (require(join(dirname(File.realpathSync(__filename)), "../scripts/loader")))(debug, password);
+        (require(join(dirname(File.realpathSync(__filename)), "../scripts/loader")))(password);
 
         break;
 }

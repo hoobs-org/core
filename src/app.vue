@@ -219,6 +219,34 @@
                     case "dismiss":
                         this.$cookie("notifications", btoa(JSON.stringify(state.notifications)), this.$client.inactive_logoff || 30);
                         break;
+
+                    case "commands":
+                        switch (state.command.action) {
+                            case "redirect":
+                                this.$router.push({
+                                    path: state.command.payload.route
+                                });
+
+                                break;
+
+                            case "download":
+                                window.location.href = state.command.payload.filename;
+                                break;
+                            
+                            case "lock":
+                                this.$store.commit("lock");
+                                break;
+
+                            case "unlock":
+                                this.$store.commit("unlock");
+                                break
+
+                            case "refresh":
+                                window.location.reload();
+                                break;
+                        }
+
+                        break;
                 }
             });
 
@@ -276,6 +304,10 @@
                         
                         case "monitor":
                             this.$store.commit("monitor", message.data);
+                            break;
+
+                        case "command":
+                            this.$store.commit("commands", message.data);
                             break;
 
                         case "update":

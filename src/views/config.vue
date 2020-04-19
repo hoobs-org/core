@@ -455,28 +455,19 @@
 
             async backup(type) {
                 if (!this.locked) {
-                    this.$store.commit("lock");
-                    this.working = true;
-
                     let response;
                     let element;
 
                     switch (type) {
                         case "system":
-                            response = await this.api.post("/backup");
+                            this.$store.commit("lock");
 
-                            if (response.success) {
-                                window.location.href = response.filename;
-                            } else {
-                                this.message = response.error;
-                                this.error = true;
-                            }
-
-                            this.working = false;
-                            this.$store.commit("unlock");
+                            await this.api.post("/backup");
                             break;
                         
                         case "config":
+                            this.$store.commit("lock");
+
                             response = await this.api.post("/config/backup");
 
                             if (response.success) {
@@ -497,11 +488,11 @@
                                 this.error = true;
                             }
 
-                            this.working = false;
                             this.$store.commit("unlock");
                             break;
                         
                         case "logs":
+                            this.$store.commit("lock");
                             this.$store.state.messages
 
                             element = document.createElement("a");
@@ -517,12 +508,6 @@
 
                             document.body.removeChild(element);
 
-                            this.working = false;
-                            this.$store.commit("unlock");
-                            break;
-                        
-                        default:
-                            this.working = false;
                             this.$store.commit("unlock");
                             break;
                     }
@@ -534,13 +519,12 @@
             },
 
             async restore(field) {
-                this.working = true;
-
                 const data = new FormData();
 
                 switch (field) {
                     case "hbf":
                         this.$store.commit("lock");
+                        this.$store.commit("hide", "service");
 
                         data.append("file", this.$refs.hbf.files[0]);
 
@@ -551,13 +535,11 @@
                             }
                         });
 
-                        setTimeout(() => {
-                            this.$store.commit("reboot");
-                        }, 1000 * 60 * 2);
-
                         break;
 
                     case "cfg":
+                        this.$store.commit("lock");
+
                         data.append("file", this.$refs.cfg.files[0]);
 
                         await Request.post("/api/config/restore", data, {
@@ -567,19 +549,6 @@
                             }
                         });
 
-                        setTimeout(async () => {
-                            this.working = false;
-
-                            await this.$configure();
-                            await this.load();
-
-                            this.$store.commit("redraw");
-                        }, 500);
-
-                        break;
-
-                    default:
-                        this.working = false;
                         break;
                 }
             },

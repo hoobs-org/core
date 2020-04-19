@@ -19,69 +19,12 @@
 const _ = require("lodash");
 
 const OS = require("os");
-const Ora = require("ora");
 const File = require("fs-extra");
 
 const { dirname, join } = require("path");
 const { spawn, execSync } = require("child_process");
 
-class Throbber {
-    constructor(debug) {
-        this.debug = debug;
-        this.throbber = null;
-    }
-
-    sleep(time) {
-        return new Promise((resolve) => {
-            setTimeout(resolve, time);
-        })
-    }
-
-    async throb(message) {
-        if (!this.debug) {
-            message = message || "";
-
-            this.throbber = Ora(message).start();
-            this.throbber.color = "yellow";
-
-            await this.sleep(100);
-        }
-    }
-
-    async update(message, time) {
-        if (message && message !== "") {
-            if (this.debug) {
-                console.log(message);
-            } else {
-                const data = message.split(":");
-
-                message = data[0];
-                data.shift();
-
-                if (data.length > 0) {
-                    message += `: ${data.map(v => v.trim().slice(-80)).join(": ")}`;
-                }
-
-                this.throbber.text = message;
-                this.throbber.color = "yellow";
-
-                await this.sleep(time);
-            }
-        }
-    };
-
-    async stop(message) {
-        if (!this.debug) {
-            await this.update(message, 10);
-
-            this.throbber.stop();
-        }
-    };
-}
-
-module.exports = (debug, password) => {
-    const throbber = new Throbber(debug);
-
+module.exports = (password, reload) => {
     const home = OS.userInfo().homedir;
     const root = join(home, ".hoobs");
     const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
@@ -97,33 +40,25 @@ module.exports = (debug, password) => {
 
     const executing = tryParseFile(join(root, "package.json"), {});
 
-    console.log("");
-
-    checkEnviornment(home, password, throbber).then(async () => {
-        if (!executing || installed.version !== executing.version || !(await checksum(root, executing, installed))) {
+    checkEnviornment(home, password).then(() => {
+        if (!executing || installed.version !== executing.version || !(checksum(root, executing, installed))) {
             let success = true;
-            let stop = false;
 
             if (File.existsSync("/var/hoobs/.migration")) {
-                await migrate(root, throbber);
+                migrate(root);
 
-                if (await preparePackage(root, executing, installed, throbber)) {
-                    await setupUserMode(root, applicaiton, throbber);
+                if (preparePackage(root, executing, installed)) {
+                    setupUserMode(root, applicaiton);
 
-                    await throbber.throb("Clear Migration");
-
-                    await execSudo(password, [
+                    execSudo(password, [
                         "rm",
                         "-fR",
                         "/var/hoobs/.migration"
                     ]);
-
-                    await throbber.update(`Clear Migration: Migration cleared`, 100);
-                    await throbber.stop("Clear Migration");
                 }
             } else {
-                if (await preparePackage(root, executing, installed, throbber)) {
-                    await setupUserMode(root, applicaiton, throbber);
+                if (preparePackage(root, executing, installed)) {
+                    setupUserMode(root, applicaiton);
                 } else {
                     success = false;
 
@@ -139,29 +74,21 @@ module.exports = (debug, password) => {
             }
 
             if (success) {
-                await throbber.throb("Application");
-
                 if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
-                    await throbber.update("Application: Restarting NGINX", 100);
+                    console.log("Restarting NGINX");
 
-                    await execSudo(password, [
+                    execSudo(password, [
                         "systemctl",
                         "restart",
                         "nginx.service"
                     ]);
                 }
 
-                await throbber.stop("Application");
-
-                if (!(await checksum(root, executing, installed))) {
-                    throw new Error("Unable to start user mode");
+                if (!reload) {
+                    require(join(applicaiton, "lib", "cli"))();
                 }
-
-                require(join(applicaiton, "lib", "cli"))();
-            } else if (!stop) {
-                require(join(applicaiton, "lib", "cli"))();
             }
-        } else {
+        } else if (!reload) {
             require(join(applicaiton, "lib", "cli"))();
         }
     });
@@ -177,9 +104,7 @@ const tryParseFile = function(filename, replacement) {
     }
 };
 
-const preparePackage = async function (root, executing, installed, throbber) {
-    await throbber.throb("Plugins");
-
+const preparePackage = function (root, executing, installed) {
     let plugins = [];
     let success = true;
     let fix = false;
@@ -209,8 +134,6 @@ const preparePackage = async function (root, executing, installed, throbber) {
     }
 
     if (File.existsSync("/var/hoobs/.migration/plugins.json")) {
-        await throbber.update("Plugins: Migrating existing plugins", 250);
-
         plugins = tryParseFile("/var/hoobs/.migration/plugins.json", []);
     }
 
@@ -221,8 +144,6 @@ const preparePackage = async function (root, executing, installed, throbber) {
     if (File.existsSync("/var/hoobs/.migration/dependencies.json")) {
         installed.dependencies = tryParseFile("/var/hoobs/.migration/dependencies.json", installed.dependencies);
     } else if (executing && executing.dependencies) {
-        await throbber.update("Plugins: Reading existing plugins", 250);
-
         const current = tryParseFile(join(root, "etc", "config.json"), null);
 
         const deps = (current || {}).plugins || [];
@@ -230,8 +151,6 @@ const preparePackage = async function (root, executing, installed, throbber) {
         const orphaned = [];
 
         for (let i = 0; i < deps.length; i++) {
-            await throbber.update(`Plugins: ${deps[i]}`, 500);
-
             let dep = null;
             let name = deps[i];
 
@@ -246,11 +165,7 @@ const preparePackage = async function (root, executing, installed, throbber) {
             } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
                 orphaned.push(name);
             } else {
-                await throbber.stop("Plugins");
-
                 console.log(`Plugin "${name}" is missing`);
-
-                await throbber.throb("Plugins");
 
                 success = false;
             }
@@ -287,7 +202,7 @@ const preparePackage = async function (root, executing, installed, throbber) {
             delete installed.bin;
         }
 
-        await throbber.update("Plugins: Writing package file", 250);
+        console.log("Writing package file");
 
         if (File.existsSync(join(root, "package.json"))) {
             File.unlinkSync(join(root, "package.json"));
@@ -295,34 +210,27 @@ const preparePackage = async function (root, executing, installed, throbber) {
 
         File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
 
-        for (let i = 0; i < plugins.length; i++) {
-            await throbber.update(`Plugins: ${plugins[i].name}`, 0);
-            
-            if (!(await npmInstall(root, plugins[i].name, plugins[i].version, throbber))) {
-                success = false;
-            };
+        for (let i = 0; i < plugins.length; i++) {   
+            execSync(`npm install --prefer-offline --no-audit --progress=true --unsafe-perm ${plugins[i].name}${plugins[i].version && plugins[i].version !== "" ? `@${plugins[i].version}` : ""}`, {
+                cwd: root,
+                stdio: ["inherit", "inherit", "inherit"]
+            });
         }
 
         if (fix) {
-            await throbber.update("Plugins: Installing missing plugins", 100);
-
             execSync("npm install --unsafe-perm --prefer-offline --no-audit --progress=true", {
                 cwd: root,
-                stdio: ["ignore", "ignore", "ignore"]
+                stdio: ["inherit", "inherit", "inherit"]
             });
         }
     }
 
-    await throbber.stop("Plugins");
-
     return success;
 };
 
-const setupUserMode = function (root, applicaiton, throbber) {
-    return new Promise(async (resolve) => {
+const setupUserMode = function (root, applicaiton) {
+    return new Promise((resolve) => {
         if (File.existsSync("/var/hoobs/.migration/config.json")) {
-            await throbber.throb("Configuring");
-
             let current = {
                 bridge: {
                     name: "HOOBS",
@@ -337,13 +245,13 @@ const setupUserMode = function (root, applicaiton, throbber) {
                 platforms: []
             };
 
-            await throbber.update("Configuring: Migrating existing configuration", 250);
+            console.log("Migrating existing configuration");
 
             current = _.extend(current, tryParseFile(join(applicaiton, "default.json"), current));
             current = _.extend(current, tryParseFile("/var/hoobs/.migration/config.json", current));
 
             if (current.plugins.length === 0 && File.existsSync("/var/hoobs/.migration/plugins.json")) {
-                await throbber.update("Configuring: Creating plugin white list", 250);
+                console.log("Creating plugin white list");
 
                 const plugins = tryParseFile("/var/hoobs/.migration/plugins.json", []);
 
@@ -353,7 +261,7 @@ const setupUserMode = function (root, applicaiton, throbber) {
                     }
                 }
 
-                await throbber.update("Configuring: Mapping plugins", 250);
+                console.log("Mapping plugins");
 
                 const platforms = {};
                 const accessories = {};
@@ -400,36 +308,28 @@ const setupUserMode = function (root, applicaiton, throbber) {
                 }
             }
 
-            await throbber.update("Configuring: Writing configuration", 250);
-
             if (File.existsSync(join(root, "etc", "config.json"))) {
                 File.unlinkSync(join(root, "etc", "config.json"));
             }
 
             File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
-
-            await throbber.stop("Configuring");
         }
 
         resolve();
     });
 };
 
-const checkEnviornment = function (home, password, throbber) {
-    return new Promise(async (resolve) => {
-        await throbber.throb("Enviornment");
-
+const checkEnviornment = function (home, password) {
+    return new Promise((resolve) => {
         const queue = [];
 
         if (File.existsSync(join(home, ".npm"))) {
             try {
                 File.accessSync(join(home, ".npm"), File.constants.W_OK);
-
-                await throbber.update(`Enviornment: NPM Cache OK`, 100);
             } catch (err) {
-                await throbber.update(`Enviornment: NPM Cache is Root Locked`, 100);
+                console.log(`NPM Cache is Root Locked`);
 
-                await execSudo(password, [
+                execSudo(password, [
                     "rm",
                     "-fR",
                     join(home, ".npm")
@@ -440,12 +340,10 @@ const checkEnviornment = function (home, password, throbber) {
         if (File.existsSync(join(home, ".config"))) {
             try {
                 File.accessSync(join(home, ".config"), File.constants.W_OK);
-
-                await throbber.update(`Enviornment: NPM Configuration OK`, 100);
             } catch (err) {
-                await throbber.update(`Enviornment: NPM Configuration is Root Locked`, 100);
+                console.log(`NPM Configuration is Root Locked`);
 
-                await execSudo(password, [
+                execSudo(password, [
                     "rm",
                     "-fR",
                     join(home, ".config")
@@ -456,12 +354,10 @@ const checkEnviornment = function (home, password, throbber) {
         if (File.existsSync(join(home, ".node-gyp"))) {
             try {
                 File.accessSync(join(home, ".node-gyp"), File.constants.W_OK);
-
-                await throbber.update(`Enviornment: GYP Build Cache OK`, 100);
             } catch (err) {
-                await throbber.update(`Enviornment: GYP Build Cache is Root Locked`, 100);
+                console.log(`GYP Build Cache is Root Locked`);
 
-                await execSudo(password, [
+                execSudo(password, [
                     "rm",
                     "-fR",
                     join(home, ".node-gyp")
@@ -470,18 +366,14 @@ const checkEnviornment = function (home, password, throbber) {
         }
 
         if (queue.length === 0) {
-            await throbber.stop("Enviornment");
-
             resolve();
         }
     });
 };
 
-const migrate = async function (root, throbber) {
-    await throbber.throb("Migrating");
-
+const migrate = function (root) {
     if (File.existsSync("/var/hoobs/.migration/access.json")) {
-        await throbber.update("Migrating: access.json", 250);
+        console.log("Migrating access.json");
 
         if (File.existsSync(join(root, "etc", "access.json"))) {
             File.unlinkSync(join(root, "etc", "access.json"));
@@ -491,7 +383,7 @@ const migrate = async function (root, throbber) {
     }
 
     if (File.existsSync("/var/hoobs/.migration/layout.json")) {
-        await throbber.update("Migrating: layout.json", 250);
+        console.log("Migrating layout.json");
 
         if (File.existsSync(join(root, "etc", "layout.json"))) {
             File.unlinkSync(join(root, "etc", "layout.json"));
@@ -501,7 +393,7 @@ const migrate = async function (root, throbber) {
     }
 
     if (File.existsSync("/var/hoobs/.migration/accessories")) {
-        await throbber.update("Migrating: accessories", 250);
+        console.log("Migrating accessories");
 
         if (File.existsSync(join(root, "etc", "accessories"))) {
             File.unlinkSync(join(root, "etc", "accessories"));
@@ -511,7 +403,7 @@ const migrate = async function (root, throbber) {
     }
 
     if (File.existsSync("/var/hoobs/.migration/persist")) {
-        await throbber.update("Migrating: persist", 250);
+        console.log("Migrating persist");
 
         if (File.existsSync(join(root, "etc", "persist"))) {
             File.unlinkSync(join(root, "etc", "persist"));
@@ -524,7 +416,7 @@ const migrate = async function (root, throbber) {
         const unmanaged = tryParseFile("/var/hoobs/.migration/unmanaged.json", []);
 
         for (let i = 0; i < unmanaged.length; i++) {
-            await throbber.update(`Migrating: ${unmanaged[i]}`, 250);
+            console.log(`Migrating ${unmanaged[i]}`);
 
             if (File.existsSync(join(root, "etc", unmanaged[i]))) {
                 File.unlinkSync(join(root, "etc", unmanaged[i]));
@@ -533,43 +425,10 @@ const migrate = async function (root, throbber) {
             File.copySync(join("/var/hoobs/.migration", unmanaged[i]), join(root, "etc", unmanaged[i]));
         }
     }
-
-    await throbber.stop("Migrating");
-};
-
-const npmInstall = function (root, name, version, throbber) {
-    return new Promise((resolve) => {
-        const proc = spawn("npm", [
-            "install",
-            "--prefer-offline",
-            "--no-audit",
-            "--progress=true",
-            "--unsafe-perm",
-            `${name}${version && version !== "" ? `@${version}` : ""}`
-        ], {
-            cwd: root
-        });
-
-        proc.stderr.on("data", async (data) => {
-            data = `${data}`.split("\n");
-            data = data.map(l => l.trim());
-            data = data.join(" - ");
-
-            await throbber.update(`Plugins: ${name} - ${data}`, 0);
-        });
-
-        proc.on("close", () => {
-            if (File.existsSync(join(root, "node_modules", name))) {
-                resolve(true);
-            } else {
-                resolve(false);
-            }
-        });
-    });
 };
 
 const execSudo = function(password, options) {
-    return new Promise(async (resolve) => {
+    return new Promise((resolve) => {
         let prompts = 0;
 
         let args = [
@@ -599,13 +458,13 @@ const execSudo = function(password, options) {
             }
         });
 
-        proc.on("close", async () => {
+        proc.on("close", () => {
             resolve();
         });
     });
 };
 
-const checksum = async function(root, executing, installed) {
+const checksum = function(root, executing, installed) {
     if (File.existsSync(join(root, "backups"))) {
         File.removeSync(join(root, "backups"));
     }

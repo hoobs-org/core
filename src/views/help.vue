@@ -138,28 +138,20 @@
         methods: {
             async backup(type) {
                 if (!this.locked) {
-                    this.$store.commit("lock");
-                    this.writing = true;
-
                     let response;
                     let element;
 
                     switch (type) {
                         case "system":
-                            response = await this.api.post("/backup");
+                            this.$store.commit("lock");
 
-                            if (response.success) {
-                                window.location.href = response.filename;
-                            } else {
-                                this.message = response.error;
-                                this.error = true;
-                            }
-
-                            this.writing = false;
-                            this.$store.commit("unlock");
+                            await this.api.post("/backup");
                             break;
                         
                         case "config":
+                            this.writing = true;
+                            this.$store.commit("lock");
+
                             response = await this.api.post("/config/backup");
 
                             if (response.success) {
@@ -185,6 +177,9 @@
                             break;
                         
                         case "logs":
+                            this.writing = true;
+                            this.$store.commit("lock");
+
                             this.$store.state.messages
 
                             element = document.createElement("a");
@@ -203,11 +198,6 @@
                             this.writing = false;
                             this.$store.commit("unlock");
                             break;
-                        
-                        default:
-                            this.writing = false;
-                            this.$store.commit("unlock");
-                            break;
                     }
                 }
             },
@@ -220,6 +210,7 @@
                 this.writing = true;
 
                 this.$store.commit("lock");
+                this.$store.commit("hide", "service");
 
                 const data = new FormData();
 
@@ -231,10 +222,6 @@
                         "Content-Type": "multipart/form-data"
                     }
                 });
-
-                setTimeout(() => {
-                    this.$store.commit("reboot");
-                }, 1000 * 60 * 2);
             },
 
             confirmError() {
@@ -248,10 +235,6 @@
                     this.$store.commit("hide", "service");
 
                     await this.api.put("/reset");
-
-                    setTimeout(() => {
-                        this.$store.commit("reboot");
-                    }, 500);
                 }
             },
 

@@ -29,11 +29,11 @@
             </div>
             <loading-marquee v-if="searching" class="searching" :height="3" color="--title-text" background="--title-text-dim" />
             <div v-if="query !== ''" class="list">
-                <plugin-list v-for="(plugin, index) in results" :key="`plugin-${index}`" :plugin="plugin" :oninstall="oninstall" :onuninstall="onuninstall" :onupdate="onupdate" />
+                <plugin-list v-for="(plugin, index) in results" :key="`plugin-${index}`" :plugin="plugin" />
                 <div v-if="results.length === 0 && !working" class="empty">{{ $t("no_results") }}</div>
             </div>
             <div v-else class="cards">
-                <plugin-card v-for="(plugin, index) in certified" :key="`certified-${index}`" :plugin="plugin" :oninstall="oninstall" :onuninstall="onuninstall" :onupdate="onupdate" />
+                <plugin-card v-for="(plugin, index) in certified" :key="`certified-${index}`" :plugin="plugin" />
                 <div v-if="certified.length === 0 && !working && !searching" class="empty">{{ $t("no_results") }}</div>
             </div>
         </div>
@@ -181,24 +181,6 @@
 
                 this.searching = false;
                 this.working = false;
-            },
-
-            oninstall(name, plugin, details) {
-                this.$router.push({
-                    path: `/config/${name}`
-                });
-            },
-
-            onuninstall() {
-                this.$router.push({
-                    path: "/plugins"
-                });
-            },
-
-            onupdate() {
-                this.$router.push({
-                    path: "/plugins"
-                });
             }
         }
     }

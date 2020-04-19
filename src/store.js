@@ -26,6 +26,7 @@ export default new Vuex.Store({
         user: null,
         messages: [],
         categories: [],
+        command: null,
         weather: null,
         forecast: null,
         version: null,
@@ -123,6 +124,10 @@ export default new Vuex.Store({
                     state.messages.shift();
                 }
             }
+        },
+
+        commands(state, payload) {
+            state.command = payload;
         },
 
         push(state, payload) {

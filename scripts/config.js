@@ -18,20 +18,13 @@
 
 const File = require("fs");
 const Path = require("path");
-const Ora = require("ora");
 
 module.exports = () => {
     return new Promise((resolve) => {
-        let throbber;
-
-        throbber = Ora("Checking Configuration").start();
-
         if (File.existsSync("/home")) {
             const folders = File.readdirSync("/home").filter(file => File.lstatSync(Path.join("/home", file)).isDirectory());
 
             for (let i = 0; i < folders.length; i++) {
-                throbber.start(Path.join("/home", folders[i]));
-
                 if (File.existsSync(Path.join("/home", folders[i], ".hoobs/etc/config.json"))) {
                     reConfigure(Path.join("/home", folders[i], ".hoobs/etc/config.json"));
                 }
@@ -39,8 +32,6 @@ module.exports = () => {
         }
 
         if (File.existsSync("/root/.hoobs/etc/config.json")) {
-            throbber.start("/root");
-
             reConfigure("/root/.hoobs/etc/config.json");
         }
 
@@ -48,8 +39,6 @@ module.exports = () => {
             const folders = File.readdirSync("/Users").filter(file => File.lstatSync(Path.join("/Users", file)).isDirectory());
 
             for (let i = 0; i < folders.length; i++) {
-                throbber.start(Path.join("/Users", folders[i]));
-
                 if (File.existsSync(Path.join("/Users", folders[i], ".hoobs/etc/config.json"))) {
                     reConfigure(Path.join("/Users", folders[i], ".hoobs/etc/config.json"));
                 }
@@ -57,13 +46,8 @@ module.exports = () => {
         }
 
         if (File.existsSync("/var/root/.hoobs/etc/config.json")) {
-            throbber.start("/var/root");
-
             reConfigure("/var/root/.hoobs/etc/config.json");
         }
-
-        throbber.start("Checking Configuration");
-        throbber.stopAndPersist();
 
         resolve();
     });

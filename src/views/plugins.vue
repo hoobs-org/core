@@ -31,7 +31,7 @@
         </div>
         <div v-else class="content">
             <div v-for="(plugin, index) in installed" :key="`plugin-${index}`">
-                <plugin-list v-if="user.admin || plugin.scope === 'hoobs'" :plugin="plugin" :oninstall="oninstall" :onuninstall="onuninstall" :onupdate="onupdate" />
+                <plugin-list v-if="user.admin || plugin.scope === 'hoobs'" :plugin="plugin" />
             </div>
             <div class="mobile-show">
                 <router-link v-if="user.admin" v-on:click="clearSearch()" to="/plugins/search" class="button button-primary">{{ $t("add") }}</router-link>
@@ -104,20 +104,6 @@
                 this.$router.push({
                     path: `/plugins/${category}`,
                 });
-            },
-
-            oninstall(name, plugin, details) {
-                this.$router.push({
-                    path: `/config/${name}`
-                });
-            },
-
-            async onuninstall() {
-                this.installed = await this.api.get("/plugins");
-            },
-
-            async onupdate() {
-                this.installed = await this.api.get("/plugins");
             }
         }
     }

@@ -18,7 +18,6 @@
 
 const _ = require("lodash");
 
-const Ora = require("ora");
 const File = require("fs-extra");
 
 const { dirname, join } = require("path");
@@ -26,96 +25,42 @@ const { execSync } = require("child_process");
 
 const home = "/hoobs";
 
-class Throbber {
-    constructor(debug) {
-        this.debug = debug;
-        this.throbber = null;
+module.exports = (reload) => {
+    const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
+    const installed = tryParseFile(join(applicaiton, "package.json"));
+
+    if (!installed) {
+        throw new Error("HOOBS Installation is Corrupt. Please Re-Install HOOBS.");
     }
 
-    sleep(time) {
-        return new Promise((resolve) => {
-            setTimeout(resolve, time);
-        })
+    if (!File.existsSync(home)) {
+        File.mkdirSync(home);
     }
 
-    async throb(message) {
-        if (!this.debug) {
-            message = message || "";
+    const executing = tryParseFile(join(home, "package.json"), {});
 
-            this.throbber = Ora(message).start();
-            this.throbber.color = "yellow";
+    console.log("");
 
-            await this.sleep(100);
-        }
-    }
-
-    async update(message, time) {
-        if (message && message !== "") {
-            if (this.debug) {
-                console.log(message);
-            } else {
-                const data = message.split(":");
-
-                message = data[0];
-                data.shift();
-
-                if (data.length > 0) {
-                    message += `: ${data.map(v => v.trim().slice(-80)).join(": ")}`;
-                }
-
-                this.throbber.text = message;
-                this.throbber.color = "yellow";
-
-                await this.sleep(time);
-            }
-        }
-    };
-
-    async stop(message) {
-        if (!this.debug) {
-            await this.update(message, 10);
-
-            this.throbber.stop();
-        }
-    };
-}
-
-module.exports = (debug) => {
-    (async () => {
-        const throbber = new Throbber(debug);
-
-        const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
-        const installed = tryParseFile(join(applicaiton, "package.json"));
-
-        if (!installed) {
-            throw new Error("HOOBS Installation is Corrupt. Please Re-Install HOOBS.");
+    if (!executing || !(checksum(executing, installed))) {
+        if (!(preparePackage(executing, installed))) {
+            console.log("---------------------------------------------------------");
+            console.log("There are configured plugins that are not installed.");
+            console.log("Please edit your config.json file and remove the missing");
+            console.log("plugin configurations, and remove the plugin from the");
+            console.log("plugins array.");
+            console.log("---------------------------------------------------------");
+            console.log("Loading previous version");
+            console.log("---------------------------------------------------------");
         }
 
-        if (!File.existsSync(home)) {
-            File.mkdirSync(home);
-        }
-
-        const executing = tryParseFile(join(home, "package.json"), {});
-
-        console.log("");
-
-        if (!executing || !(await checksum(executing, installed))) {
-            if (!(await preparePackage(executing, installed, throbber))) {
-                console.log("---------------------------------------------------------");
-                console.log("There are configured plugins that are not installed.");
-                console.log("Please edit your config.json file and remove the missing");
-                console.log("plugin configurations, and remove the plugin from the");
-                console.log("plugins array.");
-                console.log("---------------------------------------------------------");
-                console.log("Loading previous version");
-                console.log("---------------------------------------------------------");
-            }
-
-            require(join(applicaiton, "lib", "cli"))(true);
-        } else {
+        if (!reload) {
             require(join(applicaiton, "lib", "cli"))(true);
         }
-    })();
+    } else {
+        if (!reload) {
+            require(join(applicaiton, "lib", "cli"))(true);
+        }
+    }
 };
 
 const tryParseFile = function(filename, replacement) {
@@ -128,9 +73,7 @@ const tryParseFile = function(filename, replacement) {
     }
 };
 
-const preparePackage = async function (executing, installed, throbber) {
-    await throbber.throb("Plugins");
-
+const preparePackage = function (executing, installed) {
     let success = true;
     let fix = false;
 
@@ -163,7 +106,7 @@ const preparePackage = async function (executing, installed, throbber) {
     }
 
     if (executing && executing.dependencies) {
-        await throbber.update("Plugins: Reading existing plugins", 250);
+        console.log("Plugins: Reading existing plugins");
 
         const current = tryParseFile(join(home, "etc", "config.json"), null);
 
@@ -172,8 +115,6 @@ const preparePackage = async function (executing, installed, throbber) {
         const orphaned = [];
 
         for (let i = 0; i < deps.length; i++) {
-            await throbber.update(`Plugins: ${deps[i]}`, 500);
-
             let dep = null;
             let name = deps[i];
 
@@ -188,11 +129,7 @@ const preparePackage = async function (executing, installed, throbber) {
             } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
                 orphaned.push(name);
             } else {
-                await throbber.stop("Plugins");
-
                 console.log(`Plugin "${name}" is missing`);
-
-                await throbber.throb("Plugins");
 
                 success = false;
             }
@@ -229,8 +166,6 @@ const preparePackage = async function (executing, installed, throbber) {
             delete installed.bin;
         }
 
-        await throbber.update("Plugins: Writing package file", 250);
-
         if (File.existsSync(join(home, "package.json"))) {
             File.unlinkSync(join(home, "package.json"));
         }
@@ -238,21 +173,17 @@ const preparePackage = async function (executing, installed, throbber) {
         File.appendFileSync(join(home, "package.json"), JSON.stringify(installed, null, 4));
 
         if (fix) {
-            await throbber.update("Plugins: Installing missing plugins", 100);
-
             execSync("npm install --unsafe-perm --prefer-offline --no-audit --progress=true", {
                 cwd: home,
-                stdio: ["ignore", "ignore", "ignore"]
+                stdio: ["inherit", "inherit", "inherit"]
             });
         }
     }
 
-    await throbber.stop("Plugins");
-
     return success;
 };
 
-const checksum = async function(executing, installed) {
+const checksum = function(executing, installed) {
     if (File.existsSync(join(home, "backups"))) {
         File.removeSync(join(home, "backups"));
     }

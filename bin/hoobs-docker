@@ -74,7 +74,7 @@ switch ((command || "").toLowerCase()) {
         break;
 
     default:
-        (require(join(dirname(File.realpathSync(__filename)), "../scripts/docker")))(debug);
+        (require(join(dirname(File.realpathSync(__filename)), "../scripts/docker")))();
 
         break;
 }

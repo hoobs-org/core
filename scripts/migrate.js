@@ -18,12 +18,9 @@
 
 const Path = require("path");
 const File = require("fs-extra");
-const Ora = require("ora");
 
 module.exports = (enviornment) => {
     return new Promise(async (resolve) => {
-        const throbber = Ora("Checking Existing Configuration").start();
-
         if (enviornment.plugins && Array.isArray(enviornment.plugins) && enviornment.plugins.length > 0) {
             writeJson("plugins.json", enviornment.plugins);
         }
@@ -226,8 +223,6 @@ module.exports = (enviornment) => {
 
             writeJson("unmanaged.json", unmanaged);
         }
-
-        throbber.stopAndPersist();
 
         resolve();
     });

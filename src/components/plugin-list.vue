@@ -130,77 +130,15 @@
             },
 
             async install() {
-                if (!this.locked) {
-                    this.working = true;
-
-                    const restart = this.running;
-                    const results = await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
-
-                    if (restart && results.active === 0) {
-                        this.$store.commit("lock");
-
-                        await this.api.post("/service/stop");
-                        await this.api.post("/service/start");
-
-                        this.$store.commit("unlock");
-                    }
-
-                    this.working = false;
-
-                    if (results.active === 0 && results.success && this.oninstall) {
-                        this.oninstall(results.plugin.name, results.plugin, results.details);
-                    } else if (results.active === 0 && this.onuninstall) {
-                        this.onuninstall();
-                    }
-                }
+                await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
             },
 
             async uninstall() {
-                if (!this.locked) {
-                    this.working = true;
-
-                    const restart = this.running;
-                    const results = await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}`);
-
-                    if (restart && results.active === 0) {
-                        this.$store.commit("lock");
-
-                        await this.api.post("/service/stop");
-                        await this.api.post("/service/start");
-
-                        this.$store.commit("unlock");
-                    }
-
-                    this.working = false;
-
-                    if (results.active === 0 && this.onuninstall) {
-                        this.onuninstall();
-                    }
-                }
+                await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}?socketed=true`);
             },
 
             async update() {
-                if (!this.locked) {
-                    this.working = true;
-
-                    const restart = this.running;
-                    const results = await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}`);
-
-                    if (restart && results.active === 0) {
-                        this.$store.commit("lock");
-
-                        await this.api.post("/service/stop");
-                        await this.api.post("/service/start");
-
-                        this.$store.commit("unlock");
-                    }
-
-                    this.working = false;
-
-                    if (results.active === 0 && this.onupdate) {
-                        this.onupdate();
-                    }
-                }
+                await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
             }
         }
     };

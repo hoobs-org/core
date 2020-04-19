@@ -18,12 +18,9 @@
 
 const File = require("fs");
 const Process = require("child_process");
-const Ora = require("ora");
 
 module.exports = (install) => {
     return new Promise(async (resolve) => {
-        let throbber = null;
-
         const pms = getPms();
 
         if (File.existsSync("/etc/nginx/nginx.conf")) {
@@ -34,25 +31,21 @@ module.exports = (install) => {
             switch (pms) {
                 case "dnf":
                 case "yum":
-                    throbber = Ora("Installing NGINX").start();
+                    console.log("Installing NGINX");
 
                     Process.execSync(`${pms} install -y nginx`);
-
-                    throbber.stopAndPersist();
                     break;
 
                 case "apt":
-                    throbber = Ora("Installing NGINX").start();
+                    console.log("Installing NGINX");
 
                     Process.execSync("apt-get install -y nginx");
-
-                    throbber.stopAndPersist();
                     break;
             }
         }
 
         if ((install || File.existsSync("/etc/nginx/nginx.conf")) && pms) {
-            throbber = Ora("Configuring NGINX").start();
+            console.log("Configuring NGINX");
 
             if (!File.existsSync("/etc/nginx")){
                 File.mkdirSync("/etc/nginx");
@@ -298,34 +291,20 @@ module.exports = (install) => {
             loader += "</html>\n";
 
             writeFile("/usr/share/hoobs/loader.html", loader);
-
-            throbber.stopAndPersist();
         }
 
         if (install && File.existsSync("/usr/bin/firewall-cmd")) {
-            throbber = Ora("Fetching Default Firewall Zone").start();
-
             const zone = await getDefaultZone();
 
-            throbber.stopAndPersist();
-
             if (zone && zone !== "") {
-                throbber = Ora("Configuring Firewall").start();
-
                 Process.execSync(`firewall-cmd --zone=${zone} --add-port=80/tcp --permanent`);
                 Process.execSync("firewall-cmd --reload");
-
-                throbber.stopAndPersist();
             }
         }
 
         if (install && pms) {
-            throbber = Ora("Installing NGINX Service").start();
-
             Process.execSync("systemctl daemon-reload");
             Process.execSync("systemctl enable nginx.service");
-
-            throbber.stopAndPersist();
         }
 
         resolve();
