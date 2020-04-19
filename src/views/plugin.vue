@@ -207,14 +207,20 @@
             },
 
             async install() {
+                this.working = true;
+
                 await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
             },
 
             async uninstall() {
+                this.working = true;
+
                 await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}?socketed=true`);
             },
 
             async update() {
+                this.working = true;
+
                 await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
             }
         }

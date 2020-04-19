@@ -223,9 +223,13 @@
                     case "commands":
                         switch (state.command.action) {
                             case "redirect":
-                                this.$router.push({
-                                    path: state.command.payload.route
-                                });
+                                if (state.command.payload.route === this.$route.path) {
+                                    window.location.reload();
+                                } else {
+                                    this.$router.push({
+                                        path: state.command.payload.route
+                                    });
+                                }
 
                                 break;
 
