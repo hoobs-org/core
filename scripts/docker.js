@@ -42,7 +42,7 @@ module.exports = (reload) => {
     console.log("");
 
     if (!executing || !(checksum(executing, installed))) {
-        if (!(preparePackage(executing, installed))) {
+        if (!preparePackage(executing, installed)) {
             console.log("---------------------------------------------------------");
             console.log("There are configured plugins that are not installed.");
             console.log("Please edit your config.json file and remove the missing");

@@ -42,51 +42,29 @@ module.exports = (password, reload) => {
 
     checkEnviornment(home, password).then(() => {
         if (!executing || installed.version !== executing.version || !(checksum(root, executing, installed))) {
-            let success = true;
-
-            if (File.existsSync("/var/hoobs/.migration")) {
-                migrate(root);
-
-                if (preparePackage(root, executing, installed)) {
-                    setupUserMode(root, applicaiton);
-
-                    execSudo(password, [
-                        "rm",
-                        "-fR",
-                        "/var/hoobs/.migration"
-                    ]);
-                }
-            } else {
-                if (preparePackage(root, executing, installed)) {
-                    setupUserMode(root, applicaiton);
-                } else {
-                    success = false;
-
-                    console.log("---------------------------------------------------------");
-                    console.log("There are configured plugins that are not installed.");
-                    console.log("Please edit your config.json file and remove the missing");
-                    console.log("plugin configurations, and remove the plugin from the");
-                    console.log("plugins array.");
-                    console.log("---------------------------------------------------------");
-                    console.log("Loading previous version");
-                    console.log("---------------------------------------------------------");
-                }
+            if (!preparePackage(root, executing, installed)) {
+                console.log("---------------------------------------------------------");
+                console.log("There are configured plugins that are not installed.");
+                console.log("Please edit your config.json file and remove the missing");
+                console.log("plugin configurations, and remove the plugin from the");
+                console.log("plugins array.");
+                console.log("---------------------------------------------------------");
+                console.log("Loading previous version");
+                console.log("---------------------------------------------------------");
             }
 
-            if (success) {
-                if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
-                    console.log("Restarting NGINX");
+            if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
+                console.log("Restarting NGINX");
 
-                    execSudo(password, [
-                        "systemctl",
-                        "restart",
-                        "nginx.service"
-                    ]);
-                }
+                execSudo(password, [
+                    "systemctl",
+                    "restart",
+                    "nginx.service"
+                ]);
+            }
 
-                if (!reload) {
-                    require(join(applicaiton, "lib", "cli"))();
-                }
+            if (!reload) {
+                require(join(applicaiton, "lib", "cli"))();
             }
         } else if (!reload) {
             require(join(applicaiton, "lib", "cli"))();
@@ -133,60 +111,51 @@ const preparePackage = function (root, executing, installed) {
         }
     }
 
-    if (File.existsSync("/var/hoobs/.migration/plugins.json")) {
-        plugins = tryParseFile("/var/hoobs/.migration/plugins.json", []);
-    }
-
     if (installed.dependencies) {
         installed.dependencies = {};
     }
 
-    if (File.existsSync("/var/hoobs/.migration/dependencies.json")) {
-        installed.dependencies = tryParseFile("/var/hoobs/.migration/dependencies.json", installed.dependencies);
-    } else if (executing && executing.dependencies) {
-        const current = tryParseFile(join(root, "etc", "config.json"), null);
+    const current = tryParseFile(join(root, "etc", "config.json"), null);
+    const deps = (current || {}).plugins || [];
+    const keys = Object.keys(executing.dependencies);
+    const orphaned = [];
 
-        const deps = (current || {}).plugins || [];
-        const keys = Object.keys(executing.dependencies);
-        const orphaned = [];
+    for (let i = 0; i < deps.length; i++) {
+        let dep = null;
+        let name = deps[i];
 
-        for (let i = 0; i < deps.length; i++) {
-            let dep = null;
-            let name = deps[i];
+        if (executing.dependencies[name]) {
+            dep = name;
+        } else {
+            dep = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
+        }
 
-            if (executing.dependencies[name]) {
-                dep = name;
-            } else {
-                dep = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
-            }
+        if (dep && executing.dependencies[dep]) {
+            installed.dependencies[dep] = executing.dependencies[dep];
+        } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
+            orphaned.push(name);
+        } else {
+            console.log(`Plugin "${name}" is missing`);
 
-            if (dep && executing.dependencies[dep]) {
-                installed.dependencies[dep] = executing.dependencies[dep];
-            } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
-                orphaned.push(name);
-            } else {
-                console.log(`Plugin "${name}" is missing`);
+            success = false;
+        }
 
-                success = false;
-            }
+        if (dep && !File.existsSync(join(root, "node_modules", dep))) {
+            fix = true;
+        }
+    }
 
-            if (dep && !File.existsSync(join(root, "node_modules", dep))) {
-                fix = true;
+    if (success && orphaned.length > 0) {
+        for (let i = 0; i < orphaned.length; i++) {
+            const index = (current.plugins || []).indexOf(orphaned[i]);
+
+            if (index > -1) {
+                current.plugins.splice(index, 1);
             }
         }
 
-        if (success && orphaned.length > 0) {
-            for (let i = 0; i < orphaned.length; i++) {
-                const index = (current.plugins || []).indexOf(orphaned[i]);
-
-                if (index > -1) {
-                    current.plugins.splice(index, 1);
-                }
-            }
-
-            File.unlinkSync(join(root, "etc", "config.json"));
-            File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
-        }
+        File.unlinkSync(join(root, "etc", "config.json"));
+        File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
     }
 
     if (success) {
@@ -226,97 +195,6 @@ const preparePackage = function (root, executing, installed) {
     }
 
     return success;
-};
-
-const setupUserMode = function (root, applicaiton) {
-    return new Promise((resolve) => {
-        if (File.existsSync("/var/hoobs/.migration/config.json")) {
-            let current = {
-                bridge: {
-                    name: "HOOBS",
-                    port: 51826,
-                    pin: "031-45-154"
-                },
-                description: "",
-                ports: {},
-                plugins: [],
-                interfaces: [],
-                accessories: [],
-                platforms: []
-            };
-
-            console.log("Migrating existing configuration");
-
-            current = _.extend(current, tryParseFile(join(applicaiton, "default.json"), current));
-            current = _.extend(current, tryParseFile("/var/hoobs/.migration/config.json", current));
-
-            if (current.plugins.length === 0 && File.existsSync("/var/hoobs/.migration/plugins.json")) {
-                console.log("Creating plugin white list");
-
-                const plugins = tryParseFile("/var/hoobs/.migration/plugins.json", []);
-
-                for (let i = 0; i < plugins.length; i++) {
-                    if (current.plugins.indexOf(plugins[i].name) === -1) {
-                        current.plugins.push(plugins[i].name);
-                    }
-                }
-
-                console.log("Mapping plugins");
-
-                const platforms = {};
-                const accessories = {};
-
-                for (let i = 0; i < (current.platforms || []).length; i++) {
-                    if (!platforms[current.platforms[i].platform]) {
-                        platforms[current.platforms[i].platform] = [];
-                    }
-
-                    platforms[current.platforms[i].platform].push(i);
-                }
-
-                for (let i = 0; i < (current.accessories || []).length; i++) {
-                    if (!accessories[current.accessories[i].accessory]) {
-                        accessories[current.accessories[i].accessory] = [];
-                    }
-
-                    accessories[current.accessories[i].accessory].push(i);
-                }
-
-                for (let i = 0; i < plugins.length; i++) {
-                    for (let j = 0; j < (plugins[i].details || []).length; j++) {
-                        switch (plugins[i].details[j].type) {
-                            case "platform":
-                                for (let k = 0; k < (platforms[plugins[i].details[j].alias] || []).length; k++) {
-                                    current.platforms[platforms[plugins[i].details[j].alias][k]].plugin_map = {
-                                        plugin_name: plugins[i].name
-                                    }
-                                }
-
-                                break;
-
-                            case "accessory":
-                                for (let k = 0; k < (accessories[plugins[i].details[j].alias] || []).length; k++) {
-                                    current.accessories[accessories[plugins[i].details[j].alias][k]].plugin_map = {
-                                        plugin_name: plugins[i].name,
-                                        index: 0
-                                    }
-                                }
-
-                                break;
-                        }
-                    }
-                }
-            }
-
-            if (File.existsSync(join(root, "etc", "config.json"))) {
-                File.unlinkSync(join(root, "etc", "config.json"));
-            }
-
-            File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
-        }
-
-        resolve();
-    });
 };
 
 const checkEnviornment = function (home, password) {
@@ -369,62 +247,6 @@ const checkEnviornment = function (home, password) {
             resolve();
         }
     });
-};
-
-const migrate = function (root) {
-    if (File.existsSync("/var/hoobs/.migration/access.json")) {
-        console.log("Migrating access.json");
-
-        if (File.existsSync(join(root, "etc", "access.json"))) {
-            File.unlinkSync(join(root, "etc", "access.json"));
-        }
-
-        File.copySync("/var/hoobs/.migration/access.json", join(root, "etc", "access.json"));
-    }
-
-    if (File.existsSync("/var/hoobs/.migration/layout.json")) {
-        console.log("Migrating layout.json");
-
-        if (File.existsSync(join(root, "etc", "layout.json"))) {
-            File.unlinkSync(join(root, "etc", "layout.json"));
-        }
-
-        File.copySync("/var/hoobs/.migration/layout.json", join(root, "etc", "layout.json"));
-    }
-
-    if (File.existsSync("/var/hoobs/.migration/accessories")) {
-        console.log("Migrating accessories");
-
-        if (File.existsSync(join(root, "etc", "accessories"))) {
-            File.unlinkSync(join(root, "etc", "accessories"));
-        }
-
-        File.copySync("/var/hoobs/.migration/accessories", join(root, "etc", "accessories"));
-    }
-
-    if (File.existsSync("/var/hoobs/.migration/persist")) {
-        console.log("Migrating persist");
-
-        if (File.existsSync(join(root, "etc", "persist"))) {
-            File.unlinkSync(join(root, "etc", "persist"));
-        }
-
-        File.copySync("/var/hoobs/.migration/persist", join(root, "etc", "persist"));
-    }
-
-    if (File.existsSync("/var/hoobs/.migration/unmanaged.json")) {
-        const unmanaged = tryParseFile("/var/hoobs/.migration/unmanaged.json", []);
-
-        for (let i = 0; i < unmanaged.length; i++) {
-            console.log(`Migrating ${unmanaged[i]}`);
-
-            if (File.existsSync(join(root, "etc", unmanaged[i]))) {
-                File.unlinkSync(join(root, "etc", unmanaged[i]));
-            }
-
-            File.copySync(join("/var/hoobs/.migration", unmanaged[i]), join(root, "etc", unmanaged[i]));
-        }
-    }
 };
 
 const execSudo = function(password, options) {

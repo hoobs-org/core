@@ -136,9 +136,7 @@ switch ((command || "").toLowerCase()) {
             case "install":
                 (async () => {
                     const root = dirname(File.realpathSync(__filename));
-                    const enviornment = await (require(join(root, "../scripts/enviornment")))();
                 
-                    await (require(join(root, "../scripts/migrate")))(enviornment);
                     await (require(join(root, "../scripts/prerequisites")))();
                     await (require(join(root, "../scripts/nginx")))(true);
                     await (require(join(root, "../scripts/systemd")))(true);
