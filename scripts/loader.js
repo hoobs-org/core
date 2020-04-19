@@ -115,47 +115,49 @@ const preparePackage = function (root, executing, installed) {
         installed.dependencies = {};
     }
 
-    const current = tryParseFile(join(root, "etc", "config.json"), null);
-    const deps = (current || {}).plugins || [];
-    const keys = Object.keys(executing.dependencies);
-    const orphaned = [];
+    if (executing && executing.dependencies) {
+        const current = tryParseFile(join(root, "etc", "config.json"), null);
+        const deps = (current || {}).plugins || [];
+        const keys = Object.keys((executing || {}).dependencies || {});
+        const orphaned = [];
 
-    for (let i = 0; i < deps.length; i++) {
-        let dep = null;
-        let name = deps[i];
+        for (let i = 0; i < deps.length; i++) {
+            let dep = null;
+            let name = deps[i];
 
-        if (executing.dependencies[name]) {
-            dep = name;
-        } else {
-            dep = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
-        }
+            if (executing.dependencies[name]) {
+                dep = name;
+            } else {
+                dep = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
+            }
 
-        if (dep && executing.dependencies[dep]) {
-            installed.dependencies[dep] = executing.dependencies[dep];
-        } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
-            orphaned.push(name);
-        } else {
-            console.log(`Plugin "${name}" is missing`);
+            if (dep && executing.dependencies[dep]) {
+                installed.dependencies[dep] = executing.dependencies[dep];
+            } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
+                orphaned.push(name);
+            } else {
+                console.log(`Plugin "${name}" is missing`);
 
-            success = false;
-        }
+                success = false;
+            }
 
-        if (dep && !File.existsSync(join(root, "node_modules", dep))) {
-            fix = true;
-        }
-    }
-
-    if (success && orphaned.length > 0) {
-        for (let i = 0; i < orphaned.length; i++) {
-            const index = (current.plugins || []).indexOf(orphaned[i]);
-
-            if (index > -1) {
-                current.plugins.splice(index, 1);
+            if (dep && !File.existsSync(join(root, "node_modules", dep))) {
+                fix = true;
             }
         }
 
-        File.unlinkSync(join(root, "etc", "config.json"));
-        File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
+        if (success && orphaned.length > 0) {
+            for (let i = 0; i < orphaned.length; i++) {
+                const index = (current.plugins || []).indexOf(orphaned[i]);
+
+                if (index > -1) {
+                    current.plugins.splice(index, 1);
+                }
+            }
+
+            File.unlinkSync(join(root, "etc", "config.json"));
+            File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
+        }
     }
 
     if (success) {
