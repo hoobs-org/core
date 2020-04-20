@@ -18,10 +18,51 @@
 
 const Path = require("path");
 const File = require("fs-extra");
+const Reader = require("readline");
 const Process = require("child_process");
 
-module.exports = (enviornment) => {
+module.exports = () => {
     return new Promise(async (resolve) => {
+        const root = File.existsSync("/root/") ? "/root/" : "/var/root/";
+        const svc = await readLines("/etc/systemd/system/homebridge.service");
+        const env = (svc.filter(v => v.trim().startsWith("EnvironmentFile"))[0] || "").replace(/environmentfile/i, "").replace(/=/i, "").trim();
+        const user = (svc.filter(v => v.trim().startsWith("User"))[0] || "root").replace(/user/i, "").replace(/=/i, "").trim();
+        const args = ((await readLines(env)).filter(v => v.trim().startsWith("HOMEBRIDGE_OPTS"))[0] || "").replace(/homebridge_opts/i, "").replace(/=/i, "").trim().split(" ");
+
+        let storage = "";
+
+        for (let i = 0; i < args.length; i++) {
+            if (args[i] === "-U") {
+                storage = "#storage_path#";
+            } else if (storage === "#storage_path#") {
+                storage = args[i];
+            }
+        }
+
+        if (storage === "" || storage === "#storage_path#") {
+            storage = user === "root" ? Path.join(root, ".homebridge") : `/home/${user}/.homebridge`
+        }
+
+        const plugins = [];
+        const modules = Path.dirname(File.realpathSync(Path.join(__filename, "../../../")));
+
+        if (File.existsSync(storage)) {
+            const entries = File.readdirSync(modules).filter(f => File.lstatSync(Path.join(modules, f)).isDirectory());
+
+            for (let i = 0; i < entries.length; i++) {
+                const directory = Path.join(modules, entries[i]);
+                const filename = Path.join(directory, "/package.json");
+
+                if (File.existsSync(filename)) {
+                    const item = JSON.parse(File.readFileSync(filename));
+
+                    if (Array.isArray(item.keywords) && item.keywords.indexOf("homebridge-plugin") >= 0) {
+                        plugins.push(item.name);
+                    }
+                }
+            }
+        }
+
         console.log("");
         console.log("Removing the HOOBS/Homebridge Switch Capabilities");
 
@@ -33,35 +74,35 @@ module.exports = (enviornment) => {
 
         console.log("Removing Configuration Files");
 
-        if (File.existsSync(Path.join(enviornment.storage, "config.json"))) {
-            File.unlinkSync(Path.join(enviornment.storage, "config.json"));
+        if (File.existsSync(Path.join(storage, "config.json"))) {
+            File.unlinkSync(Path.join(storage, "config.json"));
         }
 
-        if (File.existsSync(Path.join(enviornment.storage, "auth.json"))) {
-            File.unlinkSync(Path.join(enviornment.storage, "auth.json"));
+        if (File.existsSync(Path.join(storage, "auth.json"))) {
+            File.unlinkSync(Path.join(storage, "auth.json"));
         }
 
-        if (File.existsSync(Path.join(enviornment.storage, "accessories/uiAccessoriesLayout.json"))) {
-            File.unlinkSync(Path.join(enviornment.storage, "accessories/uiAccessoriesLayout.json"));
+        if (File.existsSync(Path.join(storage, "accessories/uiAccessoriesLayout.json"))) {
+            File.unlinkSync(Path.join(storage, "accessories/uiAccessoriesLayout.json"));
         }
 
         console.log("Removing Homebridge Accessory Cache");
 
-        if (File.existsSync(Path.join(enviornment.storage, "accessories"))) {
-            File.removeSync(Path.join(enviornment.storage, "accessories"));
+        if (File.existsSync(Path.join(storage, "accessories"))) {
+            File.removeSync(Path.join(storage, "accessories"));
         }
 
-        if (File.existsSync(Path.join(enviornment.storage, "persist"))) {
-            File.removeSync(Path.join(enviornment.storage, "persist"));
+        if (File.existsSync(Path.join(storage, "persist"))) {
+            File.removeSync(Path.join(storage, "persist"));
         }
 
         console.log("Removing Unmanaged Files");
 
-        if (File.existsSync(enviornment.storage)) {
-            const files = File.readdirSync(enviornment.storage).filter(f => File.lstatSync(Path.join(enviornment.storage, f)).isFile() && known.indexOf(f) === -1);
+        if (File.existsSync(storage)) {
+            const files = File.readdirSync(storage).filter(f => File.lstatSync(Path.join(storage, f)).isFile() && known.indexOf(f) === -1);
 
             for (let i = 0; i < files.length; i++) {
-                File.unlinkSync(Path.join(enviornment.storage, files[i]));
+                File.unlinkSync(Path.join(storage, files[i]));
             }
         }
 
@@ -87,20 +128,16 @@ module.exports = (enviornment) => {
 
         console.log("Removing Enviornment File");
 
-        if (File.existsSync(enviornment.defaults)) {
-            File.unlinkSync(enviornment.defaults);
+        if (File.existsSync(env)) {
+            File.unlinkSync(env);
         }
 
-        if (File.existsSync(enviornment.storage)) {
-            Process.execSync(`rm -fR ${enviornment.storage}`);
+        if (File.existsSync(storage)) {
+            Process.execSync(`rm -fR ${storage}`);
         }
 
-        for (let i = 0; i < enviornment.incompatable.length; i++) {
-            await npmUnnstall(enviornment.incompatable[i]);
-        }
-
-        for (let i = 0; i < enviornment.plugins.length; i++) {
-            await npmUnnstall(enviornment.plugins[i].name);
+        for (let i = 0; i < plugins.length; i++) {
+            await npmUnnstall(plugins[i]);
         }
 
         console.log("Starting HOOBS");
@@ -130,5 +167,28 @@ const npmUnnstall = function (name) {
         proc.on("close", () => {
             resolve();
         });
+    });
+};
+
+const readLines = function (filename) {
+    return new Promise((resolve) => {
+        const results = [];
+
+        if (filename && filename !== "" && File.existsSync(filename)) {
+            const reader = Reader.createInterface({
+                input: File.createReadStream(filename),
+                crlfDelay: Infinity
+            });
+
+            reader.on("line", (line) => {
+                results.push(line);
+            });
+
+            reader.on("close", () => {
+                resolve(results);
+            });
+        } else {
+            resolve(results);
+        }
     });
 };

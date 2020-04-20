@@ -290,7 +290,7 @@ switch ((command || "").toLowerCase()) {
                         break;
                     
                     case "uninstall":
-                        await (require(join(root, "../scripts/uninstall")))((await (require(join(root, "../scripts/enviornment")))()));
+                        await (require(join(root, "../scripts/uninstall")))();
                         break;
                 }
             }
