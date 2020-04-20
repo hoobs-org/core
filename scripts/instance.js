@@ -59,7 +59,7 @@ module.exports = (mode, name, command) => {
                         hidden: true
                     },
                     bridge: {
-                        description: "Enter the bridge port for Homebridge",
+                        description: "Enter the bridge port for the bridge",
                         pattern: /^\d+$/,
                         default: "52826",
                         required: true,
