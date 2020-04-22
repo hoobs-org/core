@@ -86,13 +86,9 @@ module.exports = class Session extends EventEmitter {
                 this.currentPlatformInstance = this.configurablePlatformPlugins[this.listOfPlatforms[request.response.selections[0]]];
                 this.currentStage = 3;
 
-                this.currentPlatformInstance.configurationRequestHandler(this.currentPlatformContext, null, () => {
-                    this.pluginResponseHandler();
-                });
+                this.currentPlatformInstance.configurationRequestHandler(this.currentPlatformContext, null, this.pluginResponseHandler.bind(this));
             } else if (this.currentStage === 3) {
-                this.currentPlatformInstance.configurationRequestHandler(this.currentPlatformContext, request, () => {
-                    this.pluginResponseHandler();
-                });
+                this.currentPlatformInstance.configurationRequestHandler(this.currentPlatformContext, request, this.pluginResponseHandler.bind(this));
             } else if (this.currentStage === 4) {
                 this.handleManageAccessory(request);
             }
@@ -101,9 +97,7 @@ module.exports = class Session extends EventEmitter {
             this.validSession = false;
 
             if (this.currentStage === 3) {
-                this.currentPlatformInstance.configurationRequestHandler(this.currentPlatformContext, request, () => {
-                    this.pluginResponseHandler();
-                });
+                this.currentPlatformInstance.configurationRequestHandler(this.currentPlatformContext, request, this.pluginResponseHandler.bind(this));
             }
         }
     }
