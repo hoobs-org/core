@@ -40,36 +40,34 @@ module.exports = (password, reload) => {
 
     const executing = tryParseFile(join(root, "package.json"), {});
 
-    checkEnviornment(home, password).then(() => {
-        if (!executing || installed.version !== executing.version || !(checksum(root, executing, installed))) {
-            if (!preparePackage(root, executing, installed)) {
-                console.log("---------------------------------------------------------");
-                console.log("There are configured plugins that are not installed.");
-                console.log("Please edit your config.json file and remove the missing");
-                console.log("plugin configurations, and remove the plugin from the");
-                console.log("plugins array.");
-                console.log("---------------------------------------------------------");
-                console.log("Loading previous version");
-                console.log("---------------------------------------------------------");
-            }
+    if (!executing || installed.version !== executing.version || !(checksum(root, executing, installed))) {
+        if (!preparePackage(root, executing, installed)) {
+            console.log("---------------------------------------------------------");
+            console.log("There are configured plugins that are not installed.");
+            console.log("Please edit your config.json file and remove the missing");
+            console.log("plugin configurations, and remove the plugin from the");
+            console.log("plugins array.");
+            console.log("---------------------------------------------------------");
+            console.log("Loading previous version");
+            console.log("---------------------------------------------------------");
+        }
 
-            if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
-                console.log("Restarting NGINX");
+        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
+            console.log("Restarting NGINX");
 
-                execSudo(password, [
-                    "systemctl",
-                    "restart",
-                    "nginx.service"
-                ]);
-            }
+            execSudo(password, [
+                "systemctl",
+                "restart",
+                "nginx.service"
+            ]);
+        }
 
-            if (!reload) {
-                require(join(applicaiton, "server", "cli"))();
-            }
-        } else if (!reload) {
+        if (!reload) {
             require(join(applicaiton, "server", "cli"))();
         }
-    });
+    } else if (!reload) {
+        require(join(applicaiton, "server", "cli"))();
+    }
 };
 
 const tryParseFile = function(filename, replacement) {
@@ -86,22 +84,6 @@ const preparePackage = function (root, executing, installed) {
     let plugins = [];
     let success = true;
     let fix = false;
-
-    if (File.existsSync(join(root, "node_modules", "@hoobs", "hoobs"))) {
-        fix = true;
-    }
-
-    if (File.existsSync(join(root, "dist"))) {
-        File.removeSync(join(root, "dist"));
-    }
-
-    if (File.existsSync(join(root, "node_modules", "homebridge"))) {
-        try {
-            File.unlinkSync(join(root, "node_modules", "homebridge"));
-        } catch (_error) {
-            File.removeSync(join(root, "node_modules", "homebridge"));
-        }
-    }
 
     if (File.existsSync(join(root, "node_modules", "hap-nodejs"))) {
         try {
@@ -133,16 +115,16 @@ const preparePackage = function (root, executing, installed) {
 
             if (dep && executing.dependencies[dep]) {
                 installed.dependencies[dep] = executing.dependencies[dep];
+
+                if (!File.existsSync(join(root, "node_modules", dep))) {
+                    fix = true;
+                }
             } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
                 orphaned.push(name);
             } else {
                 console.log(`Plugin "${name}" is missing`);
 
                 success = false;
-            }
-
-            if (dep && !File.existsSync(join(root, "node_modules", dep))) {
-                fix = true;
             }
         }
 
@@ -199,58 +181,6 @@ const preparePackage = function (root, executing, installed) {
     return success;
 };
 
-const checkEnviornment = function (home, password) {
-    return new Promise((resolve) => {
-        const queue = [];
-
-        if (File.existsSync(join(home, ".npm"))) {
-            try {
-                File.accessSync(join(home, ".npm"), File.constants.W_OK);
-            } catch (err) {
-                console.log(`NPM Cache is Root Locked`);
-
-                execSudo(password, [
-                    "rm",
-                    "-fR",
-                    join(home, ".npm")
-                ]);
-            }
-        }
-
-        if (File.existsSync(join(home, ".config"))) {
-            try {
-                File.accessSync(join(home, ".config"), File.constants.W_OK);
-            } catch (err) {
-                console.log(`NPM Configuration is Root Locked`);
-
-                execSudo(password, [
-                    "rm",
-                    "-fR",
-                    join(home, ".config")
-                ]);
-            }
-        }
-
-        if (File.existsSync(join(home, ".node-gyp"))) {
-            try {
-                File.accessSync(join(home, ".node-gyp"), File.constants.W_OK);
-            } catch (err) {
-                console.log(`GYP Build Cache is Root Locked`);
-
-                execSudo(password, [
-                    "rm",
-                    "-fR",
-                    join(home, ".node-gyp")
-                ]);
-            }
-        }
-
-        if (queue.length === 0) {
-            resolve();
-        }
-    });
-};
-
 const execSudo = function(password, options) {
     return new Promise((resolve) => {
         let prompts = 0;
@@ -296,14 +226,6 @@ const checksum = function(root, executing, installed) {
     File.ensureDirSync(join(root, "backups"));
 
     if (executing.version !== installed.version) {
-        return false;
-    }
-
-    if (File.existsSync(join(root, "dist"))) {
-        return false;
-    }
-
-    if (File.existsSync(join(root, "node_modules", "@hoobs", "hoobs"))) {
         return false;
     }
 
