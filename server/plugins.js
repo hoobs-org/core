@@ -25,6 +25,17 @@ const Server = require("./server");
 const { join } = require("path");
 const { spawn, execSync } = require("child_process");
 
+const blocked = [
+    "hoobs-core",
+    "homebridge",
+    "homebridge-server",
+    "homebridge-to-hoobs",
+    "homebridge-config-ui",
+    "homebridge-config-ui-x",
+    "homebridge-config-ui-rdp",
+    "homebridge-config-ui-hoobs"
+];
+
 module.exports = class Plugins {
     static list() {
         const results = {};
@@ -345,7 +356,6 @@ module.exports = class Plugins {
         return new Promise(async (resolve, reject) => {
             if (search && search !== "") {
                 const installed = Plugins.list();
-                const blocked = await Plugins.blocked();
 
                 search = (search || "").split("/")
                 search = encodeURIComponent(search[search.length - 1]);
@@ -607,27 +617,6 @@ module.exports = class Plugins {
         return data;
     }
 
-    static blocked() {
-        return new Promise((resolve) => {
-            let blocked = [
-                "hoobs-core",
-                "homebridge",
-                "homebridge-server",
-                "homebridge-to-hoobs",
-                "homebridge-config-ui",
-                "homebridge-config-ui-x",
-                "homebridge-config-ui-rdp",
-                "homebridge-config-ui-hoobs"
-            ];
-
-            Plugins.lookup().then((data) => {
-                blocked = blocked.concat(Object.keys(data.lookup))
-            }).finally(() => {
-                resolve(blocked);
-            });
-        });
-    }
-
     static linkLibs() {
         HBS.active.pop();
 
@@ -658,8 +647,6 @@ module.exports = class Plugins {
                     active: HBS.active.length
                 });
             } else {
-                const blocked = await Plugins.blocked();
-
                 if (blocked.indexOf(id) >= 0) {
                     HBS.log.error(`[plugin] '${id}' is a blocked plugin.`);
 
@@ -719,25 +706,39 @@ module.exports = class Plugins {
                                 data.plugins.push(name);
                             }
 
-                            if (id.startsWith("@hoobs/")) {
-                                const lookup = (await Plugins.lookup()).certified;
+                            const lookup = await Plugins.lookup();
 
-                                if (lookup[id]) {
-                                    const index = data.plugins.indexOf(lookup[id]);
+                            if (id.startsWith("@hoobs/") && lookup.certified[id]) {
+                                const index = data.plugins.indexOf(lookup.certified[id].split("/").pop());
 
-                                    if (index > -1) {
-                                        data.plugins.splice(index, 1);
-                                    }
+                                if (index > -1) {
+                                    data.plugins.splice(index, 1);
+                                }
 
-                                    if (HBS.config.package_manager === "yarn") {
-                                        execSync(`yarn remove ${lookup[id]}`, {
-                                            cwd: Server.paths.application
-                                        });
-                                    } else {
-                                        execSync(`npm uninstall --unsafe-perm ${lookup[id]}`, {
-                                            cwd: Server.paths.application
-                                        });
-                                    }
+                                if (HBS.config.package_manager === "yarn") {
+                                    execSync(`yarn remove ${lookup.certified[id]}`, {
+                                        cwd: Server.paths.application
+                                    });
+                                } else {
+                                    execSync(`npm uninstall --unsafe-perm ${lookup.certified[id]}`, {
+                                        cwd: Server.paths.application
+                                    });
+                                }
+                            } else if (lookup.lookup[id]) {
+                                const index = data.plugins.indexOf(lookup.lookup[id].split("/").pop());
+
+                                if (index > -1) {
+                                    data.plugins.splice(index, 1);
+                                }
+
+                                if (HBS.config.package_manager === "yarn") {
+                                    execSync(`yarn remove ${lookup.lookup[id]}`, {
+                                        cwd: Server.paths.application
+                                    });
+                                } else {
+                                    execSync(`npm uninstall --unsafe-perm ${lookup.lookup[id]}`, {
+                                        cwd: Server.paths.application
+                                    });
                                 }
                             }
 
@@ -809,8 +810,7 @@ module.exports = class Plugins {
                     let success = false;
 
                     if (!File.existsSync(join(Server.paths.modules.local, id, "package.json"))) {
-                        const parts = id.split("/");
-                        const name = parts[parts.length - 1];
+                        const name = id.split("/").pop();
                         const data = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
 
                         if (!data.plugins) {
