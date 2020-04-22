@@ -21,9 +21,9 @@ const Request = require("axios");
 
 const { join } = require("path");
 
-const HBS = require("../instance");
-const User = require("../user");
-const Server = require("../server");
+const HBS = require("../server/instance");
+const User = require("../server/user");
+const Server = require("../server/server");
 
 module.exports = class UsersController {
     constructor(client) {
@@ -62,7 +62,7 @@ module.exports = class UsersController {
         }
     }
 
-    list(request, response) {
+    list(_request, response) {
         const results = [];
 
         for (let i = 0; i < HBS.users.length; i++) {

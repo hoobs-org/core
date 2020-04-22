@@ -18,8 +18,8 @@
 
 const Forms = require("formidable");
 
-const HBS = require("../instance");
-const Server = require("../server");
+const HBS = require("../server/instance");
+const Server = require("../server/server");
 
 const { join } = require("path");
 

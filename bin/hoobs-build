@@ -172,7 +172,7 @@ case $MODE in
                     fi
                 elif [[ "$DOCKER" = "false" && "$UTILITY" = "false" ]]; then
                     if [[ "$INTERFACE_ONLY" = "true" ]]; then
-                        vue-cli-service build --modern
+                        vue-cli-service build
                     else
                         npm pack
                         rm -f ./builds/hoobs-core.tgz
@@ -257,7 +257,7 @@ case $MODE in
                     docker container start hoobs
                 else
                     if [[ "$BUILD" = "true" ]]; then
-                        vue-cli-service build --modern
+                        vue-cli-service build
                     fi
 
                     START_ARGUMENTS=""

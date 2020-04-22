@@ -18,10 +18,10 @@
 
 const File = require("fs-extra");
 
-const HBS = require("../instance");
-const HapClient = require("../hap-client");
-const Server = require("../server");
-const User = require("../user");
+const HBS = require("../server/instance");
+const HapClient = require("../server/hap-client");
+const Server = require("../server/server");
+const User = require("../server/user");
 
 const { join } = require("path");
 
@@ -105,7 +105,7 @@ module.exports = class AccessoriesController {
             }
 
             current.rooms.push(unassigned);
-            response.send(current); // Getting 504 error here, Why?
+            response.send(current);
         });
     }
 

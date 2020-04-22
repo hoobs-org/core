@@ -95,7 +95,7 @@ process.argv.forEach((value) => {
 
 switch ((command || "").toLowerCase()) {
     case "bridge":
-        (require(join(dirname(File.realpathSync(__filename)), "../lib/bridge/cli")))();
+        (require(join(dirname(File.realpathSync(__filename)), "../bridge/cli")))();
         break;
 
     case "cluster":
@@ -238,7 +238,7 @@ switch ((command || "").toLowerCase()) {
         break;
 
     case "cockpit":
-        new (require(join(dirname(File.realpathSync(__filename)), "../lib/cockpit")))().start(true).then((registration) => {
+        new (require(join(dirname(File.realpathSync(__filename)), "../server/cockpit")))().start(true).then((registration) => {
             console.log("");
             console.log("registration code");
             console.log(registration);

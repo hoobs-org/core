@@ -89,16 +89,16 @@ module.exports = class Client {
         }
 
         HBS.controllers = {
-            auth: new (require("./controllers/auth"))(true),
-            users: new (require("./controllers/users"))(true),
-            status: new (require("./controllers/status"))(true),
-            config: new (require("./controllers/config"))(true)
+            auth: new (require("../controllers/auth"))(true),
+            users: new (require("../controllers/users"))(true),
+            status: new (require("../controllers/status"))(true),
+            config: new (require("../controllers/config"))(true)
         }
 
-        HBS.app.use(Express.static(Server.paths.dist));
+        HBS.app.use(Express.static(Server.paths.interface));
 
-        HBS.app.get("*", (request, response) => {
-            response.sendFile(resolve(Server.paths.dist, "index.html"));
+        HBS.app.get("*", (_request, response) => {
+            response.sendFile(resolve(Server.paths.interface, "index.html"));
         });
     }
 

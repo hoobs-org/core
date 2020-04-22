@@ -21,9 +21,9 @@ const _ = require("lodash");
 const File = require("fs-extra");
 const Forms = require("formidable");
 
-const HBS = require("../instance");
-const Server = require("../server");
-const User = require("../user");
+const HBS = require("../server/instance");
+const Server = require("../server/server");
+const User = require("../server/user");
 
 const { join } = require("path");
 
@@ -113,7 +113,7 @@ module.exports = class ConfigController {
         });
     }
 
-    interface(request, response) {
+    interface(_request, response) {
         let current = {
             client: {}
         };
@@ -123,7 +123,7 @@ module.exports = class ConfigController {
         return response.send(current.client || {});
     }
 
-    generate(request, response) {
+    generate(_request, response) {
         return response.send({
             username: Server.generateUsername()
         });
@@ -165,7 +165,7 @@ module.exports = class ConfigController {
         });
     }
 
-    backup(request, response) {
+    backup(_request, response) {
         File.copyFileSync(join(Server.paths.config, HBS.name || "", "config.json"), join(Server.paths.config, HBS.name || "", `/config-${new Date().getTime()}.json`));
 
         return response.send({

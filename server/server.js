@@ -32,7 +32,7 @@ const { spawn, fork, execSync } = require("child_process");
 
 module.exports = class Server {
     constructor(options) {
-        this.version = require("./bridge/version");
+        this.version = require("../bridge/version");
 
         this.arguments = [
             "bridge",
@@ -74,7 +74,7 @@ module.exports = class Server {
             root,
             application: home,
             config: join(home, "etc"),
-            dist: join(root, "dist"),
+            interface: join(root, "interface"),
             backups: join(home, "backups"),
             modules: {
                 local: join(home, "node_modules"),

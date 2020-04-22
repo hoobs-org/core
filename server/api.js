@@ -165,24 +165,24 @@ module.exports = class API {
         }
 
         HBS.controllers = {
-            auth: new (require("./controllers/auth"))(false),
-            users: new (require("./controllers/users"))(false),
-            status: new (require("./controllers/status"))(false),
-            config: new (require("./controllers/config"))(false),
-            system: new (require("./controllers/system"))(),
-            service: new (require("./controllers/service"))(),
-            plugins: new (require("./controllers/plugins"))(),
-            accessories: new (require("./controllers/accessories"))(),
-            layout: new (require("./controllers/layout"))(),
-            cockpit: new (require("./controllers/cockpit"))()
+            auth: new (require("../controllers/auth"))(false),
+            users: new (require("../controllers/users"))(false),
+            status: new (require("../controllers/status"))(false),
+            config: new (require("../controllers/config"))(false),
+            system: new (require("../controllers/system"))(),
+            service: new (require("../controllers/service"))(),
+            plugins: new (require("../controllers/plugins"))(),
+            accessories: new (require("../controllers/accessories"))(),
+            layout: new (require("../controllers/layout"))(),
+            cockpit: new (require("../controllers/cockpit"))()
         }
 
         if (client) {
-            HBS.app.use("/", Express.static(Server.paths.dist));
+            HBS.app.use("/", Express.static(Server.paths.interface));
             HBS.app.use("/backups", Express.static(Server.paths.backups));
 
             HBS.app.get("*", (_request, response) => {
-                response.sendFile(resolve(Server.paths.dist, "index.html"));
+                response.sendFile(resolve(Server.paths.interface, "index.html"));
             });
         }
     }

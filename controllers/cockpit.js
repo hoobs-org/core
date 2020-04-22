@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
-const HBS = require("../instance");
-const Cockpit = require("../cockpit");
+const HBS = require("../server/instance");
+const Cockpit = require("../server/cockpit");
 
 module.exports = class CockpitController {
     constructor() {
@@ -27,7 +27,7 @@ module.exports = class CockpitController {
         HBS.app.get("/api/cockpit/disconnect", (request, response) => this.disconnect(request, response));
     }
 
-    start(request, response) {
+    start(_request, response) {
         this.client = new Cockpit();
 
         this.client.start(false).then((registration) => {
@@ -41,7 +41,7 @@ module.exports = class CockpitController {
         });
     }
 
-    disconnect(request, response) {
+    disconnect(_request, response) {
         if (this.client) {
             this.client.disconnect();
         }

@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
-const HBS = require("../instance");
-const Plugins = require("../plugins");
-const Server = require("../server");
+const HBS = require("../server/instance");
+const Plugins = require("../server/plugins");
+const Server = require("../server/server");
 
 module.exports = class PluginsController {
     constructor() {
@@ -33,7 +33,7 @@ module.exports = class PluginsController {
         HBS.app.delete("/api/plugins/:name", (request, response) => this.uninstall(request, response));
     }
 
-    installed(request, response) {
+    installed(_request, response) {
         Plugins.installed().then((results) => {
             return response.send(results);
         });
@@ -84,7 +84,7 @@ module.exports = class PluginsController {
         }
     }
 
-    categories(request, response) {
+    categories(_request, response) {
         Plugins.categories().then((results) => {
             response.send(results);
         });

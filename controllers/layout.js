@@ -18,10 +18,10 @@
 
 const File = require("fs-extra");
 
-const HBS = require("../instance");
-const HapClient = require("../hap-client");
-const Server = require("../server");
-const User = require("../user");
+const HBS = require("../server/instance");
+const HapClient = require("../server/hap-client");
+const Server = require("../server/server");
+const User = require("../server/user");
 
 const { join } = require("path");
 
@@ -38,7 +38,7 @@ module.exports = class LayoutController {
         HBS.app.post("/api/layout/dashboard", (request, response) => this.saveDashboard(request, response));
     }
 
-    dashboardLayout(request, response) {
+    dashboardLayout(_request, response) {
         if (this.dashboard.length === 0) {
             if (!File.existsSync(join(Server.paths.config, "dashboard.json"))) {
                 File.appendFileSync(join(Server.paths.config, "dashboard.json"), JSON.stringify([{

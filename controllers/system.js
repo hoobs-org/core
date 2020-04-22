@@ -18,8 +18,8 @@
 
 const System = require("systeminformation");
 
-const HBS = require("../instance");
-const Plugins = require("../plugins");
+const HBS = require("../server/instance");
+const Plugins = require("../server/plugins");
 
 module.exports = class SystemController {
     constructor() {

@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
-const HBS = require("../instance");
-const User = require("../user");
+const HBS = require("../server/instance");
+const User = require("../server/user");
 
 module.exports = class AuthController {
     constructor(client) {
@@ -33,7 +33,7 @@ module.exports = class AuthController {
         }
     }
 
-    state(request, response) {
+    state(_request, response) {
         if (HBS.users.length === 0) {
             return response.send({
                 state: -1
@@ -45,7 +45,7 @@ module.exports = class AuthController {
         });
     }
 
-    sync(request, response) {
+    sync(_request, response) {
         return response.send(HBS.users);
     }
 

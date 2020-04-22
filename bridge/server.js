@@ -21,7 +21,7 @@ const API = require("./api");
 const User = require("./user");
 const Crypto = require("crypto");
 const Plugin = require("./plugin");
-const Manager = require("./Manager");
+const Manager = require("./manager");
 const Platform = require("./platform");
 
 const { once } = require("hap-nodejs/dist/lib/util/once");
@@ -114,7 +114,7 @@ module.exports = class Server {
         info.setCharacteristic(Characteristic.Manufacturer, bridgeConfig.manufacturer || "HOOBS");
         info.setCharacteristic(Characteristic.Model, bridgeConfig.model || "HOOBS");
         info.setCharacteristic(Characteristic.SerialNumber, bridgeConfig.username);
-        info.setCharacteristic(Characteristic.FirmwareRevision, require("../../package.json").version);
+        info.setCharacteristic(Characteristic.FirmwareRevision, require("../package.json").version);
     
         this.bridge.on("listening", (port) => {
             internal.info(`Bridge is running on port ${port}.`);

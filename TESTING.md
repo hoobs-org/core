@@ -52,13 +52,6 @@ Now you are ready to update the code.
 ~]$ sudo npm install -g --unsafe-perm ~/hoobs-core.tgz
 ```
 
-If you are installing an updated version with the same version number, you will need to remove the `dist` and `lib` folders.
-
-```bash
-~]% rm -fR ~/.hoobs/dist
-~]% rm -fR ~/.hoobs/lib
-```
-
 Once the install is finished, you will need to reboot.
 
 ```bash

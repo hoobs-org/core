@@ -54,11 +54,11 @@ module.exports = (reload) => {
         }
 
         if (!reload) {
-            require(join(applicaiton, "lib", "cli"))(true);
+            require(join(applicaiton, "server", "cli"))(true);
         }
     } else {
         if (!reload) {
-            require(join(applicaiton, "lib", "cli"))(true);
+            require(join(applicaiton, "server", "cli"))(true);
         }
     }
 };

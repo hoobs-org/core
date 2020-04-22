@@ -7,13 +7,17 @@ RUN mkdir /hoobs
 WORKDIR /usr/src/hoobs
 VOLUME /hoobs
 
-COPY dist ./dist
-COPY lib ./lib
+COPY bridge ./bridge
+COPY controllers ./controllers
+COPY interface ./interface
 COPY scripts ./scripts
+COPY server ./server
+
 COPY bin/hoobs-docker ./bin/hoobs
 COPY default-docker.json ./default.json
 COPY package.json ./
 COPY LICENSE ./
+
 COPY docker /
 
 RUN npm install --only=production

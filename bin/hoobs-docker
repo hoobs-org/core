@@ -28,7 +28,7 @@ let debug = false;
 
 const command = process.argv[2];
 
-process.argv.forEach((value, index) => {
+process.argv.forEach((value) => {
     if (value === "-d" || value === "--debug") {
         debug = true;
     } else if (value === "-v" || value === "--version") {
@@ -59,8 +59,12 @@ process.argv.forEach((value, index) => {
 });
 
 switch ((command || "").toLowerCase()) {
+    case "bridge":
+        (require(join(dirname(File.realpathSync(__filename)), "../bridge/cli")))();
+        break;
+
     case "cockpit":
-        new (require(join(dirname(File.realpathSync(__filename)), "../lib/cockpit")))().start(true).then((registration) => {
+        new (require(join(dirname(File.realpathSync(__filename)), "../server/cockpit")))().start(true).then((registration) => {
             console.log("");
             console.log("registration code");
             console.log(registration);

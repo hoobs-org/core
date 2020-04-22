@@ -14,7 +14,7 @@
     "bugs": {
         "url": "https://github.com/hoobs-org/hoobs-core/issues"
     },
-    "main": "lib/cli.js",
+    "main": "server/cli.js",
     "bin": {
         "hoobs": "bin/hoobs"
     },
@@ -23,7 +23,7 @@
         "node": ">=10.16.0"
     },
     "scripts": {
-        "build": "vue-cli-service build --modern",
+        "build": "vue-cli-service build",
         "prepare": "npm run build",
         "postinstall": "bin/hoobs upgrade",
         "hoobs": "bin/hoobs-build"

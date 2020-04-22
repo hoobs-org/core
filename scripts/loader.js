@@ -64,10 +64,10 @@ module.exports = (password, reload) => {
             }
 
             if (!reload) {
-                require(join(applicaiton, "lib", "cli"))();
+                require(join(applicaiton, "server", "cli"))();
             }
         } else if (!reload) {
-            require(join(applicaiton, "lib", "cli"))();
+            require(join(applicaiton, "server", "cli"))();
         }
     });
 };

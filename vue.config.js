@@ -16,7 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
+const { resolve } = require("path");
+
 module.exports = {
+    outputDir: resolve(__dirname, "interface"),
     configureWebpack: {
         performance: {
             hints: process.env.NODE_ENV === "production" ? false : "warning"

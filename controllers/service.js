@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
-const HBS = require("../instance");
+const HBS = require("../server/instance");
 
 module.exports = class ServiceController {
     constructor() {
@@ -24,7 +24,7 @@ module.exports = class ServiceController {
         HBS.app.post("/api/service/:action", (request, response) => this.control(request, response));
     }
 
-    status(request, response) {
+    status(_request, response) {
         response.send({
             version: HBS.server.version,
             running: HBS.server.running,
