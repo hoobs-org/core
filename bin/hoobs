@@ -227,7 +227,6 @@ switch ((command || "").toLowerCase()) {
             }
 
             if (configured) {
-                await (require(join(root, "../scripts/nginx")))(false);
                 await (require(join(root, "../scripts/systemd")))(false);
                 await (require(join(root, "../scripts/config")))();
                 await (require(join(root, "../scripts/reboot")))(reboot, "hoobs.service");

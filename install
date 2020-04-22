@@ -436,6 +436,18 @@ if [[ "$HOOBS_INSTALLED" = "true" ]]; then
         fi
     fi
 
+    for f in /home/*;	
+    do 	
+        [ -d "$f/.hoobs/dist" ] && rm -fR $f/.hoobs/dist	
+        [ -d "$f/.hoobs/lib" ] && rm -fR $f/.hoobs/lib	
+    done;	
+
+    [ -d "/root/.hoobs/dist" ] && rm -fR /root/.hoobs/dist	
+    [ -d "/root/.hoobs/lib" ] && rm -fR /root/.hoobs/lib	
+
+    [ -d "/var/root/.hoobs/dist" ] && rm -fR /var/root/.hoobs/dist	
+    [ -d "/var/root/.hoobs/lib" ] && rm -fR /var/root/.hoobs/lib
+
     if [[ "$OS" != "Darwin" ]]; then
         if command -v hoobs > /dev/null; then
             echo ""
