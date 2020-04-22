@@ -94,6 +94,10 @@ process.argv.forEach((value) => {
 });
 
 switch ((command || "").toLowerCase()) {
+    case "bridge":
+        (require(join(dirname(File.realpathSync(__filename)), "../lib/bridge/cli")))();
+        break;
+
     case "cluster":
         const root = dirname(File.realpathSync(__filename));
 
