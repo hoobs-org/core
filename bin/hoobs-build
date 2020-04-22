@@ -234,7 +234,7 @@ case $MODE in
                 ;;
 
     "create")   if [[ "$DOCKER" = "true" && "$VOLUME" = "false" ]]; then
-                    docker container run --publish 50820:50820 --detach --mount source=hoobs,target=/hoobs --name hoobs docker.io/hoobs/hoobs:dev
+                    docker container run --publish 80:80 --publish 51825:51825 --publish 51826:51826 --detach --mount source=hoobs,target=/hoobs --name hoobs docker.io/hoobs/hoobs:dev
                 elif [[ "$DOCKER" = "false" && "$VOLUME" = "true" ]]; then
                     docker volume create hoobs
                 else

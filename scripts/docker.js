@@ -16,14 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
-const _ = require("lodash");
-
 const File = require("fs-extra");
 
 const { dirname, join } = require("path");
 const { execSync } = require("child_process");
 
-const home = "/hoobs";
+const storage = "/hoobs";
 
 module.exports = (reload) => {
     const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
@@ -33,24 +31,20 @@ module.exports = (reload) => {
         throw new Error("HOOBS Installation is Corrupt. Please Re-Install HOOBS.");
     }
 
-    if (!File.existsSync(home)) {
-        File.mkdirSync(home);
+    if (!File.existsSync(storage)) {
+        File.mkdirSync(storage);
     }
 
-    const executing = tryParseFile(join(home, "package.json"), {});
-
-    console.log("");
+    const executing = tryParseFile(join(storage, "package.json"), {});
 
     if (!executing || !(checksum(executing, installed))) {
         if (!preparePackage(executing, installed)) {
-            console.log("---------------------------------------------------------");
-            console.log("There are configured plugins that are not installed.");
-            console.log("Please edit your config.json file and remove the missing");
-            console.log("plugin configurations, and remove the plugin from the");
-            console.log("plugins array.");
-            console.log("---------------------------------------------------------");
-            console.log("Loading previous version");
-            console.log("---------------------------------------------------------");
+            console.error("---------------------------------------------------------");
+            console.error("There are configured plugins that are not installed.");
+            console.error("Please edit your config.json file and remove the missing");
+            console.error("plugin configurations, and remove the plugin from the");
+            console.error("plugins array.");
+            console.error("---------------------------------------------------------");
         }
 
         if (!reload) {
@@ -75,29 +69,29 @@ const tryParseFile = function(filename, replacement) {
 
 const preparePackage = function (executing, installed) {
     let success = true;
-    let fix = false;
+    let install = false;
 
-    if (File.existsSync(join(home, "node_modules", "@hoobs", "hoobs"))) {
-        fix = true;
+    if (File.existsSync(join(storage, "node_modules", "@hoobs", "hoobs"))) {
+        install = true;
     }
 
-    if (File.existsSync(join(home, "dist"))) {
-        File.removeSync(join(home, "dist"));
+    if (File.existsSync(join(storage, "dist"))) {
+        File.removeSync(join(storage, "dist"));
     }
 
-    if (File.existsSync(join(home, "node_modules", "homebridge"))) {
+    if (File.existsSync(join(storage, "node_modules", "homebridge"))) {
         try {
-            File.unlinkSync(join(home, "node_modules", "homebridge"));
+            File.unlinkSync(join(storage, "node_modules", "homebridge"));
         } catch (_error) {
-            File.removeSync(join(home, "node_modules", "homebridge"));
+            File.removeSync(join(storage, "node_modules", "homebridge"));
         }
     }
 
-    if (File.existsSync(join(home, "node_modules", "hap-nodejs"))) {
+    if (File.existsSync(join(storage, "node_modules", "hap-nodejs"))) {
         try {
-            File.unlinkSync(join(home, "node_modules", "hap-nodejs"));
+            File.unlinkSync(join(storage, "node_modules", "hap-nodejs"));
         } catch (_error) {
-            File.removeSync(join(home, "node_modules", "hap-nodejs"));
+            File.removeSync(join(storage, "node_modules", "hap-nodejs"));
         }
     }
 
@@ -106,36 +100,33 @@ const preparePackage = function (executing, installed) {
     }
 
     if (executing && executing.dependencies) {
-        console.log("Plugins: Reading existing plugins");
-
-        const current = tryParseFile(join(home, "etc", "config.json"), null);
-
-        const deps = (current || {}).plugins || [];
-        const keys = Object.keys(executing.dependencies);
         const orphaned = [];
+        const current = tryParseFile(join(storage, "etc", "config.json"), null);
+        const plugins = (current || {}).plugins || [];
+        const keys = Object.keys(executing.dependencies);
 
-        for (let i = 0; i < deps.length; i++) {
-            let dep = null;
-            let name = deps[i];
+        for (let i = 0; i < plugins.length; i++) {
+            let plugin = null;
+            let name = plugins[i];
 
             if (executing.dependencies[name]) {
-                dep = name;
+                plugin = name;
             } else {
-                dep = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
+                plugin = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
             }
 
-            if (dep && executing.dependencies[dep]) {
-                installed.dependencies[dep] = executing.dependencies[dep];
+            if (plugin && executing.dependencies[plugin]) {
+                installed.dependencies[plugin] = executing.dependencies[plugin];
             } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
                 orphaned.push(name);
             } else {
-                console.log(`Plugin "${name}" is missing`);
+                console.error(`Plugin "${name}" is missing`);
 
                 success = false;
             }
 
-            if (dep && !File.existsSync(join(home, "node_modules", "node_modules", dep))) {
-                fix = true;
+            if (plugin && !File.existsSync(join(storage, "node_modules", "node_modules", plugin))) {
+                install = true;
             }
         }
 
@@ -148,8 +139,8 @@ const preparePackage = function (executing, installed) {
                 }
             }
 
-            File.unlinkSync(join(home, "etc", "config.json"));
-            File.appendFileSync(join(home, "etc", "config.json"), JSON.stringify(current, null, 4));
+            File.unlinkSync(join(storage, "etc", "config.json"));
+            File.appendFileSync(join(storage, "etc", "config.json"), JSON.stringify(current, null, 4));
         }
     }
 
@@ -166,15 +157,15 @@ const preparePackage = function (executing, installed) {
             delete installed.bin;
         }
 
-        if (File.existsSync(join(home, "package.json"))) {
-            File.unlinkSync(join(home, "package.json"));
+        if (File.existsSync(join(storage, "package.json"))) {
+            File.unlinkSync(join(storage, "package.json"));
         }
 
-        File.appendFileSync(join(home, "package.json"), JSON.stringify(installed, null, 4));
+        File.appendFileSync(join(storage, "package.json"), JSON.stringify(installed, null, 4));
 
-        if (fix) {
+        if (install) {
             execSync("npm install --unsafe-perm --prefer-offline --no-audit --progress=true", {
-                cwd: home,
+                cwd: storage,
                 stdio: ["inherit", "inherit", "inherit"]
             });
         }
@@ -184,21 +175,21 @@ const preparePackage = function (executing, installed) {
 };
 
 const checksum = function(executing, installed) {
-    if (File.existsSync(join(home, "backups"))) {
-        File.removeSync(join(home, "backups"));
+    if (File.existsSync(join(storage, "backups"))) {
+        File.removeSync(join(storage, "backups"));
     }
 
-    File.ensureDirSync(join(home, "backups"));
+    File.ensureDirSync(join(storage, "backups"));
 
     if (executing.version !== installed.version) {
         return false;
     }
 
-    if (File.existsSync(join(home, "dist"))) {
+    if (File.existsSync(join(storage, "dist"))) {
         return false;
     }
 
-    if (File.existsSync(join(home, "node_modules", "@hoobs", "hoobs"))) {
+    if (File.existsSync(join(storage, "node_modules", "@hoobs", "hoobs"))) {
         return false;
     }
 

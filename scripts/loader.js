@@ -16,17 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
-const _ = require("lodash");
-
 const OS = require("os");
 const File = require("fs-extra");
 
 const { dirname, join } = require("path");
-const { spawn, execSync } = require("child_process");
+const { execSync } = require("child_process");
 
-module.exports = (password, reload) => {
-    const home = OS.userInfo().homedir;
-    const root = join(home, ".hoobs");
+module.exports = (reload) => {
+    const storage = join(OS.userInfo().homedir, ".hoobs");
     const applicaiton = join(dirname(File.realpathSync(__filename)), "../");
     const installed = tryParseFile(join(applicaiton, "package.json"));
 
@@ -34,32 +31,20 @@ module.exports = (password, reload) => {
         throw new Error("HOOBS Installation is Corrupt. Please Re-Install HOOBS.");
     }
 
-    if (!File.existsSync(root)) {
-        File.mkdirSync(root);
+    if (!File.existsSync(storage)) {
+        File.mkdirSync(storage);
     }
 
-    const executing = tryParseFile(join(root, "package.json"), {});
+    const executing = tryParseFile(join(storage, "package.json"), {});
 
-    if (!executing || installed.version !== executing.version || !(checksum(root, executing, installed))) {
-        if (!preparePackage(root, executing, installed)) {
-            console.log("---------------------------------------------------------");
-            console.log("There are configured plugins that are not installed.");
-            console.log("Please edit your config.json file and remove the missing");
-            console.log("plugin configurations, and remove the plugin from the");
-            console.log("plugins array.");
-            console.log("---------------------------------------------------------");
-            console.log("Loading previous version");
-            console.log("---------------------------------------------------------");
-        }
-
-        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/nginx.service")) {
-            console.log("Restarting NGINX");
-
-            execSudo(password, [
-                "systemctl",
-                "restart",
-                "nginx.service"
-            ]);
+    if (!executing || installed.version !== executing.version || !(checksum(storage, executing, installed))) {
+        if (!preparePackage(storage, executing, installed)) {
+            console.error("---------------------------------------------------------");
+            console.error("There are configured plugins that are not installed.");
+            console.error("Please edit your config.json file and remove the missing");
+            console.error("plugin configurations, and remove the plugin from the");
+            console.error("plugins array.");
+            console.error("---------------------------------------------------------");
         }
 
         if (!reload) {
@@ -80,16 +65,31 @@ const tryParseFile = function(filename, replacement) {
     }
 };
 
-const preparePackage = function (root, executing, installed) {
-    let plugins = [];
+const preparePackage = function (storage, executing, installed) {
     let success = true;
-    let fix = false;
+    let install = false;
 
-    if (File.existsSync(join(root, "node_modules", "hap-nodejs"))) {
+    if (File.existsSync(join(storage, "node_modules", "@hoobs", "hoobs"))) {
+        install = true;
+    }
+
+    if (File.existsSync(join(storage, "dist"))) {
+        File.removeSync(join(storage, "dist"));
+    }
+
+    if (File.existsSync(join(storage, "node_modules", "homebridge"))) {
         try {
-            File.unlinkSync(join(root, "node_modules", "hap-nodejs"));
+            File.unlinkSync(join(storage, "node_modules", "homebridge"));
         } catch (_error) {
-            File.removeSync(join(root, "node_modules", "hap-nodejs"));
+            File.removeSync(join(storage, "node_modules", "homebridge"));
+        }
+    }
+
+    if (File.existsSync(join(storage, "node_modules", "hap-nodejs"))) {
+        try {
+            File.unlinkSync(join(storage, "node_modules", "hap-nodejs"));
+        } catch (_error) {
+            File.removeSync(join(storage, "node_modules", "hap-nodejs"));
         }
     }
 
@@ -98,33 +98,33 @@ const preparePackage = function (root, executing, installed) {
     }
 
     if (executing && executing.dependencies) {
-        const current = tryParseFile(join(root, "etc", "config.json"), null);
-        const deps = (current || {}).plugins || [];
-        const keys = Object.keys((executing || {}).dependencies || {});
         const orphaned = [];
+        const current = tryParseFile(join(storage, "etc", "config.json"), null);
+        const plugins = (current || {}).plugins || [];
+        const keys = Object.keys((executing || {}).dependencies || {});
 
-        for (let i = 0; i < deps.length; i++) {
-            let dep = null;
-            let name = deps[i];
+        for (let i = 0; i < plugins.length; i++) {
+            let plugin = null;
+            let name = plugins[i];
 
             if (executing.dependencies[name]) {
-                dep = name;
+                plugin = name;
             } else {
-                dep = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
+                plugin = (keys.filter(d => d.startsWith("@") && d.endsWith(`/${name}`)) || [null])[0];
             }
 
-            if (dep && executing.dependencies[dep]) {
-                installed.dependencies[dep] = executing.dependencies[dep];
-
-                if (!File.existsSync(join(root, "node_modules", dep))) {
-                    fix = true;
-                }
+            if (plugin && executing.dependencies[plugin]) {
+                installed.dependencies[plugin] = executing.dependencies[plugin];
             } else if (current && (current.accessories || []).findIndex(a => (a.plugin_map || {}).plugin_name === name) === -1 && (current.platforms || []).findIndex(p => (p.plugin_map || {}).plugin_name === name) === -1) {
                 orphaned.push(name);
             } else {
-                console.log(`Plugin "${name}" is missing`);
+                console.error(`Plugin "${name}" is missing`);
 
                 success = false;
+            }
+
+            if (plugin && !File.existsSync(join(storage, "node_modules", plugin))) {
+                install = true;
             }
         }
 
@@ -137,8 +137,8 @@ const preparePackage = function (root, executing, installed) {
                 }
             }
 
-            File.unlinkSync(join(root, "etc", "config.json"));
-            File.appendFileSync(join(root, "etc", "config.json"), JSON.stringify(current, null, 4));
+            File.unlinkSync(join(storage, "etc", "config.json"));
+            File.appendFileSync(join(storage, "etc", "config.json"), JSON.stringify(current, null, 4));
         }
     }
 
@@ -155,24 +155,15 @@ const preparePackage = function (root, executing, installed) {
             delete installed.bin;
         }
 
-        console.log("Writing package file");
-
-        if (File.existsSync(join(root, "package.json"))) {
-            File.unlinkSync(join(root, "package.json"));
+        if (File.existsSync(join(storage, "package.json"))) {
+            File.unlinkSync(join(storage, "package.json"));
         }
 
-        File.appendFileSync(join(root, "package.json"), JSON.stringify(installed, null, 4));
+        File.appendFileSync(join(storage, "package.json"), JSON.stringify(installed, null, 4));
 
-        for (let i = 0; i < plugins.length; i++) {   
-            execSync(`npm install --prefer-offline --no-audit --progress=true --unsafe-perm ${plugins[i].name}${plugins[i].version && plugins[i].version !== "" ? `@${plugins[i].version}` : ""}`, {
-                cwd: root,
-                stdio: ["inherit", "inherit", "inherit"]
-            });
-        }
-
-        if (fix) {
+        if (install) {
             execSync("npm install --unsafe-perm --prefer-offline --no-audit --progress=true", {
-                cwd: root,
+                cwd: storage,
                 stdio: ["inherit", "inherit", "inherit"]
             });
         }
@@ -181,51 +172,22 @@ const preparePackage = function (root, executing, installed) {
     return success;
 };
 
-const execSudo = function(password, options) {
-    return new Promise((resolve) => {
-        let prompts = 0;
-
-        let args = [
-            "-S",
-            "-k",
-            "-p",
-            "#sudo-hoobs#"
-        ];
-
-        args = args.concat(options);
-
-        const proc = spawn("sudo", args);
-
-        proc.stderr.on("data", (data) => {
-            const lines = `${data}`.split(/\r?\n/);
-
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-
-                if (line === "#sudo-hoobs#") {
-                    if (++prompts > 1) {
-                        proc.stdin.write("\n\n\n\n");
-                    } else {
-                        proc.stdin.write(`${password || ""}\n`);
-                    }
-                }
-            }
-        });
-
-        proc.on("close", () => {
-            resolve();
-        });
-    });
-};
-
-const checksum = function(root, executing, installed) {
-    if (File.existsSync(join(root, "backups"))) {
-        File.removeSync(join(root, "backups"));
+const checksum = function(storage, executing, installed) {
+    if (File.existsSync(join(storage, "backups"))) {
+        File.removeSync(join(storage, "backups"));
     }
 
-    File.ensureDirSync(join(root, "backups"));
+    File.ensureDirSync(join(storage, "backups"));
 
     if (executing.version !== installed.version) {
+        return false;
+    }
+
+    if (File.existsSync(join(storage, "dist"))) {
+        return false;
+    }
+
+    if (File.existsSync(join(storage, "node_modules", "@hoobs", "hoobs"))) {
         return false;
     }
 

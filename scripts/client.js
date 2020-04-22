@@ -80,7 +80,6 @@ module.exports = () => {
             writeJson("access.json", [user]);
 
             await (require(join(root, "../scripts/prerequisites")))();
-            await (require(join(root, "../scripts/nginx")))(true);
             await (require(join(root, "../scripts/systemd")))(true, "client");
             await (require(join(root, "../scripts/reboot")))(false, "hoobs.service");
         }

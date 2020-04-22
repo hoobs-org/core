@@ -208,7 +208,7 @@ module.exports = class Server {
         }
 
         if (!current.server.port) {
-            current.server.port = 50820;
+            current.server.port = 80;
         }
 
         if (!current.server.origin) {
@@ -429,7 +429,7 @@ module.exports = class Server {
         if (HBS.docker) {
             require("../scripts/docker")(true);
         } else {
-            require("../scripts/loader")(HBS.sudo, true);
+            require("../scripts/loader")(true);
         }
 
         HBS.config = await Server.configure();

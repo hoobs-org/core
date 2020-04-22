@@ -142,7 +142,6 @@ switch ((command || "").toLowerCase()) {
                     const root = dirname(File.realpathSync(__filename));
                 
                     await (require(join(root, "../scripts/prerequisites")))();
-                    await (require(join(root, "../scripts/nginx")))(true);
                     await (require(join(root, "../scripts/systemd")))(true);
                     await (require(join(root, "../scripts/reboot")))(reboot, "hoobs.service");
                 })();
@@ -303,7 +302,7 @@ switch ((command || "").toLowerCase()) {
         break;
 
     default:
-        (require(join(dirname(File.realpathSync(__filename)), "../scripts/loader")))(password);
+        (require(join(dirname(File.realpathSync(__filename)), "../scripts/loader")))();
 
         break;
 }

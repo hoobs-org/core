@@ -71,7 +71,7 @@ module.exports = (mode, name, command) => {
                         description: "Enter the URL of the cluster client",
                         pattern: /^(http(s)?:\/\/)[-a-zA-Z0-9@:%_\+.~]*$/,
                         message: "Invalid URL",
-                        default: "http://hoobs.local:50820",
+                        default: "http://hoobs.local:80",
                         required: true
                     }
                 }

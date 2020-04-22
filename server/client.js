@@ -30,7 +30,7 @@ const { join, resolve } = require("path");
 
 module.exports = class Client {
     constructor(port) {
-        this.port = port || HBS.config.server.port || 50820;
+        this.port = port || HBS.config.server.port || 80;
 
         HBS.user = -1;
         HBS.admin = false;
@@ -104,7 +104,7 @@ module.exports = class Client {
 
     start() {
         HBS.app.listen(this.port, () => {
-            HBS.log.info(`[${new Date().toLocaleString()}] HOOBS listening on port ${this.port || 50820}.`);
+            HBS.log.info(`[${new Date().toLocaleString()}] HOOBS listening on port ${this.port || 80}.`);
         });
     }
 }
