@@ -5,7 +5,11 @@
     "license": "GPL-3.0",
     "keywords": [
         "HOOBS",
-        "homebridge"
+        "homebridge",
+        "smart-home",
+        "smarthome",
+        "home",
+        "iot"
     ],
     "repository": {
         "type": "git",

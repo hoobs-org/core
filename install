@@ -36,7 +36,6 @@ NPM_TARGET=""
 NPM_PREFIX=""
 
 HOOBS_INSTALLED="false"
-UI_X_INSTALLED="false"
 SELINUX_INSTALLED="false"
 PACKAGE_MNGR=""
 
@@ -144,12 +143,6 @@ check_existing_install()
         HOOBS_INSTALLED="true"
     else
         HOOBS_INSTALLED="false"
-    fi
-
-    if command -v homebridge-config-ui-x > /dev/null; then
-        UI_X_INSTALLED="true"
-    else
-        UI_X_INSTALLED="false"
     fi
 
     if command -v setsebool > /dev/null; then
@@ -413,11 +406,6 @@ if [[ "$NPM_TARGET" != "" && "$NPM_VERSION" != "$NPM_TARGET" ]]; then
 fi
 
 clear_npm_cache
-
-if [[ "$UI_X_INSTALLED" = "true" && "$NODE_TARGET" != "" ]]; then
-    npm uninstall -g homebridge-config-ui-x
-    npm install -g --unsafe-perm homebridge-config-ui-x
-fi
 
 if [[ "$HOOBS_INSTALLED" = "true" ]]; then
     if [[ "$NODE_TARGET" != "" ]]; then

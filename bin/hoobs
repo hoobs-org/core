@@ -75,16 +75,13 @@ process.argv.forEach((value) => {
         console.log("        cluster [name] restart    (elevated) restart a named cluster instance");
         console.log("        cluster [name] enable     (elevated) enable a named cluster instance");
         console.log("        cluster [name] disable    (elevated) disable a named cluster instance");
-        console.log("        switch homebridge         (elevated) switches to the homebridge services if installed");
-        console.log("        switch hoobs              (elevated) switches to the hoobs service");
-        console.log("        switch uninstall          (elevated) remove homebridge and the switch function");
         console.log("        upgrade                   (elevated) used by npm postinstall when upgrading");
         console.log("        cockpit                   starts an unattached remote terminal session");
         console.log("");
         console.log("    Options:");
         console.log("        -v, --version             output the version number");
         console.log("        -d, --debug               turn on debug level logging");
-        console.log("        -i, --instance [name]     start homebridge as a named instance");
+        console.log("        -i, --instance [name]     start HOOBS as a named instance");
         console.log("        -p, --pass [password]     password to use for elevated commands");
         console.log("        -h, --help                displays this help menu")
         console.log("");
@@ -246,57 +243,6 @@ switch ((command || "").toLowerCase()) {
             console.log(error);
             console.log("");
         });
-
-        break;
-
-    case "switch":
-        (async () => {
-            const root = dirname(File.realpathSync(__filename));
-
-            if (File.existsSync("/etc/systemd/system/hoobs.service") && File.existsSync("/etc/systemd/system/homebridge.service")) {
-                switch ((process.argv[3] || "").toLowerCase()) {
-                    case "hoobs":
-                        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge.service")) {
-                            execSync("systemctl stop homebridge.service");
-                            execSync("systemctl disable homebridge.service");
-                        }
-    
-                        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge-config-ui-x.service")) {
-                            execSync("systemctl stop homebridge-config-ui-x.service");
-                            execSync("systemctl disable homebridge-config-ui-x.service");
-                        }
-    
-                        if (File.existsSync("/etc/systemd/system/hoobs.service")) {
-                            execSync("systemctl enable hoobs.service");
-                            execSync("systemctl restart hoobs.service");
-                        }
-    
-                        break;
-    
-                    case "homebridge":
-                        if (File.existsSync("/etc/systemd/system/multi-user.target.wants/hoobs.service")) {
-                            execSync("systemctl stop hoobs.service");
-                            execSync("systemctl disable hoobs.service");
-                        }
-    
-                        if (File.existsSync("/etc/systemd/system/homebridge.service")) {
-                            execSync("systemctl enable homebridge.service");
-                            execSync("systemctl restart homebridge.service");
-                        }
-    
-                        if (File.existsSync("/etc/systemd/system/homebridge-config-ui-x.service")) {
-                            execSync("systemctl enable homebridge-config-ui-x.service");
-                            execSync("systemctl restart homebridge-config-ui-x.service");
-                        }
-    
-                        break;
-                    
-                    case "uninstall":
-                        await (require(join(root, "../scripts/uninstall")))();
-                        break;
-                }
-            }
-        })();
 
         break;
 
