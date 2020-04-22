@@ -1,6 +1,6 @@
 {
     "server": {
-        "port": 8080,
+        "port": 50820,
         "origin": "*",
         "autostart": 0,
         "home_setup_id": "X-HM://",

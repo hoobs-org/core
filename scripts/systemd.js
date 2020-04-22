@@ -69,7 +69,7 @@ module.exports = (install, type, name, service, port, bridge) => {
                         const zone = await getDefaultZone();
 
                         if (zone && zone !== "") {
-                            Process.execSync(`firewall-cmd --zone=${zone} --add-port=8080/tcp --permanent`);
+                            Process.execSync(`firewall-cmd --zone=${zone} --add-port=50820/tcp --permanent`);
                             Process.execSync("firewall-cmd --reload");
                         }
                     }
@@ -154,7 +154,7 @@ module.exports = (install, type, name, service, port, bridge) => {
                         const zone = await getDefaultZone();
 
                         if (zone && zone !== "") {
-                            Process.execSync(`firewall-cmd --zone=${zone} --add-port=8080/tcp --permanent`);
+                            Process.execSync(`firewall-cmd --zone=${zone} --add-port=50820/tcp --permanent`);
                             Process.execSync(`firewall-cmd --zone=${zone} --add-port=51826/tcp --permanent`);
                             Process.execSync("firewall-cmd --reload");
                         }

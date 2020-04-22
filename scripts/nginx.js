@@ -350,7 +350,7 @@ const getDefaultZone = function () {
 const getProxyConfig = function (filename) {
     return new Promise((resolve) => {
         const results = [];
-        let proxy = "\"http://127.0.0.1:8080\"";
+        let proxy = "\"http://127.0.0.1:50820\"";
 
         if (File.existsSync(filename)) {
             const stream = File.createReadStream(filename);
