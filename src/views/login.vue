@@ -38,6 +38,10 @@
                     <password-field :name="$t('reenter_password')" v-model="challenge" />
                 </form>
                 <div class="actions">
+                    <div class="copyright">
+                        HOOBS and the HOOBS logo are registered trademarks of HOOBS, Inc.<br>
+                        Copyright &copy; 2020 HOOBS, Inc. All rights reserved.
+                    </div>
                     <div class="button button-primary" @click="createAccount()">{{ $t("create_account") }}</div>
                 </div>
             </div>
@@ -67,6 +71,10 @@
                     </div>
                 </form>
                 <div class="actions">
+                    <div class="copyright">
+                        HOOBS and the HOOBS logo are registered trademarks of HOOBS, Inc.<br>
+                        Copyright &copy; 2020 HOOBS, Inc. All rights reserved.
+                    </div>
                     <div class="button button-primary" @click="login()">   {{ $t("log_in") }}   </div>
                 </div>
             </div>
@@ -349,6 +357,15 @@
         margin: 10px -10px 0 0;
         display: flex;
         justify-content: flex-end;
+    }
+
+    #login .form .actions .copyright {
+        flex: 1;
+        font-size: 9px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        opacity: 0.4;
     }
 
     #login .form .remember {
