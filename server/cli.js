@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
-const File = require("fs-extra");
 const Program = require("commander");
 
 const HBS = require("./instance");

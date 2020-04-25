@@ -17,7 +17,7 @@
  **************************************************************************************************/
 
 const File = require("fs-extra");
-const Prompt = require("prompt");
+const Prompt = require("prompts");
 const Sanitize = require("sanitize-filename");
 
 const { dirname, join } = require("path");
@@ -28,67 +28,109 @@ module.exports = (mode, name, command) => {
 
     switch ((mode || "").toLowerCase()) {
         case "install":
-            const questions = {
-                properties: {
-                    name: {
-                        description: "Enter a name for the cluster instance",
-                        message: "Instance name is required",
-                        required: true,
-                        before: (value) => {
-                            return Sanitize(value);
+            const questions = [
+                {
+                    type: "text",
+                    name: "name",
+                    message: "Enter a name for the cluster instance",
+                    validate: (value) => {
+                        if (!value || value === "") {
+                            return "a name is required";
                         }
-                    },
-                    port: {
-                        description: "Enter the port this cluster instance will run on",
-                        pattern: /^\d+$/,
-                        default: "52827",
-                        required: true,
-                        before: (value) => {
-                            return parseInt(value, 10);
+
+                        return true;
+                    }
+                },
+                {
+                    type: "text",
+                    name: "port",
+                    initial: "52827",
+                    message: "Enter the port this cluster instance will run on",
+                    format: value => parseInt(value, 10),
+                    validate: (value) => {
+                        value = parseInt(value || "52827", 10);
+
+                        if (Number.isNaN(value)) {
+                            return "invalid port number";
                         }
-                    },
-                    username: {
-                        description: "Enter your HOOBS username",
-                        message: "Username is required",
-                        required: true
-                    },
-                    password: {
-                        description: "Enter your HOOBS password",
-                        message: "Password is required",
-                        required: true,
-                        hidden: true
-                    },
-                    bridge: {
-                        description: "Enter the bridge port for the bridge",
-                        pattern: /^\d+$/,
-                        default: "52826",
-                        required: true,
-                        before: (value) => {
-                            return parseInt(value, 10);
+
+                        if (value < 1 || value > 65535) {
+                            return "select a port between 1 and 65535";
                         }
-                    },
-                    client: {
-                        description: "Enter the URL of the cluster client",
-                        pattern: /^(http(s)?:\/\/)[-a-zA-Z0-9@:%_\+.~]*$/,
-                        message: "Invalid URL",
-                        default: "http://hoobs.local:80",
-                        required: true
+
+                        return true;
+                    }
+                },
+                {
+                    type: "text",
+                    name: "username",
+                    message: "Enter your HOOBS username",
+                    validate: (value) => {
+                        if (!value || value === "") {
+                            return "a username is required";
+                        }
+
+                        return true;
+                    }
+                },
+                {
+                    type: "password",
+                    name: "password",
+                    message: "Enter your HOOBS password",
+                    validate: (value) => {
+                        if (!value || value === "") {
+                            return "a password is required";
+                        }
+        
+                        return true;
+                    }
+                },
+                {
+                    type: "text",
+                    name: "bridge",
+                    initial: "52826",
+                    message: "Enter the bridge port for the bridge",
+                    format: value => parseInt(value, 10),
+                    validate: (value) => {
+                        value = parseInt(value || "52826", 10);
+
+                        if (Number.isNaN(value)) {
+                            return "invalid port number";
+                        }
+
+                        if (value < 1 || value > 65535) {
+                            return "select a port between 1 and 65535";
+                        }
+
+                        return true;
+                    }
+                },
+                {
+                    type: "text",
+                    name: "client",
+                    message: "Enter the URL of the cluster client",
+                    validate: (value) => {
+                        if (!value || value === "") {
+                            return "a client url is required";
+                        }
+
+                        if (!/^(http(s)?:\/\/)[-a-zA-Z0-9@:%_\+.~]*$/.test(value)) {
+                            return "invalid url";
+                        }
+
+                        return true;
                     }
                 }
-            };
+            ];
         
-            Prompt.start();
-        
-            Prompt.get(questions, async (error, result) => {
-                if (!error) {
-                    result.service = `hoobs.${result.name.replace(/[^a-zA-Z0-9]/gi, "").toLowerCase()}.service`;
-        
-                    writeJson(result.name.replace(/[^a-zA-Z0-9]/gi, "").toLowerCase(), "config.json", result);
-        
-                    await (require(join(root, "../scripts/prerequisites")))();
-                    await (require(join(root, "../scripts/systemd")))(true, "instance", result.name, result.service, result.port, result.bridge);
-                    await (require(join(root, "../scripts/reboot")))(false, result.service);
-                }
+            Prompt(questions).then(async (result) => {
+                result.service = `hoobs.${result.name.replace(/[^a-zA-Z0-9]/gi, "").toLowerCase()}.service`;
+    
+                writeJson(result.name.replace(/[^a-zA-Z0-9]/gi, "").toLowerCase(), "config.json", result);
+    
+                await (require(join(root, "../scripts/prerequisites")))();
+                await (require(join(root, "../scripts/systemd")))(true, "instance", result.name, result.service, parseInt(result.port, 10), parseInt(result.bridge, 10));
+                await (require(join(root, "../scripts/reboot")))(false, result.service);
             });
 
             break;

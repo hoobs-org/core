@@ -18,45 +18,65 @@
 
 const File = require("fs-extra");
 const Crypto = require("crypto");
-const Prompt = require("prompt");
+const Prompt = require("prompts");
 
 const { dirname, join } = require("path");
 
 module.exports = () => {
     const root = dirname(File.realpathSync(__filename));
 
-    const questions = {
-        properties: {
-            name: {
-                description: "Choose your HOOBS cluster account name",
-                default: "Administrator",
-                message: "Name is required",
-                required: true
-            },
-            username: {
-                description: "Choose your HOOBS cluster username",
-                default: "admin",
-                message: "Username is required",
-                required: true
-            },
-            password: {
-                description: "Choose your HOOBS cluster password",
-                message: "Password is required",
-                required: true,
-                hidden: true
-            },
-            confirm: {
-                description: "Confirm your password",
-                message: "Password is required",
-                required: true,
-                hidden: true
+    const questions = [
+        {
+            type: "text",
+            name: "name",
+            message: "Choose your HOOBS cluster account name",
+            validate: (value) => {
+                if (!value || value === "") {
+                    return "an account name is required"
+                }
+
+                return true;
+            }
+        },
+        {
+            type: "text",
+            name: "username",
+            message: "Choose your HOOBS cluster username",
+            validate: (value) => {
+                if (!value || value === "") {
+                    return "a username is required"
+                }
+
+                return true;
+            }
+        },
+        {
+            type: "password",
+            name: "password",
+            message: "Choose your HOOBS cluster password",
+            validate: (value) => {
+                if (!value || value === "") {
+                    return "a password is required"
+                }
+
+                return true;
+            }
+        },
+        {
+            type: "password",
+            name: "confirm",
+            message: "Confirm your password",
+            validate: (value) => {
+                if (!value || value === "") {
+                    return "a password is required"
+                }
+
+                return true;
             }
         }
-    };
+    ];
 
-    Prompt.start();
-
-    Prompt.get(questions, async (error, result) => {
+    Prompt(questions).then(async (result) => {
         if (result.password !== result.confirm) {
             console.log("");
             console.log("Passwords do not match");
