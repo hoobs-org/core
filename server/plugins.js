@@ -515,9 +515,10 @@ module.exports = class Plugins {
                     },
     
                     platformAccessory: {},
-                    version: "Loadout Test",
+                    version: 2.4,
+                    serverVersion: require("../bridge/version"),
     
-                    registerPlatform: (p, a) => {
+                    registerPlatform: (_p, a) => {
                         const idx = registered.findIndex(p => p.alias === a && p.type === "platform");
     
                         if (idx === -1) {
@@ -529,7 +530,7 @@ module.exports = class Plugins {
                         }
                     },
     
-                    registerAccessory: (p, a) => {
+                    registerAccessory: (_p, a) => {
                         const idx = registered.findIndex(p => p.alias === a && p.type === "accessory");
     
                         if (idx === -1) {
