@@ -458,6 +458,10 @@ else
     fi
 
     if [[ "$INSTANCE_SUPPORT" == "false" && "$OS" != "Darwin" ]]; then
+        if command -v setcap > /dev/null; then
+            setcap CAP_NET_BIND_SERVICE=+eip $NODE_PREFIX/bin/hoobs
+        fi
+
         if command -v hoobs > /dev/null; then
             echo ""
             echo "Initializing HOOBS"

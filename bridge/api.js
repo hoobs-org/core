@@ -73,41 +73,40 @@ module.exports = class API extends EventEmitter {
         }
     }
 
-    registerAccessory(pluginName, accessoryName, constructor, configurationRequestHandler) {
-        if (this.accessories[`${pluginName}.${accessoryName}`]) {
-            throw new Error(`Attempting to register an accessory "${pluginName}.${accessoryName}" which has already been registered.`);
+    registerAccessory(name, accessory, constructor, handler) {
+        if (typeof accessory === "function") {
+            handler = constructor;
+            constructor = accessory;
+        } else {
+            name = `${name}.${accessory}`;
+        }
+
+        if (this.accessories[name]) {
+            throw new Error(`Attempting to register an accessory "${name}" which has already been registered.`);
         }
     
-        internal.info(`Registering accessory "${pluginName}.${accessoryName}"`);
+        internal.info(`Registering accessory "${name}"`);
     
-        this.accessories[`${pluginName}.${accessoryName}`] = constructor;
+        this.accessories[name] = constructor;
     
-        if (configurationRequestHandler) {
-            this.configurableAccessories[`${pluginName}.${accessoryName}`] = configurationRequestHandler;
+        if (handler) {
+            this.configurableAccessories[name] = handler;
         }
     }
     
-    publishCameraAccessories(pluginName, accessories) {
-        for (let index in accessories) {
-            if (!(accessories[index] instanceof Platform)) {
-                throw new Error(`"${pluginName}" attempt to register an accessory that isn't platform accessory.`);
-            }
-    
-            accessories[index].associatedPlugin = pluginName;
-        }
-    
-        this.emit("publishExternalAccessories", API.seralizeAccessories(accessories));
+    publishCameraAccessories(name, accessories) {
+        this.publishExternalAccessories(name, accessories);
     }
     
-    publishExternalAccessories(pluginName, accessories) {
+    publishExternalAccessories(name, accessories) {
         for (let index in accessories) {
             if (!(accessories[index] instanceof Platform)) {
-                throw new Error(`"${pluginName}" attempt to register an accessory that isn't platform accessory.`);
+                throw new Error(`"${name}" attempt to register an accessory that isn't platform accessory.`);
             }
     
-            accessories[index].associatedPlugin = pluginName;
+            accessories[index].associatedPlugin = name;
         }
-    
+
         this.emit("publishExternalAccessories", API.seralizeAccessories(accessories));
     }
     
@@ -137,28 +136,35 @@ module.exports = class API extends EventEmitter {
         }
     }
     
-    registerPlatform(pluginName, platformName, constructor, dynamic) {
-        if (this.platforms[`${pluginName}.${platformName}`]) {
-            throw new Error(`Attempting to register a platform "${pluginName}.${platformName}" which has already been registered!`);
+    registerPlatform(name, platform, constructor, dynamic) {
+        if (typeof platform === "function") {
+            dynamic = constructor;
+            constructor = platform;
+        } else {
+            name = `${name}.${platform}`;
+        }
+
+        if (this.platforms[name]) {
+            throw new Error(`Attempting to register a platform "${name}" which has already been registered!`);
         }
     
-        internal.info(`Registering platform "${pluginName}.${platformName}"`);
+        internal.info(`Registering platform "${name}"`);
     
-        this.platforms[`${pluginName}.${platformName}`] = constructor;
+        this.platforms[name] = constructor;
     
         if (dynamic) {
-            this.dynamicPlatforms[`${pluginName}.${platformName}`] = constructor;
+            this.dynamicPlatforms[name] = constructor;
         }
     }
     
-    registerPlatformAccessories(pluginName, platformName, accessories) {
+    registerPlatformAccessories(name, platform, accessories) {
         for (let index in accessories) {
             if (!(accessories[index] instanceof Platform)) {
-                throw new Error(`"${pluginName} - ${platformName}" attempt to register an accessory that isn't platform accessory.`);
+                throw new Error(`"${name} - ${platform}" attempt to register an accessory that isn't platform accessory.`);
             }
     
-            accessories[index].associatedPlugin = pluginName;
-            accessories[index].associatedPlatform = platformName;
+            accessories[index].associatedPlugin = name;
+            accessories[index].associatedPlatform = platform;
         }
     
         this.emit("registerPlatformAccessories", API.seralizeAccessories(accessories));
@@ -168,10 +174,10 @@ module.exports = class API extends EventEmitter {
         this.emit("updatePlatformAccessories", API.seralizeAccessories(accessories));
     }
     
-    unregisterPlatformAccessories(pluginName, platformName, accessories) {
+    unregisterPlatformAccessories(name, platform, accessories) {
         for (let index in accessories) {
             if (!(accessories[index] instanceof Platform)) {
-                throw new Error(`"${pluginName} - ${platformName}" attempt to unregister an accessory that isn't platform accessory.`);
+                throw new Error(`"${name} - ${platform}" attempt to unregister an accessory that isn't platform accessory.`);
             }
         }
     
