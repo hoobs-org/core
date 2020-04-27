@@ -27,7 +27,7 @@
                 <div class="logo" v-html="$theme.logo.certified"></div>
                 <span><b>HOOBS</b> Certified</span>
             </div>
-            <h3>{{ humanize(plugin.name) }}</h3>
+            <h3>{{ humanize(plugin) }}</h3>
             <span class="version">
                 {{ plugin.installed || plugin.version }}
                 <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date.replace(/\s/, "T")) }} {{ getAgeDisplay(plugin.date.replace(/\s/, "T")) }}</span>
@@ -116,17 +116,32 @@
                 return Versioning.checkVersion(version, latest);
             },
 
-            humanize(string) {
-                string = Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+            humanize(plugin) {
+                let name = Inflection.titleize(Decamelize(plugin.name.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
 
-                string = string.replace(/smart things/gi, "SmartThings");
-                string = string.replace(/smartthings/gi, "SmartThings");
-                string = string.replace(/my q/gi, "myQ");
-                string = string.replace(/myq/gi, "myQ");
-                string = string.replace(/rgb/gi, "RGB");
-                string = string.replace(/ffmpeg/gi, "FFMPEG");
+                name = name.replace(/smart things/gi, "SmartThings");
+                name = name.replace(/smartthings/gi, "SmartThings");
+                name = name.replace(/my q/gi, "myQ");
+                name = name.replace(/myq/gi, "myQ");
+                name = name.replace(/rgb/gi, "RGB");
+                name = name.replace(/ffmpeg/gi, "FFMPEG");
+                name = name.replace(/hoobs/gi, "HOOBS");
 
-                return string;
+                if (plugin.scope) {
+                    let scope = Inflection.titleize(Decamelize(plugin.scope.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+
+                    scope = scope.replace(/smart things/gi, "SmartThings");
+                    scope = scope.replace(/smartthings/gi, "SmartThings");
+                    scope = scope.replace(/my q/gi, "myQ");
+                    scope = scope.replace(/myq/gi, "myQ");
+                    scope = scope.replace(/rgb/gi, "RGB");
+                    scope = scope.replace(/ffmpeg/gi, "FFMPEG");
+                    scope = scope.replace(/hoobs/gi, "HOOBS");
+
+                    name = `@${scope}/${name}`
+                }
+
+                return name;
             },
 
             async install() {
