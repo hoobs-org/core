@@ -1,5 +1,4 @@
 # ![](https://raw.githubusercontent.com/hoobs-org/HOOBS/master/docs/logo.png)
-## Welcome to HOOBS
 Pronounced as "huːbz"  
 
 HOOBS a stack that simplifies your smart home.
