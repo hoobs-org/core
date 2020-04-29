@@ -17,20 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
+const HBS = require("../server/instance");
 const HAP = require("hap-nodejs");
+const File = require("fs-extra");
 const User = require("./user");
 const Server = require("./server");
 const Plugin = require("./plugin");
 const Program = require("commander");
-const Version = require("./version");
 
+const { dirname, join } = require("path");
 const { internal } = require("./logger");
 
 module.exports = () => {
     let removeOrphans = false
     let terminating = false;
 
-    Program.version(Version)
+    HBS.application = HBS.JSON.load(join(dirname(File.realpathSync(__filename)), "../package.json"));
+
+    Program.version(HBS.application.version)
         .allowUnknownOption()
         .option("-d, --debug", "turn on debug level logging", function () { require("./logger").setDebug(true); })
         .option("-p, --plugin-path [path]", "look for plugins installed at [path] as well as the default locations ([path] can also point to a single plugin)", function (p) { Plugin.addPluginPath(p); })

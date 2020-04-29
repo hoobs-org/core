@@ -223,13 +223,8 @@ module.exports = class Server {
         const platformAccessories = [];
     
         if (cachedAccessories) {
-            for (let index in cachedAccessories) {
-                const serializedAccessory = cachedAccessories[index];
-                const platformAccessory = new Platform(serializedAccessory.displayName, serializedAccessory.UUID, serializedAccessory.category);
-    
-                platformAccessory.configFromData(serializedAccessory);
-    
-                platformAccessories.push(platformAccessory);
+            for (let index in cachedAccessories) {    
+                platformAccessories.push(Platform.deserialize(cachedAccessories[index]));
             }
         }
     
@@ -534,7 +529,7 @@ module.exports = class Server {
         const serializedAccessories = [];
     
         for (let index in this.cachedPlatformAccessories) {
-            serializedAccessories.push(this.cachedPlatformAccessories[index].dictionaryPresentation());
+            serializedAccessories.push(Platform.serialize(this.cachedPlatformAccessories[index]));
         }
     
         persist.setItemSync("cachedAccessories", serializedAccessories);

@@ -389,8 +389,8 @@ module.exports = class Plugins {
                     },
     
                     platformAccessory: {},
-                    version: 2.4,
-                    serverVersion: require("../bridge/version"),
+                    version: 2.5,
+                    serverVersion: HBS.application.version,
     
                     registerPlatform: (_p, a) => {
                         const idx = registered.findIndex(p => p.alias === a && p.type === "platform");

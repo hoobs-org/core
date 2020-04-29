@@ -32,7 +32,7 @@ const { spawn, fork, execSync } = require("child_process");
 
 module.exports = class Server {
     constructor(options) {
-        this.version = require("../bridge/version");
+        this.version = HBS.application.version;
 
         this.arguments = [
             "bridge",

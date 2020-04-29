@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
+const HBS = require("../server/instance");
 const HAP = require("hap-nodejs");
 const User = require("./user");
-const Version = require("./version");
 const Platform = require("./platform");
 const LegacyTypes = require("hap-nodejs/dist/accessories/types");
 
@@ -36,8 +36,8 @@ module.exports = class API extends EventEmitter {
         this.configurableAccessories = {};
         this.dynamicPlatforms = {};
 
-        this.version = 2.4;
-        this.serverVersion = Version;
+        this.version = 2.5;
+        this.serverVersion = HBS.application.version;
 
         this.user = User;
         this.hap = HAP;
@@ -107,7 +107,7 @@ module.exports = class API extends EventEmitter {
             accessories[index].associatedPlugin = name;
         }
 
-        this.emit("publishExternalAccessories", API.seralizeAccessories(accessories));
+        this.emit("publishExternalAccessories", accessories);
     }
     
     platform(name) {
@@ -167,11 +167,11 @@ module.exports = class API extends EventEmitter {
             accessories[index].associatedPlatform = platform;
         }
     
-        this.emit("registerPlatformAccessories", API.seralizeAccessories(accessories));
+        this.emit("registerPlatformAccessories", accessories);
     }
     
     updatePlatformAccessories(accessories) {
-        this.emit("updatePlatformAccessories", API.seralizeAccessories(accessories));
+        this.emit("updatePlatformAccessories", accessories);
     }
     
     unregisterPlatformAccessories(name, platform, accessories) {
@@ -181,23 +181,7 @@ module.exports = class API extends EventEmitter {
             }
         }
     
-        this.emit("unregisterPlatformAccessories", API.seralizeAccessories(accessories));
-    }
-    
-    static seralizeAccessories(value) {
-        const cache = [];
-    
-        return JSON.parse(JSON.stringify(value, (_key, item) => {
-            if (typeof item === "object" && item !== null) {
-                if (cache.indexOf(item) !== -1) {
-                    return;
-                }
-    
-                cache.push(item);
-            }
-
-            return item;
-        }));
+        this.emit("unregisterPlatformAccessories", accessories);
     }
 
     static expandUUID(value) {
