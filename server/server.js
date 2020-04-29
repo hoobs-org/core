@@ -698,15 +698,15 @@ module.exports = class Server {
                             break;
                         
                         case "error_log":
-                            HBS.log.error(`[Bridge] ${response.data}`);
+                            HBS.log.error(response.data);
                             break;
 
                         case "info_log":
-                            HBS.log.info(`[Bridge] ${response.data}`);
+                            HBS.log.info(response.data);
                             break;
 
                         case "debug_log":
-                            HBS.log.debug(`[Bridge] ${response.data}`);
+                            HBS.log.debug(response.data);
                             break;
 
                         case "setup_uri":
@@ -730,7 +730,7 @@ module.exports = class Server {
                             break;
 
                         default:
-                            HBS.log.debug(`[Bridge] ${response.event}`);
+                            HBS.log.debug(response.event);
 
                             if (response.data) {
                                 HBS.log.debug(JSON.stringify(response.data, null, 4));
@@ -747,7 +747,7 @@ module.exports = class Server {
                         const line = lines[i].trim();
 
                         if (line !== "") {
-                            HBS.log.info(`[Bridge] ${line}`);
+                            HBS.log.info(line);
                         }
                     }
                 });
@@ -759,7 +759,7 @@ module.exports = class Server {
                         const line = lines[i].trim();
 
                         if (line !== "") {
-                            HBS.log.error(`[Bridge] ${line}`);
+                            HBS.log.error(line);
 
                             if (this.stderr) {
                                 this.stderr(line);

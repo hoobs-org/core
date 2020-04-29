@@ -47,7 +47,7 @@ module.exports = class Client {
 
         if (HBS.debug) {
             HBS.app.use((request, response, next) => {
-                HBS.log.debug(`[${new Date().toLocaleString()}] "${request.method}" ${request.url}`);
+                HBS.log.debug(`"${request.method}" ${request.url}`);
     
                 next();
             });
@@ -104,7 +104,7 @@ module.exports = class Client {
 
     start() {
         HBS.app.listen(this.port, () => {
-            HBS.log.info(`[${new Date().toLocaleString()}] HOOBS listening on port ${this.port || 80}.`);
+            HBS.log.info(`HOOBS listening on port ${this.port || 80}.`);
         });
     }
 }

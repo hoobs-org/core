@@ -83,7 +83,7 @@ module.exports = async (docker) => {
     Program.parse(process.argv);
 
     process.on("unhandledRejection", (reason, promise) => {
-        console.log(`[${new Date().toLocaleString()}] Unhandled Rejection "${reason}".`);
+        console.log(`Unhandled Rejection "${reason}".`);
 
         promise.catch((error) => {
             if (HBS.debug) {
@@ -122,7 +122,7 @@ module.exports = async (docker) => {
             });
         
             process.once("uncaughtException", async (error) => {
-                console.log(`[${new Date().toLocaleString()}] ${error.message}`);
+                console.log(error.message);
                 console.log(error.stack);
 
                 await HBS.server.stop();
@@ -163,7 +163,7 @@ module.exports = async (docker) => {
             });
         
             process.once("uncaughtException", async (error) => {
-                console.log(`[${new Date().toLocaleString()}] ${error.message}`);
+                console.log(error.message);
                 console.log(error.stack);
 
                 await HBS.server.stop();

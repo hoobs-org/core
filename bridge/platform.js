@@ -17,26 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
-const { uuid, Accessory, Service, Characteristic } = require("hap-nodejs");
+const { Accessory } = require("hap-nodejs");
 const { EventEmitter } = require("events").EventEmitter;
 
 module.exports = class Platform extends EventEmitter {
-    constructor(displayName, UUID, category, injected) {
+    constructor(name, uuid, category) {
         super();
 
-        if (!displayName) {
-            throw new Error("Accessories must be created with a non-empty displayName.");
+        let cached = null;
+
+        if (name instanceof Accessory) {
+            cached = name;
+            category = uuid;
+            uuid = cached.UUID;
+            name = cached.displayName;
         }
 
-        if (!UUID) {
-            throw new Error("Accessories must be created with a valid UUID.");
-        }
+        this.associatedHAPAccessory = cached || new Accessory(name, uuid);
 
-        if (!uuid.isValid(UUID)) {
-            throw new Error(`UUID "${UUID}" is not a valid UUID.`);
+        if (category) {
+            this.associatedHAPAccessory.category = category;
         }
-
-        this.associatedHAPAccessory = injected ? injected : new Accessory(displayName, UUID);;
 
         this.displayName = this.associatedHAPAccessory.displayName;
         this.UUID = this.associatedHAPAccessory.UUID;
@@ -50,11 +51,9 @@ module.exports = class Platform extends EventEmitter {
         this.associatedPlatform;
 
         this.associatedHAPAccessory.on("identify", (paired, callback) => {
-            if (this.listeners("identify").length > 0) {
-                this.emit("identify", paired, callback);
-            } else {
-                callback();
-            }
+            this.emit("identify", paired, callback);
+
+            callback();
         });
     }
 
@@ -67,15 +66,21 @@ module.exports = class Platform extends EventEmitter {
     }
 
     getService(name) {
-        return this.associatedHAPAccessory.getService(name);
+        for (let i = 0; i < this.services.length; i++) {
+            if (typeof name === "string" && (this.services[i].displayName === name || this.services[i].name === name)) {
+                return this.services[i];
+            } else if (typeof name === "function" && ((this.services[i] instanceof name) || (name.UUID === this.services[i].UUID))) {
+                return this.services[i];
+            }
+        }
     }
 
-    getServiceByUUIDAndSubType(UUID, subType) {
-        return this.getServiceById(UUID, subType);
+    getServiceByUUIDAndSubType(uuid, subType) {
+        return this.getServiceById(uuid, subType);
     }
 
-    getServiceById(UUID, subType) {
-        return this.associatedHAPAccessory.getServiceById(UUID, subType);
+    getServiceById(uuid, subType) {
+        return this.associatedHAPAccessory.getServiceById(uuid, subType);
     }
 
     updateReachability(reachable) {
@@ -98,13 +103,11 @@ module.exports = class Platform extends EventEmitter {
     }
 
     static deserialize(json) {
-        const accessory = Accessory.deserialize(json);
-        const platform = new Platform(accessory.displayName, accessory.UUID, accessory);
+        const platform = new Platform(Accessory.deserialize(json), json.category);
 
         platform.associatedPlugin = json.plugin;
         platform.associatedPlatform = json.platform;
         platform.context = json.context;
-        platform.category = json.category;
 
         return platform;
     }

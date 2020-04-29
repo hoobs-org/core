@@ -52,7 +52,12 @@ module.exports = (socket) => {
     });
 
     const log = (type, message) => {
-        cache.push(message);
+        data = {
+            message,
+            time: new Date().getTime()
+        }
+
+        cache.push(data);
 
         while (cache.length >= 500) {
             cache.shift()
@@ -61,12 +66,12 @@ module.exports = (socket) => {
         if (client && client.readyState === 1) {
             client.send(JSON.stringify({
                 event: "log",
-                data: message
+                data
             }));
 
             client.send(JSON.stringify({
                 event: type,
-                data: message
+                data: data.message
             }));
         }
 

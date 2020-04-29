@@ -18,7 +18,7 @@
 
 <template>
     <div id="logs">
-        <span class="message" v-for="(message, index) in messages" :key="index">{{ message }}</span>
+        <span class="message" v-for="(message, index) in messages" :key="index"><span class="dim">{{ new Date(message.time).toLocaleString() }}</span> {{ message.message }}</span>
     </div>
 </template>
 
@@ -60,6 +60,10 @@
         font-family: monospace;
         white-space: pre-wrap;
         color: var(--log-text);
+    }
+
+    #logs .dim {
+        opacity: 0.5;
     }
 
     @media (min-width: 300px) and (max-width: 815px) {

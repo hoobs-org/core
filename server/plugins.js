@@ -139,7 +139,9 @@ module.exports = class Plugins {
         const queue = [];
 
         return new Promise((resolve) => {
+            const certified = [];
             const results = [];
+            const local = [];
             const installed = Plugins.list();
             const keys = Object.keys(installed);
 
@@ -149,32 +151,47 @@ module.exports = class Plugins {
                 queue.push(true);
 
                 Plugins.package(item.scope ? `@${item.scope}/${item.name}` : item.name, item.version).then((response) => {
-                    results.push({
-                        name: response.name,
-                        scope: response.scope,
-                        replaces: response.replaces,
-                        details: Plugins.getPluginType(item.scope ? `@${item.scope}/${item.name}` : item.name),
-                        local: false,
-                        version: response.version,
-                        certified: response.certified,
-                        installed: response.installed,
-                        date: response.date,
-                        description: response.description,
-                        keywords: response.keywords || [],
-                        links: response.links,
-                        schema: item.schema
-                    });
+                    if (item.name !== "homebridge") {
+                        if (response.scope === "hoobs") {
+                            certified.push({
+                                name: response.name,
+                                scope: response.scope,
+                                details: Plugins.getPluginType(response.scope && response.scope !== "" ? `@${response.scope}/${response.name}` : response.name),
+                                local: false,
+                                version: response.version,
+                                installed: response.installed,
+                                date: response.date,
+                                description: response.description,
+                                keywords: response.keywords || [],
+                                links: response.links,
+                                schema: item.schema
+                            });
+                        } else {
+                            results.push({
+                                name: response.name,
+                                scope: response.scope,
+                                details: Plugins.getPluginType(response.scope && response.scope !== "" ? `@${response.scope}/${response.name}` : response.name),
+                                local: false,
+                                version: response.version,
+                                installed: response.installed,
+                                date: response.date,
+                                description: response.description,
+                                keywords: response.keywords || [],
+                                links: response.links,
+                                schema: item.schema
+                            });
+                        }
+                    }
                 }).catch((error) => {
                     HBS.log.debug(error.message);
                     HBS.log.debug(error.stack);
 
-                    results.push({
+                    local.push({
                         name: item.name,
                         scope: item.scope,
-                        details: Plugins.getPluginType(item.scope ? `@${item.scope}/${item.name}` : item.name),
+                        details: Plugins.getPluginType(response.scope && response.scope !== "" ? `@${response.scope}/${response.name}` : response.name),
                         local: true,
                         version: item.version,
-                        certified: false,
                         installed: item.version,
                         date: new Date(),
                         description: (item.description || "").replace(/(?:https?|ftp):\/\/[\n\S]+/g, "").trim(),
@@ -188,18 +205,18 @@ module.exports = class Plugins {
                     queue.pop();
 
                     if (queue.length === 0) {
-                        resolve(results);
+                        resolve(certified.concat(results).concat(local));
                     }
                 });
             }
 
             if (queue.length === 0) {
-                resolve(results);
+                resolve(certified.concat(results).concat(local));
             }
         });
     }
 
-    static package(name, version, replaces) {
+    static package(name, version) {
         return new Promise((resolve, reject) => {
             const key = `package/${name}${version ? `@${version}` : ""}`;
             const cached = HBS.cache.get(key);
@@ -209,71 +226,180 @@ module.exports = class Plugins {
 
                 resolve(cached);
             } else {
-                Request.get(`https://plugins.hoobs.org/api/plugin/${name}`).then((response) => {
-                    const { ...item } = response.data.results || {};
+                Request.get(`https://registry.npmjs.org/${encodeURIComponent(name)}`).then((response) => {
+                    const { ...item } = response.data || {};
                     const id = (item.name || "").split("/");
-
-                    if ((item.override || []).length > 0) {
-                        return resolve(Plugins.package(item.override[0], version, item.name));
-                    }
 
                     const results = {
                         name: id.length === 2 ? id[1] : item.name,
-                        replaces,
                         scope: id.length === 2 ? id[0].replace(/@/gi, "") : null,
                         local: false,
-                        version: (item.tags || {}).latest,
-                        certified: item.certified,
+                        version: (item["dist-tags"] || {}).latest,
                         installed: version || false,
-                        date: (item.times || {}).modified,
-                        author: (item.author || {}).username,
+                        date: (item.time || {}).modified,
+                        author: (item.author || {}).name,
                         description: (item.description || "").replace(/(?:https?|ftp):\/\/[\n\S]+/g, "").trim(),
                         homepage: item.homepage,
-                        keywords: (item.keywords || "").split(","),
+                        keywords: item.keywords,
                         license: item.license,
-                        readme: item.curated || item.details
+                        readme: item.readme
                     };
 
                     HBS.cache.set(key, results, 60 * 3);
 
-                    return resolve(results);
+                    resolve(results);
                 }).catch((error) => {
-                    return reject(error);
+                    reject(error);
                 });
             }
         });
     }
 
-    static search(search) {
+    static categories() {
+        return new Promise((resolve, reject) => {
+            const key = "certified/categories";
+            const cached = HBS.cache.get(key);
+
+            if (cached) {
+                HBS.log.debug(`[Cache Hit] ${key}`);
+
+                resolve(cached);
+            } else {
+                Request.get("https://raw.githubusercontent.com/hoobs-org/HOOBS/master/certified/categories.json").then((response) => {
+                    response.data.sort();
+    
+                    HBS.cache.set(key, response.data, 60 * 3);
+
+                    resolve(response.data);
+                }).catch((error) => {
+                    reject(error);
+                });
+            }
+        });
+    }
+
+    static lookup() {
+        return new Promise((resolve, reject) => {
+            const key = "certified/plugins";
+            const cached = HBS.cache.get(key);
+
+            if (cached) {
+                HBS.log.debug(`[Cache Hit] ${key}`);
+
+                resolve(cached);
+            } else {
+                Request.get("https://raw.githubusercontent.com/hoobs-org/HOOBS/master/certified/plugins.json").then((response) => {
+                    HBS.cache.set(key, response.data, 60 * 3);
+
+                    resolve(response.data);
+                }).catch((error) => {
+                    reject(error);
+                });
+            }
+        });
+    }
+
+    static certified(category) {
+        return new Promise((resolve, reject) => {
+            if (category && category !== "") {
+                const key = `certified/${category}`;
+                const installed = Plugins.list();
+                const cached = HBS.cache.get(key);
+
+                const processObjects = function (objects) {
+                    const results = [];
+
+                    for (let i = 0; i < objects.length; i++) {
+                        const { ...item } = objects[i].package;
+                        const id = (item.name || "").split("/");
+
+                        results.push({
+                            name: id.length === 2 ? id[1] : item.name,
+                            scope: item.scope === "unscoped" ? null : item.scope,
+                            version: item.version,
+                            installed: installed[item.name] ? installed[item.name].version : false,
+                            date: item.date,
+                            description: (item.description || "").replace(/(?:https?|ftp):\/\/[\n\S]+/g, "").trim(),
+                            homepage: item.homepage,
+                            image: `https://raw.githubusercontent.com/hoobs-org/hoobs-images/master/certified/${id.length === 2 ? id[1] : item.name}.png`,
+                            keywords: item.keywords
+                        });
+                    }
+
+                    return results;
+                }
+
+                if (cached) {
+                    HBS.log.debug(`[Cache Hit] ${key}`);
+
+                    resolve(processObjects(cached));
+                } else {
+                    Request.get(`https://registry.npmjs.org/-/v1/search?text=@hoobs+keywords:hoobs-certified+${category}`).then((response) => {
+                        response.data.objects = response.data.objects || [];
+
+                        if (response.data.objects.length > 0) {
+                            HBS.cache.set(key, response.data.objects, 60 * 3);
+                        }
+
+                        resolve(processObjects(response.data.objects));
+                    }).catch((error) => {
+                        reject(error);
+                    });
+                }
+            } else {
+                resolve([]);
+            }
+        });
+    }
+
+    static search(search, keyword, limit) {
         return new Promise(async (resolve, reject) => {
             if (search && search !== "") {
                 const installed = Plugins.list();
 
-                Request.get(`https://plugins.hoobs.org/api/search/${encodeURIComponent(search)}`).then((response) => {
+                search = (search || "").split("/")
+                search = encodeURIComponent(search[search.length - 1]);
+
+                Request.get(`https://registry.npmjs.org/-/v1/search?text=${search}+keywords:${keyword}&size=${limit}`).then((response) => {
+                    const certified = [];
                     const results = [];
 
-                    response.data = response.data.results || [];
+                    response.data = response.data || {};
+                    response.data.objects = response.data.objects || [];
 
-                    for (let i = 0; i < response.data.length; i++) {
-                        const { ...item } = response.data[i];
+                    for (let i = 0; i < response.data.objects.length; i++) {
+                        const { ...item } = response.data.objects[i].package;
 
                         if (blocked.indexOf(item.name || "") === -1) {
                             const id = (item.name || "").split("/");
 
-                            results.push({
-                                name: id.length === 2 ? id[1] : item.name,
-                                scope: id.length === 2 ? id[0].replace(/@/gi, "") : null,
-                                version: item.version,
-                                certified: item.certified,
-                                installed: installed[item.name] ? installed[item.name].version : false,
-                                date: item.published,
-                                description: (item.description || "").replace(/(?:https?|ftp):\/\/[\n\S]+/g, "").trim(),
-                                keywords: item.keywords
-                            });
+                            if (item.scope === "hoobs") {
+                                certified.push({
+                                    name: id.length === 2 ? id[1] : item.name,
+                                    scope: item.scope === "unscoped" ? null : item.scope,
+                                    version: item.version,
+                                    installed: installed[item.name] ? installed[item.name].version : false,
+                                    date: item.date,
+                                    description: (item.description || "").replace(/(?:https?|ftp):\/\/[\n\S]+/g, "").trim(),
+                                    homepage: item.homepage,
+                                    keywords: item.keywords
+                                });
+                            } else {
+                                results.push({
+                                    name: id.length === 2 ? id[1] : item.name,
+                                    scope: item.scope === "unscoped" ? null : item.scope,
+                                    version: item.version,
+                                    installed: installed[item.name] ? installed[item.name].version : false,
+                                    date: item.date,
+                                    description: (item.description || "").replace(/(?:https?|ftp):\/\/[\n\S]+/g, "").trim(),
+                                    homepage: item.homepage,
+                                    keywords: item.keywords
+                                });
+                            }
                         }
                     }
 
-                    resolve(results);
+                    resolve(certified.concat(results));
                 }).catch((error) => {
                     reject(error);
                 });
@@ -579,6 +705,42 @@ module.exports = class Plugins {
 
                             if ((item.keywords.indexOf("hoobs-plugin") >= 0 || item.keywords.indexOf("homebridge-plugin") >= 0) && data.plugins.indexOf(name) === -1) {
                                 data.plugins.push(name);
+                            }
+
+                            const lookup = await Plugins.lookup();
+
+                            if (id.startsWith("@hoobs/") && lookup.certified[id]) {
+                                const index = data.plugins.indexOf(lookup.certified[id].split("/").pop());
+
+                                if (index > -1) {
+                                    data.plugins.splice(index, 1);
+                                }
+
+                                if (HBS.config.package_manager === "yarn") {
+                                    execSync(`yarn remove ${lookup.certified[id]}`, {
+                                        cwd: Server.paths.application
+                                    });
+                                } else {
+                                    execSync(`npm uninstall --unsafe-perm ${lookup.certified[id]}`, {
+                                        cwd: Server.paths.application
+                                    });
+                                }
+                            } else if (lookup.lookup[id]) {
+                                const index = data.plugins.indexOf(lookup.lookup[id].split("/").pop());
+
+                                if (index > -1) {
+                                    data.plugins.splice(index, 1);
+                                }
+
+                                if (HBS.config.package_manager === "yarn") {
+                                    execSync(`yarn remove ${lookup.lookup[id]}`, {
+                                        cwd: Server.paths.application
+                                    });
+                                } else {
+                                    execSync(`npm uninstall --unsafe-perm ${lookup.lookup[id]}`, {
+                                        cwd: Server.paths.application
+                                    });
+                                }
                             }
 
                             Plugins.linkLibs();

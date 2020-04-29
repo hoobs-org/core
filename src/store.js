@@ -25,6 +25,7 @@ export default new Vuex.Store({
     state: {
         user: null,
         messages: [],
+        categories: [],
         command: null,
         weather: null,
         forecast: null,
@@ -222,6 +223,10 @@ export default new Vuex.Store({
 
         last(state, results) {
             state.results = results;
+        },
+
+        category(state, data) {
+            state.categories = data;
         },
 
         current(state, data) {

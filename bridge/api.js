@@ -85,7 +85,7 @@ module.exports = class API extends EventEmitter {
             throw new Error(`Attempting to register an accessory "${name}" which has already been registered.`);
         }
     
-        internal.info(`Registering accessory "${name}"`);
+        internal.debug(`Registering accessory "${name}"`);
     
         this.accessories[name] = constructor;
     
@@ -148,7 +148,7 @@ module.exports = class API extends EventEmitter {
             throw new Error(`Attempting to register a platform "${name}" which has already been registered!`);
         }
     
-        internal.info(`Registering platform "${name}"`);
+        internal.debug(`Registering platform "${name}"`);
     
         this.platforms[name] = constructor;
     

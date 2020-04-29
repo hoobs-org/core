@@ -23,7 +23,7 @@
                 <span v-if="checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
                 <span v-else class="status">{{ $t("updated") }}</span>
             </span>
-            <div v-if="plugin.certified" class="certified">
+            <div v-if="plugin.scope === 'hoobs'" class="certified">
                 <div class="logo" v-html="$theme.logo.certified"></div>
                 <span><b>HOOBS</b> Certified</span>
             </div>

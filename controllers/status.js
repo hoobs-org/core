@@ -126,7 +126,6 @@ module.exports = class StatusController {
         } else {
             data.bridge_name = HBS.config.bridge.name || "";
             data.hoobs_version = HBS.application.version;
-            data.homebridge_version = HBS.server.version;
             data.node_version = (process.version || "").replace(/v/gi, "");
             data.username = HBS.config.bridge.username || "";
             data.homebridge_port = HBS.config.bridge.port || 51826;

@@ -64,7 +64,7 @@ module.exports = class ServiceController {
             
             case "clean":
                 HBS.server.clean().then(() => {
-                    HBS.log.info(`[${new Date().toLocaleString()}] Persist directory removed.`);
+                    HBS.log.info(`Persist directory removed.`);
 
                     return response.send({
                         success: true

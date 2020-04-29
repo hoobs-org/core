@@ -184,7 +184,7 @@
 
                             element = document.createElement("a");
 
-                            element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(this.$store.state.messages.join("\r\n"))}`);
+                            element.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(this.$store.state.messages.map(m => `${new Date(m.time).toLocaleString()} - ${m.message}`).join("\r\n"))}`);
                             element.setAttribute("download", "logs.txt");
 
                             element.style.display = "none";

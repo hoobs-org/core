@@ -20,6 +20,7 @@
     <div id="plugin">
         <div class="info">
             <router-link to="/plugins">{{ $t("installed_packages") }}</router-link>
+            <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
             <router-link v-on:click="clearSearch()" to="/plugins/search">{{ $t("search") }}</router-link>
         </div>
         <div class="content">
@@ -29,7 +30,7 @@
                         <span v-if="checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
                         <span v-else class="status">{{ $t("updated") }}</span>
                     </span>
-                    <div v-if="plugin.certified" class="certified">
+                    <div v-if="plugin.scope === 'hoobs'" class="certified">
                         HOOBS Certified
                     </div>
                     <div class="version">
@@ -49,7 +50,7 @@
                     </div>
                 </div>
                 <div v-else class="control">
-                    <div v-if="plugin.certified" class="certified">
+                    <div v-if="plugin.scope === 'hoobs'" class="certified">
                         HOOBS Certified
                     </div>
                     <div class="version">
@@ -104,6 +105,10 @@
 
             user() {
                 return this.$store.state.user;
+            },
+
+            categories() {
+                return this.$store.state.categories;
             }
         },
 
@@ -117,6 +122,10 @@
         },
 
         async mounted() {
+            if (!this.categories || this.categories.length === 0) {
+                this.$store.commit("category", await this.api.get(`/plugins/certified/categories`));
+            }
+
             this.api.get(`/plugins/${encodeURIComponent(this.$route.params.name)}`, true).then((response) => {
                 this.plugin = response;
 
@@ -130,7 +139,7 @@
             }).finally(() => {
                 this.formatted = new Showdown.Converter({
                     tables: true
-                }).makeHtml(`# ${this.humanize(this.plugin)}\n\n${this.markdown}`);
+                }).makeHtml(this.markdown);
 
                 setTimeout(() => {
                     Prism.highlightAllUnder(this.$refs.markdown);
@@ -167,8 +176,34 @@
                 return "";
             },
 
+            categoryName(value) {
+                let results = value;
+
+                results = (results || "").replace(/-/gi, "_");
+                results = this.$t(results);
+
+                if (results !== value) {
+                    return results;
+                }
+
+                results = results.replace("category_", "");
+
+                return Inflection.titleize(Decamelize(results.trim()));
+            },
+
             checkVersion(version, latest) {
                 return Versioning.checkVersion(version, latest);
+            },
+
+            changeCategory(category) {
+                this.$store.commit("search", "");
+                this.$store.commit("last", []);
+
+                this.results = [];
+
+                this.$router.push({
+                    path: `/plugins/${category}`,
+                });
             },
 
             async install() {
@@ -187,34 +222,6 @@
                 this.working = true;
 
                 await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
-            },
-
-            humanize(plugin) {
-                let name = Inflection.titleize(Decamelize(plugin.name.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
-
-                name = name.replace(/smart things/gi, "SmartThings");
-                name = name.replace(/smartthings/gi, "SmartThings");
-                name = name.replace(/my q/gi, "myQ");
-                name = name.replace(/myq/gi, "myQ");
-                name = name.replace(/rgb/gi, "RGB");
-                name = name.replace(/ffmpeg/gi, "FFMPEG");
-                name = name.replace(/hoobs/gi, "HOOBS");
-
-                if (plugin.scope) {
-                    let scope = Inflection.titleize(Decamelize(plugin.scope.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
-
-                    scope = scope.replace(/smart things/gi, "SmartThings");
-                    scope = scope.replace(/smartthings/gi, "SmartThings");
-                    scope = scope.replace(/my q/gi, "myQ");
-                    scope = scope.replace(/myq/gi, "myQ");
-                    scope = scope.replace(/rgb/gi, "RGB");
-                    scope = scope.replace(/ffmpeg/gi, "FFMPEG");
-                    scope = scope.replace(/hoobs/gi, "HOOBS");
-
-                    name = `@${scope}/${name}`
-                }
-
-                return name;
             }
         }
     }
@@ -280,7 +287,8 @@
     #plugin .info a,
     #plugin .info a:link,
     #plugin .info a:active,
-    #plugin .info a:visited {
+    #plugin .info a:visited,
+    #plugin .info .category-link {
         padding: 10px;
         border-bottom: 1px var(--border) solid;
         color: var(--text);
@@ -289,7 +297,8 @@
         cursor: pointer;
     }
 
-    #plugin .info a:hover {
+    #plugin .info a:hover,
+    #plugin .info .category-link:hover {
         color: var(--text-dark);
     }
 
