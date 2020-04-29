@@ -36,125 +36,19 @@ module.exports = class Platform extends EventEmitter {
             throw new Error(`UUID "${UUID}" is not a valid UUID.`);
         }
     
-        this.displayName = displayName;
-        this.UUID = UUID;
+        this.associatedHAPAccessory = new Accessory(displayName, UUID);;
+
+        this.displayName = this.associatedHAPAccessory.displayName;
+        this.UUID = this.associatedHAPAccessory.UUID;
+
         this.category = category || Accessory.Categories.OTHER;
-        this.services = [];
+        this.services = this.associatedHAPAccessory.services;
         this.reachable = false;
         this.context = {};
     
         this.associatedPlugin;
         this.associatedPlatform;
-        this.associatedHAPAccessory;
-    
-        this.addService(Service.AccessoryInformation)
-            .setCharacteristic(Characteristic.Name, displayName)
-            .setCharacteristic(Characteristic.Manufacturer, "Default-Manufacturer")
-            .setCharacteristic(Characteristic.Model, "Default-Model")
-            .setCharacteristic(Characteristic.SerialNumber, "Default-SerialNumber");
-    }
-    
-    addService(service) {
-        if (typeof service === "function") {
-            service = new (Function.prototype.bind.apply(service, arguments));
-        }
-    
-        for (let index in this.services) {
-            const existing = this.services[index];
-    
-            if (existing.UUID === service.UUID) {
-                if (!service.subtype) {
-                    throw new Error(`Cannot add a Service with the same UUID "${existing.UUID}" as another Service in this Accessory without also defining a unique "subtype" property.`);
-                }
-    
-                if (service.subtype.toString() === existing.subtype.toString()) {
-                    throw new Error(`Cannot add a Service with the same UUID "${existing.UUID}" and subtype "${existing.subtype}" as another Service in this Accessory.`);
-                }
-            }
-        }
-    
-        this.services.push(service);
-    
-        if (this.associatedHAPAccessory) {
-            this.associatedHAPAccessory.addService(service);
-        }
-    
-        return service;
-    }
-    
-    removeService(service) {
-        let targetServiceIndex;
-    
-        for (let index in this.services) {
-            if (this.services[index] === service) {
-                targetServiceIndex = index;
-    
-                break;
-            }
-        }
-    
-        if (targetServiceIndex) {
-            this.services.splice(targetServiceIndex, 1);
-    
-            service.removeAllListeners();
-    
-            if (this.associatedHAPAccessory) {
-                this.associatedHAPAccessory.removeService(service);
-            }
-        }
-    }
-    
-    getService(name) {
-        for (let index in this.services) {
-            const service = this.services[index];
-    
-            if (typeof name === "string" && (service.displayName === name || service.name === name)) {
-                return service;
-            } else if (typeof name === "function" && ((service instanceof name) || (name.UUID === service.UUID))) {
-                return service;
-            }
-        }
-    }
-    
-    getServiceByUUIDAndSubType(UUID, subtype) {
-        for (let index in this.services) {
-            const service = this.services[index];
-    
-            if (typeof UUID === "string" && (service.displayName === UUID || service.name === UUID) && service.subtype === subtype) {
-                return service;
-            } else if (typeof UUID === "function" && ((service instanceof UUID) || (UUID.UUID === service.UUID)) && service.subtype === subtype) {
-                return service;
-            }
-        }
-    }
-    
-    updateReachability(reachable) {
-        this.reachable = reachable;
-    
-        if (this.associatedHAPAccessory) {
-            this.associatedHAPAccessory.updateReachability(reachable);
-        }
-    }
-    
-    configureCameraSource(cameraSource) {
-        this.cameraSource = cameraSource;
-    
-        for (let index in cameraSource.services) {
-            this.addService(cameraSource.services[index]);
-        }
-    }
-    
-    prepareAssociatedHAPAccessory() {
-        this.associatedHAPAccessory = new Accessory(this.displayName, this.UUID);
-    
-        if (this.cameraSource) {
-            this.associatedHAPAccessory.configureCameraSource(this.cameraSource);
-        }
-    
-        this.associatedHAPAccessory.sideloadServices(this.services);
-        this.associatedHAPAccessory.category = this.category;
-        this.associatedHAPAccessory.reachable = this.reachable;
-    
+
         this.associatedHAPAccessory.on("identify", (paired, callback) => {
             if (this.listeners("identify").length > 0) {
                 this.emit("identify", paired, callback);
@@ -162,6 +56,42 @@ module.exports = class Platform extends EventEmitter {
                 callback();
             }
         });
+    
+        this.addService(Service.AccessoryInformation)
+            .setCharacteristic(Characteristic.Name, displayName)
+            .setCharacteristic(Characteristic.Manufacturer, "Default-Manufacturer")
+            .setCharacteristic(Characteristic.Model, "Default-Model")
+            .setCharacteristic(Characteristic.SerialNumber, "Default-SerialNumber");
+    }
+
+    addService(service, ...args) {
+        return this.associatedHAPAccessory.addService(service, ...args);
+    }
+    
+    removeService(service) {
+        this.associatedHAPAccessory.removeService(service);
+    }
+    
+    getService(name) {
+        return this.associatedHAPAccessory.getService(name);
+    }
+    
+    getServiceByUUIDAndSubType(UUID, subtype) {
+        return this.getServiceById(UUID, subType);
+    }
+
+    getServiceById(UUID, subType) {
+        return this.associatedHAPAccessory.getServiceById(UUID, subType);
+    }
+    
+    updateReachability(reachable) {
+        this.reachable = reachable;
+        this.associatedHAPAccessory.updateReachability(reachable);
+    }
+    
+    configureCameraSource(cameraSource) {
+        this.cameraSource = cameraSource;
+        this.associatedHAPAccessory.configureCameraSource(this.cameraSource);
     }
     
     dictionaryPresentation() {

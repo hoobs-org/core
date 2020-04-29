@@ -353,7 +353,6 @@ module.exports = class Server {
             }
     
             verifiedAccessories.push(accessory);
-            accessory.prepareAssociatedHAPAccessory();
     
             this.bridge.addBridgedAccessory(accessory.associatedHAPAccessory);
         }
@@ -446,7 +445,6 @@ module.exports = class Server {
         for (let index in accessories) {
             const accessory = accessories[index];
     
-            accessory.prepareAssociatedHAPAccessory();
             hapAccessories.push(accessory.associatedHAPAccessory);
     
             this.cachedPlatformAccessories.push(accessory);
@@ -506,9 +504,7 @@ module.exports = class Server {
                     }
                 }
             }
-    
-            accessory.prepareAssociatedHAPAccessory();
-    
+        
             const hapAccessory = accessory.associatedHAPAccessory;
             const advertiseAddress = this.generateAddress(accessory.UUID);
     
