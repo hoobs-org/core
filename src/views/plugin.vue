@@ -20,17 +20,17 @@
     <div id="plugin">
         <div class="info">
             <router-link to="/plugins">{{ $t("installed_packages") }}</router-link>
-            <div v-for="(item, index) in categories" :key="`caregory-${index}`" :to="`/plugins/${item}`" v-on:click="changeCategory(item)" class="category-link">{{ categoryName(item) }}</div>
             <router-link v-on:click="clearSearch()" to="/plugins/search">{{ $t("search") }}</router-link>
         </div>
         <div class="content">
             <div class="details" v-if="plugin.version">
                 <div v-if="plugin.installed" class="control">
                     <span v-if="!plugin.local">
-                        <span v-if="checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
+                        <span v-if="plugin.replaces || checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
                         <span v-else class="status">{{ $t("updated") }}</span>
                     </span>
-                    <div v-if="plugin.scope === 'hoobs'" class="certified">
+                    <h3>{{ humanize(plugin) }}</h3>
+                    <div v-if="plugin.certified" class="certified">
                         HOOBS Certified
                     </div>
                     <div class="version">
@@ -39,18 +39,18 @@
                     </div>
                     <div v-if="!working" class="actions">
                         <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>
-                        <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
+                        <div v-if="plugin.replaces" v-on:click.stop="replace()" class="button button-primary">{{ $t("update") }}</div>
+                        <div v-else-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
                         <confirm-delete v-if="plugin.name !== 'homebridge'" class="uninstall" :title="$t('uninstall')" :subtitle="$t('uninstall')" :confirmed="uninstall" />
-                        <a :href="`https://www.npmjs.com/package/${plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name}`" target="_blank">NPM</a>
-                        <span v-if="plugin.homepage" class="link-seperator">|</span>
-                        <a v-if="plugin.homepage" :href="plugin.homepage" target="_blank">{{ $t("details") }}</a>
+                        <a :href="`https://plugins.hoobs.org/plugin/${plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name}`" target="_blank">{{ $t("details") }}</a>
                     </div>
                     <div v-else class="loader">
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
                     </div>
                 </div>
                 <div v-else class="control">
-                    <div v-if="plugin.scope === 'hoobs'" class="certified">
+                    <h3>{{ humanize(plugin) }}</h3>
+                    <div v-if="plugin.certified" class="certified">
                         HOOBS Certified
                     </div>
                     <div class="version">
@@ -60,9 +60,7 @@
                     <div v-if="!working" class="actions">
                         <span v-on:click="$router.go(-1)" class="icon">chevron_left</span>
                         <div v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
-                        <a :href="`https://www.npmjs.com/package/${plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name}`" target="_blank">NPM</a>
-                        <span v-if="plugin.homepage" class="link-seperator">|</span>
-                        <a v-if="plugin.homepage" :href="plugin.homepage" target="_blank">{{ $t("details") }}</a>
+                        <a :href="`https://plugins.hoobs.org/plugin/${plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name}`" target="_blank">{{ $t("details") }}</a>
                     </div>
                     <div v-else class="loader">
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
@@ -105,10 +103,6 @@
 
             user() {
                 return this.$store.state.user;
-            },
-
-            categories() {
-                return this.$store.state.categories;
             }
         },
 
@@ -122,10 +116,6 @@
         },
 
         async mounted() {
-            if (!this.categories || this.categories.length === 0) {
-                this.$store.commit("category", await this.api.get(`/plugins/certified/categories`));
-            }
-
             this.api.get(`/plugins/${encodeURIComponent(this.$route.params.name)}`, true).then((response) => {
                 this.plugin = response;
 
@@ -195,33 +185,50 @@
                 return Versioning.checkVersion(version, latest);
             },
 
-            changeCategory(category) {
-                this.$store.commit("search", "");
-                this.$store.commit("last", []);
+            humanize(plugin) {
+                let name = Inflection.titleize(Decamelize(plugin.name.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
 
-                this.results = [];
+                name = name.replace(/smart things/gi, "SmartThings");
+                name = name.replace(/smartthings/gi, "SmartThings");
+                name = name.replace(/my q/gi, "myQ");
+                name = name.replace(/myq/gi, "myQ");
+                name = name.replace(/rgb/gi, "RGB");
+                name = name.replace(/ffmpeg/gi, "FFMPEG");
+                name = name.replace(/hoobs/gi, "HOOBS");
 
-                this.$router.push({
-                    path: `/plugins/${category}`,
-                });
+                return name;
+            },
+
+            identifier() {
+                if (this.plugin.replaces) {
+                    return encodeURIComponent(this.plugin.replaces)
+                }
+
+                return encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)
             },
 
             async install() {
                 this.working = true;
 
-                await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
+                await this.api.put(`/plugin/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
+            },
+
+            async replace() {
+                this.working = true;
+
+                await this.api.put(`/plugin/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?replace=${encodeURIComponent(this.plugin.replaces)}&socketed=true`);
             },
 
             async uninstall() {
                 this.working = true;
 
-                await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}?socketed=true`);
+                await this.api.delete(`/plugin/${identifier()}?socketed=true`);
             },
 
             async update() {
                 this.working = true;
 
-                await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
+                await this.api.post(`/plugin/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
             }
         }
     }
@@ -251,6 +258,14 @@
         display: block;
         color: var(--text) !important;
         text-decoration: none;
+    }
+
+    #plugin .control h3 {
+        font-size: 20px;
+        line-height: normal;
+        color: var(--title-text);
+        padding: 0;
+        margin: 7px 0;
     }
 
     #plugin .info {
@@ -287,8 +302,7 @@
     #plugin .info a,
     #plugin .info a:link,
     #plugin .info a:active,
-    #plugin .info a:visited,
-    #plugin .info .category-link {
+    #plugin .info a:visited {
         padding: 10px;
         border-bottom: 1px var(--border) solid;
         color: var(--text);
@@ -297,8 +311,7 @@
         cursor: pointer;
     }
 
-    #plugin .info a:hover,
-    #plugin .info .category-link:hover {
+    #plugin .info a:hover {
         color: var(--text-dark);
     }
 

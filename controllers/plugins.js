@@ -24,13 +24,10 @@ module.exports = class PluginsController {
     constructor() {
         HBS.app.get("/api/plugins", (request, response) => this.installed(request, response));
         HBS.app.get("/api/plugins/:name", (request, response) => this.package(request, response));
-        HBS.app.post("/api/plugins/:query/:limit", (request, response) => this.search(request, response));
-        HBS.app.get("/api/plugins/certified/categories", (request, response) => this.categories(request, response));
-        HBS.app.get("/api/plugins/certified/lookup/:name", (request, response) => this.lookup(request, response));
-        HBS.app.get("/api/plugins/certified/:category", (request, response) => this.certified(request, response));
-        HBS.app.put("/api/plugins/:name", (request, response) => this.install(request, response));
-        HBS.app.post("/api/plugins/:name", (request, response) => this.update(request, response));
-        HBS.app.delete("/api/plugins/:name", (request, response) => this.uninstall(request, response));
+        HBS.app.post("/api/plugins/:query", (request, response) => this.search(request, response));
+        HBS.app.put("/api/plugin/:name", (request, response) => this.install(request, response));
+        HBS.app.post("/api/plugin/:name", (request, response) => this.update(request, response));
+        HBS.app.delete("/api/plugin/:name", (request, response) => this.uninstall(request, response));
     }
 
     installed(_request, response) {
@@ -50,75 +47,10 @@ module.exports = class PluginsController {
     }
 
     search(request, response) {
-        let hoobs = [];
-        let homebridge = [];
-
-        const queue = [];
-
-        queue.push(true);
-
-        Plugins.search(decodeURIComponent(request.params.query), "hoobs-plugin", request.params.limit).then((results) => {
-            hoobs = results;
-        }).finally(() => {
-            queue.pop();
-
-            if (queue.length === 0) {
-                response.send(hoobs.concat(homebridge));
-            }
-        });
-
-        queue.push(true);
-
-        Plugins.search(decodeURIComponent(request.params.query), "homebridge-plugin", request.params.limit).then((results) => {
-            homebridge = results;
-        }).finally(() => {
-            queue.pop();
-
-            if (queue.length === 0) {
-                response.send(hoobs.concat(homebridge));
-            }
-        });
-
-        if (queue.length === 0) {
-            response.send(hoobs.concat(homebridge));
-        }
-    }
-
-    categories(_request, response) {
-        Plugins.categories().then((results) => {
-            response.send(results);
-        });
-    }
-
-    lookup(request, response) {
-        const name = decodeURIComponent(request.params.name);
-
-        const results = {
-            certified: false
-        }
-
-        Plugins.lookup().then((data) => {
-            if (data.lookup[name]) {
-                results.certified = false;
-                results.package = data.lookup[name];
-                results.base = name;
-            } else if (data.certified[name]) {
-                results.certified = true;
-                results.package = name;
-                results.base = data.certified[name];
-            }
-
-            response.send(results);
-        }).catch((error) => {
-            response.send({
-                error: error.message
-            });
-        });
-    }
-
-    certified(request, response) {
-        Plugins.certified(request.params.category).then((results) => {
-            response.send(results);
+        Plugins.search(decodeURIComponent(request.params.query)).then((results) => {
+            return response.send(results);
+        }).catch((_error) => {
+            return response.send([]);
         });
     }
 
@@ -157,7 +89,7 @@ module.exports = class PluginsController {
             });
         }
 
-        Plugins.install(name, tag).then((results) => {
+        Plugins.install(name, tag, request.query.replace ? decodeURIComponent(request.query.replace) : null).then((results) => {
             if (results.success) {
                 HBS.log.info(`Plugin "${name}" installed.`);
 

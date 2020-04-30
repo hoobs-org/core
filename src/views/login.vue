@@ -105,7 +105,7 @@
                 username: "",
                 password: "",
                 challenge: "",
-                remember: false,
+                remember: true,
                 errors: [],
                 url: "/"
             }

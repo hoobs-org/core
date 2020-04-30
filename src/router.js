@@ -60,10 +60,9 @@ const getRoutes = (defaultRoute) => {
         name: "plugins",
         component: () => import(/* webpackChunkName: "plugins" */ "./views/plugins.vue")
     },{
-        path: "/plugins/:category",
+        path: "/plugins/search",
         name: "search",
-        component: () => import(/* webpackChunkName: "search" */ "./views/search.vue"),
-        props: true
+        component: () => import(/* webpackChunkName: "search" */ "./views/search.vue")
     },{
         path: "/plugin/:name",
         name: "plugin",

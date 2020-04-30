@@ -20,10 +20,10 @@
     <div id="plugin">
         <div>
             <span v-if="plugin.installed && !plugin.local">
-                <span v-if="checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
+                <span v-if="plugin.replaces || checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
                 <span v-else class="status">{{ $t("updated") }}</span>
             </span>
-            <div v-if="plugin.scope === 'hoobs'" class="certified">
+            <div v-if="plugin.certified" class="certified">
                 <div class="logo" v-html="$theme.logo.certified"></div>
                 <span><b>HOOBS</b> Certified</span>
             </div>
@@ -37,13 +37,14 @@
         </div>
         <div v-if="!plugin.local && !working" class="actions">
             <div v-if="plugin.installed">
-                <router-link :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`" class="button">{{ $t("details") }}</router-link>
-                <div v-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
+                <router-link :to="`/plugin/${identifier()}`" class="button">{{ $t("details") }}</router-link>
+                <div v-if="plugin.replaces" v-on:click.stop="replace()" class="button button-primary">{{ $t("update") }}</div>                
+                <div v-else-if="checkVersion(plugin.installed, plugin.version)" v-on:click.stop="update()" class="button button-primary">{{ $t("update") }}</div>
                 <confirm-delete class="uninstall" :title="$t('uninstall')" :subtitle="$t('uninstall')" :confirmed="uninstall" />
                 <router-link class="config-link" :to="`/config/${plugin.name}`"><span class="icon">settings</span> {{ $t("config") }}</router-link>
             </div>
             <div v-else>
-                <router-link :to="`/plugin/${encodeURIComponent(plugin.scope ? `@${plugin.scope}/${plugin.name}` : plugin.name)}`" class="button">{{ $t("details") }}</router-link>
+                <router-link :to="`/plugin/${identifier()}`" class="button">{{ $t("details") }}</router-link>
                 <div v-on:click.stop="install()" class="button button-primary">{{ $t("install") }}</div>
             </div>
         </div>
@@ -116,6 +117,14 @@
                 return Versioning.checkVersion(version, latest);
             },
 
+            identifier() {
+                if (this.plugin.replaces) {
+                    return encodeURIComponent(this.plugin.replaces)
+                }
+
+                return encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)
+            },
+
             humanize(plugin) {
                 let name = Inflection.titleize(Decamelize(plugin.name.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
 
@@ -127,39 +136,31 @@
                 name = name.replace(/ffmpeg/gi, "FFMPEG");
                 name = name.replace(/hoobs/gi, "HOOBS");
 
-                if (plugin.scope) {
-                    let scope = Inflection.titleize(Decamelize(plugin.scope.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
-
-                    scope = scope.replace(/smart things/gi, "SmartThings");
-                    scope = scope.replace(/smartthings/gi, "SmartThings");
-                    scope = scope.replace(/my q/gi, "myQ");
-                    scope = scope.replace(/myq/gi, "myQ");
-                    scope = scope.replace(/rgb/gi, "RGB");
-                    scope = scope.replace(/ffmpeg/gi, "FFMPEG");
-                    scope = scope.replace(/hoobs/gi, "HOOBS");
-
-                    name = `@${scope}/${name}`
-                }
-
                 return name;
             },
 
             async install() {
                 this.working = true;
 
-                await this.api.put(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
+                await this.api.put(`/plugin/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
+            },
+
+            async replace() {
+                this.working = true;
+
+                await this.api.put(`/plugin/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?replace=${encodeURIComponent(this.plugin.replaces)}&socketed=true`);
             },
 
             async uninstall() {
                 this.working = true;
 
-                await this.api.delete(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}`)}?socketed=true`);
+                await this.api.delete(`/plugin/${this.identifier()}?socketed=true`);
             },
 
             async update() {
                 this.working = true;
 
-                await this.api.post(`/plugins/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
+                await this.api.post(`/plugin/${encodeURIComponent(`${this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name}@${this.plugin.version}`)}?socketed=true`);
             }
         }
     };
