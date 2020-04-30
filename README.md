@@ -1,6 +1,8 @@
 # ![](https://raw.githubusercontent.com/hoobs-org/HOOBS/master/docs/logo.png)
 Pronounced as "huːbz"  
 
+> Disclaimer This NPM package runs a postinstall script. This script is used to build a component used to enable terminals from the browser. This script can be reviewed [Here](https://github.com/microsoft/node-pty/blob/master/scripts/post-install.js).
+
 HOOBS a stack that simplifies your smart home.
 
 ![](https://raw.githubusercontent.com/hoobs-org/HOOBS/master/docs/dashboard/dashboard.png)
