@@ -53,7 +53,7 @@ module.exports = class Plugin {
         }
     }
     
-    static loadPackageJSON = function (pluginPath) {
+    static loadPackageJSON(pluginPath) {
         const pjsonPath = join(pluginPath, "package.json");
     
         let pjson = null;
@@ -75,13 +75,13 @@ module.exports = class Plugin {
         return pjson;
     }
     
-    static addPluginPath = function (pluginPath) {
+    static addPluginPath(pluginPath) {
         if (existsSync(pluginPath)) {
             paths.push(pluginPath);
         }
     };
     
-    static installed = function () {
+    static installed() {
         const plugins = [];
         const pluginsByName = {};
         const searchedPaths = {};
