@@ -60,16 +60,16 @@ module.exports = class API extends EventEmitter {
             if (found.length === 1) {
                 return this.accessories[found[0]];
             } else if (found.length > 1) {
-                throw new Error(`The requested accessory "${name}" has been registered multiple times.`);
+                internal.error(`The requested accessory "${name}" has been registered multiple times.`);
             } else {
-                throw new Error(`The requested accessory "${name}" was not registered by any plugin.`);
+                internal.error(`The requested accessory "${name}" was not registered by any plugin.`);
             }
         } else {
             if (!this.accessories[name]) {
-                throw new Error(`The requested accessory "${name}" was not registered by any plugin.`);
+                internal.error(`The requested accessory "${name}" was not registered by any plugin.`);
+            } else {
+                return this.accessories[name];
             }
-
-            return this.accessories[name];
         }
     }
 
@@ -82,15 +82,15 @@ module.exports = class API extends EventEmitter {
         }
 
         if (this.accessories[name]) {
-            throw new Error(`Attempting to register an accessory "${name}" which has already been registered.`);
-        }
-    
-        internal.debug(`Registering accessory "${name}"`);
-    
-        this.accessories[name] = constructor;
-    
-        if (handler) {
-            this.configurableAccessories[name] = handler;
+            internal.error(`Attempting to register an accessory "${name}" which has already been registered.`);
+        } else {
+            internal.debug(`Registering accessory "${name}"`);
+        
+            this.accessories[name] = constructor;
+        
+            if (handler) {
+                this.configurableAccessories[name] = handler;
+            }
         }
     }
     
@@ -101,10 +101,10 @@ module.exports = class API extends EventEmitter {
     publishExternalAccessories(name, accessories) {
         for (let index in accessories) {
             if (!(accessories[index] instanceof Platform)) {
-                throw new Error(`"${name}" attempt to register an accessory that isn't platform accessory.`);
+                internal.error(`"${name}" attempt to register an accessory that isn't platform accessory.`);
+            } else {
+                accessories[index].associatedPlugin = name;
             }
-    
-            accessories[index].associatedPlugin = name;
         }
 
         this.emit("publishExternalAccessories", accessories);
@@ -123,16 +123,16 @@ module.exports = class API extends EventEmitter {
             if (found.length === 1) {
                 return this.platforms[found[0]];
             } else if (found.length > 1) {
-                throw new Error(`The requested platform "${name}" has been registered multiple times.`);
+                internal.error(`The requested platform "${name}" has been registered multiple times.`);
             } else {
-                throw new Error(`The requested platform "${name}" was not registered by any plugin.`);
+                internal.error(`The requested platform "${name}" was not registered by any plugin.`);
             }
         } else {
             if (!this.platforms[name]) {
-                throw new Error(`The requested platform "${name}" was not registered by any plugin.`);
-            }
-    
-            return this.platforms[name];
+                internal.error(`The requested platform "${name}" was not registered by any plugin.`);
+            } else {
+                return this.platforms[name];
+            }    
         }
     }
     
@@ -145,26 +145,26 @@ module.exports = class API extends EventEmitter {
         }
 
         if (this.platforms[name]) {
-            throw new Error(`Attempting to register a platform "${name}" which has already been registered!`);
-        }
-    
-        internal.debug(`Registering platform "${name}"`);
-    
-        this.platforms[name] = constructor;
-    
-        if (dynamic) {
-            this.dynamicPlatforms[name] = constructor;
+            internal.error(`Attempting to register a platform "${name}" which has already been registered!`);
+        } else {
+            internal.debug(`Registering platform "${name}"`);
+        
+            this.platforms[name] = constructor;
+        
+            if (dynamic) {
+                this.dynamicPlatforms[name] = constructor;
+            }
         }
     }
     
     registerPlatformAccessories(name, platform, accessories) {
         for (let index in accessories) {
             if (!(accessories[index] instanceof Platform)) {
-                throw new Error(`"${name} - ${platform}" attempt to register an accessory that isn't platform accessory.`);
-            }
-    
-            accessories[index].associatedPlugin = name;
-            accessories[index].associatedPlatform = platform;
+                internal.error(`"${name} - ${platform}" attempt to register an accessory that isn't platform accessory.`);
+            } else {
+                accessories[index].associatedPlugin = name;
+                accessories[index].associatedPlatform = platform;
+            }    
         }
     
         this.emit("registerPlatformAccessories", accessories);
@@ -174,13 +174,7 @@ module.exports = class API extends EventEmitter {
         this.emit("updatePlatformAccessories", accessories);
     }
     
-    unregisterPlatformAccessories(name, platform, accessories) {
-        for (let index in accessories) {
-            if (!(accessories[index] instanceof Platform)) {
-                throw new Error(`"${name} - ${platform}" attempt to unregister an accessory that isn't platform accessory.`);
-            }
-        }
-    
+    unregisterPlatformAccessories(_name, _platform, accessories) {    
         this.emit("unregisterPlatformAccessories", accessories);
     }
 

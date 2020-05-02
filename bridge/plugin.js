@@ -38,18 +38,18 @@ module.exports = class Plugin {
         options = options || {};
     
         if (!existsSync(this.pluginPath)) {
-            throw new Error(`Plugin "${this.pluginPath}" was not found.`);
-        }
-    
-        const pjson = Plugin.loadPackageJSON(this.pluginPath);
-        const pluginModules = require(join(this.pluginPath, pjson.main || "./index.js"));
-    
-        if (typeof pluginModules === "function") {
-            this.initializer = pluginModules;
-        } else if (pluginModules && typeof pluginModules.default === "function") {
-            this.initializer = pluginModules.default;
+            internal.error(`Plugin "${this.pluginPath}" was not found.`);
         } else {
-            throw new Error(`Plugin "${this.pluginPath}" does not export a initializer function from main.`);
+            const pjson = Plugin.loadPackageJSON(this.pluginPath);
+            const pluginModules = require(join(this.pluginPath, pjson.main || "./index.js"));
+        
+            if (typeof pluginModules === "function") {
+                this.initializer = pluginModules;
+            } else if (pluginModules && typeof pluginModules.default === "function") {
+                this.initializer = pluginModules.default;
+            } else {
+                internal.error(`Plugin "${this.pluginPath}" does not export a initializer function from main.`);
+            }
         }
     }
     

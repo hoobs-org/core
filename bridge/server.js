@@ -25,8 +25,7 @@ const Manager = require("./manager");
 const Platform = require("./platform");
 
 const { once } = require("hap-nodejs/dist/lib/util/once");
-const { Logger } = require("./logger");
-const { internal } = require("./logger");
+const { Logger, internal } = require("./logger");
 const { existsSync, readFileSync, writeFileSync } = require("fs-extra");
 const { uuid, Bridge, Accessory, Service, Characteristic, AccessoryLoader } = require("hap-nodejs");
 
@@ -198,7 +197,13 @@ module.exports = class Server {
         } catch (err) {
             internal.error("There was a problem reading your config.json file.");
 
-            throw err;
+            return {
+                bridge: {
+                    name: "HOOBS",
+                    username: "CC:22:3D:E3:CE:30",
+                    pin: "031-45-154"
+                }
+            };
         }
 
         if (config.ports !== undefined) {
@@ -210,7 +215,9 @@ module.exports = class Server {
         }
 
         if (!/^([0-9A-F]{2}:){5}([0-9A-F]{2})$/.test(config.bridge.username)) {
-            throw new Error(`Not a valid username: "${config.bridge.username}".`);
+            internal.error(`Not a valid username: "${config.bridge.username}".`);
+
+            config.bridge.username = "CC:22:3D:E3:CE:30";
         }
 
         return config;
@@ -249,20 +256,19 @@ module.exports = class Server {
 
     loadAccessories() {
         for (let i = 0; i < this.config.accessories.length; i++) {
-            const accessoryConfig = this.config.accessories[i];
-            const accessoryConstructor = this.api.accessory(accessoryConfig["accessory"]);
+            const init = this.api.accessory(this.config.accessories[i]["accessory"]);
 
-            if (!accessoryConstructor) {
-                throw new Error(`Your config.json is requesting the accessory "${accessoryConfig["accessory"]}" which has not been published by any installed plugins.`);
+            if (!init) {
+                internal.warn(`Your config.json is requesting the accessory "${this.config.accessories[i]["accessory"]}" which has not been published by any installed plugins.`);
+            } else {
+                const logger = Logger.withPrefix(this.config.accessories[i]["name"]);
+                const instance = new init(logger, this.config.accessories[i], this.api);
+                const accessory = this.createAccessory(instance, this.config.accessories[i]["name"], this.config.accessories[i]["accessory"], this.config.accessories[i].uuid_base);
+
+                if (accessory) {
+                    this.bridge.addBridgedAccessory(accessory);
+                }
             }
-
-            const accessoryLogger = Logger.withPrefix(accessoryConfig["name"]);
-
-            accessoryLogger(`Initializing ${accessoryConfig["accessory"]} accessory...`);
-
-            const accessoryInstance = new accessoryConstructor(accessoryLogger, accessoryConfig);
-
-            this.bridge.addBridgedAccessory(this.createAccessory(accessoryInstance, accessoryConfig["name"], accessoryConfig["accessory"], accessoryConfig.uuid_base));
         }
     }
 
@@ -271,23 +277,20 @@ module.exports = class Server {
             const init = this.api.platform(this.config.platforms[i].platform);
 
             if (!init) {
-                throw new Error(`Your config.json is requesting the platform "${this.config.platforms[i].platform}" which has not been published by any installed plugins.`);
-            }
-
-            const logger = Logger.withPrefix(this.config.platforms[i].name || this.config.platforms[i].platform);
-
-            logger(`Initializing ${this.config.platforms[i].platform} platform...`);
-
-            const instance = new init(logger, this.config.platforms[i], this.api);
-
-            if (instance.configureAccessory == undefined) {
-                this.loadPlatformAccessories(instance, logger, this.config.platforms[i].platform);
+                internal.warn(`Your config.json is requesting the platform "${this.config.platforms[i].platform}" which has not been published by any installed plugins.`);
             } else {
-                this.activeDynamicPlugins[this.config.platforms[i].platform] = instance;
-            }
+                const logger = Logger.withPrefix(this.config.platforms[i].name || this.config.platforms[i].platform);
+                const instance = new init(logger, this.config.platforms[i], this.api);
 
-            if (instance.configurationRequestHandler != undefined) {
-                this.configurablePlatformPlugins[this.config.platforms[i].platform] = instance;
+                if (instance.configureAccessory == undefined) {
+                    this.loadPlatformAccessories(instance, logger, this.config.platforms[i].platform);
+                } else {
+                    this.activeDynamicPlugins[this.config.platforms[i].platform] = instance;
+                }
+
+                if (instance.configurationRequestHandler != undefined) {
+                    this.configurablePlatformPlugins[this.config.platforms[i].platform] = instance;
+                }
             }
         }
     }
@@ -483,24 +486,24 @@ module.exports = class Server {
             const advertiseAddress = this.generateAddress(accessory.UUID);
 
             if (this.publishedAccessories[advertiseAddress]) {
-                throw new Error("Accessory " + accessory.displayName + " experienced an address collision.");
+                internal.warn(`Accessory ${accessory.displayName}experienced an address collision.`);
             } else {
                 this.publishedAccessories[advertiseAddress] = accessory;
+
+                ((name) => {
+                    hapAccessory.on("listening", (port) => {
+                        internal.info(`${name} is running on port ${port}.`);
+                    });
+                })(accessory.displayName);
+
+                hapAccessory.publish({
+                    username: advertiseAddress,
+                    pincode: (this.config.bridge || {}).pin || "031-45-154",
+                    category: accessory.category,
+                    port: accessoryPort,
+                    mdns: this.config.mdns
+                }, true);
             }
-
-            ((name) => {
-                hapAccessory.on("listening", (port) => {
-                    internal.info(`${name} is running on port ${port}.`);
-                });
-            })(accessory.displayName);
-
-            hapAccessory.publish({
-                username: advertiseAddress,
-                pincode: (this.config.bridge || {}).pin || "031-45-154",
-                category: accessory.category,
-                port: accessoryPort,
-                mdns: this.config.mdns
-            }, true);
         }
     }
 
