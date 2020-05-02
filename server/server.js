@@ -440,7 +440,7 @@ module.exports = class Server {
             case "hoobs-box":
                 HBS.config.system = "hoobs-box";
                 break;
-    
+
             default:
                 HBS.config.system = "hoobs";
                 break;
@@ -474,6 +474,9 @@ module.exports = class Server {
 
     static reset() {
         HBS.server.stop().then(async () => {
+            const config = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
+            const port = (config.server || {}).port || 80;
+
             if (File.existsSync(join(Server.paths.config))) {
                 File.removeSync(join(Server.paths.config));
             }
@@ -501,6 +504,14 @@ module.exports = class Server {
             if (File.existsSync(join(Server.paths.application, "lib"))) {
                 File.removeSync(join(Server.paths.application, "lib"));
             }
+
+            const factory = HBS.JSON.load(join(Server.paths.root, "default.json"), {});
+
+            factory.server.port = port;
+            factory.bridge.username = Server.generateUsername();
+
+            File.ensureDirSync(Server.paths.config);
+            File.appendFileSync(join(Server.paths.config, "config.json"), HBS.JSON.toString(factory));
 
             await Server.reload();
 
@@ -698,7 +709,7 @@ module.exports = class Server {
 
                             resolve();
                             break;
-                        
+
                         case "error_log":
                             HBS.log.error(response.data);
                             break;
