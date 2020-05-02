@@ -36,9 +36,6 @@
 </template>
 
 <script>
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
-
     import { debounce } from "lodash-es";
 
     import PluginList from "@/components/plugin-list.vue";

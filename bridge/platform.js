@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
+const { internal } = require("./logger");
 const { Accessory } = require("hap-nodejs");
 const { EventEmitter } = require("events").EventEmitter;
 
@@ -33,36 +34,44 @@ module.exports = class Platform extends EventEmitter {
             name = cached.displayName;
         }
 
-        this.associatedHAPAccessory = cached || new Accessory(name, uuid);
+        this.associated = cached || new Accessory(name, uuid);
 
         if (category) {
-            this.associatedHAPAccessory.category = category;
+            this.associated.category = category;
         }
 
-        this.displayName = this.associatedHAPAccessory.displayName;
-        this.UUID = this.associatedHAPAccessory.UUID;
+        this.displayName = this.associated.displayName;
+        this.UUID = this.associated.UUID;
 
         this.category = category || Accessory.Categories.OTHER;
-        this.services = this.associatedHAPAccessory.services;
+        this.services = this.associated.services;
         this.reachable = false;
         this.context = {};
 
         this.associatedPlugin;
         this.associatedPlatform;
 
-        this.associatedHAPAccessory.on("identify", (paired, callback) => {
+        this.associated.on("identify", (paired, callback) => {
             this.emit("identify", paired, callback);
 
             callback();
         });
     }
 
+    get _associatedHAPAccessory() {
+        return this.associated;
+    }
+
+    get associatedHAPAccessory() {
+        return this.associated;
+    }
+
     addService(service, ...args) {
-        return this.associatedHAPAccessory.addService(service, ...args);
+        return this.associated.addService(service, ...args);
     }
 
     removeService(service) {
-        this.associatedHAPAccessory.removeService(service);
+        this.associated.removeService(service);
     }
 
     getService(name) {
@@ -80,17 +89,23 @@ module.exports = class Platform extends EventEmitter {
     }
 
     getServiceById(uuid, subType) {
-        return this.associatedHAPAccessory.getServiceById(uuid, subType);
+        return this.associated.getServiceById(uuid, subType);
     }
 
     updateReachability(reachable) {
         this.reachable = reachable;
-        this.associatedHAPAccessory.updateReachability(reachable);
+
+        try {
+            this.associated.updateReachability(reachable);
+        } catch (error) {
+            internal.debug("Unable to update reachability");
+            internal.debug(error);
+        }
     }
 
     configureCameraSource(cameraSource) {
         this.cameraSource = cameraSource;
-        this.associatedHAPAccessory.configureCameraSource(this.cameraSource);
+        this.associated.configureCameraSource(this.cameraSource);
     }
 
     static serialize(accessory) {
@@ -98,7 +113,7 @@ module.exports = class Platform extends EventEmitter {
             plugin: accessory.associatedPlugin,
             platform: accessory.associatedPlatform,
             context: accessory.context,
-            ...Accessory.serialize(accessory.associatedHAPAccessory),
+            ...Accessory.serialize(accessory.associated),
         };
     }
 

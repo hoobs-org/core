@@ -40,9 +40,6 @@
 </template>
 
 <script>
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
-
     import PluginList from "@/components/plugin-list.vue";
 
     export default {

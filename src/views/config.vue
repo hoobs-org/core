@@ -161,8 +161,6 @@
 
 <script>
     import Request from "axios";
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
 
     import JSONEditor from "@/components/json-editor.vue";
     import TextField from "@/components/text-field.vue";
@@ -583,25 +581,10 @@
                 const accessory = (plugin.schema || {}).accessories || {};
 
                 if (index === -1) {
-                    return this.humanize((platform.plugin_alias || accessory.plugin_alias || plugin.name || "Unknown Plugin").split(".")[0]);
+                    return this.$humanize((platform.plugin_alias || accessory.plugin_alias || plugin.name || "Unknown Plugin").split(".")[0]);
                 }
 
-                return this.humanize((platform.plugin_alias || this.configuration.platforms[index].platform || plugin.name || "Unknown Plugin").split(".")[0]);
-            },
-
-            humanize(string) {
-                string = Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
-
-                string = string.replace(/smart things/gi, "SmartThings");
-                string = string.replace(/smartthings/gi, "SmartThings");
-                string = string.replace(/my q/gi, "myQ");
-                string = string.replace(/myq/gi, "myQ");
-                string = string.replace(/rgb/gi, "RGB");
-                string = string.replace(/ffmpeg/gi, "FFMPEG");
-                string = string.replace(/webos/gi, "LG webOS");
-                string = string.replace(/webostv/gi, "webOS");
-
-                return string;
+                return this.$humanize((platform.plugin_alias || this.configuration.platforms[index].platform || plugin.name || "Unknown Plugin").split(".")[0]);
             },
 
             async save() {

@@ -342,7 +342,7 @@ module.exports = class Server {
 
             verifiedAccessories.push(accessory);
 
-            this.bridge.addBridgedAccessory(accessory.associatedHAPAccessory);
+            this.bridge.addBridgedAccessory(accessory.associated);
         }
 
         this.cachedPlatformAccessories = verifiedAccessories;
@@ -373,8 +373,8 @@ module.exports = class Server {
 
         if (!(services[0] instanceof Service)) {
             return AccessoryLoader.parseAccessoryJSON({
-                displayName: displayName,
-                services: services
+                displayName,
+                services
             });
         } else {
             const accessory = new Accessory(displayName, uuid.generate(accessoryType + ":" + (uuidBase || displayName)));
@@ -419,7 +419,7 @@ module.exports = class Server {
         for (let index in accessories) {
             const accessory = accessories[index];
 
-            hapAccessories.push(accessory.associatedHAPAccessory);
+            hapAccessories.push(accessory.associated);
 
             this.cachedPlatformAccessories.push(accessory);
         }
@@ -438,8 +438,8 @@ module.exports = class Server {
         for (let index in accessories) {
             const accessory = accessories[index];
 
-            if (accessory.associatedHAPAccessory) {
-                hapAccessories.push(accessory.associatedHAPAccessory);
+            if (accessory.associated) {
+                hapAccessories.push(accessory.associated);
             }
 
             for (let targetIndex in this.cachedPlatformAccessories) {
@@ -479,7 +479,7 @@ module.exports = class Server {
                 }
             }
 
-            const hapAccessory = accessory.associatedHAPAccessory;
+            const hapAccessory = accessory.associated;
             const advertiseAddress = this.generateAddress(accessory.UUID);
 
             if (this.publishedAccessories[advertiseAddress]) {
@@ -534,7 +534,7 @@ module.exports = class Server {
         this.bridge.unpublish();
 
         Object.keys(this.publishedAccessories).forEach((advertiseAddress) => {
-            this.publishedAccessories[advertiseAddress].associatedHAPAccessory.unpublish();
+            this.publishedAccessories[advertiseAddress].associated.unpublish();
         });
     }
 

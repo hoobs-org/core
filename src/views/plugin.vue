@@ -29,7 +29,7 @@
                         <span v-if="plugin.replaces || checkVersion(plugin.installed, plugin.version)" class="status">{{ $t("update_available") }}</span>
                         <span v-else class="status">{{ $t("updated") }}</span>
                     </span>
-                    <h3>{{ humanize(plugin) }}</h3>
+                    <h3>{{ $humanize(plugin.name) }}</h3>
                     <div v-if="plugin.certified" class="certified">
                         HOOBS Certified
                     </div>
@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div v-else class="control">
-                    <h3>{{ humanize(plugin) }}</h3>
+                    <h3>{{ $humanize(plugin.name) }}</h3>
                     <div v-if="plugin.certified" class="certified">
                         HOOBS Certified
                     </div>
@@ -75,8 +75,6 @@
 <script>
     import Showdown from "showdown";
     import Prism from "prismjs";
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
 
     import Versioning from "../versioning";
     import Dates from "../dates";
@@ -166,37 +164,8 @@
                 return "";
             },
 
-            categoryName(value) {
-                let results = value;
-
-                results = (results || "").replace(/-/gi, "_");
-                results = this.$t(results);
-
-                if (results !== value) {
-                    return results;
-                }
-
-                results = results.replace("category_", "");
-
-                return Inflection.titleize(Decamelize(results.trim()));
-            },
-
             checkVersion(version, latest) {
                 return Versioning.checkVersion(version, latest);
-            },
-
-            humanize(plugin) {
-                let name = Inflection.titleize(Decamelize(plugin.name.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
-
-                name = name.replace(/smart things/gi, "SmartThings");
-                name = name.replace(/smartthings/gi, "SmartThings");
-                name = name.replace(/my q/gi, "myQ");
-                name = name.replace(/myq/gi, "myQ");
-                name = name.replace(/rgb/gi, "RGB");
-                name = name.replace(/ffmpeg/gi, "FFMPEG");
-                name = name.replace(/hoobs/gi, "HOOBS");
-
-                return name;
             },
 
             identifier() {

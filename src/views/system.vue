@@ -103,8 +103,6 @@
 <script>
     import Showdown from "showdown";
     import Prism from "prismjs";
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
 
     import Marquee from "@/components/loading-marquee.vue";
     import ModalDialog from "@/components/modal-dialog.vue";
@@ -181,7 +179,7 @@
                     return results;
                 }
 
-                return Inflection.titleize(Decamelize(results.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+                return $humanize(results);
             },
 
             showChangelog(update) {

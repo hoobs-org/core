@@ -38,7 +38,7 @@
             <div v-for="(key, index) in getAccessoryIndex()" :key="`${index}-accessory`">
                 <div v-if="value.accessories[key].plugin_map && accessories[accessoryKey(value.accessories[key])]">
                     <div class="accessory-title">
-                        <h3>{{ accessories[accessoryKey(value.accessories[key])].title || humanize(alias) }}</h3>
+                        <h3>{{ accessories[accessoryKey(value.accessories[key])].title || $humanize(alias) }}</h3>
                         <confirm-delete :title="$t('delete')" :index="key" :confirmed="removeAccessory" />
                     </div>
                     <schema-form :schema="accessories[accessoryKey(value.accessories[key])].properties || {}" v-model="value.accessories[key]" />
@@ -64,9 +64,6 @@
 </template>
 
 <script>
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
-
     import JSONEditor from "@/components/json-editor.vue";
     import ModalDialog from "@/components/modal-dialog.vue";
     import SchemaForm from "@/components/schema-form.vue";
@@ -157,10 +154,10 @@
                 const accessory = (this.plugin.schema || {}).accessories || {};
 
                 if (index === -1) {
-                    return this.humanize((platform.plugin_alias || accessory.plugin_alias || this.plugin.name || "Unknown Plugin").split(".")[0]);
+                    return this.$humanize((platform.plugin_alias || accessory.plugin_alias || this.plugin.name || "Unknown Plugin").split(".")[0]);
                 }
 
-                return this.humanize((platform.plugin_alias || this.value.platforms[index].platform || this.plugin.name || "Unknown Plugin").split(".")[0]);
+                return this.$humanize((platform.plugin_alias || this.value.platforms[index].platform || this.plugin.name || "Unknown Plugin").split(".")[0]);
             },
 
             platformCode() {
@@ -398,19 +395,6 @@
                 if (this.save) {
                     this.save();
                 }
-            },
-
-            humanize(string) {
-                string = Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
-
-                string = string.replace(/smart things/gi, "SmartThings");
-                string = string.replace(/smartthings/gi, "SmartThings");
-                string = string.replace(/my q/gi, "myQ");
-                string = string.replace(/myq/gi, "myQ");
-                string = string.replace(/rgb/gi, "RGB");
-                string = string.replace(/ffmpeg/gi, "FFMPEG");
-
-                return string;
             }
         }
     }

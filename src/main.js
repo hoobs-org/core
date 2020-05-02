@@ -259,7 +259,39 @@ import App from "./app.vue";
                 }
     
                 return {};
-            }
+            },
+
+            decamel(string) {
+                return string.replace(/[\w]([A-Z])/g, word => word[0] + "_" + word[1]).toLowerCase();
+            },
+
+            inflection(string) {
+                return string.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+            },
+
+            $humanize(string) {
+                if (!(typeof string === "string")) {
+                    return string;
+                }
+
+                string = (string || "").trim();
+                string = string.replace(/[\w]([A-Z])/g, word => word[0] + "_" + word[1]).toLowerCase();
+                string = string.replace(/-/gi, "_");
+                string = string.replace(/homebridge_/gi, "");
+                string = string.replace(/_/gi, " ");
+                string = string.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+
+                string = string.replace(/smart things/gi, "SmartThings");
+                string = string.replace(/smartthings/gi, "SmartThings");
+                string = string.replace(/my q/gi, "myQ");
+                string = string.replace(/myq/gi, "myQ");
+                string = string.replace(/rgb/gi, "RGB");
+                string = string.replace(/ffmpeg/gi, "FFMPEG");
+                string = string.replace(/webos/gi, "LG webOS");
+                string = string.replace(/webostv/gi, "webOS");
+
+                return string;
+            },
         }
     });
 

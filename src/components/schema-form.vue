@@ -20,19 +20,19 @@
     <div id="schema-form">
         <div v-for="(field, index) in fields" :key="index">
             <div v-if="fieldType(field) === 'input'">
-                <component :is="getComponent(field)" :name="field.title || humanize(field.name)" :options="getOptions(field)" :type="getType(field)" :required="field.required" :description="field.description || ''" v-model="value[field.name]" />
+                <component :is="getComponent(field)" :name="field.title || $humanize(field.name)" :options="getOptions(field)" :type="getType(field)" :required="field.required" :description="field.description || ''" v-model="value[field.name]" />
             </div>
             <div v-else-if="fieldType(field) === 'form'">
                 <schema-form :schema="field.properties" v-model="value[field.name]" />
             </div>
             <div v-else-if="fieldType(field) === 'button'">
                 <div class="field">
-                    <div v-on:click.stop="configNav(field.url)" class="button">{{ field.title || humanize(field.name) }}</div>
+                    <div v-on:click.stop="configNav(field.url)" class="button">{{ field.title || $humanize(field.name) }}</div>
                 </div>
             </div>
             <div v-else-if="fieldType(field) === 'json'">
                 <div class="field">
-                    <span class="title">{{ field.title || humanize(field.name) }}</span>
+                    <span class="title">{{ field.title || $humanize(field.name) }}</span>
                     <json-editor :name="field.name" :height="200" :index="0" :change="updateJson" :code="getJson(field)" />
                 </div>
             </div>
@@ -41,9 +41,6 @@
 </template>
 
 <script>
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
-
     import JSONEditor from "@/components/json-editor.vue";
     import TextField from "@/components/text-field.vue";
     import PasswordField from "@/components/password-field.vue";
@@ -358,10 +355,6 @@
                 }
 
                 return options;
-            },
-
-            humanize(string) {
-                return Inflection.titleize(Decamelize(string.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
             }
         }
     };

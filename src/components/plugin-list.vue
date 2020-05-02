@@ -27,7 +27,7 @@
                 <div class="logo" v-html="$theme.logo.certified"></div>
                 <span><b>HOOBS</b> Certified</span>
             </div>
-            <h3>{{ humanize(plugin) }}</h3>
+            <h3>{{ $humanize(plugin.name) }}</h3>
             <span class="version">
                 {{ plugin.installed || plugin.version }}
                 <span v-if="!plugin.local">{{ $t("published") }} {{ formatDate(plugin.date.replace(/\s/, "T")) }} {{ getAgeDisplay(plugin.date.replace(/\s/, "T")) }}</span>
@@ -57,9 +57,6 @@
 </template>
 
 <script>
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
-
     import Versioning from "../versioning";
     import Dates from "../dates";
 
@@ -123,20 +120,6 @@
                 }
 
                 return encodeURIComponent(this.plugin.scope ? `@${this.plugin.scope}/${this.plugin.name}` : this.plugin.name)
-            },
-
-            humanize(plugin) {
-                let name = Inflection.titleize(Decamelize(plugin.name.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
-
-                name = name.replace(/smart things/gi, "SmartThings");
-                name = name.replace(/smartthings/gi, "SmartThings");
-                name = name.replace(/my q/gi, "myQ");
-                name = name.replace(/myq/gi, "myQ");
-                name = name.replace(/rgb/gi, "RGB");
-                name = name.replace(/ffmpeg/gi, "FFMPEG");
-                name = name.replace(/hoobs/gi, "HOOBS");
-
-                return name;
             },
 
             async install() {

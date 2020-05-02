@@ -34,9 +34,6 @@
 </template>
 
 <script>
-    import Decamelize from "decamelize";
-    import Inflection from "inflection";
-
     import Cookies from "../cookies";
 
     import { Terminal } from "xterm";
@@ -149,7 +146,7 @@
                     return results;
                 }
 
-                return Inflection.titleize(Decamelize(results.replace(/-/gi, " ").replace(/homebridge/gi, "").trim()));
+                return $humanize(results);
             },
 
             size() {
