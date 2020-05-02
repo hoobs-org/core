@@ -87,7 +87,7 @@ module.exports = async (docker) => {
 
         promise.catch((error) => {
             if (HBS.debug) {
-                console.log(error.stack);
+                console.log(error);
             }
         });
     });
@@ -122,8 +122,7 @@ module.exports = async (docker) => {
             });
         
             process.once("uncaughtException", async (error) => {
-                console.log(error.message);
-                console.log(error.stack);
+                console.log(error);
 
                 await HBS.server.stop();
 
@@ -163,8 +162,7 @@ module.exports = async (docker) => {
             });
         
             process.once("uncaughtException", async (error) => {
-                console.log(error.message);
-                console.log(error.stack);
+                console.log(error);
 
                 await HBS.server.stop();
 

@@ -139,6 +139,8 @@ module.exports = class PluginsController {
                     });
                 }
             }
+        }).catch((error) => {
+            HBS.log.error(error);
         });
 
         if (request.query.socketed === "true") {
@@ -215,6 +217,8 @@ module.exports = class PluginsController {
                     });
                 }
             }
+        }).catch((error) => {
+            HBS.log.error(error);
         });
 
         if (request.query.socketed === "true") {
@@ -287,6 +291,8 @@ module.exports = class PluginsController {
                     active: results.active
                 });
             }
+        }).catch((error) => {
+            HBS.log.error(error);
         });
     }
 }

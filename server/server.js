@@ -250,17 +250,19 @@ module.exports = class Server {
     }
 
     static saveConfig(config) {
-        const current = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
+        if (config) {
+            const current = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
 
-        config.accessories = config.accessories || [];
-        config.platforms = config.platforms || [];
+            config.accessories = config.accessories || [];
+            config.platforms = config.platforms || [];
 
-        Server.filterConfig(config.accessories);
-        Server.filterConfig(config.platforms);
+            Server.filterConfig(config.accessories);
+            Server.filterConfig(config.platforms);
 
-        if (!HBS.JSON.equals(config, current)) {
-            File.unlinkSync(join(Server.paths.config, HBS.name || "", "config.json"));
-            File.appendFileSync(join(Server.paths.config, HBS.name || "", "config.json"), HBS.JSON.toString(config));
+            if (!HBS.JSON.equals(config, current)) {
+                File.unlinkSync(join(Server.paths.config, HBS.name || "", "config.json"));
+                File.appendFileSync(join(Server.paths.config, HBS.name || "", "config.json"), HBS.JSON.toString(config));
+            }
         }
     }
 

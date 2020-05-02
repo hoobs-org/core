@@ -456,13 +456,11 @@ module.exports = class Plugins {
         return registered;
     }
 
-    static getPlatform(id, name, data) {
-        if (!data.platforms) {
-            data.platforms = [];
-        }
+    static getPlatform(id, name, config) {
+        config.platforms = config.platforms || [];
 
-        if (data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name) >= 0) {
-            return null;
+        if (config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name) >= 0) {
+            return config;
         }
 
         let found = false;
@@ -472,10 +470,10 @@ module.exports = class Plugins {
 
         for (let i = 0; i < details.length; i++) {
             if (details[i].type === "platform") {
-                const index = data.platforms.findIndex(p => p.platform === details[i].alias);
+                const index = config.platforms.findIndex(p => p.platform === details[i].alias);
 
                 if (index >= 0) {
-                    data.platforms[index].plugin_map = {
+                    config.platforms[index].plugin_map = {
                         plugin_name: name
                     };
 
@@ -487,7 +485,7 @@ module.exports = class Plugins {
         }
 
         if (!found && alias !== "") {
-            data.platforms.push({
+            config.platforms.push({
                 platform: alias,
                 plugin_map: {
                     plugin_name: name
@@ -495,7 +493,7 @@ module.exports = class Plugins {
             });
         }
 
-        return data;
+        return config;
     }
 
     static linkLibs() {
@@ -538,65 +536,47 @@ module.exports = class Plugins {
 
                 if (replace) {
                     const name = replace.split("/").pop();
-                    const data = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
+                    const config = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
 
-                    if (!data.plugins) {
-                        data.plugins = [];
-                    }
+                    config.plugins = config.plugins || [];
 
-                    let index = data.plugins.indexOf(name);
+                    let index = config.plugins.indexOf(name);
 
                     if (index > -1) {
-                        data.plugins.splice(index, 1);
+                        config.plugins.splice(index, 1);
                     }
 
-                    if (!data.platforms) {
-                        data.platforms = [];
-                    }
-
-                    index = data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
+                    config.platforms = config.platforms || [];
+                    index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
 
                     while (index >= 0) {
-                        data.platforms[index].plugin_map.plugin_name = id.split("/").pop();
-                        index = data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
+                        config.platforms[index].plugin_map.plugin_name = id.split("/").pop();
+                        index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
                     }
 
-                    index = data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === replace);
+                    index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === replace);
 
                     while (index >= 0) {
-                        data.platforms[index].plugin_map.plugin_name = id.split("/").pop();
-                        index = data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === replace);
+                        config.platforms[index].plugin_map.plugin_name = id.split("/").pop();
+                        index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === replace);
                     }
 
-                    if (!data.accessories) {
-                        data.accessories = [];
-                    }
-
-                    index = data.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
+                    config.accessories = config.accessories || [];
+                    index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
 
                     while (index >= 0) {
-                        data.accessories[index].plugin_map.plugin_name = id.split("/").pop();
-                        index = data.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
+                        config.accessories[index].plugin_map.plugin_name = id.split("/").pop();
+                        index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
                     }
 
-                    index = data.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === replace);
+                    index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === replace);
 
                     while (index >= 0) {
-                        data.accessories[index].plugin_map.plugin_name = id.split("/").pop();
-                        index = data.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === replace);
+                        config.accessories[index].plugin_map.plugin_name = id.split("/").pop();
+                        index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === replace);
                     }
 
-                    Server.saveConfig(data);
-
-                    if (HBS.config.package_manager === "yarn") {
-                        execSync(`yarn remove ${replace}`, {
-                            cwd: Server.paths.application
-                        });
-                    } else {
-                        execSync(`npm uninstall --unsafe-perm --progress=true ${replace}`, {
-                            cwd: Server.paths.application
-                        });
-                    }
+                    Server.saveConfig(config);
                 }
 
                 let proc;
@@ -635,29 +615,21 @@ module.exports = class Plugins {
                     let success = false;
 
                     if (File.existsSync(join(Server.paths.modules.local, id, "package.json"))) {
-                        const item = HBS.JSON.load(join(Server.paths.modules.local, id, "package.json"), {});
-                        const parts = id.split("/");
-                        const name = parts[parts.length - 1];
+                        const name = id.split("/").pop();
 
-                        let data = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
+                        let config = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
 
-                        if (item.keywords) {
-                            if (!data.plugins) {
-                                data.plugins = [];
-                            }
+                        config.plugins = config.plugins || [];
 
-                            if ((item.keywords.indexOf("hoobs-plugin") >= 0 || item.keywords.indexOf("homebridge-plugin") >= 0) && data.plugins.indexOf(name) === -1) {
-                                data.plugins.push(name);
-                            }
-
-                            Plugins.linkLibs();
-
-                            data = Plugins.getPlatform(id, name, data);
-                        } else {
-                            Plugins.linkLibs();
+                        if (config.plugins.indexOf(name) === -1) {
+                            config.plugins.push(name);
                         }
 
-                        Server.saveConfig(data);
+                        Plugins.linkLibs();
+
+                        config = Plugins.getPlatform(id, name, config);
+
+                        Server.saveConfig(config);
 
                         HBS.config = await Server.configure();
                         HBS.application = HBS.JSON.load(join(Server.paths.application, "/package.json"));
@@ -719,55 +691,47 @@ module.exports = class Plugins {
 
                     if (!File.existsSync(join(Server.paths.modules.local, id, "package.json"))) {
                         const name = id.split("/").pop();
-                        const data = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
+                        const config = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
 
-                        if (!data.plugins) {
-                            data.plugins = [];
-                        }
+                        config.plugins = config.plugins || [];
 
-                        let index = data.plugins.indexOf(name);
+                        let index = config.plugins.indexOf(name);
 
                         if (index > -1) {
-                            data.plugins.splice(index, 1);
+                            config.plugins.splice(index, 1);
                         }
 
-                        if (!data.platforms) {
-                            data.platforms = [];
-                        }
-
-                        index = data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
+                        config.platforms = config.platforms || [];
+                        index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
 
                         while (index >= 0) {
-                            data.platforms.splice(index, 1);
-                            index = data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
+                            config.platforms.splice(index, 1);
+                            index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
                         }
 
-                        index = data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === id);
+                        index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === id);
 
                         while (index >= 0) {
-                            data.platforms.splice(index, 1);
-                            index = data.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === id);
+                            config.platforms.splice(index, 1);
+                            index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === id);
                         }
 
-                        if (!data.accessories) {
-                            data.accessories = [];
-                        }
-
-                        index = data.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
+                        config.accessories = config.accessories || [];
+                        index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
 
                         while (index >= 0) {
-                            data.accessories.splice(index, 1);
-                            index = data.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
+                            config.accessories.splice(index, 1);
+                            index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
                         }
 
-                        index = data.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === id);
+                        index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === id);
 
                         while (index >= 0) {
-                            data.accessories.splice(index, 1);
-                            index = data.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === id);
+                            config.accessories.splice(index, 1);
+                            index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === id);
                         }
 
-                        Server.saveConfig(data);
+                        Server.saveConfig(config);
 
                         HBS.config = await Server.configure();
                         HBS.application = HBS.JSON.load(join(Server.paths.application, "/package.json"));
