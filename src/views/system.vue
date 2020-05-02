@@ -179,7 +179,7 @@
                     return results;
                 }
 
-                return $humanize(results);
+                return this.$humanize(results);
             },
 
             showChangelog(update) {

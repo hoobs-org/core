@@ -146,7 +146,7 @@
                     return results;
                 }
 
-                return $humanize(results);
+                return this.$humanize(results);
             },
 
             size() {
