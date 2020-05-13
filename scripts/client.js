@@ -99,9 +99,9 @@ module.exports = () => {
 
             writeJson("access.json", [user]);
 
-            await (require(join(root, "../scripts/prerequisites")))();
-            await (require(join(root, "../scripts/systemd")))(true, "client");
-            await (require(join(root, "../scripts/reboot")))(false, "hoobs.service");
+            await (require(join(root, "./prerequisites")))();
+            await (require(join(root, "./systemd")))(true, "client");
+            await (require(join(root, "./reboot")))(false, "hoobs.service");
         }
     });
 };

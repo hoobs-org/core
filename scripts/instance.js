@@ -128,9 +128,9 @@ module.exports = (mode, name, command) => {
     
                 writeJson(result.name.replace(/[^a-zA-Z0-9]/gi, "").toLowerCase(), "config.json", result);
     
-                await (require(join(root, "../scripts/prerequisites")))();
-                await (require(join(root, "../scripts/systemd")))(true, "instance", result.name, result.service, parseInt(result.port, 10), parseInt(result.bridge, 10));
-                await (require(join(root, "../scripts/reboot")))(false, result.service);
+                await (require(join(root, "./prerequisites")))();
+                await (require(join(root, "./systemd")))(true, "instance", result.name, result.service, parseInt(result.port, 10), parseInt(result.bridge, 10));
+                await (require(join(root, "./reboot")))(false, result.service);
             });
 
             break;

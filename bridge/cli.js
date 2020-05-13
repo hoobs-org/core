@@ -62,14 +62,14 @@ module.exports = () => {
             terminating = true;
 
             internal.info(`Got ${signal}, shutting down Bridge...`);
+
             server.teardown();
-
-            setTimeout(function () {
-                process.exit(128 + signals[signal]);
-            }, 1000)
-
             server.api.emit("shutdown");
-            process.send({ event: "shutdown" })
+
+            setTimeout(() => {
+                process.send({ event: "shutdown" });
+                process.exit(128 + signals[signal]);
+            }, 3000)
         });
     });
 

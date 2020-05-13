@@ -570,7 +570,7 @@
             },
 
             pluginTitle(plugin) {
-                if (plugin.name === "google-home") {
+                if (plugin.name === "google-home" || plugin.name === "homebridge-gsh") {
                     return "Google Home";
                 }
 

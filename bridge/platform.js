@@ -94,18 +94,14 @@ module.exports = class Platform extends EventEmitter {
 
     updateReachability(reachable) {
         this.reachable = reachable;
-
-        try {
-            this.associated.updateReachability(reachable);
-        } catch (error) {
-            internal.debug("Unable to update reachability");
-            internal.debug(error);
-        }
     }
 
-    configureCameraSource(cameraSource) {
-        this.cameraSource = cameraSource;
-        this.associated.configureCameraSource(this.cameraSource);
+    configureCameraSource(source) {
+        return this.associated.configureCameraSource(source);
+    }
+    
+    configureController(controller) {
+        return this.associated.configureController(controller);
     }
 
     static serialize(accessory) {

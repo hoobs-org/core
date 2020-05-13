@@ -18,7 +18,7 @@
 
 <template>
     <div id="plugin" v-if="(user.admin || plugin.scope === 'hoobs')">
-        <p v-if="plugin.name === 'google-home'">
+        <p v-if="plugin.name === 'google-home' || plugin.name === 'homebridge-gsh'">
             <span>
                 <div class="button button-primary" v-on:click="gsh">Link Account</div>
             </span>
@@ -124,13 +124,13 @@
         },
 
         async mounted() {
-            if (this.plugin.name === "google-home") {
+            if (this.plugin.name === "google-home" || this.plugin.name === 'homebridge-gsh') {
                 window.addEventListener("message", this.gshListner, false);
             }
         },
 
         destroyed() {
-            if (this.plugin.name === "google-home") {
+            if (this.plugin.name === "google-home" || this.plugin.name === 'homebridge-gsh') {
                 if (this.gshOriginCheck) {
                     clearInterval(this.gshOriginCheck);
                 }
@@ -145,7 +145,7 @@
 
         methods: {
             title() {
-                if (this.plugin.name === "google-home") {
+                if (this.plugin.name === "google-home" || this.plugin.name === 'homebridge-gsh') {
                     return "Google Home";
                 }
 
@@ -388,7 +388,7 @@
 
                 this.gshPopup = null;
 
-                const index = this.value.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "google-home");
+                const index = this.value.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === "google-home" || (p.plugin_map || {}).plugin_name === "homebridge-gsh");
 
                 this.value.platforms[index].token = token;
 
