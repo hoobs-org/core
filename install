@@ -234,7 +234,7 @@ install_node()
                     ;;
 
                 "armv6l")
-                    curl -k -O https://nodejs.org/dist/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv6l.tar.gz
+                    curl -k -O https://unofficial-builds.nodejs.org/download/release/v$NODE_TARGET/node-v$NODE_TARGET-linux-armv6l.tar.gz
                     tar -xzf ./node-v$NODE_TARGET-linux-armv6l.tar.gz -C $NODE_PREFIX --strip-components=1 --no-same-owner > /dev/null 2>&1
                     rm -f ./node-v$NODE_TARGET-linux-armv6l.tar.gz > /dev/null 2>&1
 
