@@ -458,9 +458,11 @@ else
     fi
 
     if [[ "$INSTANCE_SUPPORT" == "false" && "$OS" != "Darwin" ]]; then
+        get_node
+
         if command -v setcap > /dev/null; then
-            setcap CAP_NET_BIND_SERVICE=+eip /usr/local/lib/node_modules/@hoobs/hoobs/bin/hoobs
-            setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node
+            setcap CAP_NET_BIND_SERVICE=+eip $NODE_PREFIX/node_modules/@hoobs/hoobs/bin/hoobs
+            setcap CAP_NET_BIND_SERVICE=+eip $NODE_PREFIX/bin/node
         fi
 
         if command -v hoobs > /dev/null; then
