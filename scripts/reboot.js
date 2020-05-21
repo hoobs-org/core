@@ -20,20 +20,12 @@ const File = require("fs");
 const Process = require("child_process");
 
 module.exports = (reboot, service) => {
-    return new Promise(async (resolve) => {
+    return new Promise((resolve) => {
         service = service || "hoobs.service";
 
         if (getPms()) {
             Process.execSync(`systemctl enable ${service}`);
 
-            if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge.service")) {
-                Process.execSync("systemctl disable homebridge.service");
-            }
-
-            if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge-config-ui-x.service")) {
-                Process.execSync("systemctl disable homebridge-config-ui-x.service");
-            }
-        
             if (reboot) {
                 console.log("---------------------------------------------------------");
                 console.log("HOOBS is Installed");
@@ -45,14 +37,6 @@ module.exports = (reboot, service) => {
             }
 
             if (!reboot) {
-                if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge.service")) {
-                    Process.execSync("systemctl stop homebridge.service");
-                }
-    
-                if (File.existsSync("/etc/systemd/system/multi-user.target.wants/homebridge-config-ui-x.service")) {
-                    Process.execSync("systemctl stop homebridge-config-ui-x.service");
-                }
-
                 Process.execSync(`systemctl restart ${service}`);
             }
         }

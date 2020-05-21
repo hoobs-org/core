@@ -203,6 +203,34 @@ switch ((command || "").toLowerCase()) {
 
         break;
 
+    case "upgrade":
+        (async () => {
+            const root = dirname(File.realpathSync(__filename));
+
+            let configured = false;
+
+            if (File.existsSync("/home")) {
+                const folders = File.readdirSync("/home").filter(file => File.lstatSync(join("/home", file)).isDirectory());
+    
+                for (let i = 0; i < folders.length; i++) {    
+                    if (File.existsSync(join("/home", folders[i], ".hoobs/etc/config.json"))) {
+                        configured = true;
+                    }
+                }
+            }
+    
+            if (File.existsSync("/root/.hoobs/etc/config.json")) {    
+                configured = true;
+            }
+
+            if (configured) {
+                await (require(join(root, "../scripts/systemd")))(false);
+                await (require(join(root, "../scripts/reboot")))(reboot, "hoobs.service");
+            }
+        })();
+
+        break;
+
     case "cockpit":
         new (require(join(dirname(File.realpathSync(__filename)), "../server/cockpit")))().start(true).then((registration) => {
             console.log("");
