@@ -52,7 +52,7 @@ module.exports = class Platform extends EventEmitter {
         this.associatedPlatform;
 
         this.associated.on("identify", (paired, callback) => {
-            this.emit("identify", paired, callback);
+            this.emit("identify", paired, () => {});
 
             callback();
         });

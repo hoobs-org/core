@@ -36,7 +36,7 @@ module.exports = class API extends EventEmitter {
         this.configurableAccessories = {};
         this.dynamicPlatforms = {};
 
-        this.version = 2.5;
+        this.version = 2.6;
         this.serverVersion = HBS.application.version;
 
         this.user = User;

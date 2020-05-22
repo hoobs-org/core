@@ -27,7 +27,7 @@ const Platform = require("./platform");
 const { once } = require("hap-nodejs/dist/lib/util/once");
 const { Logger, internal } = require("./logger");
 const { existsSync, readFileSync, writeFileSync } = require("fs-extra");
-const { uuid, Bridge, Accessory, Service, Characteristic, AccessoryLoader } = require("hap-nodejs");
+const { uuid, Bridge, Accessory, Service, Characteristic, AccessoryLoader, CharacteristicEventTypes } = require("hap-nodejs");
 
 const persist = require("node-persist").create();
 
@@ -372,7 +372,12 @@ module.exports = class Server {
     }
 
     createAccessory(accessoryInstance, displayName, accessoryType, uuidBase) {
-        const services = accessoryInstance.getServices();
+        const services = (accessoryInstance.getServices() || []).filter(service => !!service);
+        const controllers = (accessoryInstance.getControllers && accessoryInstance.getControllers() || []).filter(controller => !!controller);
+
+        if (services.length === 0 && controllers.length === 0) {
+            return undefined;
+        }
 
         if (!(services[0] instanceof Service)) {
             return AccessoryLoader.parseAccessoryJSON({
@@ -397,20 +402,27 @@ module.exports = class Server {
 
             if (accessoryInstance.identify) {
                 accessory.on("identify", (_paired, callback) => {
-                    accessoryInstance.identify(callback);
+                    accessoryInstance.identify(() => {});
+
+                    callback();
                 });
             }
 
             const informationService = accessory.getService(Service.AccessoryInformation);
 
-            services.forEach((service) => {
-                if (service instanceof Service.AccessoryInformation) {
-                    service.setCharacteristic(Characteristic.Name, displayName);
-                    informationService.replaceCharacteristicsFromService(service);
+            for (let i = 0; i < services.length; i++) {
+                if (services[i] instanceof Service.AccessoryInformation) {
+                    services[i].setCharacteristic(Characteristic.Name, displayName);
+                    services[i].getCharacteristic(Characteristic.Identify).removeAllListeners(CharacteristicEventTypes.SET);
+                    informationService.replaceCharacteristicsFromService(services[i]);
                 } else {
-                    accessory.addService(service);
+                    accessory.addService(services[i]);
                 }
-            });
+            }
+
+            for (let i = 0; i < controllers.length; i++) {
+                accessory.configureController(controllers[i]);
+            }
 
             return accessory;
         }
