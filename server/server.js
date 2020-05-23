@@ -39,7 +39,7 @@ module.exports = class Server {
             "-u",
             join(Server.paths.config, HBS.name || ""),
             "-p",
-            Server.paths.modules.local
+            Server.paths.application
         ].concat(options || []);
 
         this.proc = null;

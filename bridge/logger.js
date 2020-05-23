@@ -28,7 +28,8 @@ function setDebug(enabled) {
 const loggerCache = {};
 
 class Logger {
-    constructor(prefix) {
+    constructor(plugin, prefix) {
+        this.plugin = plugin;
         this.prefix = prefix;
     }
 
@@ -37,19 +38,21 @@ class Logger {
             this.log.apply(this, ["debug"].concat(Array.prototype.slice.call(arguments)));
         }
     }
-    
+
     info() {
         this.log.apply(this, ["info"].concat(Array.prototype.slice.call(arguments)));
     }
-    
+
     warn() {
-        this.log.apply(this, ["warn"].concat(Array.prototype.slice.call(arguments)));
+        if (debug) {
+            this.log.apply(this, ["warn"].concat(Array.prototype.slice.call(arguments)));
+        }
     }
-    
+
     error() {
         this.log.apply(this, ["error"].concat(Array.prototype.slice.call(arguments)));
     }
-    
+
     log(level, msg) {
         msg = util.format.apply(util, Array.prototype.slice.call(arguments, 1));
     
@@ -63,10 +66,10 @@ class Logger {
             process.send({ event: "info_log", data: msg });
         }
     }
-    
-    static withPrefix(prefix) {
+
+    static withPrefix(plugin, prefix) {
         if (!loggerCache[prefix]) {
-            const logger = new Logger(prefix);
+            const logger = new Logger(plugin, prefix);
             const log = logger.info.bind(logger);
     
             log.debug = logger.debug;
@@ -74,11 +77,12 @@ class Logger {
             log.warn = logger.warn;
             log.error = logger.error;
             log.log = logger.log;
+            log.plugin = logger.plugin;
             log.prefix = logger.prefix;
     
             loggerCache[prefix] = log;
         }
-    
+
         return loggerCache[prefix];
     }
 }
