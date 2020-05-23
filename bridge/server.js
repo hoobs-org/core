@@ -231,7 +231,7 @@ module.exports = class Server {
         this.cachedAccessories = [];
 
         for (let i = 0; i < accessories.length; i++) {
-            cachedAccessories.push(Platform.deserialize(accessories[i]));
+            this.cachedAccessories.push(Platform.deserialize(accessories[i]));
         }
 
         this.cacheExists = true;
