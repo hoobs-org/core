@@ -591,6 +591,8 @@ module.exports = class Plugins {
                         cwd: Server.paths.application
                     });
                 } else {
+                    execSync("npm_config_loglevel=silent npm version");
+
                     proc = spawn("npm", [
                         "install",
                         "--prefer-offline",
@@ -772,6 +774,8 @@ module.exports = class Plugins {
                         cwd: Server.paths.application
                     });
                 } else {
+                    execSync("npm_config_loglevel=silent npm version");
+
                     proc = spawn("npm", [
                         "install",
                         "--unsafe-perm",
