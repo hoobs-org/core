@@ -456,7 +456,7 @@ module.exports = class Plugins {
         return registered;
     }
 
-    static getPlatform(id, name, config) {
+    static getPlatform(name, config) {
         config.platforms = config.platforms || [];
 
         if (config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name) >= 0) {
@@ -466,7 +466,7 @@ module.exports = class Plugins {
         let found = false;
         let alias = "";
 
-        const details = Plugins.getPluginType(id) || [];
+        const details = Plugins.getPluginType(name) || [];
 
         for (let i = 0; i < details.length; i++) {
             if (details[i].type === "platform") {
@@ -516,7 +516,7 @@ module.exports = class Plugins {
         HBS.active.push(true);
     }
 
-    static install(id, tag, replace) {
+    static install(name, tag, replace) {
         tag = tag || "latest";
 
         return new Promise(async (resolve) => {
@@ -526,8 +526,8 @@ module.exports = class Plugins {
                     active: HBS.active.length
                 });
             } else {
-                if (blocked.indexOf(id) >= 0) {
-                    HBS.log.error(`[plugin] '${id}' is a blocked plugin.`);
+                if (blocked.indexOf(name) >= 0) {
+                    HBS.log.error(`[plugin] '${name}' is a blocked plugin.`);
 
                     return resolve(false);
                 }
@@ -535,44 +535,29 @@ module.exports = class Plugins {
                 Plugins.unlinkLibs();
 
                 if (replace) {
-                    const name = replace.split("/").pop();
                     const config = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
 
                     config.plugins = config.plugins || [];
 
-                    let index = config.plugins.indexOf(name);
+                    let index = config.plugins.indexOf(replace);
 
                     if (index > -1) {
                         config.plugins.splice(index, 1);
                     }
 
                     config.platforms = config.platforms || [];
-                    index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
-
-                    while (index >= 0) {
-                        config.platforms[index].plugin_map.plugin_name = id.split("/").pop();
-                        index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
-                    }
-
                     index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === replace);
 
                     while (index >= 0) {
-                        config.platforms[index].plugin_map.plugin_name = id.split("/").pop();
+                        config.platforms[index].plugin_map.plugin_name = name;
                         index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === replace);
                     }
 
                     config.accessories = config.accessories || [];
-                    index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
-
-                    while (index >= 0) {
-                        config.accessories[index].plugin_map.plugin_name = id.split("/").pop();
-                        index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
-                    }
-
                     index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === replace);
 
                     while (index >= 0) {
-                        config.accessories[index].plugin_map.plugin_name = id.split("/").pop();
+                        config.accessories[index].plugin_map.plugin_name = name;
                         index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === replace);
                     }
 
@@ -586,7 +571,7 @@ module.exports = class Plugins {
                         "add",
                         "--unsafe-perm",
                         "--ignore-engines",
-                        `${id}@${tag}`
+                        `${name}@${tag}`
                     ], {
                         cwd: Server.paths.application
                     });
@@ -599,7 +584,7 @@ module.exports = class Plugins {
                         "--no-audit",
                         "--unsafe-perm",
                         "--progress=true",
-                        `${id}@${tag}`
+                        `${name}@${tag}`
                     ], {
                         cwd: Server.paths.application
                     });
@@ -616,9 +601,7 @@ module.exports = class Plugins {
                 proc.on("close", async () => {
                     let success = false;
 
-                    if (File.existsSync(join(Server.paths.modules.local, id, "package.json"))) {
-                        const name = id.split("/").pop();
-
+                    if (File.existsSync(join(Server.paths.modules.local, name, "package.json"))) {
                         let config = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
 
                         config.plugins = config.plugins || [];
@@ -629,7 +612,7 @@ module.exports = class Plugins {
 
                         Plugins.linkLibs();
 
-                        config = Plugins.getPlatform(id, name, config);
+                        config = Plugins.getPlatform(name, config);
 
                         Server.saveConfig(config);
 
@@ -650,7 +633,7 @@ module.exports = class Plugins {
         });
     }
 
-    static uninstall(id) {
+    static uninstall(name) {
         return new Promise((resolve) => {
             if (HBS.active.length > 0) {
                 resolve({
@@ -665,7 +648,7 @@ module.exports = class Plugins {
                 if (HBS.config.package_manager === "yarn") {
                     proc = spawn("yarn", [
                         "remove",
-                        id
+                        name
                     ], {
                         cwd: Server.paths.application
                     });
@@ -674,7 +657,7 @@ module.exports = class Plugins {
                         "uninstall",
                         "--unsafe-perm",
                         "--progress=true",
-                        id
+                        name
                     ], {
                         cwd: Server.paths.application
                     });
@@ -691,8 +674,7 @@ module.exports = class Plugins {
                 proc.on("close", async () => {
                     let success = false;
 
-                    if (!File.existsSync(join(Server.paths.modules.local, id, "package.json"))) {
-                        const name = id.split("/").pop();
+                    if (!File.existsSync(join(Server.paths.modules.local, name, "package.json"))) {
                         const config = HBS.JSON.load(join(Server.paths.config, HBS.name || "", "config.json"), {});
 
                         config.plugins = config.plugins || [];
@@ -711,26 +693,12 @@ module.exports = class Plugins {
                             index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
                         }
 
-                        index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === id);
-
-                        while (index >= 0) {
-                            config.platforms.splice(index, 1);
-                            index = config.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === id);
-                        }
-
                         config.accessories = config.accessories || [];
                         index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
 
                         while (index >= 0) {
                             config.accessories.splice(index, 1);
                             index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
-                        }
-
-                        index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === id);
-
-                        while (index >= 0) {
-                            config.accessories.splice(index, 1);
-                            index = config.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === id);
                         }
 
                         Server.saveConfig(config);
@@ -752,7 +720,7 @@ module.exports = class Plugins {
         });
     }
 
-    static update(id, tag) {
+    static update(name, tag) {
         tag = tag || "latest";
 
         return new Promise((resolve) => {
@@ -769,7 +737,7 @@ module.exports = class Plugins {
                     proc = spawn("yarn", [
                         "upgrade",
                         "--ignore-engines",
-                        `${id}@${tag}`
+                        `${name}@${tag}`
                     ], {
                         cwd: Server.paths.application
                     });
@@ -781,7 +749,7 @@ module.exports = class Plugins {
                         "--unsafe-perm",
                         "--no-audit",
                         "--progress=true",
-                        `${id}@${tag}`
+                        `${name}@${tag}`
                     ], {
                         cwd: Server.paths.application
                     });

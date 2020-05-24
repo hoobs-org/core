@@ -38,35 +38,24 @@ module.exports = class Server {
 
         this.api = new API();
 
-        this.api.on("registerPlatformAccessories", (accessories) => {
-            this.handleRegisterPlatformAccessories(accessories);
-        });
-
-        this.api.on("updatePlatformAccessories", (accessories) => {
-            this.handleUpdatePlatformAccessories(accessories);
-        });
-
-        this.api.on("unregisterPlatformAccessories", (accessories) => {
-            this.handleUnregisterPlatformAccessories(accessories);
-        });
-
-        this.api.on("publishExternalAccessories", (accessories) => {
-            this.handlePublishExternalAccessories(accessories);
-        });
+        this.api.on("registerPlatformAccessories", this.handleRegisterPlatformAccessories.bind(this));
+        this.api.on("updatePlatformAccessories", this.handleUpdatePlatformAccessories.bind(this));
+        this.api.on("unregisterPlatformAccessories", this.handleUnregisterPlatformAccessories.bind(this));
+        this.api.on("publishExternalAccessories", this.handlePublishExternalAccessories.bind(this));
 
         this.path = opts.path;
         this.config = opts.config || this.loadConfig();
-        this.plugins = new Plugins(this.path, this.config, this.api);
-        this.bridge = new Bridge((this.config.bridge || {}).name || "HOOBS", uuid.generate("HomeBridge"));
         this.removeOrphans = opts.removeOrphans || false;
         this.cacheExists = false;
 
         this.externalPorts = this.config.ports;
         this.nextExternalPort = undefined;
 
-        this.activeDynamicPlugins = {};
-        this.configurablePlatformPlugins = {};
         this.publishedAccessories = {};
+        this.cachedAccessories = [];
+
+        this.plugins = new Plugins(this.path, this.config, this.api);
+        this.bridge = new Bridge((this.config.bridge || {}).name || "HOOBS", uuid.generate("HomeBridge"));
     }
 
     async run() {
@@ -85,9 +74,10 @@ module.exports = class Server {
 
         this.restoreCache();
 
+        this.api.emit("didFinishLaunching");
+
         await Promise.all(platforms).then(() => {
             this.publish();
-            this.api.emit("didFinishLaunching");
     
             process.send({ event: "api_launched" });
         });        
@@ -243,7 +233,7 @@ module.exports = class Server {
         for (let i = 0; i < this.cachedAccessories.length; i++) {
             const accessory = this.cachedAccessories[i];
 
-            let plugin = this.plugins.getPlugin(accessory.associated);
+            let plugin = this.plugins.getPlugin(accessory.associatedPlugin);
 
             if (!plugin) {
                 try {

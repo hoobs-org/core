@@ -118,14 +118,6 @@ module.exports = class API {
 
         HBS.app.use(Parser.json());
 
-        if (HBS.debug) {
-            HBS.app.use((request, _response, next) => {
-                HBS.log.debug(`"${request.method}" ${request.url}`);
-
-                next();
-            });
-        }
-
         const publicRoutes = [
             "/api/auth",
             "/api/auth/logon",

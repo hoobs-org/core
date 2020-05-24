@@ -34,32 +34,32 @@ module.exports = class Plugin {
         this.dynamic = {};
     }
 
+    toFqpn(identifier) {
+        return `${this.name}.${identifier.toString().split(".").pop()}`;
+    }
+
     hasIdentifier(identifier) {
-        return this.identifiers.indexOf(identifier.split(".").pop()) >= 0;
+        return this.identifiers.indexOf(this.toFqpn(identifier)) >= 0;
     }
 
     addIdentifier(identifier) {
         if (!this.hasIdentifier(identifier)) {
-            internal.debug(`Registering "${identifier.split(".").pop()}"`);
+            internal.debug(`Registering "${this.toFqpn(identifier)}"`);
 
-            this.identifiers.push(identifier.split(".").pop());
+            this.identifiers.push(this.toFqpn(identifier));
         }
     }
 
     getInitilizer(type, identifier) {
-        let platforms = null;
-
         switch (type) {
             case "accessory":
-                return this.accessories[identifier.split(".").pop()];
+                return this.accessories[this.toFqpn(identifier)];
 
             case "platform":
-                return this.platforms[identifier.split(".").pop()];
+                return this.platforms[this.toFqpn(identifier)];
 
             case "dynamic":
-                platforms = this.dynamic[identifier];
-
-                return platforms && platforms[0];
+                return (this.dynamic[this.toFqpn(identifier)] || [])[0];
         }
 
         return null;
@@ -67,37 +67,34 @@ module.exports = class Plugin {
     
     load(api) {    
         if (!existsSync(this.path)) {
-            internal.error(`Plugin "${this.path}" was not found.`);
+            internal.error(`Plugin "${this.path}" was not found`);
         } else {
             this.initializer = require(join(this.path, this.main));
 
-            internal.info(`Loaded plugin "${this.name}".`);
+            internal.debug(`Loaded plugin "${this.name}"`);
 
             if (typeof this.initializer === "function") {
                 this.initializer(api);
             } else if (this.initializer && typeof this.initializer.default === "function") {
                 this.initializer.default(api);
             } else {
-                internal.error(`Plugin "${this.path}" does not export a initializer function from main.`);
+                internal.error(`Plugin "${this.path}" does not export a initializer function from main`);
             }
         }
     }
 
     registerAccessory(identifier, constructor) {
         this.addIdentifier(identifier);
-
-        this.accessories[identifier.split(".").pop()] = constructor;
+        this.accessories[this.toFqpn(identifier)] = constructor;
     }
 
     registerPlatform(identifier, constructor) {
         this.addIdentifier(identifier);
-
-        this.platforms[identifier.split(".").pop()] = constructor;
+        this.platforms[this.toFqpn(identifier)] = constructor;
     }
 
     assignDynamicPlatform(identifier, platform) {
         this.addIdentifier(identifier);
-
-        this.dynamic[identifier.split(".").pop()] = platform;
+        this.dynamic[this.toFqpn(identifier)] = platform;
     }
 }

@@ -34,13 +34,8 @@ module.exports = class Plugins {
         this.installed = [];
         this.loaded = [];
 
-        this.api.on("register_accessory", (identifier, constructor) => {
-            this.registerAccessory(identifier, constructor);
-        });
-
-        this.api.on("register_platform", (identifier, constructor) => {
-            this.registerPlatform(identifier, constructor);
-        });
+        this.api.on("register_accessory", this.registerAccessory.bind(this));
+        this.api.on("register_platform", this.registerPlatform.bind(this));
 
         this.active();
         this.scan();
@@ -67,10 +62,14 @@ module.exports = class Plugins {
     }
 
     getPlugin(identifier) {
+        internal.debug(`Lookup identifier ${JSON.stringify(identifier)}`);
+
         return this.loaded.find((p) => p.hasIdentifier(identifier));
     }
 
     getDynamicPlatform(identifier) {
+        internal.debug(`Lookup dynamic identifier ${JSON.stringify(identifier)}`);
+
         return this.loaded.find((p) => p.getInitilizer("dynamic", identifier));
     }
 
@@ -98,32 +97,33 @@ module.exports = class Plugins {
         for (let i = 0; i < this.installed.length; i++) {
             this.working = this.installed[i];
 
+            internal.debug(`Working plugin "${this.working.name}"`);
+
             if (this.whitelist[this.working.name] !== true) {
                 continue;
             }
 
             try {
                 this.working.load(this.api);
+                this.loaded.push(this.working);
             } catch (error) {
-                internal.error(`Error loading plugin "${this.working.name}".`);
+                internal.error(`Error loading plugin "${this.working.name}"`);
                 internal.error(error.stack);
             }
-
-            this.loaded.push(this.working);
         }
     }
 
     scan() {
-        const paths = [];
+        const dependencies = [];
 
         try {
-            paths.push(...Object.keys((readJsonSync(join(this.path, "package.json")) || {}).dependencies || {}));
+            dependencies.push(...Object.keys((readJsonSync(join(this.path, "package.json")) || {}).dependencies || {}));
         } catch (_error) {
-            internal.warn(`missing "${join(this.path, "package.json")}" file.`);
+            internal.warn(`Missing "${join(this.path, "package.json")}" file`);
         }
 
-        for (let i = 0; i < paths.length; i++) {
-            const path = join(this.path, "node_modules", paths[i]);
+        for (let i = 0; i < dependencies.length; i++) {
+            const path = join(this.path, "node_modules", dependencies[i]);
 
             let pjson = null;
     
@@ -133,7 +133,7 @@ module.exports = class Plugins {
                 continue;
             }
 
-            this.installed.push(new Plugin(path, paths[i], pjson));
+            this.installed.push(new Plugin(path, dependencies[i], pjson));
         }
     }
 }

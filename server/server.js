@@ -85,6 +85,14 @@ module.exports = class Server {
         };
     }
 
+    static dependencies() {
+        try {
+            return Object.keys((File.readJsonSync(join(Server.paths.application, "package.json")) || {}).dependencies || {});
+        } catch (_error) {
+            return [];
+        }
+    }
+
     static hostname() {
         const hostname = (OS.hostname() || "").split(".")[0].toLowerCase();
 
@@ -213,6 +221,38 @@ module.exports = class Server {
 
         if (!current.server.origin) {
             current.server.origin = "*";
+        }
+
+        const dependencies = Server.dependencies();
+
+        current.plugins = current.plugins || [];
+        current.platforms = current.platforms || [];
+        current.accessories = current.accessories || [];
+
+        for (let i = 0; i < dependencies.length; i++) {
+            if (dependencies[i].startsWith("@hoobs/")) {
+                const name = dependencies[i].split("/").pop();
+
+                let index = current.plugins.indexOf(name);
+
+                if (index >= 0) {
+                    current.plugins[index] = dependencies[i];
+                }
+
+                index = current.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
+
+                while (index >= 0) {
+                    current.platforms[index].plugin_map.plugin_name = dependencies[i];
+                    index = current.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
+                }
+
+                index = current.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
+
+                while (index >= 0) {
+                    current.accessories[index].plugin_map.plugin_name = dependencies[i];
+                    index = current.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
+                }
+            }
         }
 
         if (current.package_manager && current.package_manager === "yarn") {
