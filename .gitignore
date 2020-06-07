@@ -25,6 +25,7 @@ typings/
 .yarn-integrity
 .env
 .next
+.idea
 etc/persist
 etc/accessories
 

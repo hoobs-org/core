@@ -27,7 +27,10 @@
             {{ plugin.description }}
         </p>
         <div v-if="plugin.details.findIndex(p => p.type === 'platform') >= 0">
-            <div v-if="plugin.schema && plugin.schema.platform.schema.properties">
+            <div v-if="plugin.name === 'homebridge-ring' && !value.platforms[platformIndex()].refreshToken">
+                <ring-login :save="save" v-model="value.platforms[platformIndex()]"></ring-login>
+            </div>
+            <div v-else-if="plugin.schema && plugin.schema.platform.schema.properties">
                 <schema-form :schema="plugin.schema.platform.schema.properties || {}" v-model="value.platforms[platformIndex()]" />
             </div>
             <div v-else>
@@ -68,6 +71,7 @@
     import ModalDialog from "@/components/modal-dialog.vue";
     import SchemaForm from "@/components/schema-form.vue";
     import ConfirmDelete from "@/components/confirm-delete.vue";
+    import RingLogin from "@/components/ring-login.vue";
 
     export default {
         name: "plugin-config",
@@ -76,7 +80,8 @@
             "json-editor": JSONEditor,
             "modal-dialog": ModalDialog,
             "schema-form": SchemaForm,
-            "confirm-delete": ConfirmDelete
+            "confirm-delete": ConfirmDelete,
+            "ring-login": RingLogin
         },
 
         props: {
