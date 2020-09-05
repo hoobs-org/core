@@ -45,6 +45,7 @@ module.exports = class Server {
         this.proc = null;
         this.events = {};
         this.running = false;
+        this.manualStop = false;
         this.time = new Date();
     }
 
@@ -722,6 +723,121 @@ module.exports = class Server {
     }
 
     start() {
+        const homebridgeProcess = (resolve) => {
+            const _homebridgeProcess = fork(join(Server.paths.bridge, "hoobs"), this.arguments, {
+                cwd: Server.paths.application,
+                silent: true
+            });
+
+            _homebridgeProcess.on("message", (response) => {
+                switch (response.event) {
+                    case "running":
+                        this.running = true;
+                        this.time = new Date();
+
+                        HBS.log.debug(`Bridge started: ${this.time}`);
+                        HBS.log.push.info("Bridge", "Bridge service started");
+
+                        if (this.events.start) {
+                            this.events.start();
+                        }
+
+                        resolve();
+                        break;
+
+                    case "error_log":
+                        HBS.log.error(response.data);
+                        break;
+
+                    case "info_log":
+                        HBS.log.info(response.data);
+                        break;
+
+                    case "debug_log":
+                        HBS.log.debug(response.data);
+                        break;
+
+                    case "setup_uri":
+                        HBS.log.debug(`Setup URI: ${response.data}`);
+
+                        if (HBS.config.server.home_setup_id !== response.data) {
+                            HBS.config.server.home_setup_id = response.data;
+
+                            Server.saveConfig(HBS.config);
+                        }
+
+                        break;
+
+                    case "accessory_change":
+                        HBS.log.debug("Accessory refresh triggered");
+
+                        if (this.events.update) {
+                            this.events.update();
+                        }
+
+                        break;
+
+                    default:
+                        HBS.log.debug(response.event);
+
+                        if (response.data) {
+                            HBS.log.debug(JSON.stringify(response.data, null, 4));
+                        }
+
+                        break;
+                }
+            });
+
+            _homebridgeProcess.stdout.on("data", async (data) => {
+                const lines = `${data}`.split(/\r?\n/);
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    if (line !== "") {
+                        HBS.log.info(line);
+                    }
+                }
+            });
+
+            _homebridgeProcess.stderr.on("data", (data) => {
+                const lines = `${data}`.split(/\r?\n/);
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    if (line !== "") {
+                        HBS.log.error(line);
+
+                        if (this.stderr) {
+                            this.stderr(line);
+                        }
+                    }
+                }
+            });
+
+            _homebridgeProcess.on("exit", (data) => {
+                this.running = false;
+                this.time = new Date();
+
+                if (this.manualStop) {
+                    HBS.log.push.warning("Bridge", "Bridge service stopped");
+                } else {
+                    HBS.log.push.error("Bridge", "Bridge service stopped unintentionally, restarting...");
+                }
+
+                if (this.events.stop) {
+                    this.events.stop();
+                }
+
+                _homebridgeProcess.kill("SIGINT");
+
+                resolve();
+            });
+
+            return _homebridgeProcess;
+        }
+
         return new Promise((resolve) => {
             if (!this.running) {
                 File.ensureSymlinkSync(Server.paths.hap, join(Server.paths.modules.local, "hap-nodejs"));
@@ -729,111 +845,13 @@ module.exports = class Server {
                 HBS.cache.remove("hap/accessories");
                 HBS.log.debug(`${join(Server.paths.bridge, "hoobs")} ${(this.arguments || []).join(" ")}`);
 
-                this.proc = fork(join(Server.paths.bridge, "hoobs"), this.arguments, {
-                    cwd: Server.paths.application,
-                    silent: true
-                });
+                this.proc = homebridgeProcess(resolve);
 
-                this.proc.on("message", (response) => {
-                    switch (response.event) {
-                        case "running":
-                            this.running = true;
-                            this.time = new Date();
-
-                            HBS.log.debug(`Bridge started: ${this.time}`);
-                            HBS.log.push.info("Bridge", "Bridge service started");
-
-                            if (this.events.start) {
-                                this.events.start();
-                            }
-
-                            resolve();
-                            break;
-
-                        case "error_log":
-                            HBS.log.error(response.data);
-                            break;
-
-                        case "info_log":
-                            HBS.log.info(response.data);
-                            break;
-
-                        case "debug_log":
-                            HBS.log.debug(response.data);
-                            break;
-
-                        case "setup_uri":
-                            HBS.log.debug(`Setup URI: ${response.data}`);
-
-                            if (HBS.config.server.home_setup_id !== response.data) {
-                                HBS.config.server.home_setup_id = response.data;
-
-                                Server.saveConfig(HBS.config);
-                            }
-
-                            break;
-
-                        case "accessory_change":
-                            HBS.log.debug("Accessory refresh triggered");
-
-                            if (this.events.update) {
-                                this.events.update();
-                            }
-
-                            break;
-
-                        default:
-                            HBS.log.debug(response.event);
-
-                            if (response.data) {
-                                HBS.log.debug(JSON.stringify(response.data, null, 4));
-                            }
-
-                            break;
+                this.proc.on('exit', () => {
+                    if (!this.manualStop) {
+                        this._cleanup();
+                        this.start();
                     }
-                });
-
-                this.proc.stdout.on("data", async (data) => {
-                    const lines = `${data}`.split(/\r?\n/);
-
-                    for (let i = 0; i < lines.length; i++) {
-                        const line = lines[i].trim();
-
-                        if (line !== "") {
-                            HBS.log.info(line);
-                        }
-                    }
-                });
-
-                this.proc.stderr.on("data", (data) => {
-                    const lines = `${data}`.split(/\r?\n/);
-
-                    for (let i = 0; i < lines.length; i++) {
-                        const line = lines[i].trim();
-
-                        if (line !== "") {
-                            HBS.log.error(line);
-
-                            if (this.stderr) {
-                                this.stderr(line);
-                            }
-                        }
-                    }
-                });
-
-                this.proc.on("exit", (data) => {
-                    this.running = false;
-                    this.time = new Date();
-
-                    HBS.log.push.error("Bridge", "Bridge service stopped");
-
-                    if (this.events.stop) {
-                        this.events.stop();
-                    }
-
-                    this.proc.kill("SIGINT");
-
-                    resolve();
                 });
             } else {
                 resolve();
@@ -841,16 +859,21 @@ module.exports = class Server {
         });
     }
 
+    _cleanup() {
+        if (File.existsSync(join(Server.paths.modules.local, "hap-nodejs"))) {
+            try {
+                File.unlinkSync(join(Server.paths.modules.local, "hap-nodejs"));
+            } catch (_error) {
+                File.removeSync(join(Server.paths.modules.local, "hap-nodejs"));
+            }
+        }
+    }
+
     stop() {
+        this.manualStop = true;
         return new Promise((resolve) => {
             if (this.running) {
-                if (File.existsSync(join(Server.paths.modules.local, "hap-nodejs"))) {
-                    try {
-                        File.unlinkSync(join(Server.paths.modules.local, "hap-nodejs"));
-                    } catch (_error) {
-                        File.removeSync(join(Server.paths.modules.local, "hap-nodejs"));
-                    }
-                }
+                this._cleanup();
 
                 this.proc.on("exit", () => {
                     this.running = false;
@@ -860,11 +883,13 @@ module.exports = class Server {
                         this.events.stop();
                     }
 
+                    this.manualStop = false;
                     resolve();
                 });
 
                 this.proc.kill("SIGINT");
             } else {
+                this.manualStop = false;
                 resolve();
             }
         });
