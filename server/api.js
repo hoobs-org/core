@@ -166,7 +166,8 @@ module.exports = class API {
             plugins: new (require("../controllers/plugins"))(),
             accessories: new (require("../controllers/accessories"))(),
             layout: new (require("../controllers/layout"))(),
-            cockpit: new (require("../controllers/cockpit"))()
+            cockpit: new (require("../controllers/cockpit"))(),
+            ringLogin: new (require("../controllers/ring-login"))()
         }
 
         if (client) {
