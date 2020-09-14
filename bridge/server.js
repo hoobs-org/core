@@ -154,7 +154,7 @@ module.exports = class Server {
         }
 
         if (!/^([0-9A-F]{2}:){5}([0-9A-F]{2})$/.test(config.bridge.username)) {
-            internal.error(`Not a valid username: "${config.bridge.username}".`);
+            internal.error(`Not a valid username "${config.bridge.username}".`);
 
             config.bridge.username = "CC:22:3D:E3:CE:30";
         }
@@ -165,16 +165,23 @@ module.exports = class Server {
     loadAccessories() {
         for (let i = 0; i < this.config.accessories.length; i++) {
             const plugin = this.plugins.getPlugin(this.config.accessories[i].accessory);
-            const initilizer = plugin.getInitilizer("accessory", this.config.accessories[i].accessory);
 
-            if (initilizer) {
-                const logger = Logger.withPrefix(plugin.name, this.config.accessories[i]["name"]);
-                const instance = new initilizer(logger, this.config.accessories[i], this.api);
-                const accessory = this.createAccessory(plugin, instance, this.config.accessories[i]["name"], this.config.accessories[i]["accessory"], this.config.accessories[i].uuid_base);
+            if (plugin) {
+                const initilizer = plugin.getInitilizer("accessory", this.config.accessories[i].accessory);
 
-                if (accessory) {
-                    this.bridge.addBridgedAccessory(accessory);
+                if (initilizer) {
+                    const logger = Logger.withPrefix(plugin.name, this.config.accessories[i]["name"]);
+                    const instance = new initilizer(logger, this.config.accessories[i], this.api);
+                    const accessory = this.createAccessory(plugin, instance, this.config.accessories[i]["name"], this.config.accessories[i]["accessory"], this.config.accessories[i].uuid_base);
+
+                    if (accessory) {
+                        this.bridge.addBridgedAccessory(accessory);
+                    }
+                } else {
+                    internal.error(`Unable to find initilizer "${plugin.name}"`);
                 }
+            } else {
+                internal.error(`Unable to find plugin "${this.config.accessories[i].accessory}"`);
             }
         }
     }
@@ -184,17 +191,24 @@ module.exports = class Server {
 
         for (let i = 0; i < this.config.platforms.length; i++) {
             const plugin = this.plugins.getPlugin(this.config.platforms[i].platform);
-            const initilizer = plugin.getInitilizer("platform", this.config.platforms[i].platform);
 
-            if (initilizer) {
-                const logger = Logger.withPrefix(plugin.name, this.config.platforms[i].name || this.config.platforms[i].platform);
-                const instance = new initilizer(logger, this.config.platforms[i], this.api);
+            if (plugin) {
+                const initilizer = plugin.getInitilizer("platform", this.config.platforms[i].platform);
 
-                if (API.isDynamicPlatformPlugin(instance)) {
-                    plugin.assignDynamicPlatform(this.config.platforms[i].platform, instance);
-                } else if (API.isStaticPlatformPlugin(instance)) {
-                    platforms.push(this.loadPlatformAccessories(plugin, instance, this.config.platforms[i].platform));
+                if (initilizer) {
+                    const logger = Logger.withPrefix(plugin.name, this.config.platforms[i].name || this.config.platforms[i].platform);
+                    const instance = new initilizer(logger, this.config.platforms[i], this.api);
+
+                    if (API.isDynamicPlatformPlugin(instance)) {
+                        plugin.assignDynamicPlatform(this.config.platforms[i].platform, instance);
+                    } else if (API.isStaticPlatformPlugin(instance)) {
+                        platforms.push(this.loadPlatformAccessories(plugin, instance, this.config.platforms[i].platform));
+                    }
+                } else {
+                    internal.error(`Unable to find initilizer "${plugin.name}"`);
                 }
+            } else {
+                internal.error(`Unable to find plugin "${this.config.platforms[i].platform}"`);
             }
         }
 
@@ -206,8 +220,12 @@ module.exports = class Server {
             instance.accessories(once((accessories) => {    
                 for (let i = 0; i < accessories.length; i++) {    
                     internal.debug(`Initializing "${plugin.name}" accessory "${accessories[i].name}"`);
-    
-                    this.bridge.addBridgedAccessory(this.createAccessory(plugin, accessories[i], accessories[i].name, type, accessories[i].uuid_base));
+
+                    const accessory = this.createAccessory(plugin, accessories[i], accessories[i].name, type, accessories[i].uuid_base);
+
+                    if (accessory) {
+                        this.bridge.addBridgedAccessory();
+                    }
                 }
     
                 resolve();
@@ -297,6 +315,7 @@ module.exports = class Server {
         } else {
             const accessory = new Accessory(name, uuid.generate(`${type}:${uuidBase || name}`));
 
+            /*
             accessory.on("service-characteristic-change", (data) => {
                 if (
                     data.newValue !== data.oldValue
@@ -309,6 +328,7 @@ module.exports = class Server {
                     process.send({ event: "accessory_change" });
                 }
             });
+            */
 
             if (instance.identify) {
                 accessory.on("identify", (_paired, callback) => {
@@ -350,7 +370,7 @@ module.exports = class Server {
             this.cachedAccessories.push(accessories[i]);
 
             const accessory = accessories[i];
-            const plugin = this.plugins.getPlugin(accessory.associated);
+            const plugin = this.plugins.getPlugin(accessory.associatedPlugin);
 
             if (plugin) {
                 const informationService = accessory.getService(Service.AccessoryInformation);

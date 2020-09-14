@@ -62,13 +62,13 @@ module.exports = class Plugins {
     }
 
     getPlugin(identifier) {
-        internal.debug(`Lookup identifier ${JSON.stringify(identifier)}`);
+        internal.debug(`Lookup identifier "${identifier}"`);
 
         return this.loaded.find((p) => p.hasIdentifier(identifier));
     }
 
     getDynamicPlatform(identifier) {
-        internal.debug(`Lookup dynamic identifier ${JSON.stringify(identifier)}`);
+        internal.debug(`Lookup dynamic identifier "${identifier}"`);
 
         return this.loaded.find((p) => p.getInitilizer("dynamic", identifier));
     }
@@ -129,7 +129,9 @@ module.exports = class Plugins {
     
             try {
                 pjson = Plugins.read(path);
-            } catch (_error) {
+            } catch (error) {
+                internal.error(error.message);
+
                 continue;
             }
 

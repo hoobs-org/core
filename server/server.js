@@ -590,7 +590,7 @@ module.exports = class Server {
             HBS.log.command("unlock");
         });
 
-        archive.on("error", (_error) => {
+        archive.on("error", (error) => {
             HBS.log.push.error("System Backup", error.message || "Unable to create backup");
             HBS.log.command("unlock");
         });
