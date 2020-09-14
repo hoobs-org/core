@@ -73,15 +73,15 @@ module.exports = class Plugins {
         return this.loaded.find((p) => p.getInitilizer("dynamic", identifier));
     }
 
-    registerAccessory(identifier, constructor) {
+    registerAccessory(name, constructor, _identifier) {
         if (this.working) {    
-            this.working.registerAccessory(identifier, constructor);
+            this.working.registerAccessory(name, constructor);
         }
     }
 
-    registerPlatform(identifier, constructor) {
+    registerPlatform(name, constructor, _identifier) {
         if (this.working) {        
-            this.working.registerPlatform(identifier, constructor);
+            this.working.registerPlatform(name, constructor);
         }
     }
 

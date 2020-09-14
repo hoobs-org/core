@@ -51,13 +51,16 @@ module.exports = class API extends EventEmitter {
 
     static isStaticPlatformPlugin(platform) {
         return "accessories" in platform;
-    }
+    }  
 
-    registerAccessory(...args) {
-        if (typeof args[1] === "function") {
-            this.emit("register_accessory", args[0], args[1]);
+    registerAccessory(identifier, name, constructor) {
+        if (typeof name === "function") {
+            constructor = name;
+            name = identifier;
+    
+            this.emit("register_accessory", name, constructor);
         } else {
-            this.emit("register_accessory", `${args[0]}.${args[1]}`, args[2]);
+            this.emit("register_accessory", name, constructor, identifier);
         }
     }
     
@@ -77,11 +80,14 @@ module.exports = class API extends EventEmitter {
         this.emit("publishExternalAccessories", accessories);
     }
     
-    registerPlatform(...args) {
-        if (typeof args[1] === "function") {
-            this.emit("register_platform", args[0], args[1]);
+    registerPlatform(identifier, name, constructor) {
+        if (typeof name === "function") {
+            constructor = name;
+            name = identifier;
+
+            this.emit("register_platform", name, constructor);
         } else {
-            this.emit("register_platform", `${args[0]}.${args[1]}`, args[2]);
+            this.emit("register_platform", name, constructor, identifier);
         }
     }
 
