@@ -39,8 +39,17 @@ module.exports = class Server {
             "-u",
             join(Server.paths.config, HBS.name || ""),
             "-p",
-            Server.paths.application
+            Server.paths.modules.local
         ].concat(options || []);
+
+        if (HBS.docker) {
+            this.arguments.push("-c");
+        }
+
+        if (HBS.name && HBS.name !== "") {
+            this.arguments.push("-i");
+            this.arguments.push(HBS.name);
+        }
 
         this.proc = null;
         this.events = {};
@@ -83,14 +92,6 @@ module.exports = class Server {
             bridge: join(root, "bin"),
             hap: join(root, "node_modules", "hap-nodejs")
         };
-    }
-
-    static dependencies() {
-        try {
-            return Object.keys((File.readJsonSync(join(Server.paths.application, "package.json")) || {}).dependencies || {});
-        } catch (_error) {
-            return [];
-        }
     }
 
     static hostname() {
@@ -157,7 +158,11 @@ module.exports = class Server {
         const current = _.extend({
             server: {},
             client: {},
-            bridge: {},
+            bridge: {
+                name: "HOOBS",
+                pin: "031-45-154",
+                port: 51826
+            },
             description: "",
             ports: {},
             plugins: [],
@@ -221,38 +226,6 @@ module.exports = class Server {
 
         if (!current.server.origin) {
             current.server.origin = "*";
-        }
-
-        const dependencies = Server.dependencies();
-
-        current.plugins = current.plugins || [];
-        current.platforms = current.platforms || [];
-        current.accessories = current.accessories || [];
-
-        for (let i = 0; i < dependencies.length; i++) {
-            if (dependencies[i].startsWith("@hoobs/")) {
-                const name = dependencies[i].split("/").pop();
-
-                let index = current.plugins.indexOf(name);
-
-                if (index >= 0) {
-                    current.plugins[index] = dependencies[i];
-                }
-
-                index = current.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
-
-                while (index >= 0) {
-                    current.platforms[index].plugin_map.plugin_name = dependencies[i];
-                    index = current.platforms.findIndex(p => (p.plugin_map || {}).plugin_name === name);
-                }
-
-                index = current.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
-
-                while (index >= 0) {
-                    current.accessories[index].plugin_map.plugin_name = dependencies[i];
-                    index = current.accessories.findIndex(a => (a.plugin_map || {}).plugin_name === name);
-                }
-            }
         }
 
         if (current.package_manager && current.package_manager === "yarn") {
@@ -590,7 +563,7 @@ module.exports = class Server {
             HBS.log.command("unlock");
         });
 
-        archive.on("error", (error) => {
+        archive.on("error", (_error) => {
             HBS.log.push.error("System Backup", error.message || "Unable to create backup");
             HBS.log.command("unlock");
         });

@@ -24,7 +24,6 @@
                 <router-link :to="`/system/${title}`" :class="section === title ? 'active' : ''">{{ translate(title) }}</router-link>
             </div>
             <router-link v-if="!$server.docker" to="/system/filesystem" :class="section === 'filesystem' ? 'active' : ''">{{ translate("file_system") }}</router-link>
-            <router-link v-if="temp && (temp || {}).main >= 0" to="/system/temp" :class="section === 'temp' ? 'active' : ''">{{ translate("temperature") }}</router-link>
             <router-link v-if="user.admin" to="/system/terminal" class="mobile-hide">{{ $t("terminal") }}</router-link>
         </div>
         <div v-if="info" ref="content" class="content">
@@ -78,21 +77,6 @@
                     </tbody>
                 </table>
             </div>
-            <div v-if="temp && (temp || {}).main >= 0 && (section === 'temp' || screen.width <= 815)" class="system-content">
-                <h2>{{ translate("temperature") }}</h2>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td style="min-width: 250px;">{{ $t("current") }}</td>
-                            <td style="width: 100%;">{{ getTemp(temp.main) }}°</td>
-                        </tr>
-                        <tr>
-                            <td style="min-width: 250px;">{{ $t("max") }}</td>
-                            <td style="width: 100%;">{{ getTemp(temp.max) }}°</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
         <modal-dialog v-if="changelog" width="550px" :ok="closeChangelog">
             <div v-if="formatted !== ''" v-html="formatted" ref="changelog" id="changelog"></div>
@@ -136,7 +120,6 @@
                 info: null,
                 status: null,
                 filesystem: null,
-                temp: null,
                 checking: true,
                 updates: [],
                 changelog: false,
@@ -146,7 +129,6 @@
 
         async mounted() {
             this.filesystem = await this.api.get("/system/filesystem");
-            this.temp = await this.api.get("/system/temp");
             this.status = await this.api.get("/status");
             this.info = await this.api.get("/system");
 

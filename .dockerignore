@@ -1,6 +1,7 @@
 .git
 .github
 builds
+cache
 etc
 node_modules
 notes

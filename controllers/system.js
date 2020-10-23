@@ -30,7 +30,6 @@ module.exports = class SystemController {
         HBS.app.get("/api/system/activity", (request, response) => this.activity(request, response));
         HBS.app.get("/api/system/releases", (request, response) => this.releases(request, response));
         HBS.app.get("/api/system/updates", (request, response) => this.updates(request, response));
-        HBS.app.get("/api/system/temp", (request, response) => this.temp(request, response));
     }
 
     async info(_request, response) {
@@ -54,10 +53,6 @@ module.exports = class SystemController {
         }
     
         return response.send(data);
-    }
-
-    async temp(_request, response) {
-        return response.send(await System.cpuTemperature());
     }
 
     async cpu(_request, response) {

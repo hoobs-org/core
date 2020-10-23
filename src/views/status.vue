@@ -57,7 +57,8 @@
 
         data() {
             return {
-                grid: []
+                grid: [],
+                loaded: false,
             };
         },
 
@@ -68,6 +69,7 @@
                 });
             } else {
                 this.grid = await this.api.get("/layout/dashboard");
+                this.loaded = true;
             }
         },
 
@@ -79,13 +81,15 @@
              },
 
             async updateDashboard() {
-                const data = JSON.parse(JSON.stringify(this.grid));
+                if (this.loaded) {
+                    const data = JSON.parse(JSON.stringify(this.grid));
 
-                for (let i = 0; i < data.length; i++) {
-                    delete data[i].moved;
+                    for (let i = 0; i < data.length; i++) {
+                        delete data[i].moved;
+                    }
+
+                    await this.api.post("/layout/dashboard", data);
                 }
-
-                await this.api.post("/layout/dashboard", data);
             }
         }
     };

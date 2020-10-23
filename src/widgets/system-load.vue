@@ -44,7 +44,7 @@
                     name: `${this.$t("hoobs")} (${this.running ? this.$t("running") : this.$t("stopped")})`,
                     data: []
                 }, {
-                    name: `${this.$t("cpu")} ${(this.cpu || {}).used || 0}%${this.temp >= 0 ? `, ${this.$client.temp_units && this.$client.temp_units === "celsius" ? Math.round(this.temp) : Math.round((this.temp * (9/5)) + 32)}°` : ""}`,
+                    name: `${this.$t("cpu")} ${(this.cpu || {}).used || 0}%`,
                     data: this.cpu.history
                 }, {
                     name: `${this.$t("memory")} ${(this.memory || {}).load || 0}% (${((this.memory || {}).used || {}).value || 0} ${((this.memory || {}).used || {}).units || "MB"})`,
@@ -66,10 +66,6 @@
 
             running() {
                 return this.$store.state.running;
-            },
-
-            temp() {
-                return this.$store.state.temp;
             },
 
             uptime() {

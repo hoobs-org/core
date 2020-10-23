@@ -118,6 +118,14 @@ module.exports = class API {
 
         HBS.app.use(Parser.json());
 
+        if (HBS.debug) {
+            HBS.app.use((request, _response, next) => {
+                HBS.log.debug(`"${request.method}" ${request.url}`);
+
+                next();
+            });
+        }
+
         const publicRoutes = [
             "/api/auth",
             "/api/auth/logon",
@@ -166,8 +174,7 @@ module.exports = class API {
             plugins: new (require("../controllers/plugins"))(),
             accessories: new (require("../controllers/accessories"))(),
             layout: new (require("../controllers/layout"))(),
-            cockpit: new (require("../controllers/cockpit"))(),
-            ringLogin: new (require("../controllers/ring-login"))()
+            cockpit: new (require("../controllers/cockpit"))()
         }
 
         if (client) {

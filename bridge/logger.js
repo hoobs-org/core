@@ -27,9 +27,8 @@ function setDebug(enabled) {
 
 const loggerCache = {};
 
-class Logger {
-    constructor(plugin, prefix) {
-        this.plugin = plugin;
+class Console {
+    constructor(prefix) {
         this.prefix = prefix;
     }
 
@@ -38,21 +37,19 @@ class Logger {
             this.log.apply(this, ["debug"].concat(Array.prototype.slice.call(arguments)));
         }
     }
-
+    
     info() {
         this.log.apply(this, ["info"].concat(Array.prototype.slice.call(arguments)));
     }
-
+    
     warn() {
-        if (debug) {
-            this.log.apply(this, ["warn"].concat(Array.prototype.slice.call(arguments)));
-        }
+        this.log.apply(this, ["warn"].concat(Array.prototype.slice.call(arguments)));
     }
-
+    
     error() {
         this.log.apply(this, ["error"].concat(Array.prototype.slice.call(arguments)));
     }
-
+    
     log(level, msg) {
         msg = util.format.apply(util, Array.prototype.slice.call(arguments, 1));
     
@@ -66,10 +63,10 @@ class Logger {
             process.send({ event: "info_log", data: msg });
         }
     }
-
-    static withPrefix(plugin, prefix) {
+    
+    static withPrefix(prefix) {
         if (!loggerCache[prefix]) {
-            const logger = new Logger(plugin, prefix);
+            const logger = new Console(prefix);
             const log = logger.info.bind(logger);
     
             log.debug = logger.debug;
@@ -77,18 +74,17 @@ class Logger {
             log.warn = logger.warn;
             log.error = logger.error;
             log.log = logger.log;
-            log.plugin = logger.plugin;
             log.prefix = logger.prefix;
     
             loggerCache[prefix] = log;
         }
-
+    
         return loggerCache[prefix];
     }
 }
 
 module.exports = {
-    Logger,
+    Console,
     setDebug,
-    internal: new Logger()
+    internal: new Console()
 }

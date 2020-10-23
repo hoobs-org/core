@@ -66,7 +66,6 @@ export default new Vuex.Store({
                 [16, -1], [17, -1], [18, -1], [19, -1]
             ]
         },
-        temp: -1,
         menus: {
             nav: false,
             service: false,
@@ -174,9 +173,9 @@ export default new Vuex.Store({
                 case "status":
                     state.version = payload.data.version;
                     state.running = payload.data.running;
-        
+
                     let diff = payload.data.uptime;
-        
+
                     state.uptime.days = Math.floor(diff / (1000 * 60 * 60 * 24));
                     diff -=  state.uptime.days * (1000 * 60 * 60 * 24);
                     state.uptime.hours = Math.floor(diff / (1000 * 60 * 60));
@@ -204,7 +203,6 @@ export default new Vuex.Store({
                             state.memory.history[i][0] = `${i}`;
                         }
 
-                        state.temp = payload.data.temp.main;
                         state.cpu.history[state.cpu.history.length - 1] = [state.cpu.history.length - 1, state.cpu.used];
                         state.memory.history[state.memory.history.length - 1] = [state.memory.history.length - 1, state.memory.load];
                     }

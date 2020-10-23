@@ -61,7 +61,6 @@ usage()
     echo "        -m, --npm [version]       the desired NPM version"
     echo "        -c, --core [file]         file path to NPM pack file"
     echo "        --reset                   resets to factory settings"
-    echo "	  --resetsd		    resets to factory settings and shuts down the device"
     echo "        -h, --help                displays this help menu"
     echo ""
     echo "    Returns:"
@@ -87,16 +86,6 @@ reset()
 
     rm -fR /home/hoobs/.hoobs/
     shutdown -r now
-}
-
-resetsd()
-{
-    echo ""
-    echo "Reseting device and shutting down"
-    echo ""
-    
-    rm -fR /home/hoobs/.hoobs/
-    shutdown -h now
 }
 
 get_os()
@@ -336,10 +325,6 @@ while [ "$1" != "" ]; do
         --reset )         reset
                           exit
                           ;;
-			  
-	--resetsd )       resetsd
-                          exit
-                          ;;	 
 
         -n | --node )     shift
                           NODE_TARGET=$1

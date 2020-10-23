@@ -1,4 +1,4 @@
-FROM node:12.16.2-alpine3.11
+FROM node:12.19.0-alpine3.11
 
 RUN apk add --no-cache --virtual .gyp-deps python make gcc g++ git avahi-compat-libdns_sd avahi-dev dbus iputils nano ffmpeg
 RUN chmod 4755 /bin/ping

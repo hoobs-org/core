@@ -186,8 +186,6 @@ case $MODE in
                 ;;
 
     "publish")  if [[ "$DOCKER" = "true" && "$UTILITY" = "false" ]]; then
-                    docker login
-
                     if [[ "$BUILD" = "true" ]]; then
                         npm pack
                         rm -f ./builds/hoobs-core.tgz
@@ -201,7 +199,9 @@ case $MODE in
                     read -p "Type \"yes\" to continue: " CONFIRM
 
                     if [[ "$CONFIRM" = "yes" ]]; then
-                        docker buildx build --no-cache --platform $ARCH -t hoobs/hoobs:$TAG --push .
+                        docker buildx build --cache-to=type=local,dest=cache,mode=max --platform $ARCH --tag hoobs/hoobs:$TAG .
+                        docker login
+                        docker buildx build --push --cache-from=type=local,src=cache --platform $ARCH --tag hoobs/hoobs:$TAG .
                     fi
                 elif [[ "$DOCKER" = "false" && "$UTILITY" = "true" ]]; then
                     if [[ -f "../hoobs-upgrade/package.json" ]]; then
