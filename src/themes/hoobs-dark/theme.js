@@ -20,7 +20,7 @@ export default {
     name: "hoobs-dark",
     title: "HOOBS Dark",
     translate: "hoobs_dark",
-    donate: "https://www.paypal.me/hoobsofficial",
+    donate: "https://paypal.me/hoobsorg",
     homepage: {
         name: "HOOBS.org",
         url: "https://hoobs.org"

@@ -19,7 +19,7 @@
 export default {
     name: "tealzier",
     title: "Tealzier",
-    donate: "https://www.paypal.me/hoobsofficial",
+    donate: "https://paypal.me/hoobsorg",
     homepage: {
         name: "HOOBS.org",
         url: "https://hoobs.org"

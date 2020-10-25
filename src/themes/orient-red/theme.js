@@ -19,7 +19,7 @@
 export default {
     name: "orient-red",
     title: "Orient Red",
-    donate: "https://www.paypal.me/hoobsofficial",
+    donate: "https://paypal.me/hoobsorg",
     homepage: {
         name: "HOOBS.org",
         url: "https://hoobs.org"
