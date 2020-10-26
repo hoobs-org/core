@@ -61,7 +61,7 @@ usage()
     echo "        -m, --npm [version]       the desired NPM version"
     echo "        -c, --core [file]         file path to NPM pack file"
     echo "        --reset                   resets to factory settings"
-    echo "	  --resetsd		    resets to factory settings and shuts down the device"
+    echo "        --resetsd                 resets to factory settings and shuts down the device"
     echo "        -h, --help                displays this help menu"
     echo ""
     echo "    Returns:"
