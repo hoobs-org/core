@@ -30,7 +30,8 @@ const Monitor = async function Monitor() {
 
     HBS.log.monitor("load", {
         cpu: await System.currentLoad(),
-        memory: await System.mem()
+        memory: await System.mem(),
+        temp: await System.cpuTemperature()
     });
 
     if ((HBS.config.server.polling_seconds || 10) > 0) {
