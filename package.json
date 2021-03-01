@@ -34,7 +34,7 @@
     },
     "dependencies": {
         "archiver": "^5.1.0",
-        "axios": "^0.21.0",
+        "axios": "^0.21.1",
         "commander": "^6.2.0",
         "cors": "^2.8.5",
         "express": "^4.17.1",
@@ -48,7 +48,7 @@
         "prompts": "^2.4.0",
         "sanitize-filename": "^1.6.3",
         "semver": "^7.3.4",
-        "systeminformation": "^4.33.6",
+        "systeminformation": "^5.3.4",
         "unzipper": "^0.10.11",
         "ws": "^7.4.1"
     },

@@ -59,7 +59,7 @@ module.exports = class SystemController {
     async cpu(_request, response) {
         return response.send({
             information: await System.cpu(),
-            speed: await System.cpuCurrentspeed(),
+            speed: await System.cpuCurrentSpeed(),
             load: await System.currentLoad(),
             cache: await System.cpuCache()
         });
