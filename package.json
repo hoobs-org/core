@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.3.2",
+    "version": "3.3.3",
     "description": "Certified HOOBS stack",
     "license": "GPL-3.0",
     "keywords": [
@@ -41,7 +41,7 @@
         "express-ws": "^4.0.0",
         "formidable": "^1.2.2",
         "fs-extra": "^9.0.1",
-        "homebridge": "^1.1.7",
+        "homebridge": "1.3.1",
         "lodash": "^4.17.20",
         "node-cache": "^5.1.2",
         "node-pty": "^0.9.0",

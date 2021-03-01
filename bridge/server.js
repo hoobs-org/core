@@ -48,8 +48,9 @@ const {
     InternalAPIEvent,
 } = require("homebridge/lib/api");
 
-const { PlatformAccessory } = require("homebridge/lib/platformAccessory");
 const mac = require("homebridge/lib/util/mac");
+const { PlatformAccessory } = require("homebridge/lib/platformAccessory");
+const { ExternalPortService } = require("homebridge/lib/externalPortService");
 const { PluginManager } = require("homebridge/lib/pluginManager");
 const HBS = require("../server/instance");
 const Plugins = require("../server/plugins");
@@ -70,7 +71,7 @@ module.exports = class Server {
         this.config = options.config;
         this.keepOrphanedCachedAccessories = options.keepOrphanedCachedAccessories || false;
         this.allowInsecureAccess = true;
-        this.externalPorts = this.config.ports;
+        this.externalPortService = new ExternalPortService(this.config.ports);
 
         this.api = new HomebridgeAPI();
         this.api.on(InternalAPIEvent.REGISTER_PLATFORM_ACCESSORIES, this.handleRegisterPlatformAccessories.bind(this));
@@ -494,23 +495,10 @@ module.exports = class Server {
     handlePublishExternalAccessories(accessories) {
         const accessoryPin = this.config.bridge.pin;
 
-        accessories.forEach(accessory => {
-            let accessoryPort = 0;
-
-            if (this.externalPorts) {
-                if (this.nextExternalPort === undefined) {
-                    this.nextExternalPort = this.externalPorts.start;
-                }
-
-                if (this.nextExternalPort <= this.externalPorts.end) {
-                    accessoryPort = this.nextExternalPort++;
-                } else {
-                    log.warn("External port pool ran out of ports. Fallback to random assign.");
-                }
-            }
-
+        accessories.forEach(async (accessory) => {
             const hapAccessory = accessory._associatedHAPAccessory;
             const advertiseAddress = mac.generate(hapAccessory.UUID);
+            const accessoryPort = await this.externalPortService.requestPort(advertiseAddress);
 
             if (this.publishedExternalAccessories.has(advertiseAddress)) {
                 throw new Error(`Accessory ${hapAccessory.displayName} experienced an address collision.`);
