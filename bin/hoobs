@@ -223,6 +223,24 @@ switch ((command || "").toLowerCase()) {
                 configured = true;
             }
 
+            if (File.existsSync("/usr/local/bin/node")) {
+                try {
+                    execSync("sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node", {
+                        stdio: "inherit"
+                    });
+                } catch (_error) {
+                    console.log("can't run command \"sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node\"");
+                }
+            } else if (File.existsSync("/usr/bin/node")) {
+                try {
+                    execSync("sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/node", {
+                        stdio: "inherit"
+                    });
+                } catch (_error) {
+                    console.log("can't run command \"sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/node\"");
+                }
+            }
+
             if (configured) {
                 await (require(join(root, "../scripts/systemd")))(false);
                 await (require(join(root, "../scripts/reboot")))(reboot, "hoobs.service");
