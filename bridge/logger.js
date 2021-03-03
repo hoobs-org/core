@@ -52,6 +52,11 @@ class Console {
     
     log(level, msg) {
         msg = util.format.apply(util, Array.prototype.slice.call(arguments, 1));
+
+        if (msg.startsWith("Initializing HAP-NodeJS")) return;
+        if (msg.match(/^(?=.*\bhoobs\b)(?=.*\bhomebridge\b).*$/gmi)) return;
+        if (msg.match(/^(?=.*\brecommended\b)(?=.*\bnode\b).*$/gmi)) return;
+        if (msg.match(/^(?=.*\brecommended\b)(?=.*\bhomebridge\b).*$/gmi)) return;
     
         if (this.prefix) {
             msg = `[${this.prefix}] ${msg}`;
