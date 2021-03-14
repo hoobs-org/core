@@ -22,7 +22,7 @@ const _ = require("lodash");
 const fs = require("fs");
 const os = require("os");
 const { join } = require("path");
-const storage = require("node-persist");
+const { StorageService } = require("homebridge/lib/storageService");
 
 const {
     Accessory,
@@ -58,12 +58,12 @@ const Plugins = require("../server/plugins");
 PluginManager.PLUGIN_IDENTIFIER_PATTERN = /^((@[\S]*)\/)?([\S-]*)$/;
 
 const home = HBS.docker ? "/hoobs" : join(os.userInfo().homedir, ".hoobs");
-const accessoryStorage = storage.create();
 const log = internal;
 
 module.exports = class Server {
     constructor(options = {}) {
-        accessoryStorage.initSync({ dir: join(home, "etc", HBS.name || "", "accessories") });
+        this.storageService = new StorageService(join(home, "etc", HBS.name || "", "accessories"));
+        this.storageService.initSync();
 
         this.cachedPlatformAccessories = [];
         this.cachedAccessoriesFileCreated = false;
@@ -196,16 +196,26 @@ module.exports = class Server {
         process.send({ event: "api_launched" });
     }
 
-    loadCachedPlatformAccessoriesFromDisk() {
-        const cachedAccessories = accessoryStorage.getItem("cachedAccessories");
+    async loadCachedPlatformAccessoriesFromDisk() {
+        let cachedAccessories = null;
+
+        if (!fs.existsSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"))) {
+            fs.writeFileSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"), "[]");
+        }
+
+        try {
+            cachedAccessories = await this.storageService.getItem("cachedAccessories");
+        } catch (error) {
+            log.error(`Failed to load cached accessories from disk: ${error.message}`);
+        }
 
         if (cachedAccessories) {
             this.cachedPlatformAccessories = cachedAccessories.map(serialized => {
                 return PlatformAccessory.deserialize(serialized);
             });
-
-            this.cachedAccessoriesFileCreated = true;
         }
+
+        this.cachedAccessoriesFileCreated = true;
     }
 
     restoreCachedPlatformAccessories() {
@@ -255,16 +265,18 @@ module.exports = class Server {
     }
 
     saveCachedPlatformAccessoriesOnDisk() {
-        if ((this.cachedPlatformAccessories || []).length > 0) {
-            this.cachedAccessoriesFileCreated = true;
+        if (this.cachedAccessoriesFileCreated) {
+            try {
+                const serializedAccessories = this.cachedPlatformAccessories.map(accessory => PlatformAccessory.serialize(accessory));
 
-            const serializedAccessories = this.cachedPlatformAccessories.map(accessory => PlatformAccessory.serialize(accessory));
+                if (!fs.existsSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"))) {
+                    fs.writeFileSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"), "[]");
+                }
 
-            accessoryStorage.setItemSync("cachedAccessories", serializedAccessories);
-        } else if (this.cachedAccessoriesFileCreated) {
-            this.cachedAccessoriesFileCreated = false;
-
-            accessoryStorage.removeItemSync("cachedAccessories");
+                this.storageService.setItemSync("cachedAccessories", serializedAccessories);
+            } catch (error) {
+                log.error(`Failed to save cached accessories to disk: ${error.message}`);
+            }
         }
     }
 
