@@ -79,7 +79,7 @@ module.exports = () => {
                 setTimeout(() => {
                     process.send({ event: "shutdown" });
                     process.exit(128 + signals[signal]);
-                }, 3000)
+                }, 5000)
             });
         });
     

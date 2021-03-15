@@ -19,10 +19,9 @@
 
 const _ = require("lodash");
 
-const fs = require("fs");
+const fs = require("fs-extra");
 const os = require("os");
 const { join } = require("path");
-const { StorageService } = require("homebridge/lib/storageService");
 
 const {
     Accessory,
@@ -62,11 +61,7 @@ const log = internal;
 
 module.exports = class Server {
     constructor(options = {}) {
-        this.storageService = new StorageService(join(home, "etc", HBS.name || "", "accessories"));
-        this.storageService.initSync();
-
         this.cachedPlatformAccessories = [];
-        this.cachedAccessoriesFileCreated = false;
         this.publishedExternalAccessories = new Map();
         this.config = options.config;
         this.keepOrphanedCachedAccessories = options.keepOrphanedCachedAccessories || false;
@@ -199,23 +194,27 @@ module.exports = class Server {
     async loadCachedPlatformAccessoriesFromDisk() {
         let cachedAccessories = null;
 
-        if (!fs.existsSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"))) {
-            fs.writeFileSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"), "[]");
-        }
+        fs.ensureDirSync(join(home, "etc", HBS.name || "", "accessories"));
 
-        try {
-            cachedAccessories = await this.storageService.getItem("cachedAccessories");
-        } catch (error) {
-            log.error(`Failed to load cached accessories from disk: ${error.message}`);
+        if (fs.existsSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"))) {
+            try {
+                cachedAccessories = JSON.parse(fs.readFileSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories")).toString());
+            } catch (error) {
+                if (error instanceof SyntaxError) {
+                    cachedAccessories = JSON.parse(fs.readFileSync(join(home, "etc", HBS.name || "", "accessories", ".cachedAccessories.bak")).toString());
+                } else {
+                    log.error(`Failed to load cached accessories from disk: ${error.message}`);
+                }
+            }
         }
 
         if (cachedAccessories) {
-            this.cachedPlatformAccessories = cachedAccessories.map(serialized => {
-                return PlatformAccessory.deserialize(serialized);
-            });
-        }
+            this.cachedPlatformAccessories = cachedAccessories.map((serialized) => PlatformAccessory.deserialize(serialized));
 
-        this.cachedAccessoriesFileCreated = true;
+            if (cachedAccessories.length > 0) {
+                fs.copyFileSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"), join(home, "etc", HBS.name || "", "accessories", ".cachedAccessories.bak"));
+            }
+        }
     }
 
     restoreCachedPlatformAccessories() {
@@ -265,18 +264,15 @@ module.exports = class Server {
     }
 
     saveCachedPlatformAccessoriesOnDisk() {
-        if (this.cachedAccessoriesFileCreated) {
-            try {
-                const serializedAccessories = this.cachedPlatformAccessories.map(accessory => PlatformAccessory.serialize(accessory));
+        fs.ensureDirSync(join(home, "etc", HBS.name || "", "accessories"));
 
-                if (!fs.existsSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"))) {
-                    fs.writeFileSync(join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"), "[]");
-                }
-
-                this.storageService.setItemSync("cachedAccessories", serializedAccessories);
-            } catch (error) {
-                log.error(`Failed to save cached accessories to disk: ${error.message}`);
-            }
+        try {
+            fs.writeFileSync(
+                join(home, "etc", HBS.name || "", "accessories", "cachedAccessories"),
+                JSON.stringify(this.cachedPlatformAccessories.map(accessory => PlatformAccessory.serialize(accessory)))
+            );
+        } catch (error) {
+            log.error(`Failed to save cached accessories to disk: ${error.message}`);
         }
     }
 
