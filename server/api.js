@@ -170,6 +170,7 @@ module.exports = class API {
             status: new (require("../controllers/status"))(false),
             config: new (require("../controllers/config"))(false),
             system: new (require("../controllers/system"))(),
+            migration: new (require("../controllers/migration"))(),
             service: new (require("../controllers/service"))(),
             plugins: new (require("../controllers/plugins"))(),
             accessories: new (require("../controllers/accessories"))(),

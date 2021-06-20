@@ -29,7 +29,7 @@
         <div v-if="info" ref="content" class="content">
             <div v-if="section === 'software' || screen.width <= 815" class="system-content">
                 <h2>{{ $t("software") }}</h2>
-                <div v-if="!$server.docker" class="update-card">
+                <div v-if="!$server.docker && tasks.length <= 0" class="update-card">
                     <b>HOOBS Core</b>
                     <span v-if="status">Current Version: {{ status["hoobs_version"] }}</span>
                     <div v-if="checking" class="update-actions">
@@ -44,7 +44,7 @@
                         <b>{{ $t("up_to_date") }}</b>
                     </div>
                 </div>
-                <div v-if="!$server.docker" class="update-card">
+                <div v-if="!$server.docker && instances && tasks.length <= 0" class="update-card">
                     <b>HOOBS 4 is Available</b>
                     <ul>
                         <li>Easy Multi-Bridge Configuration</li>
@@ -61,11 +61,28 @@
                         <li>Encrypted Config Files</li>
                         <li>And Much More ...</li>
                     </ul>
-                    <div class="update-actions">
-                        <div class="button button-primary" v-on:click="migrate()">Start Migration</div>
+                    <div v-if="!running" class="update-actions">
+                        <checkbox id="split" v-model="split"> <label for="split">Seperate Plugins to Individual Bridges</label></checkbox>
+                        <div class="button button-primary" v-on:click="prerun()">Start Migration</div>
+                    </div>
+                    <div v-else class="update-actions">
+                        <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
                     </div>
                 </div>
-                <table>
+                <div v-if="!$server.docker && instances && tasks.length > 0" class="update-card">
+                    <b>HOOBS 4 Migration Steps</b>
+                    <ol>
+                        <li v-for="(task, index) in tasks" :key="`task:${index}`">{{ task.description }}</li>
+                    </ol>
+                    <div v-if="!running" class="update-actions">
+                        <div class="button" v-on:click="cancel()">Cancel</div>
+                        <div class="button button-primary" v-on:click="migrate()">Migrate</div>
+                    </div>
+                    <div v-else class="update-actions">
+                        <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
+                    </div>
+                </div>
+                <table v-if="tasks.length <= 0">
                     <tbody>
                         <tr v-for="(value, name) in status" :key="name">
                             <td style="min-width: 250px;">{{ translate(name) }}</td>
@@ -75,7 +92,7 @@
                 </table>
             </div>
             <div v-for="(item, title) in info" :key="title">
-                <div v-if="section === title || screen.width <= 815" class="system-content">
+                <div v-if="tasks.length <= 0 && (section === title || screen.width <= 815)" class="system-content">
                     <h2>{{ translate(title) }}</h2>
                     <table>
                         <tbody>
@@ -87,7 +104,7 @@
                     </table>
                 </div>
             </div>
-            <div v-if="!$server.docker && (section === 'filesystem' || screen.width <= 815)" class="system-content">
+            <div v-if="!$server.docker && tasks.length <= 0 && (section === 'filesystem' || screen.width <= 815)" class="system-content">
                 <h2>{{ translate("file_system") }}</h2>
                 <table>
                     <tbody>
@@ -109,6 +126,7 @@
     import Showdown from "showdown";
     import Prism from "prismjs";
 
+    import Checkbox from "vue-material-checkbox";
     import Marquee from "@/components/loading-marquee.vue";
     import ModalDialog from "@/components/modal-dialog.vue";
 
@@ -118,6 +136,7 @@
         name: "system",
 
         components: {
+            "checkbox": Checkbox,
             "loading-marquee": Marquee,
             "modal-dialog": ModalDialog
         },
@@ -144,14 +163,21 @@
                 checking: true,
                 updates: [],
                 changelog: false,
-                formatted: ""
+                formatted: "",
+                instances: false,
+                split: false,
+                tasks: [],
+                running: false,
             }
         },
 
         async mounted() {
+            this.tasks = [];
+
             this.filesystem = await this.api.get("/system/filesystem");
             this.status = await this.api.get("/status");
             this.info = await this.api.get("/system");
+            this.instances = (await this.api.get("/migration/instances")).find((item) => item.name === "hoobs") !== undefined;
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
                 if (document.querySelector(window.location.hash)) {
@@ -236,8 +262,34 @@
                 return Math.round((value * (9/5)) + 32);
             },
 
-            migrate() {
-                // MIGRATE
+            async prerun() {
+                this.running = true;
+
+                const response = await this.api.get(`/migration/prerun/hoobs?split=${this.split ? "true": "false"}`);
+
+                if (response.error) {
+                    this.instances = false;
+                    this.split = false;
+                    this.tasks = [];
+                } else {
+                    this.tasks = response.tasks;
+                }
+
+                this.running = false;
+            },
+
+            async migrate() {
+                this.running = true;
+
+                await this.api.get(`/migration/execute/hoobs?split=${this.split ? "true": "false"}`);
+
+                this.$store.commit("migrate");
+            },
+
+            cancel() {
+                this.split = false;
+                this.tasks = [];
+                this.running = false;
             }
         }
     }

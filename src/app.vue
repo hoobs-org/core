@@ -211,6 +211,13 @@
 
             this.$store.subscribe(async (mutation, state) => {
                 switch (mutation.type) {
+                    case "migrate":
+                        setTimeout(() => {
+                            window.location.href = "/";
+                        }, 2 * 60 * 1000);
+
+                        break;
+
                     case "reboot":
                         window.location.reload();
                         break;

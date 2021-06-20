@@ -93,6 +93,10 @@ export default new Vuex.Store({
             state.refresh = new Date();
         },
 
+        migrate(state) {
+            state.refresh = new Date();
+        },
+
         reboot(state) {
             state.refresh = new Date();
         },
