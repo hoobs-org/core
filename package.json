@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.3.5",
+    "version": "3.3.6",
     "description": "Certified HOOBS stack",
     "license": "GPL-3.0",
     "keywords": [
@@ -27,12 +27,14 @@
         "node": ">=10.16.0"
     },
     "scripts": {
+        "debug": "bin/hoobs-build start",
         "build": "vue-cli-service build",
         "prepare": "npm run build",
         "postinstall": "bin/hoobs upgrade",
         "hoobs": "bin/hoobs-build"
     },
     "dependencies": {
+        "@hoobs/migration": "^4.4.8",
         "archiver": "^5.1.0",
         "axios": "^0.21.1",
         "commander": "^6.2.0",
@@ -42,15 +44,15 @@
         "formidable": "^1.2.2",
         "fs-extra": "^9.0.1",
         "homebridge": "1.3.3",
-        "lodash": "^4.17.20",
+        "lodash": "^4.17.21",
         "node-cache": "^5.1.2",
         "node-pty": "^0.9.0",
         "prompts": "^2.4.0",
         "sanitize-filename": "^1.6.3",
         "semver": "^7.3.4",
-        "systeminformation": "^5.3.4",
+        "systeminformation": "^5.6.7",
         "unzipper": "^0.10.11",
-        "ws": "^7.4.1"
+        "ws": "^7.5.0"
     },
     "devDependencies": {
         "@chenfengyuan/vue-qrcode": "^1.0.2",
