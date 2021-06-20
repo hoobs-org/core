@@ -44,6 +44,27 @@
                         <b>{{ $t("up_to_date") }}</b>
                     </div>
                 </div>
+                <div v-if="!$server.docker" class="update-card">
+                    <b>HOOBS 4 is Available</b>
+                    <ul>
+                        <li>Easy Multi-Bridge Configuration</li>
+                        <li>Isolate Plugins from Other Plugins</li>
+                        <li>Redesigned Interface</li>
+                        <li>Camera Support</li>
+                        <li>Expanded Accessory Support</li>
+                        <li>Desktop App</li>
+                        <li>Redesigned Backup and Restore</li>
+                        <li>Stable Upgrades</li>
+                        <li>Intergrated Node Upgrades</li>
+                        <li>Filtered Logs</li>
+                        <li>Live Debug Log Switch</li>
+                        <li>Encrypted Config Files</li>
+                        <li>And Much More ...</li>
+                    </ul>
+                    <div class="update-actions">
+                        <div class="button button-primary" v-on:click="migrate()">Start Migration</div>
+                    </div>
+                </div>
                 <table>
                     <tbody>
                         <tr v-for="(value, name) in status" :key="name">
@@ -213,6 +234,10 @@
                 }
 
                 return Math.round((value * (9/5)) + 32);
+            },
+
+            migrate() {
+                // MIGRATE
             }
         }
     }
