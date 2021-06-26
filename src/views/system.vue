@@ -29,7 +29,7 @@
         <div v-if="info" ref="content" class="content">
             <div v-if="section === 'software' || screen.width <= 815" class="system-content">
                 <h2>{{ $t("software") }}</h2>
-                <div v-if="!$server.docker && instances && tasks.length <= 0" class="update-card">
+                <div v-if="!$server.docker && instances && tasks.length <= 0 && arch === 'arm' && $server.port === 80" class="update-card">
                     <b>HOOBS 4 is Available</b>
                     <ul>
                         <li>Easy Multi-Bridge Configuration</li>
@@ -133,6 +133,7 @@
 
         data() {
             return {
+                arch: null,
                 info: null,
                 status: null,
                 running: false,
@@ -151,6 +152,7 @@
             this.status = await this.api.get("/status");
             this.info = await this.api.get("/system");
             this.instances = (await this.api.get("/migration/instances")).find((item) => item.name === "hoobs") !== undefined;
+            this.arch = this.info.operating_system.arch;
 
             if (window.location.hash && window.location.hash !== "" && window.location.hash !== "#") {
                 if (document.querySelector(window.location.hash)) {

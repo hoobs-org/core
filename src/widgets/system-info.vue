@@ -22,7 +22,7 @@
             <tbody>
                 <tr v-for="(value, name) in info" :key="name">
                     <td>{{ $t(name) }}</td>
-                    <td v-if="!$server.docker && name === 'hoobs_version'">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ $t("update_available") }}</router-link></td>
+                    <td v-if="!$server.docker && name === 'hoobs_version' && arch === 'arm' && $server.port === 80">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ $t("update_available") }}</router-link></td>
                     <td v-else>{{ value }}</td>
                 </tr>
             </tbody>
@@ -42,12 +42,34 @@
 
         data() {
             return {
-                info: null
+                info: null,
+                system: null,
+                arch: null
             }
         },
 
         async mounted() {
-            this.info = await this.api.get("/status");
+            const waits = [];
+
+            waits.push(new Promise((resolve) => {
+                this.api.get("/status").then((data) => {
+                    this.info = data;
+
+                    resolve();
+                });
+            }));
+
+            waits.push(new Promise((resolve) => {
+                this.api.get("/system").then((data) => {
+                    this.system = data;
+
+                    resolve();
+                });
+            }));
+
+            await Promise.allSettled(waits);
+
+            this.arch = this.system.operating_system.arch;
         }
     };
 </script>
