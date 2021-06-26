@@ -34,7 +34,7 @@
         "hoobs": "bin/hoobs-build"
     },
     "dependencies": {
-        "@hoobs/migration": "^4.4.10",
+        "@hoobs/migration": "^4.4.11",
         "archiver": "^5.1.0",
         "axios": "^0.21.1",
         "commander": "^6.2.0",
