@@ -59,6 +59,7 @@
                     <ol>
                         <li v-for="(task, index) in tasks" :key="`task:${index}`">{{ task.description }}</li>
                     </ol>
+                    <p class="warning" v-if="split">You have chosen to seperate plugins to individual bridges. This will require re-pairing with Apple&reg; Home. It is recommended to remove your old bridges from Apple&reg; Home before migrating.</p>
                     <div v-if="!running" class="update-actions">
                         <div class="button" v-on:click="cancel()">Cancel</div>
                         <div class="button button-primary" v-on:click="migrate()">Migrate</div>
@@ -270,6 +271,11 @@
         border-radius: 3px;
         color: var(--text) !important;
         margin: 10px 0;
+    }
+
+    #system .update-card .warning {
+        font-weight: bold;
+        color: #feb400;
     }
 
     #system .update-card .update-actions {
