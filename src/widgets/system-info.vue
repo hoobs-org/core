@@ -19,16 +19,11 @@
 <template>
     <div id="system">
         <table>
-            <tbody v-if="running">
+            <tbody>
                 <tr v-for="(value, name) in info" :key="name">
                     <td>{{ $t(name) }}</td>
-                    <td v-if="!$server.docker && name === 'hoobs_version' && updates.length > 0">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ updates[0].version }} {{ $t("update_available") }}</router-link></td>
+                    <td v-if="!$server.docker && name === 'hoobs_version'">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ $t("update_available") }}</router-link></td>
                     <td v-else>{{ value }}</td>
-                </tr>
-            </tbody>
-            <tbody v-else>
-                <tr>
-                    <td colspan="2" class="empty">{{ $t("service_stoped_message") }}</td>
                 </tr>
             </tbody>
         </table>
@@ -47,20 +42,12 @@
 
         data() {
             return {
-                info: null,
-                updates: []
-            }
-        },
-
-        computed: {
-            running() {
-                return this.$store.state.running;
+                info: null
             }
         },
 
         async mounted() {
             this.info = await this.api.get("/status");
-            this.updates = await this.api.get("/system/updates");
         }
     };
 </script>
