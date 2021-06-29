@@ -34,7 +34,7 @@
         "hoobs": "bin/hoobs-build"
     },
     "dependencies": {
-        "@hoobs/migration": "^4.4.11",
+        "@hoobs/migration": "^4.4.12",
         "archiver": "^5.1.0",
         "axios": "^0.21.1",
         "commander": "^6.2.0",
@@ -59,7 +59,7 @@
         "@jaames/iro": "^5.3.1",
         "@vue/cli-plugin-router": "^4.5.9",
         "@vue/cli-plugin-vuex": "^4.5.9",
-        "@vue/cli-service": "^4.5.9",
+        "@vue/cli-service": "^4.5.13",
         "chartkick": "^3.2.1",
         "deep-equal": "^2.0.5",
         "deepmerge": "^4.2.2",
