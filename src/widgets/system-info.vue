@@ -19,16 +19,11 @@
 <template>
     <div id="system">
         <table>
-            <tbody v-if="running">
+            <tbody>
                 <tr v-for="(value, name) in info" :key="name">
                     <td>{{ $t(name) }}</td>
-                    <td v-if="!$server.docker && name === 'hoobs_version' && updates.length > 0">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ updates[0].version }} {{ $t("update_available") }}</router-link></td>
+                    <td v-if="!$server.docker && name === 'hoobs_version' && arch === 'arm' && $server.port === 80">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ $t("update_available") }}</router-link></td>
                     <td v-else>{{ value }}</td>
-                </tr>
-            </tbody>
-            <tbody v-else>
-                <tr>
-                    <td colspan="2" class="empty">{{ $t("service_stoped_message") }}</td>
                 </tr>
             </tbody>
         </table>
@@ -48,19 +43,33 @@
         data() {
             return {
                 info: null,
-                updates: []
-            }
-        },
-
-        computed: {
-            running() {
-                return this.$store.state.running;
+                system: null,
+                arch: null
             }
         },
 
         async mounted() {
-            this.info = await this.api.get("/status");
-            this.updates = await this.api.get("/system/updates");
+            const waits = [];
+
+            waits.push(new Promise((resolve) => {
+                this.api.get("/status").then((data) => {
+                    this.info = data;
+
+                    resolve();
+                });
+            }));
+
+            waits.push(new Promise((resolve) => {
+                this.api.get("/system").then((data) => {
+                    this.system = data;
+
+                    resolve();
+                });
+            }));
+
+            await Promise.allSettled(waits);
+
+            this.arch = this.system.operating_system.arch;
         }
     };
 </script>

@@ -16,9 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.                          *
  **************************************************************************************************/
 
+const { exec } = require("child_process");
+const { join, dirname } = require("path");
 const Migration = require("@hoobs/migration");
 const HBS = require("../server/instance");
- 
+
 module.exports = class MigrationController {
     constructor() {
         HBS.app.get("/api/migration/instances", (_request, response) => response.send(MigrationController.instances()));
@@ -41,14 +43,12 @@ module.exports = class MigrationController {
     }
 
     static async execute(request, response) {
-        const tasks = new Migration.tasks(false);
         const instances = MigrationController.instances();
         const instance = instances.find((item) => item.name === request.params.instance);
+        const migration = dirname(require.resolve("@hoobs/migration"));
 
         if (instance) {
-            await tasks.interrogate("hoobs", instance, request.query.split === "true");
-
-            tasks.execute(command.transfer ? process.cwd() : undefined, command.debug);
+            exec(`sudo ${join(migration, "bin", "hbs-migrate")} -a hoobs -i hoobs -y${request.query.split === "true" ? " -s" : ""}`);
 
             return response.send({ success: true });
         }
