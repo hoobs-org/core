@@ -214,7 +214,7 @@
                     case "migrate":
                         setTimeout(() => {
                             window.location.href = "/";
-                        }, 2 * 60 * 1000);
+                        }, 15 * 60 * 1000);
 
                         setTimeout(() => {
                             this.loader.write();

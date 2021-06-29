@@ -48,7 +48,7 @@
                     </ul>
                     <div v-if="!running" class="update-actions">
                         <checkbox id="split" v-model="split"> <label for="split">Seperate Plugins to Individual Bridges</label></checkbox>
-                        <div class="button button-primary" v-on:click="prerun()">Start Migration</div>
+                        <div class="button button-primary" v-on:click="prerun()">Next</div>
                     </div>
                     <div v-else class="update-actions">
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
