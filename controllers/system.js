@@ -17,6 +17,7 @@
  **************************************************************************************************/
 
 const System = require("systeminformation");
+const { execSync } = require("child_process");
 
 const HBS = require("../server/instance");
 const Plugins = require("../server/plugins");
@@ -34,9 +35,13 @@ module.exports = class SystemController {
     }
 
     async info(_request, response) {
+        const os = await System.osInfo();
+
+        os.arch = (execSync("uname -m").toString().trim() || os.arch).toLowerCase();
+
         const data = {
             system: await System.system(),
-            operating_system: await System.osInfo()
+            operating_system: os
         };
 
         switch (HBS.config.system) {

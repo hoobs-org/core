@@ -22,7 +22,7 @@
             <tbody>
                 <tr v-for="(value, name) in info" :key="name">
                     <td>{{ $t(name) }}</td>
-                    <td v-if="!$server.docker && name === 'hoobs_version' && arch === 'arm' && $server.port === 80">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ $t("update_available") }}</router-link></td>
+                    <td v-if="!$server.docker && name === 'hoobs_version' && arch === 'armv7l' && $server.port === 80">{{ value }}<router-link class="data-addon-link" to="/system/software">{{ $t("update_available") }}</router-link></td>
                     <td v-else>{{ value }}</td>
                 </tr>
             </tbody>

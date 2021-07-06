@@ -29,7 +29,7 @@
         <div v-if="info" ref="content" class="content">
             <div v-if="section === 'software' || screen.width <= 815" class="system-content">
                 <h2>{{ $t("software") }}</h2>
-                <div v-if="!$server.docker && instances && tasks.length <= 0 && arch === 'arm' && $server.port === 80" class="update-card">
+                <div v-if="!$server.docker && instances && tasks.length <= 0 && arch === 'armv7l' && $server.port === 80" class="update-card">
                     <b>HOOBS 4 is Available</b>
                     <ul>
                         <li>Easy Multi-Bridge Configuration</li>
