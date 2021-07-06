@@ -389,16 +389,20 @@ module.exports = class Server {
 
     createHAPAccessory(plugin, accessoryInstance, displayName, accessoryType, uuidBase) {
         const services = (accessoryInstance.getServices() || [])
-            .filter(service => !!service);
+            .filter(service => service !== undefined && service !== null);
 
         const controllers = (accessoryInstance.getControllers && accessoryInstance.getControllers() || [])
-            .filter(controller => !!controller);
+            .filter(controller => controller !== undefined && controller !== null);
 
         if (services.length === 0 && controllers.length === 0) {
             return undefined;
         }
 
         if (!(services[0] instanceof Service)) {
+            services.map((service) => {
+                service.sType = service.sType || service.UUID;
+            });
+
             return AccessoryLoader.parseAccessoryJSON({
                 displayName: displayName,
                 services: services,
