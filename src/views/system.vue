@@ -68,6 +68,20 @@
                         <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
                     </div>
                 </div>
+                <div v-if="!$server.docker && tasks.length <= 0" class="update-card">
+                    <b>HOOBS Core</b>
+                    <span v-if="status">Current Version: {{ status["hoobs_version"] }}</span>
+                    <div v-if="checking" class="update-actions">
+                        <loading-marquee :height="3" color="--title-text" background="--title-text-dim" />
+                    </div>
+                    <div v-else-if="updates.length > 0" class="update-actions">
+                        <b>{{ updates[0].version }} {{ $t("update_available") }}</b><br>
+                        <div class="button button-primary" v-on:click="update()">{{ $t("update") }}</div>
+                    </div>
+                    <div v-else class="update-actions">
+                        <b>{{ $t("up_to_date") }}</b>
+                    </div>
+                </div>
                 <table v-if="tasks.length <= 0">
                     <tbody>
                         <tr v-for="(value, name) in status" :key="name">
@@ -139,6 +153,8 @@
                 running: false,
                 filesystem: null,
                 instances: false,
+                checking: true,
+                updates: [],
                 formatted: "",
                 split: false,
                 tasks: []
@@ -159,9 +175,20 @@
                     document.querySelector(window.location.hash).scrollIntoView();
                 }
             }
+
+            this.checkVersion();
         },
 
         methods: {
+            async checkVersion() {
+                this.checking = true;
+                this.updates = await this.api.get("/system/updates");
+
+                setTimeout(() => {
+                    this.checking = false;
+                }, 100);
+            },
+
             translate(value) {
                 let results = value;
 
@@ -173,6 +200,19 @@
                 }
 
                 return this.$humanize(results);
+            },
+
+            async update() {
+                this.checking = true;
+
+                this.$store.commit("lock");
+
+                await this.api.post("/service/stop");
+                await this.api.put("/update");
+
+                setTimeout(() => {
+                    this.$store.commit("reboot");
+                }, 1000 * 60 * 2);
             },
 
             getTemp(value) {
