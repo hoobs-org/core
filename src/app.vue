@@ -217,7 +217,8 @@
                         }, 15 * 60 * 1000);
 
                         setTimeout(() => {
-                            this.loader.write();
+                            this.poll();
+                            this.loader.write("Migrating...", "This could take a while, please do not turn off your device.");
                         }, 2 * 1000);
 
                         break;
@@ -284,6 +285,26 @@
         },
 
         methods: {
+            poll() {
+                this.application("hoobsd").then((response) => {
+                    if (!response) {
+                        setTimeout(() => this.poll(), 2 * 1000);
+                    } else {
+                        window.location.href = "/";
+                    }
+                });
+            },
+
+            async application(value) {
+                try {
+                    const results = await this.client.get("", true);
+
+                    return results.application === value;
+                } catch (_error) {
+                    return false;
+                }
+            },
+
             resize() {
                 this.$store.commit("resize", {
                     width: window.innerWidth,

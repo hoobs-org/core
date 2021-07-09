@@ -32,9 +32,11 @@ class Loader {
         window.location.reload();
     }
 
-    write() {
+    write(title, message) {
         if (!this.loading) {
             this.loading = true;
+
+            document.body.innerHTML = "";
 
             document.write(`
                 <!DOCTYPE html>
@@ -92,6 +94,23 @@ class Loader {
                             -webkit-animation: loading-marquee 2s linear infinite alternate;
                             animation: loading-marquee 2s linear infinite alternate;
                         }
+
+                        .loading-title {
+                            color: ${this.foreground};
+                            font-size: 27px;
+                            font-family: sans-serif;
+                            text-align: center;
+                        }
+
+                        .loading-message {
+                            color: ${this.foreground};
+                            font-size: 17px;
+                            font-family: sans-serif;
+                            text-align: center;
+                            max-width: 300px;
+                            margin-top: 7px;
+                            opacity: 0.5;
+                        }
                     
                         @-moz-keyframes loading-marquee {
                             0% {
@@ -135,11 +154,21 @@ class Loader {
                         <div class="marquee">
                             <div></div>
                         </div>
+                        <div class="loading-title">${title || ""}</div>
+                        <div class="loading-message">${message || ""}</div>
                     </div>
                 </body>
                 
                 </html>
             `);
+        } else {
+            const elements = {
+                title: document.querySelector(".loading-title"),
+                message: document.querySelector(".loading-message")
+            };
+
+            if (elements.title && title && title !== "") elements.title.innerHTML = title === "null" ? "" : title;
+            if (elements.message && message && message !== "") elements.message.innerHTML = message === "null" ? "" : message;
         }
     }
 }
