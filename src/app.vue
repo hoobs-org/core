@@ -361,7 +361,7 @@
                 };
 
                 this.socket.onopen = () => {
-                    if (this.loader.loading) {
+                    if (!this.migrating && this.loader.loading) {
                         this.loader.load();
                     }
 
