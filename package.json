@@ -1,6 +1,6 @@
 {
     "name": "@hoobs/hoobs",
-    "version": "3.3.9",
+    "version": "3.3.10",
     "description": "Certified HOOBS stack",
     "license": "GPL-3.0",
     "keywords": [
@@ -34,7 +34,7 @@
         "hoobs": "bin/hoobs-build"
     },
     "dependencies": {
-        "@hoobs/migration": "^4.4.19",
+        "@hoobs/migration": "^4.4.21",
         "archiver": "^5.1.0",
         "axios": "^0.21.1",
         "commander": "^6.2.0",
