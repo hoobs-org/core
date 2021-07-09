@@ -139,6 +139,7 @@
                 instances: [],
                 socket: null,
                 loader: null,
+                migrating: false,
                 available: [
                     "setup-pin",
                     "system-load",
@@ -212,6 +213,8 @@
             this.$store.subscribe(async (mutation, state) => {
                 switch (mutation.type) {
                     case "migrate":
+                        this.migrating = true;
+
                         setTimeout(() => {
                             window.location.href = "/";
                         }, 15 * 60 * 1000);
@@ -372,13 +375,15 @@
                 };
 
                 this.socket.onerror = () => {
-                    fetch("/").then((response) => {
-                        if (!response.ok) {
+                    if (!this.migrating) {
+                        fetch("/").then((response) => {
+                            if (!response.ok) {
+                                this.loader.write();
+                            }
+                        }).catch(() => {
                             this.loader.write();
-                        }
-                    }).catch(() => {
-                        this.loader.write();
-                    });
+                        });
+                    }
 
                     this.socket.close();
                 };
